@@ -21,6 +21,7 @@
     "@angular/router": "~10.1.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
+    "web3": "^1.2.11",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
