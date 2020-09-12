@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 const Web3 = require('web3');
+import Web3Modal from 'web3modal';
 
 @Injectable({
   providedIn: 'root'
