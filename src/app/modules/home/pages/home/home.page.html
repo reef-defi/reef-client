@@ -1,10 +1,2 @@
-<button (click)="connectorService.onConnect()">Connect</button>
-<button (click)="connectorService.onDisconnect()">Disconnect</button>
-<div *ngIf="provider$ | async as provider">
-  <div *ngIf="providerName$ | async as providerName">
-    You are connected on {{ providerName }}
-  </div>
-  <div *ngIf="providerUserInfo$ | async as providerUserInfo">
-    you have <strong>{{ providerUserInfo.balance }} </strong> on {{ providerUserInfo.address }}!
-  </div>
-</div>
+<button (click)="onConnect()">Connect</button>
+<button (click)="onDisconnect()">Disconnect</button>

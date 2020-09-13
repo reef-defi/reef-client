@@ -7,14 +7,19 @@ import { ConnectorService } from '../../../../core/services/connector.service';
   styleUrls: ['./home.page.scss']
 })
 export class HomePage implements OnInit {
-  providerName$ = this.connectorService.currentProviderName$;
-  provider$ = this.connectorService.currentProvider$;
-  providerUserInfo$ = this.connectorService.providerUserInfo$;
 
   constructor(
     private readonly connectorService: ConnectorService) {
   }
 
   ngOnInit(): void {
+  }
+
+  onConnect(): void {
+    this.connectorService.onConnect();
+  }
+
+  onDisconnect(): void {
+    this.connectorService.onDisconnect();
   }
 }

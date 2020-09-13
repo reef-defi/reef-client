@@ -1,0 +1,17 @@
+$theme-colors: (
+  "primary":    #F0D3F7,
+  "secondary":  #B98EA7,
+  "success":    #388e3c,
+  "info":       #00acc1,
+  "light":      #f3e5f5,
+  "dark":       #863895
+);
+
+@import "~bootstrap";
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
+body {
+  color: gray('800');
+  background-color: theme-color('light');
+  font-family: 'Raleway', sans-serif;
+}

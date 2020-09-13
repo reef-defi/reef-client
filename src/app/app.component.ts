@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ConnectorService } from './core/services/connector.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'reef-app-v2';
+  providerName$ = this.connectorService.currentProviderName$;
+  provider$ = this.connectorService.currentProvider$;
+  providerUserInfo$ = this.connectorService.providerUserInfo$;
+  constructor(private readonly connectorService: ConnectorService) {
+  }
 }
