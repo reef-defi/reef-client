@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  testBasketContrAddr: '', //TODO: revert these on commit
+  testBasketContrABI: '',
+  testReefUrl: 'https://baskets.reef.finance/v1',
 };
 
 /*

@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "https://baskets.reef.finance/v1",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}

@@ -22,3 +22,32 @@ export interface IAssetData {
   contractAddress: string;
   balance?: string;
 }
+
+export interface IPoolsMetadata {
+  assets: IPoolMetadataAsset[];
+  exchange: string;
+  ownershipToken: string;
+  platform: string;
+  poolName: string;
+  roi: number;
+  tags: any[];
+  usdLiquidity: number;
+  usdVolume: number;
+}
+
+export interface IPoolMetadataAsset {
+  address: string;
+  balance: number;
+  name: string;
+  symbol: string;
+  weight: number;
+}
+
+export interface IGenerateBasketRequest {
+  amount: string;
+  risk_aversion: number;
+}
+
+export interface IGenerateBasketResponse {
+  [key: string]: number;
+}

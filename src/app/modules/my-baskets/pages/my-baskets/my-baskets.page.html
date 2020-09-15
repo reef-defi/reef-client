@@ -1,1 +1,10 @@
-<p>my-baskets works!</p>
+<button (click)="generateBasket({amount: '3', risk_aversion: 30})">Generate Basket</button>
+
+Baskets:
+<ng-container *ngIf="pools$ | async as pools">
+  <div *ngFor="let basket of pools">
+    <div>{{ basket.poolName }} - {{ basket.roi }}</div>
+  </div>
+</ng-container>
+
+
