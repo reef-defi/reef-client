@@ -1,3 +1,15 @@
+import {
+  ChartComponent,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexTitleSubtitle,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexYAxis,
+  ApexFill,
+} from 'ng-apexcharts';
+
 export interface IProviderUserInfo {
   address: string;
   balance: string;
@@ -51,3 +63,14 @@ export interface IGenerateBasketRequest {
 export interface IGenerateBasketResponse {
   [key: string]: number;
 }
+
+export type ApexChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: ApexYAxis;
+  xaxis: ApexXAxis;
+  fill: ApexFill;
+  title: ApexTitleSubtitle;
+};

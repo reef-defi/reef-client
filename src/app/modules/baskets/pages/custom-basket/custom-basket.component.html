@@ -1,0 +1,29 @@
+<ng-container *ngIf="allPools$ | async as allPools">
+  <div *ngFor="let pool of allPools.slice(0, 10)">
+    {{ pool.platform }} - {{ pool.poolName }}
+    <button class="btn btn-primary" (click)="addPool(pool.poolName)">Add Pool to Basket</button>
+    <button class="btn btn-secondary" *ngIf="chartPoolData[pool.poolName]" (click)="removePool(pool.poolName)">
+      Remove Pool
+    </button>
+    <mat-slider
+      [disabled]="disableSlider()"
+      *ngIf="chartOptions && chartPoolData[pool.poolName] >= 0"
+      min="1" max="99" thumbLabel
+      [displayWith]="formatSliderLabel"
+      (valueChange)="editBasketAllocation(pool.poolName, $event)"
+      [value]="chartPoolData[pool.poolName]"></mat-slider>
+  </div>
+</ng-container>
+
+<div *ngIf="chartOptions && Object.keys(chartPoolData).length > 0">
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [dataLabels]="chartOptions.dataLabels"
+    [plotOptions]="chartOptions.plotOptions"
+    [yaxis]="chartOptions.yaxis"
+    [xaxis]="chartOptions.xaxis"
+    [fill]="chartOptions.fill"
+    [title]="chartOptions.title"
+  ></apx-chart>
+</div>

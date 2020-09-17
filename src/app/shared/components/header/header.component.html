@@ -8,6 +8,6 @@
     <div *ngIf="providerName">Connected to: {{ providerName }} on chain {{ providerUserInfo.chainInfo.name }}</div>
     <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:8 }} <strong>ETH</strong>
     <strong class="ml-2">Address: </strong>{{ providerUserInfo.address}} </div>
-    <div [routerLink]="['/my-baskets']">My Baskets</div>
+    <div [routerLink]="['/baskets']">My Baskets</div>
 </nav>
 

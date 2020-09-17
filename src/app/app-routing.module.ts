@@ -7,8 +7,8 @@ const routes: Routes = [
     loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule)
   },
   {
-    path: 'my-baskets',
-    loadChildren: () => import('./modules/my-baskets/my-baskets.module').then(m => m.MyBasketsModule)
+    path: 'baskets',
+    loadChildren: () => import('./modules/baskets/baskets.module').then(m => m.BasketsModule)
   },
   {
     path: 'reef',

@@ -1,0 +1,38 @@
+<div class="form-group w-20">
+  <label for="ethAmount">Eth Amount: </label>
+  <input
+    class="w-25 form-control"
+    id="ethAmount"
+    [formControl]="ethAmount"
+    placeholder="Amount of ETH" type="text"/>
+</div>
+<div>
+  <label for="risk">Risk: </label>
+  <mat-slider
+    id="risk"
+    thumbLabel
+    min="1" max="100" step="1" [formControl]="risk"></mat-slider>
+</div>
+
+<div *ngIf="chartOptions">
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [dataLabels]="chartOptions.dataLabels"
+    [plotOptions]="chartOptions.plotOptions"
+    [yaxis]="chartOptions.yaxis"
+    [xaxis]="chartOptions.xaxis"
+    [fill]="chartOptions.fill"
+    [title]="chartOptions.title"
+  ></apx-chart>
+</div>
+
+<button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>
+<!--Baskets:-->
+<!--<ng-container *ngIf="pools$ | async as pools">-->
+<!--  <div *ngFor="let basket of pools">-->
+<!--    <div>{{ basket.poolName }} - {{ basket.roi }}</div>-->
+<!--  </div>-->
+<!--</ng-container>-->
+
+

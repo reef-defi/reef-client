@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { IGenerateBasketRequest, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Content-Type':  'application/json',
+    'Content-Type': 'application/json',
   })
 };
+
 @Injectable({
   providedIn: 'root'
 })
 export class BasketsService {
+  readonly COMPOSITION_LIMIT = 10;
   private url = environment.testReefUrl;
 
 
@@ -24,6 +26,9 @@ export class BasketsService {
   }
 
   generateBasket(payload: IGenerateBasketRequest): Observable<IGenerateBasketResponse> {
+    if (!payload.amount || !payload.risk_aversion) {
+      return EMPTY;
+    }
     return this.http.post<IGenerateBasketResponse>(`${this.url}/generate_basket`, payload, httpOptions);
   }
 
