@@ -1,0 +1,48 @@
+<ng-container *ngIf="allPools$ | async as allPools">
+  <div>
+    <label for="searchPools">Search pools</label>
+    <input
+      id="searchPools"
+      [(ngModel)]="poolsSearchVal"
+      type="text"
+      class="form-control w-25" />
+  </div>
+  <div *ngFor="let pool of allPools.slice(0, 10) | filter: 'poolName':poolsSearchVal">
+    {{ pool.platform }} - {{ pool.poolName }}
+    <button
+      *ngIf="Object.keys(chartPoolData).length < COMPOSITION_LIMIT && !chartPoolData[pool.poolName]"
+      class="btn btn-primary"
+      (click)="addPool(pool.poolName)">Add Pool to Basket
+    </button>
+    <button class="btn btn-secondary" *ngIf="chartPoolData[pool.poolName]" (click)="removePool(pool.poolName)">
+      Remove Pool
+    </button>
+    <mat-slider
+      [disabled]="disableSlider()"
+      *ngIf="chartOptions && chartPoolData[pool.poolName] >= 0"
+      min="1" max="99"
+      thumbLabel
+      [displayWith]="formatSliderLabel"
+      (valueChange)="editBasketAllocation(pool.poolName, $event)"
+      [value]="chartPoolData[pool.poolName]"></mat-slider>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="chartOptions && Object.keys(chartPoolData).length > 0; else emptyChartsTemplate">
+  <div>
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [dataLabels]="chartOptions.dataLabels"
+      [plotOptions]="chartOptions.plotOptions"
+      [yaxis]="chartOptions.yaxis"
+      [xaxis]="chartOptions.xaxis"
+      [fill]="chartOptions.fill"
+      [title]="chartOptions.title"
+    ></apx-chart>
+  </div>
+</ng-container>
+
+<ng-template #emptyChartsTemplate>
+  <h2>Add a pool to allocate funds</h2>
+</ng-template>

@@ -6,15 +6,16 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-custom-basket',
-  templateUrl: './custom-basket.component.html',
-  styleUrls: ['./custom-basket.component.scss']
+  templateUrl: './custom-basket.page.html',
+  styleUrls: ['./custom-basket.page.scss']
 })
-export class CustomBasketComponent implements OnInit {
+export class CustomBasketPage implements OnInit {
   Object = Object;
+  readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
   readonly allPools$: Observable<IPoolsMetadata[]> = this.basketService.listPools();
   public chartOptions: Partial<ApexChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
-
+  public poolsSearchVal = '';
   constructor(private readonly basketService: BasketsService, private readonly chartsService: ChartsService) {
   }
 
@@ -22,9 +23,13 @@ export class CustomBasketComponent implements OnInit {
   }
 
   addPool(poolName: string): void {
-    this.chartPoolData[poolName] = this.calculatePoolAllocation();
-    this.balancePoolAllocation();
-    this.setChart();
+    if (!(Object.keys(this.chartPoolData).length < this.COMPOSITION_LIMIT)) {
+      console.error(`Can't have more than 10 compositions.`);
+    } else {
+      this.chartPoolData[poolName] = this.calculatePoolAllocation();
+      this.balancePoolAllocation();
+      this.setChart();
+    }
   }
 
   removePool(poolName: string): void {

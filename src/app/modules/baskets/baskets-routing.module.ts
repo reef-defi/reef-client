@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MyBasketsPage } from './pages/my-baskets/my-baskets.page';
-import { CustomBasketComponent } from './pages/custom-basket/custom-basket.component';
+import { CustomBasketPage } from './pages/custom-basket/custom-basket.page';
 
 const routes: Routes = [
   {
@@ -10,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'custom-basket',
-    component: CustomBasketComponent
+    component: CustomBasketPage
   }
 ];
 
