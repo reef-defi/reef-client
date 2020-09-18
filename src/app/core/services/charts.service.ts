@@ -5,7 +5,6 @@ import { ApexChartOptions } from '../models/types';
   providedIn: 'root'
 })
 export class ChartsService {
-  private chartOptions: Partial<ApexChartOptions>;
   constructor() { }
 
   composeWeightAllocChart(labels: any, data: any[]): Partial<ApexChartOptions> {

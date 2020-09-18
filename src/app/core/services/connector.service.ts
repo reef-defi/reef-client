@@ -41,8 +41,8 @@ export class ConnectorService {
       }
     },
   };
-  web3Modal = null;
-  web3 = null;
+  public web3Modal = null;
+  public web3 = null;
 
   constructor() {
     this.initWeb3Modal().then(() => {

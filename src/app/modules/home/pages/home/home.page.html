@@ -1,2 +1,16 @@
-<button (click)="onConnect()">Connect</button>
-<button (click)="onDisconnect()">Disconnect</button>
+<div>
+  <button (click)="onConnect()">Connect to Wallet</button>
+</div>
+<div>
+  <button (click)="onDisconnect()">Disconnect from Wallet</button>
+</div>
+<ng-container *ngIf="contract$ | async as contract">
+  Connected to contract!
+  <button (click)="getAvailableBasketCount()">Get Available Baskets</button>
+  <div *ngIf="availableBasketCounts">
+    {{ availableBasketCounts }}
+  </div>
+  <div>
+    {{ contract.methods | json }}
+  </div>
+</ng-container>
