@@ -41,4 +41,9 @@ export class HomePage implements OnInit {
   async getAvailableBasketCount(): Promise<any> {
     this.availableBasketCounts = await this.contractService.getAvailableBasketsCount();
   }
+
+  async getAvailableBasket(): Promise<any> {
+    const basket = await this.contractService.getAvailableBasket(0);
+    console.log(basket);
+  }
 }

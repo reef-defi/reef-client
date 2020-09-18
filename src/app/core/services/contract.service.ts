@@ -20,4 +20,8 @@ export class ContractService {
   getAvailableBasketsCount(): Promise<any> {
     return this.contract$.value.methods.getAvailableBasketsCount().call();
   }
+
+  getAvailableBasket(basketIdx: number): Promise<any> {
+    return this.contract$.value.methods.getAvailableBasket(basketIdx).call();
+  }
 }

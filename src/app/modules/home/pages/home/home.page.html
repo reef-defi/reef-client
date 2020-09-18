@@ -8,7 +8,10 @@
   Connected to contract!
   <button (click)="getAvailableBasketCount()">Get Available Baskets</button>
   <div *ngIf="availableBasketCounts">
-    {{ availableBasketCounts }}
+    available baskets: {{ availableBasketCounts }}
+  </div>
+  <div>
+    <button (click)="getAvailableBasket()">Get Basket</button>
   </div>
   <div>
     {{ contract.methods | json }}
