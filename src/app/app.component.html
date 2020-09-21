@@ -1,5 +1,6 @@
 <div class="container-fluid">
   <app-header
+    [ethPrice]="ethPrice$ | async"
     [providerName]="providerName$ | async"
     [providerUserInfo]="providerUserInfo$ | async">
   </app-header>

@@ -5,15 +5,6 @@
   <button (click)="onDisconnect()">Disconnect from Wallet</button>
 </div>
 <ng-container *ngIf="contract$ | async as contract">
-  Connected to contract!
-  <button (click)="getAvailableBasketCount()">Get Available Baskets</button>
-  <div *ngIf="availableBasketCounts">
-    available baskets: {{ availableBasketCounts }}
-  </div>
-  <div>
-    <button (click)="getAvailableBasket()">Get Basket</button>
-  </div>
-  <div>
-    {{ contract.methods | json }}
-  </div>
+  <h2>Connected to contract</h2>
+  <button class="btn btn-primary" (click)="contractService.createBasketTest()">Create a random basket</button>
 </ng-container>

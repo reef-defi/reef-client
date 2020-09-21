@@ -67,10 +67,14 @@ export class ConnectorService {
     console.log('damn');
   }
 
+  public async getTransactionReceipt(txHash: string): Promise<any> {
+    return await this.web3.eth.getTransactionReceipt(txHash);
+  }
+
   private async initWeb3Modal(): Promise<any> {
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
-      // cacheProvider: true,
+      cacheProvider: true,
       disableInjectedProvider: false
     });
     await this.onConnect();
@@ -93,7 +97,7 @@ export class ConnectorService {
   }
 
   private subToProviderEvents(): void {
-    if (this.currentProvider$.value.on) {
+    if (!this.currentProvider$.value.on) {
       return;
     }
     this.currentProvider$.value.on('connect', () => {
@@ -101,13 +105,14 @@ export class ConnectorService {
     });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on('accountsChanged', (accounts: string[]) => {
-      console.log(accounts);
+      this.providerUserInfo$.next({
+        ...this.providerUserInfo$.value,
+        address: accounts[0]
+      });
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
-      console.log(chainId);
-    });
-    this.currentProvider$.value.on('networkChanged', async (networkId: number) => {
-      console.log(networkId);
+      console.log(chainId)
+      window.location.reload();
     });
   }
 

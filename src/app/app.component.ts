@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ConnectorService } from './core/services/connector.service';
+import { PoolService } from './core/services/pool.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,11 @@ export class AppComponent {
   providerName$ = this.connectorService.currentProviderName$;
   provider$ = this.connectorService.currentProvider$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
-  constructor(private readonly connectorService: ConnectorService) {
+  ethPrice$ = this.poolService.getEthPrice();
+  constructor(
+    private readonly connectorService: ConnectorService,
+    private readonly poolService: PoolService) {
   }
+
+
 }

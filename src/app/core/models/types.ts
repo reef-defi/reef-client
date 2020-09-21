@@ -74,3 +74,9 @@ export type ApexChartOptions = {
   fill: ApexFill;
   title: ApexTitleSubtitle;
 };
+
+export interface EthPrice {
+  ethereum: {
+    usd: number
+  };
+}

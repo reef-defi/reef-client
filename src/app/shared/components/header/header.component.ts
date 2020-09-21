@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IProviderUserInfo } from '../../../core/models/types';
+import { EthPrice, IProviderUserInfo } from '../../../core/models/types';
 
 @Component({
   selector: 'app-header',
@@ -9,6 +9,7 @@ import { IProviderUserInfo } from '../../../core/models/types';
 export class HeaderComponent implements OnInit {
   @Input() providerName: string | undefined;
   @Input() providerUserInfo: IProviderUserInfo | undefined;
+  @Input() ethPrice: EthPrice | undefined;
 
   constructor() { }
 

@@ -1,0 +1,12 @@
+<button [routerLink]="['/baskets/my-baskets']">My baskets</button>
+
+<ng-container *ngIf="contract$ | async as contract">
+  <ng-container *ngIf="baskets$ | async as allBaskets">
+    <div class="border border-danger" *ngFor="let basket of allBaskets">
+      <div>Name: {{ basket[0]}} </div>
+      <div>Allocation1: {{basket[1][0]}} into {{basket[2][0]}}</div>
+      <div>Allocation2: {{basket[1][1]}} into {{basket[2][1]}}</div>
+      <div>Allocation3: {{basket[1][2]}} into {{basket[3]}}</div>
+    </div>
+  </ng-container>
+</ng-container>

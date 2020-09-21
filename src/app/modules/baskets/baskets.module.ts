@@ -8,9 +8,10 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { CustomBasketPage } from './pages/custom-basket/custom-basket.page';
 import { MatSliderModule } from '@angular/material/slider';
 import { SharedModule } from '../../shared/shared.module';
+import { BasketsPage } from './pages/baskets/baskets.page';
 
 @NgModule({
-  declarations: [MyBasketsPage, CustomBasketPage],
+  declarations: [MyBasketsPage, CustomBasketPage, BasketsPage],
   imports: [
     CommonModule,
     FormsModule,

@@ -4,10 +4,13 @@
     <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
          class="d-inline-block align-top header__logo" alt="">
   </a>
+  <div *ngIf="ethPrice && ethPrice.ethereum">
+    ETH Price: ${{ ethPrice.ethereum.usd }}
+  </div>
   <div *ngIf="providerUserInfo">
-    <div *ngIf="providerName">Connected to: {{ providerName }} on chain {{ providerUserInfo.chainInfo.name }}</div>
-    <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:8 }} <strong>ETH</strong>
+    <div *ngIf="providerName">Connected to: {{ providerName }} on chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}</div>
+    <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:6 }} <strong>ETH</strong>
     <strong class="ml-2">Address: </strong>{{ providerUserInfo.address}} </div>
-    <div [routerLink]="['/baskets']">My Baskets</div>
+    <div [routerLink]="['/baskets']">Baskets</div>
 </nav>
 

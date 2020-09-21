@@ -40,6 +40,7 @@ export class MyBasketsPage implements OnInit {
   generateBasket(): any {
     return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_aversion: this.risk.value}).pipe(
       tap((data) => {
+        console.log(data, 'generated_basket')
         this.chartOptions = this.chartsService.composeWeightAllocChart(Object.keys(data), Object.values(data));
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data))
