@@ -10,10 +10,10 @@ import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-my-baskets',
-  templateUrl: './my-baskets.page.html',
-  styleUrls: ['./my-baskets.page.scss']
+  templateUrl: './create-basket.page.html',
+  styleUrls: ['./create-basket.page.scss']
 })
-export class MyBasketsPage implements OnInit {
+export class CreateBasketPage implements OnInit {
   readonly pools$ = this.basketsService.listPools();
   public chartOptions: Partial<ApexChartOptions>;
   ethAmount = new FormControl('1');

@@ -104,10 +104,11 @@ export class ConnectorService {
       console.log('connected!');
     });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
-    this.currentProvider$.value.on('accountsChanged', (accounts: string[]) => {
+    this.currentProvider$.value.on('accountsChanged', async (accounts: string[]) => {
       this.providerUserInfo$.next({
         ...this.providerUserInfo$.value,
-        address: accounts[0]
+        address: accounts[0],
+        balance: await this.getUserBalance(accounts[0])
       });
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {

@@ -1,4 +1,4 @@
-<button [routerLink]="['/baskets/my-baskets']">My baskets</button>
+<button class="btn btn-primary" [routerLink]="['/baskets/create-basket']">Create a basket</button>
 
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="baskets$ | async as allBaskets">

@@ -20,10 +20,10 @@ export class HomePage implements OnInit {
     this.connectorService.currentProviderName$
       .pipe(first(ev => !!ev))
       .subscribe((data: any) => {
-      if (data) {
-        this.connectToContract();
-      }
-    });
+        if (data) {
+          this.connectToContract();
+        }
+      });
   }
 
   onConnect(): void {
@@ -36,5 +36,9 @@ export class HomePage implements OnInit {
 
   connectToContract(): void {
     this.contractService.connectToContract();
+  }
+
+  async createTestBasket(): Promise<void> {
+    await this.contractService.createBasketTest();
   }
 }
