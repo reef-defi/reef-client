@@ -10,6 +10,7 @@ import { first } from 'rxjs/operators';
 })
 export class HomePage implements OnInit {
   public contract$ = this.contractService.contract$;
+  public isWalletConnected$ = this.connectorService.currentProviderName$;
   public availableBasketCounts = 0;
 
   constructor(

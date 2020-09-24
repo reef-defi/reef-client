@@ -1,10 +1,30 @@
-<div>
-  <button (click)="onConnect()">Connect to Wallet</button>
+<div class="d-flex align-content-center justify-content-center my-5">
+  <h1>Welcome to Reef</h1>
 </div>
+
 <div>
-  <button (click)="onDisconnect()">Disconnect from Wallet</button>
+  <div *ngIf="isWalletConnected$ | async as connected; else notConnectedTemplate">
+    <ng-container *ngIf="contract$ | async as contract; else connectingContractTemplate">
+      <div class="mb-5">
+        <div class="text-success small">Connected to contract</div>
+        <button class="btn btn-primary" (click)="createTestBasket()">Create a random basket</button>
+      </div>
+    </ng-container>
+  </div>
+  <div>
+    <button class="btn btn-danger" (click)="onDisconnect()">Disconnect from Wallet</button>
+  </div>
 </div>
-<ng-container *ngIf="contract$ | async as contract">
-  <h2>Connected to contract</h2>
-  <button class="btn btn-primary" (click)="createTestBasket()">Create a random basket</button>
-</ng-container>
+
+<ng-template #notConnectedTemplate>
+  <div class="text-info">
+    Please connect to your wallet to proceed.
+  </div>
+  <div>
+    <button class="btn btn-primary" (click)="onConnect()">Connect to Wallet</button>
+  </div>
+</ng-template>
+
+<ng-template #connectingContractTemplate>
+  <div>Connecting contract...</div>
+</ng-template>
