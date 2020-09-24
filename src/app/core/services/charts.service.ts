@@ -1,14 +1,55 @@
 import { Injectable } from '@angular/core';
-import { ApexChartOptions } from '../models/types';
+import { HistoricRoiChartOptions, PoolsChartOptions } from '../models/types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChartsService {
-  constructor() { }
+  constructor() {
+  }
 
-  composeWeightAllocChart(labels: any, data: any[]): Partial<ApexChartOptions> {
-    return  {
+  composeHistoricRoiChart(labels: any[], data: any[]): Partial<HistoricRoiChartOptions> {
+    return {
+      series: [
+        {
+          name: 'Return of Investment',
+          data: [...data]
+        }
+      ],
+      chart: {
+        height: 350,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        toolbar: {
+          show: false,
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: 'Historic ROI',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        }
+      },
+      xaxis: {
+        categories: [...labels]
+      },
+    };
+  }
+
+  composeWeightAllocChart(labels: any, data: any[]): Partial<PoolsChartOptions> {
+    return {
       series: [
         {
           name: 'Allocation',
@@ -17,7 +58,10 @@ export class ChartsService {
       ],
       chart: {
         height: 350,
-        type: 'bar'
+        type: 'bar',
+        toolbar: {
+          show: false,
+        }
       },
       plotOptions: {
         bar: {

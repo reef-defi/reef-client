@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BasketsService } from '../../../../core/services/baskets.service';
 import { ChartsService } from '../../../../core/services/charts.service';
-import { ApexChartOptions, IPoolsMetadata } from '../../../../core/models/types';
+import { PoolsChartOptions, IPoolsMetadata } from '../../../../core/models/types';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -13,7 +13,7 @@ export class CustomBasketPage implements OnInit {
   Object = Object;
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
   readonly allPools$: Observable<IPoolsMetadata[]> = this.basketService.listPools();
-  public chartOptions: Partial<ApexChartOptions>;
+  public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
   public poolsSearchVal = '';
   constructor(private readonly basketService: BasketsService, private readonly chartsService: ChartsService) {

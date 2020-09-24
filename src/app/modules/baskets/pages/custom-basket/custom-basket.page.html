@@ -6,7 +6,7 @@
       [(ngModel)]="poolsSearchVal"
       type="text"
       class="form-control w-25" />
-  </div>
+  </div>W
   <div *ngFor="let pool of allPools.slice(0, 10) | filter: 'poolName':poolsSearchVal">
     {{ pool.platform }} - {{ pool.poolName }}
     <button

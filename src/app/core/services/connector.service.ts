@@ -19,7 +19,7 @@ export class ConnectorService {
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
-  WalletLinkProvider = this.walletLink.makeWeb3Provider('https://rinkeby.infura.io/v3/bd80ce1ca1f94da48e151bb6868bb150', 4);
+  WalletLinkProvider = this.walletLink.makeWeb3Provider('https://ropsten.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310', 4);
   providerOptions = {
     walletconnect: {
       package: WalletConnectProvider,
@@ -30,12 +30,11 @@ export class ConnectorService {
     'custom-walletlink': {
       display: {
         name: 'Wallet Link',
-        description: 'Connect to your wallet link provider'
+        description: 'Scan with WalletLink to connect'
       },
       package: this.WalletLinkProvider,
-      connector: async (ProvidePackage, options) => {
+      connector: async (provider, options) => {
         console.log(this.WalletLinkProvider);
-        const provider = new ProvidePackage(options);
         await provider.enable();
         return provider;
       }

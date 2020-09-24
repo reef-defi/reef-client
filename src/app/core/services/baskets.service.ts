@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EMPTY, Observable } from 'rxjs';
-import { IGenerateBasketRequest, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
+import { IBasketHistoricRoi, IGenerateBasketRequest, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
+import { subMonths } from 'date-fns';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -32,7 +33,13 @@ export class BasketsService {
     return this.http.post<IGenerateBasketResponse>(`${this.url}/generate_basket`, payload, httpOptions);
   }
 
-  getHistoricRoi(payload: IGenerateBasketResponse): Observable<any> {
-    return this.http.post<any>(`${this.url}/basket_historic_roi`, payload, httpOptions);
+  getHistoricRoi(payload: IGenerateBasketResponse, subtractMonths: number = 1): Observable<IBasketHistoricRoi> {
+    const date = new Date();
+    const startDate = subMonths(date, subtractMonths);
+    const body = {
+      start_date: startDate,
+      basket: payload,
+    };
+    return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions);
   }
 }

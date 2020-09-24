@@ -14,16 +14,33 @@
     min="1" max="100" step="1" [formControl]="risk"></mat-slider>
 </div>
 
-<div *ngIf="chartOptions">
+<div *ngIf="poolChartOptions">
   <apx-chart
-    [series]="chartOptions.series"
-    [chart]="chartOptions.chart"
-    [dataLabels]="chartOptions.dataLabels"
-    [plotOptions]="chartOptions.plotOptions"
-    [yaxis]="chartOptions.yaxis"
-    [xaxis]="chartOptions.xaxis"
-    [fill]="chartOptions.fill"
-    [title]="chartOptions.title"
+    [series]="poolChartOptions.series"
+    [chart]="poolChartOptions.chart"
+    [dataLabels]="poolChartOptions.dataLabels"
+    [plotOptions]="poolChartOptions.plotOptions"
+    [yaxis]="poolChartOptions.yaxis"
+    [xaxis]="poolChartOptions.xaxis"
+    [fill]="poolChartOptions.fill"
+    [title]="poolChartOptions.title"
+  ></apx-chart>
+</div>
+
+<div *ngIf="roiChartOptions">
+  <div>
+    <button class="btn btn-primary" (click)="getHistoricRoi(basket, 1)">Last month</button>
+    <button class="btn btn-primary" (click)="getHistoricRoi(basket, 6)">Last 6 months</button>
+    <button class="btn btn-primary" (click)="getHistoricRoi(basket, 12)">Last year</button>
+  </div>
+  <apx-chart
+    [series]="roiChartOptions.series"
+    [chart]="roiChartOptions.chart"
+    [dataLabels]="roiChartOptions.dataLabels"
+    [grid]="roiChartOptions.grid"
+    [stroke]="roiChartOptions.stroke"
+    [xaxis]="roiChartOptions.xaxis"
+    [title]="roiChartOptions.title"
   ></apx-chart>
 </div>
 

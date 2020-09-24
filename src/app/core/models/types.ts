@@ -8,6 +8,8 @@ import {
   ApexPlotOptions,
   ApexYAxis,
   ApexFill,
+  ApexGrid,
+  ApexStroke,
 } from 'ng-apexcharts';
 
 export interface IProviderUserInfo {
@@ -64,7 +66,14 @@ export interface IGenerateBasketResponse {
   [key: string]: number;
 }
 
-export type ApexChartOptions = {
+export interface IBasketHistoricRoi {
+  [key: string]: {
+    [key: string]: number,
+    weighted_roi: number,
+  };
+}
+
+export type PoolsChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
@@ -72,6 +81,16 @@ export type ApexChartOptions = {
   yaxis: ApexYAxis;
   xaxis: ApexXAxis;
   fill: ApexFill;
+  title: ApexTitleSubtitle;
+};
+
+export type HistoricRoiChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
+  grid: ApexGrid;
+  stroke: ApexStroke;
   title: ApexTitleSubtitle;
 };
 
