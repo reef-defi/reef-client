@@ -38,15 +38,15 @@ export interface IAssetData {
 }
 
 export interface IPoolsMetadata {
-  assets: IPoolMetadataAsset[];
-  exchange: string;
-  ownershipToken: string;
-  platform: string;
-  poolName: string;
-  roi: number;
-  tags: any[];
-  usdLiquidity: number;
-  usdVolume: number;
+  Assets: IPoolMetadataAsset[];
+  ExchangeAddress: string;
+  ExchangeName: string;
+  Id: number;
+  LPToken: string;
+  LiquidityUSD: number;
+  ROI30d: number;
+  Symbol: string;
+  VolumeUSD: number;
 }
 
 export interface IPoolMetadataAsset {

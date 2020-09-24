@@ -6,25 +6,25 @@
       [(ngModel)]="poolsSearchVal"
       type="text"
       class="form-control w-25" />
-  </div>W
-  <div *ngFor="let pool of allPools.slice(0, 10) | filter: 'poolName':poolsSearchVal">
-    {{ pool.platform }} - {{ pool.poolName }}
+  </div>
+  <div *ngFor="let pool of allPools.slice(0, 10) | filter: 'Symbol':poolsSearchVal">
+    {{ pool.Platform }} - {{ pool.Symbol }}
     <button
-      *ngIf="Object.keys(chartPoolData).length < COMPOSITION_LIMIT && !chartPoolData[pool.poolName]"
+      *ngIf="Object.keys(chartPoolData).length < COMPOSITION_LIMIT && !chartPoolData[pool.Symbol]"
       class="btn btn-primary"
-      (click)="addPool(pool.poolName)">Add Pool to Basket
+      (click)="addPool(pool.Symbol)">Add Pool to Basket
     </button>
-    <button class="btn btn-secondary" *ngIf="chartPoolData[pool.poolName]" (click)="removePool(pool.poolName)">
+    <button class="btn btn-secondary" *ngIf="chartPoolData[pool.Symbol]" (click)="removePool(pool.Symbol)">
       Remove Pool
     </button>
     <mat-slider
       [disabled]="disableSlider()"
-      *ngIf="chartOptions && chartPoolData[pool.poolName] >= 0"
+      *ngIf="chartOptions && chartPoolData[pool.Symbol] >= 0"
       min="1" max="99"
       thumbLabel
       [displayWith]="formatSliderLabel"
-      (valueChange)="editBasketAllocation(pool.poolName, $event)"
-      [value]="chartPoolData[pool.poolName]"></mat-slider>
+      (valueChange)="editBasketAllocation(pool.Symbol, $event)"
+      [value]="chartPoolData[pool.Symbol]"></mat-slider>
   </div>
 </ng-container>
 
