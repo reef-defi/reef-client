@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BasketsService } from '../../../../core/services/baskets.service';
 import { ChartsService } from '../../../../core/services/charts.service';
-import { PoolsChartOptions, IPoolsMetadata } from '../../../../core/models/types';
-import { Observable } from 'rxjs';
+import { PoolsChartOptions, IPoolsMetadata, IBasketPoolsAndCoinInfo } from '../../../../core/models/types';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
 
 @Component({
   selector: 'app-custom-basket',
@@ -12,15 +13,17 @@ import { Observable } from 'rxjs';
 export class CustomBasketPage implements OnInit {
   Object = Object;
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
-  readonly pools$: Observable<IPoolsMetadata[]> = this.basketService.pools$;
-  readonly tokens$: Observable<any> = this.basketService.tokens$;
+  readonly pools$: BehaviorSubject<IPoolsMetadata[]> = this.basketService.pools$;
+  readonly tokens$: BehaviorSubject<any> = this.basketService.tokens$;
   public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
   public poolsSearchVal = '';
+  public basketPayload: IBasketPoolsAndCoinInfo | null = null;
   constructor(private readonly basketService: BasketsService, private readonly chartsService: ChartsService) {
   }
 
   ngOnInit(): void {
+
   }
 
   addPool(poolName: string): void {
@@ -74,6 +77,8 @@ export class CustomBasketPage implements OnInit {
     Object.keys(this.chartPoolData).forEach(poolKey => {
       this.chartPoolData[poolKey] = 100 / total;
     });
+    this.basketPayload = getBasketPoolsAndCoins(this.chartPoolData, this.pools$.value, this.tokens$.value);
+    console.log(this.basketPayload);
   }
 
   private setChart(): void {

@@ -4,6 +4,7 @@ import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from './notification.service';
+import { IBasketPoolsAndCoinInfo } from '../models/types';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +42,16 @@ export class ContractService {
     return this.contract$.value.methods.getAvailableBasket(basketIdx).call();
   }
 
-  createBasket(name: string, weights: string[] | number[], uniswapPools: string[][], tokens: string[]): Promise<any> {
-    return this.contract$.value.methods.createBasket(name, weights, uniswapPools, tokens)
-      .send({from: this.connectorService.providerUserInfo$.value.address});
+  async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo): Promise<any> {
+    try {
+      const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights} = basketPoolTokenInfo;
+      const response = await this.contract$.value.methods
+        .createBasket(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights)
+        .send({from: this.connectorService.providerUserInfo$.value.address});
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
+    } catch (e) {
+      this.notificationService.showNotification(e.message, 'Close', 'error');
+    }
   }
 
   getBalanceOf(ownerAddr: string, basketIdx): Promise<any> {

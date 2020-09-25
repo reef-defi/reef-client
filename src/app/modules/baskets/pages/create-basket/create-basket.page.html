@@ -44,7 +44,7 @@
   ></apx-chart>
 </div>
 
-<button class="btn btn-primary">Invest in this basket</button>
+<button (click)="createBasket()" class="btn btn-primary">Create this basket</button>
 <div>Or</div>
 <button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>
 <!--Baskets:-->

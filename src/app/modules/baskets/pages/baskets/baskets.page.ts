@@ -33,7 +33,7 @@ export class BasketsPage implements OnInit {
     }
   }
 
-  async getAllBaskets() {
+  async getAllBaskets(): Promise<any> {
     await this.contractService.getAllBaskets();
   }
 

@@ -58,21 +58,12 @@ export interface IPoolMetadataAsset {
 }
 
 export interface IBasketPoolsAndCoinInfo {
-  balancer: {
-    name: string,
-    addresses: string[];
-    allocation: number;
-  }[];
-  uniswap: {
-    name: string,
-    addresses: string[];
-    allocation: number;
-  }[];
-  coins: {
-    coinName: string;
-    allocation: number;
-    address: string;
-  }[];
+  uniswapPools: string[][];
+  uniSwapWeights: number[];
+  tokenPools: string[][];
+  tokenWeights: number[];
+  balancerPools: string[][];
+  balancerWeights: number[];
 }
 
 export interface IGenerateBasketRequest {
