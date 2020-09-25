@@ -6,6 +6,7 @@ import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
 import { IChainData, IProviderUserInfo } from '../models/types';
 import { getChainData } from '../utils/chains';
+import { NotificationService } from './notification.service';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -43,7 +44,7 @@ export class ConnectorService {
   public web3Modal = null;
   public web3 = null;
 
-  constructor() {
+  constructor(private readonly notificationService: NotificationService) {
     this.initWeb3Modal().then(() => {
       this.subToProviderEvents();
     });
@@ -92,6 +93,7 @@ export class ConnectorService {
       ]
     });
     this.currentProviderName$.next(getProviderName(this.web3));
+    this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
     console.log(this.currentProviderName$.value);
   }
 

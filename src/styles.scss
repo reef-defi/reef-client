@@ -1,5 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'assets/scss/styles';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.error.mat-snack-bar-container {
+  background: map-get($theme-colors, danger);
+  color: white;
+}
+
+.success.mat-snack-bar-container {
+  background: map-get($theme-colors, success);
+  color: white;
+}
+
+.info.mat-snack-bar-container {
+  background: map-get($theme-colors, info);
+  color: white;
+}

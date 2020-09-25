@@ -1,0 +1,28 @@
+<ng-container *ngIf="data.type === 'error'">
+  <h5>Error</h5>
+  <div class="text-break mb-2">
+    {{ data.message }}
+  </div>
+  <div>
+    <button mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="data.type === 'success'">
+  <h5>Success</h5>
+  <div class="text-break mb-2">
+    {{ data.message }}
+  </div>
+  <div>
+    <button mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="data.type === 'info'">
+  <div class="text-break mb-2">
+    {{ data.message }}
+  </div>
+  <div>
+    <button mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+  </div>
+</ng-container>

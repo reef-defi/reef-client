@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { WalletGuard } from './core/guards/wallet.guard';
 
 const routes: Routes = [
   {
@@ -8,11 +9,13 @@ const routes: Routes = [
   },
   {
     path: 'baskets',
-    loadChildren: () => import('./modules/baskets/baskets.module').then(m => m.BasketsModule)
+    loadChildren: () => import('./modules/baskets/baskets.module').then(m => m.BasketsModule),
+    canActivate: [WalletGuard],
   },
   {
     path: 'reef',
-    loadChildren: () => import('./modules/reef/reef.module').then(m => m.ReefModule)
+    loadChildren: () => import('./modules/reef/reef.module').then(m => m.ReefModule),
+    canActivate: [WalletGuard],
   }
 ];
 

@@ -6,7 +6,6 @@ import { CreateBasketPage } from './pages/my-baskets/create-basket.page';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { CustomBasketPage } from './pages/custom-basket/custom-basket.page';
-import { MatSliderModule } from '@angular/material/slider';
 import { SharedModule } from '../../shared/shared.module';
 import { BasketsPage } from './pages/baskets/baskets.page';
 
@@ -18,7 +17,6 @@ import { BasketsPage } from './pages/baskets/baskets.page';
     ReactiveFormsModule,
     BasketsRoutingModule,
     NgApexchartsModule,
-    MatSliderModule,
     SharedModule,
   ]
 })

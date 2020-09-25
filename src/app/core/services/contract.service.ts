@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { contractData } from '../../../assets/abi';
 import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,9 @@ export class ContractService {
   baskets$ = new BehaviorSubject(null);
   transactionInterval = null;
 
-  constructor(private readonly connectorService: ConnectorService) {
+  constructor(
+    private readonly connectorService: ConnectorService,
+    private readonly notificationService: NotificationService) {
   }
 
   connectToContract(): void {
@@ -69,13 +73,14 @@ export class ContractService {
         .send({from: this.connectorService.providerUserInfo$.value.address});
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
     } catch (e) {
-      alert(e.message);
+      this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }
 
   private async checkIfTransactionSuccess(hash: string): Promise<any> {
     const receipt = await this.connectorService.getTransactionReceipt(hash);
     if (receipt && receipt.status) {
+      this.notificationService.showNotification(`Transaction with hash: ${hash} successful`, 'Okay', 'success');
       clearInterval(this.transactionInterval);
     }
   }
