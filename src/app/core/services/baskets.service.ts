@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import { IBasketHistoricRoi, IGenerateBasketRequest, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
 import { subMonths } from 'date-fns';
 
@@ -16,14 +16,26 @@ const httpOptions = {
 })
 export class BasketsService {
   readonly COMPOSITION_LIMIT = 10;
+  public pools$ = new BehaviorSubject(null);
+  public tokens$ = new BehaviorSubject(null);
   private url = environment.testReefUrl;
 
 
   constructor(private readonly http: HttpClient) {
+    this.listPools();
+    this.listTokens();
   }
 
-  listPools(): Observable<IPoolsMetadata[]> {
-    return this.http.get<IPoolsMetadata[]>(`${this.url}/list_pools`);
+  listPools(): Subscription {
+    return this.http.get<IPoolsMetadata[]>(`${this.url}/list_pools`).subscribe((pools: IPoolsMetadata[]) => {
+      this.pools$.next(pools);
+    });
+  }
+
+  listTokens(): Subscription {
+    return this.http.get<{ [key: string]: string }>(`${this.url}/list_tokens`).subscribe((tokens: { [key: string]: string }) => {
+      this.tokens$.next(tokens);
+    });
   }
 
   generateBasket(payload: IGenerateBasketRequest): Observable<IGenerateBasketResponse> {

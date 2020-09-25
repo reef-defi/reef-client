@@ -57,6 +57,24 @@ export interface IPoolMetadataAsset {
   weight: number;
 }
 
+export interface IBasketPoolsAndCoinInfo {
+  balancer: {
+    name: string,
+    addresses: string[];
+    allocation: number;
+  }[];
+  uniswap: {
+    name: string,
+    addresses: string[];
+    allocation: number;
+  }[];
+  coins: {
+    coinName: string;
+    allocation: number;
+    address: string;
+  }[];
+}
+
 export interface IGenerateBasketRequest {
   amount: string;
   risk_aversion: number;

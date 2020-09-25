@@ -12,7 +12,8 @@ import { Observable } from 'rxjs';
 export class CustomBasketPage implements OnInit {
   Object = Object;
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
-  readonly allPools$: Observable<IPoolsMetadata[]> = this.basketService.listPools();
+  readonly pools$: Observable<IPoolsMetadata[]> = this.basketService.pools$;
+  readonly tokens$: Observable<any> = this.basketService.tokens$;
   public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
   public poolsSearchVal = '';

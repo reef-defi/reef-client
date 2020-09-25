@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { BasketsService } from '../../../../core/services/baskets.service';
-import { PoolsChartOptions, IGenerateBasketResponse, HistoricRoiChartOptions, IBasketHistoricRoi } from '../../../../core/models/types';
+import {
+  PoolsChartOptions,
+  IGenerateBasketResponse,
+  HistoricRoiChartOptions,
+  IBasketHistoricRoi,
+  IBasketPoolsAndCoinInfo
+} from '../../../../core/models/types';
 import { merge, startWith, switchMap } from 'rxjs/operators';
 import { PoolService } from '../../../../core/services/pool.service';
 import { FormControl } from '@angular/forms';
 import { tap } from 'rxjs/internal/operators/tap';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { combineLatest, Subscription } from 'rxjs';
+import { getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
 
 @Component({
   selector: 'app-my-baskets',
@@ -14,10 +21,12 @@ import { combineLatest, Subscription } from 'rxjs';
   styleUrls: ['./create-basket.page.scss']
 })
 export class CreateBasketPage implements OnInit {
-  readonly pools$ = this.basketsService.listPools();
+  readonly pools$ = this.basketsService.pools$;
+  readonly tokens$ = this.basketsService.tokens$;
   public basket: IGenerateBasketResponse = null;
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiChartOptions: Partial<HistoricRoiChartOptions>;
+  public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   ethAmount = new FormControl('1');
   risk = new FormControl(10);
 
@@ -30,7 +39,6 @@ export class CreateBasketPage implements OnInit {
   ngOnInit(): void {
     this.getAllPools();
     this.getEthPrice();
-    this.pools$.subscribe(console.log);
     combineLatest(
       this.ethAmount.valueChanges.pipe(startWith(this.ethAmount.value)),
       this.risk.valueChanges.pipe(startWith(this.risk.value)),
@@ -44,6 +52,8 @@ export class CreateBasketPage implements OnInit {
       tap((data) => {
         this.basket = data;
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(data), Object.values(data));
+        this.basketPoolAndCoinInfo = getBasketPoolsAndCoins(data, this.pools$.value, this.tokens$.value);
+        console.log(this.basketPoolAndCoinInfo, 'bINFO_DAMN')
         console.log(data, 'generated_basket');
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data))

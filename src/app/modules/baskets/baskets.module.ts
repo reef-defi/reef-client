@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { BasketsRoutingModule } from './baskets-routing.module';
-import { CreateBasketPage } from './pages/my-baskets/create-basket.page';
+import { CreateBasketPage } from './pages/create-basket/create-basket.page';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { CustomBasketPage } from './pages/custom-basket/custom-basket.page';

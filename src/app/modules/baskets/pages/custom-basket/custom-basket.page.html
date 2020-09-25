@@ -1,4 +1,4 @@
-<ng-container *ngIf="allPools$ | async as allPools">
+<ng-container *ngIf="pools$ | async as pools">
   <div>
     <label for="searchPools">Search pools</label>
     <input
@@ -7,7 +7,7 @@
       type="text"
       class="form-control w-25" />
   </div>
-  <div *ngFor="let pool of allPools.slice(0, 10) | filter: 'Symbol':poolsSearchVal">
+  <div *ngFor="let pool of pools.slice(0, 10) | filter: 'Symbol':poolsSearchVal">
     {{ pool.Platform }} - {{ pool.Symbol }}
     <button
       *ngIf="Object.keys(chartPoolData).length < COMPOSITION_LIMIT && !chartPoolData[pool.Symbol]"
