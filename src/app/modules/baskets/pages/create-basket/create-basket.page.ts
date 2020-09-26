@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BasketsService } from '../../../../core/services/baskets.service';
+import { ApiService } from '../../../../core/services/api.service';
 import {
   PoolsChartOptions,
   IGenerateBasketResponse,
@@ -33,7 +33,7 @@ export class CreateBasketPage implements OnInit {
   risk = new FormControl(10);
 
   constructor(
-    private readonly basketsService: BasketsService,
+    private readonly basketsService: ApiService,
     private readonly poolService: PoolService,
     private readonly chartsService: ChartsService,
     private readonly contractService: ContractService,

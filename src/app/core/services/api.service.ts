@@ -13,8 +13,8 @@ const httpOptions = {
 
 @Injectable({
   providedIn: 'root'
-})
-export class BasketsService {
+}) 
+export class ApiService {
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);

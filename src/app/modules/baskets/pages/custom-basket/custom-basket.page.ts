@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BasketsService } from '../../../../core/services/baskets.service';
+import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { PoolsChartOptions, IPoolsMetadata, IBasketPoolsAndCoinInfo } from '../../../../core/models/types';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -19,7 +19,7 @@ export class CustomBasketPage implements OnInit {
   public chartPoolData: { [key: string]: number } = {};
   public poolsSearchVal = '';
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
-  constructor(private readonly basketService: BasketsService, private readonly chartsService: ChartsService) {
+  constructor(private readonly basketService: ApiService, private readonly chartsService: ChartsService) {
   }
 
   ngOnInit(): void {

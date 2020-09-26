@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
 import { convertContractBasket } from '../utils/pools-utils';
-import { BasketsService } from './baskets.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class ContractService {
   constructor(
     private readonly connectorService: ConnectorService,
     private readonly notificationService: NotificationService,
-    private readonly basketService: BasketsService) {
+    private readonly basketService: ApiService) {
   }
 
   connectToContract(): void {
