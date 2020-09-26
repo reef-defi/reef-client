@@ -60,7 +60,26 @@ export const convertContractBasket = (basket: any[], allTokens: any) => {
 
 const getName = (addresses: string[], allTokens: any): string => {
   const prefix = addresses.length > 1 ? 'Pool: ' : 'Token: ';
-  const n = Object.keys(allTokens).filter((name: string) => addresses.includes(allTokens[name])).join('/');
-  return `${prefix}${n ? n : addresses[0].slice(0, 5)}${addresses[1] ? '/' + addresses[1].slice(0, 5) : ''}`;
+  const n = Object.keys(allTokens).filter((name: string) => addresses.includes(allTokens[name]));
+  if (n.length === 0) {
+    const word = addresses.reduce((memo, curr) => `${memo}${memo.length === 0 ? '' : '/'}${curr.slice(0, 5)}`, '');
+    return `${prefix}${word}`;
+  }
+  if (n.length === addresses.length) {
+    return `${prefix}${n.join('/')}`;
+  }
+  if (n.length < addresses.length) {
+    const remainder = addresses.length - n.length;
+    let word = '';
+    for (let i = 0; i < remainder; ++i) {
+      if (n[i]) {
+        word += `${n[i]}/`;
+      } else {
+        word += `${addresses[i].slice(0, 5)}${addresses.length <= i ? '' : '/'}`;
+      }
+    }
+    return `${prefix}${word}`;
+  }
+  // return `${prefix}${n ? n : addresses[0].slice(0, 5)}${addresses[1] ? '/' + addresses[1].slice(0, 5) : ''}`;
 };
 

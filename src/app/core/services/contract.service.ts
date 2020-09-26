@@ -35,6 +35,7 @@ export class ContractService {
       invested.push(this.getBalanceOf(i));
     }
     let baskets = await Promise.all(promises);
+    console.log(baskets);
     let investedVals = await Promise.all(invested);
     baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value)).map((basket, idx) => ({
       ...basket,
@@ -92,13 +93,13 @@ export class ContractService {
   async createBasketTest(): Promise<any> {
     try {
       const response = await this.contract$.value.methods.createBasket(
-        'Hello',
+        'Test_Basket',
         [20, 20, 60],
         [
-          ['0xc2118d4d90b274016cB7a54c03EF52E6c537D957', '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
-          ['0xBde8bB00A7eF67007A96945B3a3621177B615C44', '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
+          ['0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'],
+          ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xdac17f958d2ee523a2206206994597c13d831ec7'],
         ],
-        ['0x516de3a7A567d81737e3a46ec4FF9cFD1fcb0136'])
+        ['0x6b175474e89094c44da98b954eedeac495271d0f'])
         .send({from: this.connectorService.providerUserInfo$.value.address});
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
     } catch (e) {
