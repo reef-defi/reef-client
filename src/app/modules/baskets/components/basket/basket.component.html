@@ -16,8 +16,11 @@
         [title]="poolChartOptions.title"
       ></apx-chart>
     </div>
+    <div *ngFor="let pool of basket.pools; let i = index">
+      Invested {{ basket.investedVals[i] }} into {{ pool.name }}
+    </div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button>Invest</button>
+    <button mat-button (click)="onInvest()">Invest</button>
   </mat-card-actions>
 </mat-card>

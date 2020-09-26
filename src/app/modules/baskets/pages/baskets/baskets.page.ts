@@ -21,7 +21,7 @@ export class BasketsPage implements OnInit {
     if (this.contract$.value) {
       this.getAllBaskets();
     } else {
-      this.connectorService.currentProviderName$
+      this.connectorService.providerUserInfo$
         .pipe(first(ev => !!ev))
         .subscribe((data: any) => {
           if (data) {
@@ -30,6 +30,12 @@ export class BasketsPage implements OnInit {
           }
         });
     }
+  }
+
+  onBasketInvest(basketInfo: any): void {
+    console.log(basketInfo);
+    const { basketIdx, weights, name } = basketInfo;
+    this.contractService.investInBasket([0, 1], [50, 50], 1);
   }
 
   async getAllBaskets(): Promise<any> {

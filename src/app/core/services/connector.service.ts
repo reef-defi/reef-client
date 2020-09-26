@@ -71,6 +71,11 @@ export class ConnectorService {
     return await this.web3.eth.getTransactionReceipt(txHash);
   }
 
+  public async toWei(amount: number): Promise<any> {
+    return this.web3.utils.toWei(`${amount}`, 'ether');
+  }
+
+
   private async initWeb3Modal(): Promise<any> {
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
@@ -113,7 +118,7 @@ export class ConnectorService {
       });
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
-      console.log(chainId)
+      console.log(chainId);
       window.location.reload();
     });
   }

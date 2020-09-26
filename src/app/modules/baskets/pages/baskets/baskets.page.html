@@ -2,8 +2,11 @@
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
     <div class="d-flex flex-wrap mt-5">
-      <div *ngFor="let basket of allBaskets.slice(0, 5)">
-        <app-basket [basket]="basket"></app-basket>
+      <div *ngFor="let basket of allBaskets.slice(0, 5); let i = index;">
+        <app-basket
+          [basket]="basket"
+          [basketIndex]="i"
+          (invest)="onBasketInvest($event)"></app-basket>
       </div>
     </div>
   </ng-container>

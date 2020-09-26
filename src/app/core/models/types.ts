@@ -73,6 +73,7 @@ export interface IBasket {
     allocation: string;
     name: string;
   }[];
+  investedVals: string[];
 }
 
 export interface IGenerateBasketRequest {

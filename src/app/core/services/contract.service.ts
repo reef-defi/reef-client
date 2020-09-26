@@ -29,12 +29,17 @@ export class ContractService {
   async getAllBaskets(): Promise<any> {
     const basketCount = (await this.getAvailableBasketsCount()) - 1;
     const promises = [];
+    const invested = [];
     for (let i = 0; i <= basketCount; i++) {
       promises.push(this.getAvailableBasket(i));
+      invested.push(this.getBalanceOf(i));
     }
     let baskets = await Promise.all(promises);
-    console.log('Before Mod', baskets);
-    baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value));
+    let investedVals = await Promise.all(invested);
+    baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value)).map((basket, idx) => ({
+      ...basket,
+      investedVals: investedVals[idx]
+    }));
     this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }
@@ -59,18 +64,29 @@ export class ContractService {
     }
   }
 
-  getBalanceOf(ownerAddr: string, basketIdx): Promise<any> {
-    return this.contract$.value.methods.balanceOf(ownerAddr, basketIdx).call();
+  getBalanceOf(basketIdx): Promise<any> {
+    console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???')
+    return this.contract$.value.methods.balanceOf(this.connectorService.providerUserInfo$.value.address, basketIdx).call();
   }
 
-  investInBasket(fromTokenAddr: string, basketIdxs: number[], weights: number[], amount: number): Promise<any> {
-    return this.contract$.value.methods.invest(
-      '0x0000000000000000000000000000000000000000',
-      basketIdxs,
-      weights,
-      this.connectorService.web3.utils.toWei(amount, 'ether'),
-      0)
-      .send({amount: `${amount} ether`, from: this.connectorService.providerUserInfo$.value.address});
+  async investInBasket(basketIdxs: number[], weights: number[], amount: number): Promise<any> {
+    try {
+      const wei = await this.connectorService.toWei(amount);
+      console.log('0x0000000000000000000000000000000000000000', basketIdxs, weights, wei, 1)
+      console.log('addr', this.connectorService.providerUserInfo$.value.address);
+      const res = await this.contract$.value.methods.invest(
+        '0x0000000000000000000000000000000000000000',
+        basketIdxs,
+        weights,
+        wei,
+        0xD467FB9
+      )
+        .send({value: wei, from: this.connectorService.providerUserInfo$.value.address});
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash), 1000);
+    } catch (e) {
+      console.log(e);
+      this.notificationService.showNotification(e.message, 'Close', 'error');
+    }
   }
 
   async createBasketTest(): Promise<any> {
@@ -91,11 +107,16 @@ export class ContractService {
   }
 
   private async checkIfTransactionSuccess(hash: string): Promise<any> {
+    if (!hash) {
+      this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
+      clearInterval(this.transactionInterval);
+    }
     const receipt = await this.connectorService.getTransactionReceipt(hash);
     if (receipt && receipt.status) {
       this.notificationService.showNotification(`Tx Hash: ${hash}`, 'Okay', 'success');
       clearInterval(this.transactionInterval);
     }
   }
+
 
 }

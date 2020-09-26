@@ -13,7 +13,7 @@ const httpOptions = {
 
 @Injectable({
   providedIn: 'root'
-}) 
+})
 export class ApiService {
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
