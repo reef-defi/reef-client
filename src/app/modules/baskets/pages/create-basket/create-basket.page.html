@@ -14,7 +14,7 @@
     min="1" max="100" step="1" [formControl]="risk"></mat-slider>
 </div>
 
-<div *ngIf="poolChartOptions">
+<div class="mb-4" *ngIf="poolChartOptions; else loadingTemplate">
   <apx-chart
     [series]="poolChartOptions.series"
     [chart]="poolChartOptions.chart"
@@ -27,8 +27,8 @@
   ></apx-chart>
 </div>
 
-<div *ngIf="roiChartOptions">
-  <div>
+<div *ngIf="roiChartOptions; else loadingTemplate">
+  <div class="mb-2">
     <button class="btn btn-primary" (click)="getHistoricRoi(basket, 1)">Last month</button>
     <button class="btn btn-primary" (click)="getHistoricRoi(basket, 6)">Last 6 months</button>
     <button class="btn btn-primary" (click)="getHistoricRoi(basket, 12)">Last year</button>
@@ -47,6 +47,10 @@
 <button (click)="createBasket()" class="btn btn-primary">Create this basket</button>
 <div>Or</div>
 <button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>
+
+<ng-template #loadingTemplate>
+  <app-loading></app-loading>
+</ng-template>
 <!--Baskets:-->
 <!--<ng-container *ngIf="pools$ | async as pools">-->
 <!--  <div *ngFor="let basket of pools">-->

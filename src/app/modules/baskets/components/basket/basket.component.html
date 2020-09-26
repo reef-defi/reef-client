@@ -1,0 +1,23 @@
+<mat-card class="example-card mr-5 mb-5">
+  <mat-card-header>
+    <mat-card-title>{{ basket.name }}</mat-card-title>
+    <mat-card-subtitle>Basket</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="mb-4" *ngIf="poolChartOptions">
+      <apx-chart
+        [series]="poolChartOptions.series"
+        [chart]="poolChartOptions.chart"
+        [dataLabels]="poolChartOptions.dataLabels"
+        [plotOptions]="poolChartOptions.plotOptions"
+        [yaxis]="poolChartOptions.yaxis"
+        [xaxis]="poolChartOptions.xaxis"
+        [fill]="poolChartOptions.fill"
+        [title]="poolChartOptions.title"
+      ></apx-chart>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button>Invest</button>
+  </mat-card-actions>
+</mat-card>

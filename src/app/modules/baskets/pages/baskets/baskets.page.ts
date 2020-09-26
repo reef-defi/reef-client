@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ContractService } from '../../../../core/services/contract.service';
 import { first } from 'rxjs/operators';
 import { ConnectorService } from '../../../../core/services/connector.service';
-import { filter } from 'rxjs/internal/operators/filter';
 
 @Component({
   selector: 'app-baskets',

@@ -66,6 +66,15 @@ export interface IBasketPoolsAndCoinInfo {
   balancerWeights: number[];
 }
 
+export interface IBasket {
+  name: any;
+  pools: {
+    addrs: string[] | string;
+    allocation: string;
+    name: string;
+  }[];
+}
+
 export interface IGenerateBasketRequest {
   amount: string;
   risk_aversion: number;

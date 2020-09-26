@@ -38,5 +38,29 @@ export const basketNameGenerator = (basketPoolInfo: IBasketPoolsAndCoinInfo, bas
   const uniswap = basketPoolInfo.uniswapPools.length && 'uniswap_' || '';
   const coins = basketPoolInfo.tokenPools.length && 'tokens_' || '';
   const strings = Object.keys(basket).join('_');
-  return `${balancer}${uniswap}${coins}_${strings}`;
+  return `${balancer}${uniswap}${coins}${strings}`;
 };
+
+export const convertContractBasket = (basket: any[], allTokens: any) => {
+  let allocs = basket[1].map((allocation, idx) => ({
+    addrs: basket[2][idx] ? basket[2][idx] : [basket[3][idx - basket[2].length]],
+    allocation,
+  }));
+
+  allocs = allocs.map(alloc => ({
+    ...alloc,
+    name: getName(alloc.addrs, allTokens)
+  }));
+
+  return {
+    name: basket[0],
+    pools: allocs
+  };
+};
+
+const getName = (addresses: string[], allTokens: any): string => {
+  const prefix = addresses.length > 1 ? 'Pool: ' : 'Token: ';
+  const n = Object.keys(allTokens).filter((name: string) => addresses.includes(allTokens[name])).join('/');
+  return `${prefix}${n ? n : addresses[0].slice(0, 5)}${addresses[1] ? '/' + addresses[1].slice(0, 5) : ''}`;
+};
+

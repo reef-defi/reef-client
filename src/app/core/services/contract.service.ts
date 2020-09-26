@@ -2,21 +2,23 @@ import { Injectable } from '@angular/core';
 import { contractData } from '../../../assets/abi';
 import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from './notification.service';
-import { IBasketPoolsAndCoinInfo } from '../models/types';
+import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
+import { convertContractBasket } from '../utils/pools-utils';
+import { BasketsService } from './baskets.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContractService {
   contract$ = new BehaviorSubject(null);
-  baskets$ = new BehaviorSubject(null);
+  baskets$ = new BehaviorSubject<IBasket[] | null>(null);
   transactionInterval = null;
 
   constructor(
     private readonly connectorService: ConnectorService,
-    private readonly notificationService: NotificationService) {
+    private readonly notificationService: NotificationService,
+    private readonly basketService: BasketsService) {
   }
 
   connectToContract(): void {
@@ -30,7 +32,10 @@ export class ContractService {
     for (let i = 0; i <= basketCount; i++) {
       promises.push(this.getAvailableBasket(i));
     }
-    this.baskets$.next(await Promise.all(promises));
+    let baskets = await Promise.all(promises);
+    console.log('Before Mod', baskets);
+    baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value));
+    this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }
 
@@ -88,7 +93,7 @@ export class ContractService {
   private async checkIfTransactionSuccess(hash: string): Promise<any> {
     const receipt = await this.connectorService.getTransactionReceipt(hash);
     if (receipt && receipt.status) {
-      this.notificationService.showNotification(`Transaction with hash: ${hash} successful`, 'Okay', 'success');
+      this.notificationService.showNotification(`Tx Hash: ${hash}`, 'Okay', 'success');
       clearInterval(this.transactionInterval);
     }
   }

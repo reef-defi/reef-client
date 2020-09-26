@@ -85,7 +85,6 @@ export class ChartsService {
         categories: [...labels],
         position: 'top',
         labels: {
-          offsetY: -18
         },
         axisBorder: {
           show: false
@@ -137,7 +136,7 @@ export class ChartsService {
         }
       },
       title: {
-        text: 'Weight Allocations for each pool',
+        text: '',
         floating: false,
         offsetY: 320,
         align: 'center',
