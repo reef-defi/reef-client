@@ -1,18 +1,29 @@
 <!-- Image and text -->
-<nav class="navbar navbar-light bg-primary">
-  <a class="navbar-brand" href="#">
+<nav class="navbar bg-light header">
+  <div class="navbar-brand" href="#">
     <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
          class="d-inline-block align-top header__logo" alt="">
-  </a>
-  <div *ngIf="ethPrice && ethPrice.ethereum">
-    ETH Price: ${{ ethPrice.ethereum.usd }}
   </div>
-  <div *ngIf="providerUserInfo">
-    <div *ngIf="providerName">Connected to: {{ providerName }} on chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}</div>
-    <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:6 }} <strong>ETH</strong>
-    <strong class="ml-2">Address: </strong>{{ providerUserInfo.address}} </div>
-    <a class="text-info" [routerLink]="['/']">Home</a>
-    <a class="text-info" [routerLink]="['/baskets']">Baskets</a>
-    <a class="text-info" [routerLink]="['/reef']">Reef</a>
+  <div class="d-flex">
+    <div *ngIf="providerUserInfo; else noWalletTemplate">
+      <div *ngIf="ethPrice && ethPrice.ethereum">
+        ETH Price: ${{ ethPrice.ethereum.usd }}
+      </div>
+      <div *ngIf="providerName">Connected to: {{ providerName }} on
+        chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}</div>
+      <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:6 }} <strong>ETH</strong>
+      <strong class="ml-2">Address: </strong>{{ providerUserInfo.address}}
+      <a class="text-info" [routerLink]="['/']">Home</a>
+      <a class="text-info" [routerLink]="['/baskets']">Baskets</a>
+      <a class="text-info" [routerLink]="['/reef']">Reef</a>
+    </div>
+    <mat-icon aria-hidden="false" aria-label="select language">language</mat-icon>
+  </div>
 </nav>
 
+<ng-template #noWalletTemplate>
+  <div class="mr-2">
+    <mat-icon color="warn" aria-hidden="false" aria-label="no wallet">account_balance_wallet
+    </mat-icon>
+  </div>
+</ng-template>

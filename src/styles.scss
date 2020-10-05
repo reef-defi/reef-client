@@ -6,8 +6,13 @@ html, body {
 }
 
 body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: theme-color('primary');
+  background-color: theme-color('light');
+  font-family: 'Poppins', 'Roboto', sans-serif;
+}
+
+c-pointer {
+  cursor: pointer;
 }
 
 .error.mat-snack-bar-container {

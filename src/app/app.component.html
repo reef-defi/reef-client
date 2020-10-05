@@ -1,11 +1,9 @@
-<div class="container-fluid">
+<div class="container-fluid min-vh-100">
   <app-header
     [ethPrice]="ethPrice$ | async"
     [providerName]="providerName$ | async"
     [providerUserInfo]="providerUserInfo$ | async">
   </app-header>
-  <div class="min-vh-100">
-    <router-outlet></router-outlet>
-  </div>
+  <router-outlet></router-outlet>
   <app-footer></app-footer>
 </div>
