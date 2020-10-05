@@ -1,5 +1,7 @@
 <!-- Image and text -->
-<nav class="navbar bg-light header">
+<nav
+  [ngClass]="providerUserInfo ? 'bg-white header__shadow' : 'bg-light'"
+  class="header navbar bg-secondary">
   <div class="navbar-brand" href="#">
     <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
          class="d-inline-block align-top header__logo" alt="">
@@ -12,7 +14,7 @@
       <div *ngIf="providerName">Connected to: {{ providerName }} on
         chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}</div>
       <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:6 }} <strong>ETH</strong>
-      <strong class="ml-2">Address: </strong>{{ providerUserInfo.address}}
+      <strong class="ml-2">Address: </strong><app-address-shortener [address]="providerUserInfo.address"></app-address-shortener>
       <a class="text-info" [routerLink]="['/']">Home</a>
       <a class="text-info" [routerLink]="['/baskets']">Baskets</a>
       <a class="text-info" [routerLink]="['/reef']">Reef</a>

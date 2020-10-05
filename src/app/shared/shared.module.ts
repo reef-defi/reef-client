@@ -14,13 +14,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatIconModule } from '@angular/material/icon';
+import { AddressShortenerComponent } from './components/address-shortener/address-shortener.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
-
-const components = [FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent];
+const components = [
+  FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent
+];
 const directives = [];
 const pipes = [FilterPipe];
 const modules = [
-  MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule
+  MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
+  MatTooltipModule, ClipboardModule,
 ];
 
 @NgModule({

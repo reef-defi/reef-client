@@ -1,0 +1,20 @@
+<div
+  class="d-flex"
+  *ngIf="address">
+  <div
+    [matTooltip]="address"
+    matTooltipHideDelay="1000"
+    class="mr-2">
+    {{address.slice(0, 5)}}...{{address.slice(address.length - 6, address.length - 1)}}
+  </div>
+  <div
+    class="c-pointer"
+    matTooltip="Copy to clipboard">
+    <mat-icon
+      [inline]="true"
+      [cdkCopyToClipboard]="address">
+      content_copy
+    </mat-icon>
+  </div>
+</div>
+
