@@ -1,10 +1,13 @@
+
 .header__logo {
   transform: scale(1.5);
   margin-left: 10px;
 }
 
 .header {
-  padding: 10px 25px;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
 }
 
 .header__shadow {

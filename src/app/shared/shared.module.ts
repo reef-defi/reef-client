@@ -16,10 +16,12 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatIconModule } from '@angular/material/icon';
 import { AddressShortenerComponent } from './components/address-shortener/address-shortener.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {ClipboardModule} from '@angular/cdk/clipboard';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { ContentBoxComponent } from './components/content-box/content-box.component';
 
 const components = [
-  FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent
+  FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
+  ContentBoxComponent,
 ];
 const directives = [];
 const pipes = [FilterPipe];
@@ -29,7 +31,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes],
+  declarations: [...components, ...directives, ...pipes,],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],

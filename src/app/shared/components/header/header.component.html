@@ -6,20 +6,30 @@
     <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
          class="d-inline-block align-top header__logo" alt="">
   </div>
-  <div class="d-flex">
-    <div *ngIf="providerUserInfo; else noWalletTemplate">
-      <div *ngIf="ethPrice && ethPrice.ethereum">
-        ETH Price: ${{ ethPrice.ethereum.usd }}
+  <div *ngIf="providerUserInfo; else noWalletTemplate" class="d-flex justify-content-center align-items-center">
+    <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
+      <div>
+        <span>
+          {{ providerUserInfo.balance | slice:0:6 }}
+        </span>
+        <span class="cc ETH"></span>
       </div>
-      <div *ngIf="providerName">Connected to: {{ providerName }} on
-        chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}</div>
-      <strong>Balance: </strong>{{ providerUserInfo.balance | slice:0:6 }} <strong>ETH</strong>
-      <strong class="ml-2">Address: </strong><app-address-shortener [address]="providerUserInfo.address"></app-address-shortener>
-      <a class="text-info" [routerLink]="['/']">Home</a>
-      <a class="text-info" [routerLink]="['/baskets']">Baskets</a>
-      <a class="text-info" [routerLink]="['/reef']">Reef</a>
-    </div>
-    <mat-icon aria-hidden="false" aria-label="select language">language</mat-icon>
+      <div class="small">
+        (1ETH = ${{ ethPrice.ethereum.usd }})
+      </div>
+    </app-content-box>
+    <app-content-box class="pt-1">
+      <app-address-shortener [address]="providerUserInfo.address"></app-address-shortener>
+    </app-content-box>
+    <!--      <div *ngIf="providerName">Connected to: {{ providerName }} on-->
+    <!--        chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}-->
+    <!--      </div>-->
+    <a class="text-info mr-2" [routerLink]="['/']">Home</a>
+    <a class="text-info mr-2" [routerLink]="['/baskets']">Baskets</a>
+    <a class="text-info mr-2" [routerLink]="['/reef']">Reef</a>
+    <app-content-box>
+      <mat-icon aria-hidden="false" aria-label="select language">language</mat-icon>
+    </app-content-box>
   </div>
 </nav>
 

@@ -1,0 +1,12 @@
+@import '../../../../assets/scss/partials/variables';
+
+.content-box {
+  height: 65px;
+  padding: 10px 18px;
+  margin: 0 5px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  background-color: map_get($theme-colors, light);
+  font-weight: 500;
+}
