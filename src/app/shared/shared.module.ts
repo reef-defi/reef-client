@@ -18,6 +18,7 @@ import { AddressShortenerComponent } from './components/address-shortener/addres
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ContentBoxComponent } from './components/content-box/content-box.component';
+import { ButtonComponent } from './components/button/button.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
@@ -31,7 +32,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes,],
+  declarations: [...components, ...directives, ...pipes, ButtonComponent,],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
@@ -40,7 +41,7 @@ const modules = [
     RouterModule,
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, RouterModule],
+  exports: [...components, ...directives, ...pipes, ...modules, RouterModule, ButtonComponent],
 })
 export class SharedModule {
 }

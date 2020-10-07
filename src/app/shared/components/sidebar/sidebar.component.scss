@@ -1,6 +1,7 @@
 @import '../../../../assets/scss/partials/variables';
 
 .sidebar {
+  margin-top: $header-height;
   width: $sidebar-width;
   min-height: 100vh;
   background-color: $dark-primary;

@@ -1,5 +1,15 @@
 @import '../assets/scss/partials/variables';
 
 .main {
-  margin-left: $sidebar-width + 20px;
+  padding-left: $sidebar-width + 20px;
+  padding-top: $header-height + 20px;
+  padding-bottom: 20px;
+}
+
+.dark {
+  background: map-get($theme-colors, dark);
+}
+
+.light {
+  background: map-get($theme-colors, light);
 }

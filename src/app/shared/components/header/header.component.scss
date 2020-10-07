@@ -4,9 +4,12 @@
 }
 
 .header {
+  position: fixed;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 15px 25px;
+  z-index: 998;
 }
 
 .header__shadow {

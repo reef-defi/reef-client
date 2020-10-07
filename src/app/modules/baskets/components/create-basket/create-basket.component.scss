@@ -1,0 +1,72 @@
+@import '../../../../../assets/scss/partials/variables';
+
+.create-basket {
+  background: $dark-primary;
+  padding: 30px;
+  border: none;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+  box-shadow: 0 0 10px rgba(210, 210, 210, 0.1);
+}
+
+.create-basket__heading {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.02em;
+  color: map_get($theme-colors, lightest);
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.amount__wrapper {
+  margin-bottom: 50px;
+}
+
+.create-basket__label {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: map_get($theme-colors, lightest);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+//
+//.create-basket__input {
+//  width: 60%;
+//}
+
+.risk__wrapper {
+  margin-bottom: 40px;
+}
+
+// Mat-Slider configs, jesus christ
+::ng-deep {
+  .mat-slider.mat-slider-horizontal .mat-slider-wrapper {
+    //top: 18px;
+  }
+  .mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+    height: 8px;
+    border-radius: 8px
+  }
+  .mat-slider.mat-slider-horizontal .mat-slider-track-background,
+  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+    height: 100%;
+  }
+
+  .mat-accent .mat-slider-thumb {
+    height: 26px;
+    width: 26px;
+    background-color: #DE5DA6;
+    bottom: -16px;
+    right: -16px;
+  }
+
+  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+    background-color: #DE5DA6;
+  }
+}
+
+

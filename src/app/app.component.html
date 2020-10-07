@@ -5,8 +5,10 @@
     [providerUserInfo]="providerUserInfo$ | async">
   </app-header>
   <app-sidebar></app-sidebar>
-  <div class="main">
+  <div
+    [ngClass]="{ dark: (providerUserInfo$ | async), light: !(providerUserInfo$ | async)}"
+    class="main">
     <router-outlet></router-outlet>
   </div>
-  <app-footer></app-footer>
+  <app-footer *ngIf="!(providerUserInfo$ | async)"></app-footer>
 </div>

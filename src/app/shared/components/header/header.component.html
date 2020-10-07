@@ -1,6 +1,6 @@
 <!-- Image and text -->
 <nav
-  [ngClass]="providerUserInfo ? 'bg-white header__shadow' : 'bg-light'"
+  [ngClass]="providerUserInfo ? 'bg-white' : 'bg-light'"
   class="header navbar bg-secondary">
   <div class="navbar-brand" href="#">
     <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
@@ -24,9 +24,6 @@
     <!--      <div *ngIf="providerName">Connected to: {{ providerName }} on-->
     <!--        chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}-->
     <!--      </div>-->
-    <a class="text-info mr-2" [routerLink]="['/']">Home</a>
-    <a class="text-info mr-2" [routerLink]="['/baskets']">Baskets</a>
-    <a class="text-info mr-2" [routerLink]="['/reef']">Reef</a>
     <app-content-box>
       <mat-icon aria-hidden="false" aria-label="select language">language</mat-icon>
     </app-content-box>

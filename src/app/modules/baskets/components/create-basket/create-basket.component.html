@@ -1,0 +1,31 @@
+<div class="create-basket">
+  <div class="create-basket__heading">
+    Create Basket
+  </div>
+  <div class="amount__wrapper">
+    <label class="create-basket__label" for="ethAmount">Enter your amount</label>
+    <div class="d-flex align-items-center">
+      <input
+        class="create-basket__input form-control mr-2"
+        id="ethAmount"
+        [formControl]="ethAmount"
+        placeholder="Amount of ETH" type="text"/>
+      <img width="50" height="50" src="../../../../../assets/images/eth.png"/>
+    </div>
+  </div>
+  <div class="risk__wrapper">
+    <div>
+      <label class="create-basket__label mb-2" for="risk">Risk</label>
+    </div>
+    <div>
+      <mat-slider
+        id="risk"
+        thumbLabel
+        class="w-100"
+        min="1" max="100" step="1" [formControl]="riskAmount"></mat-slider>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center align-items-center">
+    <app-button text="Invest Now"></app-button>
+  </div>
+</div>
