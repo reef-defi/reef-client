@@ -1,1 +1,21 @@
-<p>sidebar works!</p>
+<div class="sidebar">
+  <div class="icon-container">
+    <div
+      [routerLink]="['/baskets/create-basket']"
+      [routerLinkActiveOptions]="{exact: true}"
+      routerLinkActive="active"
+      matTooltip="Create Basket"
+      class="la la-shopping-basket menu-icon active"></div>
+    <div
+      [routerLink]="['/baskets']"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}"
+      matTooltip="My Baskets"
+      class="la la-balance-scale menu-icon"></div>
+    <div
+      [routerLink]="['/reef']"
+      routerLinkActive="active"
+      matTooltip="Buy Reef"
+      class="la la-swimming-pool menu-icon"></div>
+  </div>
+</div>

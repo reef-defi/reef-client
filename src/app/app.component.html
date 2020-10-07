@@ -4,7 +4,8 @@
     [providerName]="providerName$ | async"
     [providerUserInfo]="providerUserInfo$ | async">
   </app-header>
-  <div class="container-fluid">
+  <app-sidebar></app-sidebar>
+  <div class="main">
     <router-outlet></router-outlet>
   </div>
   <app-footer></app-footer>

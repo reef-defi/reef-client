@@ -1,0 +1,30 @@
+@import '../../../../assets/scss/partials/variables';
+
+.sidebar {
+  width: $sidebar-width;
+  min-height: 100vh;
+  background-color: $dark-primary;
+  position: fixed;
+  z-index: 999;
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.menu-icon {
+  font-size: 2.5em;
+  color: white;
+  margin-bottom: 35px;
+  cursor: pointer;
+}
+
+.active {
+  background: $primary-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

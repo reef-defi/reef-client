@@ -1,7 +1,10 @@
+@import '../../../../assets/scss/partials/variables';
+
 .footer {
   position: absolute;
   bottom: 0;
   padding: 20px;
+  margin-left: $sidebar-width;
 }
 
 .footer__company {
