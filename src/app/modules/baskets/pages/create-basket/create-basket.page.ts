@@ -29,6 +29,7 @@ export class CreateBasketPage implements OnInit {
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiChartOptions: Partial<HistoricRoiChartOptions>;
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
+  public currentRoiTimespan = 1;
   ethAmount = new FormControl('1');
   risk = new FormControl(10);
 
@@ -73,6 +74,7 @@ export class CreateBasketPage implements OnInit {
   }
 
   getHistoricRoi(basket: IGenerateBasketResponse, subtractMonths: number): Subscription {
+    this.currentRoiTimespan = subtractMonths;
     return this.basketsService.getHistoricRoi(basket, subtractMonths).subscribe((historicRoi: IBasketHistoricRoi) => {
       const roi = this.extractRoi(historicRoi);
       this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(historicRoi), roi);

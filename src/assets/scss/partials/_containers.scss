@@ -1,0 +1,11 @@
+@import '_variables.scss';
+
+.content__container {
+  background: $dark-primary;
+  padding: 30px;
+  border: none;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+  box-shadow: 0 0 10px rgba(210, 210, 210, 0.1);
+}

@@ -18,32 +18,57 @@ export class ChartsService {
       ],
       chart: {
         height: 350,
-        type: 'line',
+        type: 'area',
         zoom: {
           enabled: false
         },
         toolbar: {
           show: false,
-        }
+        },
       },
+      fill: {
+        opacity: 0.5,
+        type: 'solid',
+        colors: ['#DE5DA6']
+      },
+      colors: ['#DE5DA6'],
       dataLabels: {
         enabled: false
       },
       stroke: {
-        curve: 'straight'
-      },
-      title: {
-        text: 'Historic ROI',
-        align: 'left'
+        curve: 'smooth'
       },
       grid: {
-        row: {
-          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-          opacity: 0.5
-        }
+        show: false,
       },
       xaxis: {
-        categories: [...labels]
+        categories: [...labels],
+        labels: {
+          offsetY: 10,
+          trim: true,
+          style: {
+            colors: 'white',
+            fontFamily: 'inherit',
+            fontSize: '13px',
+            cssClass: 'chart-label'
+          },
+          show: true,
+        },
+        axisTicks: {
+          show: false
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          show: true,
+          style: {
+            colors: '#FFF',
+            fontFamily: 'inherit',
+            fontSize: '14px',
+            cssClass: 'chart-label'
+          },
+        }
       },
     };
   }
@@ -63,6 +88,9 @@ export class ChartsService {
           show: false,
         }
       },
+      grid: {
+        show: false,
+      },
       plotOptions: {
         bar: {
           dataLabels: {
@@ -75,24 +103,37 @@ export class ChartsService {
         formatter(val): string {
           return val + '%';
         },
-        offsetY: -20,
+        offsetY: 250,
         style: {
-          fontSize: '11px',
-          colors: ['#304758']
+          fontFamily: 'inherit',
+          fontSize: '13px',
+          fontWeight: 400,
+          colors: ['#DADADA']
         }
       },
       xaxis: {
         categories: [...labels],
+        // offsetY: 100,
         position: 'top',
         labels: {
+          style: {
+            colors: 'white',
+            fontFamily: 'inherit',
+            fontSize: '14px',
+            cssClass: 'chart-label'
+          },
+          show: true,
         },
         axisBorder: {
-          show: false
+          show: false,
+          color: 'yellow',
+          strokeWidth: 5,
         },
         axisTicks: {
-          show: false
+          show: false,
         },
         crosshairs: {
+          show: false,
           fill: {
             type: 'gradient',
             gradient: {
@@ -110,6 +151,7 @@ export class ChartsService {
         }
       },
       fill: {
+        colors: ['#DE5DA6'],
         type: 'gradient',
         gradient: {
           shade: 'light',

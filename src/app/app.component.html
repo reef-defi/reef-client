@@ -1,14 +1,16 @@
-<div class="min-vh-100">
-  <app-header
-    [ethPrice]="ethPrice$ | async"
-    [providerName]="providerName$ | async"
-    [providerUserInfo]="providerUserInfo$ | async">
-  </app-header>
-  <app-sidebar></app-sidebar>
-  <div
-    [ngClass]="{ dark: (providerUserInfo$ | async), light: !(providerUserInfo$ | async)}"
-    class="main">
-    <router-outlet></router-outlet>
+<ng-container *ngIf="{ ethPrice: ethPrice$ | async, providerName: providerName$ | async, providerUserInfo: providerUserInfo$ | async } as obs">
+  <div class="min-vh-100">
+    <app-header
+      [ethPrice]="obs.ethPrice"
+      [providerName]="obs.providerName"
+      [providerUserInfo]="obs.providerUserInfo">
+    </app-header>
+    <app-sidebar *ngIf="obs.providerUserInfo"></app-sidebar>
+    <div
+      class="main dark min-vh-100 container-fluid">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer *ngIf="!obs.providerUserInfo"></app-footer>
   </div>
-  <app-footer *ngIf="!(providerUserInfo$ | async)"></app-footer>
-</div>
+
+</ng-container>

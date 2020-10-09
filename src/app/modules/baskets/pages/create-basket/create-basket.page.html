@@ -1,51 +1,19 @@
 <div class="row page__wrapper">
   <div class="parameters__wrapper col-4">
-    <app-create-basket [ethAmount]="ethAmount" [riskAmount]="risk"></app-create-basket>
+    <app-create-basket
+      [ethAmount]="ethAmount"
+      [riskAmount]="risk">
+    </app-create-basket>
   </div>
   <div class="col-8 justify-content-right">
-    <div class="mb-4" *ngIf="poolChartOptions; else loadingTemplate">
-      <apx-chart
-        [series]="poolChartOptions.series"
-        [chart]="poolChartOptions.chart"
-        [dataLabels]="poolChartOptions.dataLabels"
-        [plotOptions]="poolChartOptions.plotOptions"
-        [yaxis]="poolChartOptions.yaxis"
-        [xaxis]="poolChartOptions.xaxis"
-        [fill]="poolChartOptions.fill"
-        [title]="poolChartOptions.title"
-      ></apx-chart>
-    </div>
-
-    <div *ngIf="roiChartOptions; else loadingTemplate">
-      <div class="mb-2">
-        <button class="btn btn-primary" (click)="getHistoricRoi(basket, 1)">Last month</button>
-        <button class="btn btn-primary" (click)="getHistoricRoi(basket, 6)">Last 6 months</button>
-        <button class="btn btn-primary" (click)="getHistoricRoi(basket, 12)">Last year</button>
-      </div>
-      <apx-chart
-        [series]="roiChartOptions.series"
-        [chart]="roiChartOptions.chart"
-        [dataLabels]="roiChartOptions.dataLabels"
-        [grid]="roiChartOptions.grid"
-        [stroke]="roiChartOptions.stroke"
-        [xaxis]="roiChartOptions.xaxis"
-        [title]="roiChartOptions.title"
-      ></apx-chart>
-    </div>
-
-    <button (click)="createBasket()" class="btn btn-primary">Create this basket</button>
-    <div>Or</div>
-    <button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>
+    <app-basket-composition
+      [roiChartOptions]="roiChartOptions"
+      [poolChartOptions]="poolChartOptions"
+      [activeTimeSpan]="currentRoiTimespan"
+      (dateSpanChange)="getHistoricRoi(basket, $event)"
+    >
+    </app-basket-composition>
+<!--    <button (click)="createBasket()" class="btn btn-primary">Create this basket</button>-->
+<!--    <button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>-->
   </div>
-
-  <ng-template #loadingTemplate>
-    <app-loading></app-loading>
-  </ng-template>
-  <!--Baskets:-->
-  <!--<ng-container *ngIf="pools$ | async as pools">-->
-  <!--  <div *ngFor="let basket of pools">-->
-  <!--    <div>{{ basket.poolName }} - {{ basket.roi }}</div>-->
-  <!--  </div>-->
-  <!--</ng-container>-->
-
 </div>

@@ -5,12 +5,14 @@
   bottom: 0;
   padding: 20px;
   margin-left: $sidebar-width;
+  color: map-get($theme-colors, lightest)
 }
 
 .footer__company {
   font-weight: 300;
 }
 
-.footer__links {
+a {
   font-weight: 500;
+  color: map-get($theme-colors, lightest)
 }

@@ -1,1 +1,51 @@
-<p>basket-composition works!</p>
+<div class="content__container">
+  <div class="mb-4">
+    <div class="heading__md mb-2">Composition</div>
+    <div *ngIf="poolChartOptions; else loadingTemplate">
+      <apx-chart
+        [series]="poolChartOptions.series"
+        [chart]="poolChartOptions.chart"
+        [dataLabels]="poolChartOptions.dataLabels"
+        [plotOptions]="poolChartOptions.plotOptions"
+        [yaxis]="poolChartOptions.yaxis"
+        [xaxis]="poolChartOptions.xaxis"
+        [fill]="poolChartOptions.fill"
+        [title]="poolChartOptions.title"
+      ></apx-chart>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column">
+    <div class="heading__md mb-2">
+      Historic Simulated Performance
+    </div>
+    <div class="d-flex flex-column" *ngIf="roiChartOptions; else loadingTemplate">
+      <div class="d-flex justify-content-end mb-2">
+        <button
+          [class.regular]="activeTimeSpan === 1"
+          class="button-small mr-2" (click)="onDateSpanChange(1)">1M</button>
+        <button
+          [class.regular]="activeTimeSpan === 6"
+          class="button-small mr-2" (click)="onDateSpanChange(6)">6M</button>
+        <button
+          [class.regular]="activeTimeSpan === 12"
+          class="button-small" (click)="onDateSpanChange(12)">1Y</button>
+      </div>
+      <div>
+        <apx-chart
+          [series]="roiChartOptions.series"
+          [chart]="roiChartOptions.chart"
+          [dataLabels]="roiChartOptions.dataLabels"
+          [grid]="roiChartOptions.grid"
+          [stroke]="roiChartOptions.stroke"
+          [xaxis]="roiChartOptions.xaxis"
+          [title]="roiChartOptions.title"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <app-loading></app-loading>
+</ng-template>

@@ -93,6 +93,7 @@ export interface IBasketHistoricRoi {
 }
 
 export type PoolsChartOptions = {
+  colors: any[];
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
@@ -101,12 +102,16 @@ export type PoolsChartOptions = {
   xaxis: ApexXAxis;
   fill: ApexFill;
   title: ApexTitleSubtitle;
+  grid: ApexGrid;
 };
 
 export type HistoricRoiChartOptions = {
+  colors: any[];
+  fill: ApexFill;
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   dataLabels: ApexDataLabels;
   grid: ApexGrid;
   stroke: ApexStroke;

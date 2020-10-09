@@ -1,0 +1,54 @@
+@import './variables';
+
+.label__lg {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: map_get($theme-colors, lightest);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.heading__md {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.02em;
+  color: map_get($theme-colors, lightest);
+  text-transform: uppercase;
+}
+
+.heading__lg {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 27px;
+  letter-spacing: 0.03em;
+  color: map_get($theme-colors, lightest);
+}
+
+.heading__xl {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 60px;
+  line-height: 54px;
+  letter-spacing: 0.04em;
+  color: map_get($theme-colors, lightest);
+}
+
+.subheading__xl {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 25px;
+  line-height: 30px;
+  color: map_get($theme-colors, lightest);
+}
+
+.apexcharts-gridline:not(:last-child) {
+  display: none;
+}
+
+.apexcharts-yaxis-label {
+  fill: map_get($theme-colors, lightest);
+  line-height: 7px;
+  font-size: 13px;
+}
