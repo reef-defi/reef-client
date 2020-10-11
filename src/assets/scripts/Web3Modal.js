@@ -2,7 +2,7 @@
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
-Permission to use, copy, modify, and/or distribute this software for any
+Permission to use, copy, modify, and/or makeBasket this software for any
 purpose with or without fee is hereby granted.
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH

@@ -11,6 +11,7 @@ export class NotificationService {
   }
 
   public showNotification(message: string, buttonText: string, type: 'error' | 'success' | 'info'): void {
+    console.log(message, 'DEBUG_ERROR')
     this.snackBar.openFromComponent<NotificationComponent>(NotificationComponent, {
       data: {
         message,

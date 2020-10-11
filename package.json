@@ -25,6 +25,7 @@
     "@walletconnect/qrcode-modal": "^1.2.2",
     "@walletconnect/web3-provider": "^1.2.2",
     "apexcharts": "^3.20.2",
+    "bignumber.js": "^9.0.1",
     "bootstrap": "^4.5.2",
     "date-fns": "^2.16.1",
     "ng-apexcharts": "^1.5.1",

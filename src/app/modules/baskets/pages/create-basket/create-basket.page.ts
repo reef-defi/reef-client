@@ -13,7 +13,7 @@ import { FormControl } from '@angular/forms';
 import { tap } from 'rxjs/internal/operators/tap';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { combineLatest, Subscription } from 'rxjs';
-import { basketNameGenerator, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
+import { basketNameGenerator, getBasketPoolsAndCoins, convertToInt } from '../../../../core/utils/pools-utils';
 import { ContractService } from '../../../../core/services/contract.service';
 import { ConnectorService } from '../../../../core/services/connector.service';
 
@@ -62,7 +62,7 @@ export class CreateBasketPage implements OnInit {
   generateBasket(): any {
     return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_aversion: this.risk.value}).pipe(
       tap((data) => {
-        this.basket = Object.keys(data).map(key => ({ [key]: data[key] * 100 })).reduce((memo, curr) => ({ ...memo, ...curr }));
+        this.basket = this.makeBasket(data);
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
         console.log(data, 'generated_basket');
       }),
@@ -82,9 +82,10 @@ export class CreateBasketPage implements OnInit {
   }
 
   async createBasket(): Promise<any> {
+    console.log('Creating Basket...');
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.basket, this.pools$.value, this.tokens$.value);
-    const name = basketNameGenerator(basketPoolAndCoinInfo, this.basket);
-    console.log(basketPoolAndCoinInfo, name)
+    const name = basketNameGenerator();
+    console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
     await this.contractService.createBasket(name, basketPoolAndCoinInfo);
   }
 
@@ -104,4 +105,20 @@ export class CreateBasketPage implements OnInit {
     this.contractService.connectToContract();
   }
 
+  private makeBasket(basket: IGenerateBasketResponse): IGenerateBasketResponse {
+    const b: IGenerateBasketResponse = Object.keys(basket)
+      .map(key => ({[key]: convertToInt(basket[key] * 100)})).reduce((memo, curr) => ({...memo, ...curr}));
+    const weights = Object.values(b);
+    const sum = weights.reduce((memo, curr) => memo + curr);
+    if (sum === 100) {
+      return basket;
+    }
+    let max = Math.max(...weights);
+    const poolMax = Object.keys(b).find(key => b[key] === max);
+    max = sum > 100 ? max - (sum - 100) : max + (100 - sum);
+    return {
+      ...b,
+      [poolMax]: max
+    };
+  }
 }

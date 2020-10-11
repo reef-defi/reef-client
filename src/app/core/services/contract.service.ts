@@ -28,6 +28,7 @@ export class ContractService {
 
   async getAllBaskets(): Promise<any> {
     const basketCount = (await this.getAvailableBasketsCount()) - 1;
+    console.log(basketCount, 'basketCount');
     const promises = [];
     const invested = [];
     for (let i = 0; i <= basketCount; i++) {
@@ -36,7 +37,7 @@ export class ContractService {
     }
     let baskets = await Promise.all(promises);
     console.log(baskets);
-    let investedVals = await Promise.all(invested);
+    const investedVals = await Promise.all(invested);
     baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value)).map((basket, idx) => ({
       ...basket,
       investedVals: investedVals[idx]
@@ -46,7 +47,8 @@ export class ContractService {
   }
 
   getAvailableBasketsCount(): Promise<any> {
-    return this.contract$.value.methods.getAvailableBasketsCount().call();
+    console.log(this.contract$.value, 'size');
+    return this.contract$.value.methods.availableBaskets(0).call();
   }
 
   getAvailableBasket(basketIdx: number): Promise<any> {
@@ -55,10 +57,15 @@ export class ContractService {
 
   async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo): Promise<any> {
     try {
-      const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights} = basketPoolTokenInfo;
+      const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
+        = basketPoolTokenInfo;
+      console.log(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights);
+
       const response = await this.contract$.value.methods
-        .createBasket(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights)
-        .send({from: this.connectorService.providerUserInfo$.value.address});
+        .createBasket(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
+        .send({
+          from: this.connectorService.providerUserInfo$.value.address, gas: 500000,
+        });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
@@ -66,14 +73,14 @@ export class ContractService {
   }
 
   getBalanceOf(basketIdx): Promise<any> {
-    console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???')
+    console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???');
     return this.contract$.value.methods.balanceOf(this.connectorService.providerUserInfo$.value.address, basketIdx).call();
   }
 
   async investInBasket(basketIdxs: number[], weights: number[], amount: number): Promise<any> {
     try {
       const wei = await this.connectorService.toWei(amount);
-      console.log('0x0000000000000000000000000000000000000000', basketIdxs, weights, wei, 1)
+      console.log('0x0000000000000000000000000000000000000000', basketIdxs, weights, wei, 1);
       console.log('addr', this.connectorService.providerUserInfo$.value.address);
       const res = await this.contract$.value.methods.invest(
         '0x0000000000000000000000000000000000000000',

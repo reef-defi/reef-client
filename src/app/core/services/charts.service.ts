@@ -94,16 +94,16 @@ export class ChartsService {
       plotOptions: {
         bar: {
           dataLabels: {
-            position: 'top'
+            position: 'bottom'
           }
         }
       },
       dataLabels: {
         enabled: true,
-        formatter(val): string {
-          return val + '%';
+
+        formatter(val: number): string {
+          return val.toFixed(2) + '%';
         },
-        offsetY: 250,
         style: {
           fontFamily: 'inherit',
           fontSize: '13px',

@@ -1,5 +1,5 @@
 export const contractData = {
-  addr: '0x32F84bC4C3aC1ea3d7EABE79cE55ef8c42758E2f',
+  addr: '0x98F6eDCabd737BF1B1d3C02b2F93CDeB948E01a0',
   abi: [
     {
       inputs: [
@@ -14,10 +14,58 @@ export const contractData = {
           type: 'address'
         }
       ],
-      payable: false,
       stateMutability: 'nonpayable',
-      type: 'constructor',
-      name: 'constructor'
+      type: 'constructor'
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: 'address',
+          name: 'user',
+          type: 'address'
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'basketId',
+          type: 'uint256'
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'disinvestedAmount',
+          type: 'uint256'
+        }
+      ],
+      name: 'Disinvest',
+      type: 'event'
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: 'address',
+          name: 'user',
+          type: 'address'
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'basketId',
+          type: 'uint256'
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'investedAmount',
+          type: 'uint256'
+        }
+      ],
+      name: 'Invest',
+      type: 'event'
     },
     {
       anonymous: false,
@@ -39,27 +87,6 @@ export const contractData = {
       type: 'event'
     },
     {
-      payable: true,
-      stateMutability: 'payable',
-      type: 'fallback'
-    },
-    {
-      constant: true,
-      inputs: [],
-      name: 'UniSwapV2FactoryAddress',
-      outputs: [
-        {
-          internalType: 'contract IUniswapV2Factory',
-          name: '',
-          type: 'address'
-        }
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function'
-    },
-    {
-      constant: true,
       inputs: [
         {
           internalType: 'uint256',
@@ -73,14 +100,30 @@ export const contractData = {
           internalType: 'string',
           name: 'name',
           type: 'string'
+        },
+        {
+          internalType: 'address',
+          name: 'referrer',
+          type: 'address'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
+      inputs: [],
+      name: 'availableBasketsSize',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
       inputs: [
         {
           internalType: 'address',
@@ -93,7 +136,7 @@ export const contractData = {
           type: 'uint8'
         }
       ],
-      name: 'balanceOf',
+      name: 'balanceOfBalancerPools',
       outputs: [
         {
           internalType: 'uint256[]',
@@ -101,64 +144,82 @@ export const contractData = {
           type: 'uint256[]'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'reserveIn',
-          type: 'uint256'
-        },
-        {
-          internalType: 'uint256',
-          name: 'userIn',
-          type: 'uint256'
-        }
-      ],
-      name: 'calculateSwapInAmount',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256'
-        }
-      ],
-      payable: false,
-      stateMutability: 'pure',
-      type: 'function'
-    },
-    {
-      constant: true,
       inputs: [
         {
           internalType: 'address',
-          name: '_fromToken',
+          name: '_owner',
           type: 'address'
         },
         {
-          internalType: 'address',
-          name: '_toToken',
-          type: 'address'
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
         }
       ],
-      name: 'canSwapFromV2',
+      name: 'balanceOfMooniswapPools',
       outputs: [
         {
-          internalType: 'bool',
+          internalType: 'uint256[]',
           name: '',
-          type: 'bool'
+          type: 'uint256[]'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: false,
+      inputs: [
+        {
+          internalType: 'address',
+          name: '_owner',
+          type: 'address'
+        },
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
+        }
+      ],
+      name: 'balanceOfTokens',
+      outputs: [
+        {
+          internalType: 'uint256[]',
+          name: '',
+          type: 'uint256[]'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '_owner',
+          type: 'address'
+        },
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
+        }
+      ],
+      name: 'balanceOfUniswapPools',
+      outputs: [
+        {
+          internalType: 'uint256[]',
+          name: '',
+          type: 'uint256[]'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
       inputs: [
         {
           internalType: 'string',
@@ -166,19 +227,44 @@ export const contractData = {
           type: 'string'
         },
         {
-          internalType: 'uint8[]',
-          name: '_weights',
-          type: 'uint8[]'
-        },
-        {
           internalType: 'address[2][]',
           name: '_uniswapPools',
           type: 'address[2][]'
         },
         {
+          internalType: 'uint8[]',
+          name: '_uniswapPoolsWeights',
+          type: 'uint8[]'
+        },
+        {
           internalType: 'address[]',
           name: '_tokens',
           type: 'address[]'
+        },
+        {
+          internalType: 'uint8[]',
+          name: '_tokensWeights',
+          type: 'uint8[]'
+        },
+        {
+          internalType: 'address[]',
+          name: '_balancerPools',
+          type: 'address[]'
+        },
+        {
+          internalType: 'uint8[]',
+          name: '_balancerPoolsWeights',
+          type: 'uint8[]'
+        },
+        {
+          internalType: 'address[]',
+          name: '_mooniswapPools',
+          type: 'address[]'
+        },
+        {
+          internalType: 'uint8[]',
+          name: '_mooniswapPoolsWeights',
+          type: 'uint8[]'
         }
       ],
       name: 'createBasket',
@@ -189,18 +275,11 @@ export const contractData = {
           type: 'uint256'
         }
       ],
-      payable: true,
       stateMutability: 'payable',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [
-        {
-          internalType: 'address',
-          name: '_ToTokenContractAddress',
-          type: 'address'
-        },
         {
           internalType: 'uint8[]',
           name: '_basketIndexes',
@@ -230,12 +309,10 @@ export const contractData = {
           type: 'uint256'
         }
       ],
-      payable: true,
       stateMutability: 'payable',
       type: 'function'
     },
     {
-      constant: true,
       inputs: [
         {
           internalType: 'uint8',
@@ -243,50 +320,95 @@ export const contractData = {
           type: 'uint8'
         }
       ],
-      name: 'getAvailableBasket',
+      name: 'getAvailableBasketBalancerPools',
       outputs: [
         {
-          internalType: 'string',
+          internalType: 'address[]',
           name: '',
-          type: 'string'
+          type: 'address[]'
         },
         {
           internalType: 'uint8[]',
           name: '',
           type: 'uint8[]'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
+        }
+      ],
+      name: 'getAvailableBasketMooniswapPools',
+      outputs: [
+        {
+          internalType: 'address[]',
+          name: '',
+          type: 'address[]'
         },
+        {
+          internalType: 'uint8[]',
+          name: '',
+          type: 'uint8[]'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
+        }
+      ],
+      name: 'getAvailableBasketTokens',
+      outputs: [
+        {
+          internalType: 'address[]',
+          name: '',
+          type: 'address[]'
+        },
+        {
+          internalType: 'uint8[]',
+          name: '',
+          type: 'uint8[]'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
+        }
+      ],
+      name: 'getAvailableBasketUniswapPools',
+      outputs: [
         {
           internalType: 'address[2][]',
           name: '',
           type: 'address[2][]'
         },
         {
-          internalType: 'address[]',
+          internalType: 'uint8[]',
           name: '',
-          type: 'address[]'
+          type: 'uint8[]'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
-      inputs: [],
-      name: 'getAvailableBasketsCount',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256'
-        }
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function'
-    },
-    {
-      constant: false,
       inputs: [
         {
           internalType: 'contract IERC20',
@@ -296,18 +418,11 @@ export const contractData = {
       ],
       name: 'inCaseTokengetsStuck',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [
-        {
-          internalType: 'address',
-          name: '_FromTokenContractAddress',
-          type: 'address'
-        },
         {
           internalType: 'uint8[]',
           name: '_basketIndexes',
@@ -317,11 +432,6 @@ export const contractData = {
           internalType: 'uint256[]',
           name: '_weights',
           type: 'uint256[]'
-        },
-        {
-          internalType: 'uint256',
-          name: '_amount',
-          type: 'uint256'
         },
         {
           internalType: 'uint256',
@@ -337,27 +447,47 @@ export const contractData = {
           type: 'uint256'
         }
       ],
-      payable: true,
       stateMutability: 'payable',
       type: 'function'
     },
     {
-      constant: true,
-      inputs: [],
-      name: 'isOwner',
-      outputs: [
+      inputs: [
         {
-          internalType: 'bool',
-          name: '',
-          type: 'bool'
+          internalType: 'address',
+          name: '_owner',
+          type: 'address'
+        },
+        {
+          internalType: 'uint8',
+          name: '_basketIndex',
+          type: 'uint8'
         }
       ],
-      payable: false,
+      name: 'investedAmountInBasket',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256'
+        }
+      ],
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
+      inputs: [],
+      name: 'minimalInvestment',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256'
+        }
+      ],
+      stateMutability: 'view',
+      type: 'function'
+    },
+    {
       inputs: [],
       name: 'owner',
       outputs: [
@@ -367,12 +497,10 @@ export const contractData = {
           type: 'address'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
       inputs: [],
       name: 'protocolTokenAddress',
       outputs: [
@@ -382,12 +510,10 @@ export const contractData = {
           type: 'address'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: true,
       inputs: [],
       name: 'protocolTokenDisinvestPercentage',
       outputs: [
@@ -397,21 +523,30 @@ export const contractData = {
           type: 'uint16'
         }
       ],
-      payable: false,
       stateMutability: 'view',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [],
       name: 'renounceOwnership',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: false,
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: '_minimalInvestment',
+          type: 'uint256'
+        }
+      ],
+      name: 'setMinimalInvestment',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function'
+    },
+    {
       inputs: [
         {
           internalType: 'address',
@@ -421,12 +556,10 @@ export const contractData = {
       ],
       name: 'setProtocolTokenAddress',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [
         {
           internalType: 'uint16',
@@ -436,21 +569,17 @@ export const contractData = {
       ],
       name: 'setProtocolTokenDisinvestPercentage',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [],
       name: 'toggleContractActive',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: false,
       inputs: [
         {
           internalType: 'address',
@@ -460,33 +589,19 @@ export const contractData = {
       ],
       name: 'transferOwnership',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
     },
     {
-      constant: true,
-      inputs: [],
-      name: 'uniswapV2Router',
-      outputs: [
-        {
-          internalType: 'contract IUniswapV2Router02',
-          name: '',
-          type: 'address'
-        }
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function'
-    },
-    {
-      constant: false,
       inputs: [],
       name: 'withdraw',
       outputs: [],
-      payable: false,
       stateMutability: 'nonpayable',
       type: 'function'
+    },
+    {
+      stateMutability: 'payable',
+      type: 'receive'
     }
   ]
 };

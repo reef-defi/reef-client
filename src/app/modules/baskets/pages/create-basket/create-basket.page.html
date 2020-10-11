@@ -2,7 +2,8 @@
   <div class="parameters__wrapper col-4">
     <app-create-basket
       [ethAmount]="ethAmount"
-      [riskAmount]="risk">
+      [riskAmount]="risk"
+      (invest)="createBasket()">
     </app-create-basket>
   </div>
   <div class="col-8 justify-content-right">

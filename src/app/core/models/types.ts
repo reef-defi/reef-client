@@ -64,6 +64,8 @@ export interface IBasketPoolsAndCoinInfo {
   tokenWeights: number[];
   balancerPools: string[][];
   balancerWeights: number[];
+  mooniswapPools: string[][];
+  mooniswapWeights: number[];
 }
 
 export interface IBasket {

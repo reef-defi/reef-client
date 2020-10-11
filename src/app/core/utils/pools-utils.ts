@@ -1,4 +1,5 @@
 import { IBasketPoolsAndCoinInfo, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
+import { animals, adjectives } from './basket-name-data';
 
 export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools: IPoolsMetadata[], allCoins: any)
   : IBasketPoolsAndCoinInfo => {
@@ -23,22 +24,17 @@ export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools
   const coins = Object.keys(allCoins)
     .filter(coinName => coinNames.includes(coinName))
     .map(coinName => ({coinName, allocation: +basket[coinName], address: allCoins[coinName]}));
+
   return {
     uniswapPools: uniswap.map(uniPool => uniPool.addresses),
     uniSwapWeights: uniswap.map(uniPool => uniPool.allocation),
     tokenPools: coins.map(coin => coin.address),
     tokenWeights: coins.map(coin => coin.allocation),
     balancerPools: balancer.map(balancerPool => balancerPool.addresses),
-    balancerWeights: balancer.map(balancerPool => balancerPool.allocation)
+    balancerWeights: balancer.map(pool => pool.allocation),
+    mooniswapPools: [],
+    mooniswapWeights: [],
   };
-};
-
-export const basketNameGenerator = (basketPoolInfo: IBasketPoolsAndCoinInfo, basket: IGenerateBasketResponse) => {
-  const balancer = basketPoolInfo.balancerPools.length && 'balancer_' || '';
-  const uniswap = basketPoolInfo.uniswapPools.length && 'uniswap_' || '';
-  const coins = basketPoolInfo.tokenPools.length && 'tokens_' || '';
-  const strings = Object.keys(basket).join('_');
-  return `${balancer}${uniswap}${coins}${strings}`;
 };
 
 export const convertContractBasket = (basket: any[], allTokens: any) => {
@@ -83,3 +79,19 @@ const getName = (addresses: string[], allTokens: any): string => {
   // return `${prefix}${n ? n : addresses[0].slice(0, 5)}${addresses[1] ? '/' + addresses[1].slice(0, 5) : ''}`;
 };
 
+export const basketNameGenerator = () => {
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const animal = animals[Math.floor(Math.random() * animals.length)];
+  const word = `${adj} ${animal}`;
+  return word.split(/ /g).map((x: string) =>
+    `${x.substring(0, 1).toUpperCase()}${x.substring(1)}`)
+    .join(' ');
+};
+
+export const convertToInt = (n: number) => {
+  if (n < 1) {
+    return Math.ceil(n);
+  } else {
+    return Math.floor(n);
+  }
+};
