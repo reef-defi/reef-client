@@ -27,8 +27,8 @@ export class ContractService {
   }
 
   async getAllBaskets(): Promise<any> {
-    const basketCount = (await this.getAvailableBasketsCount()) - 1;
-    console.log(basketCount, 'basketCount');
+    const basketCount = (await this.getAvailableBasketsCount());
+    console.log(basketCount, 'basketcoutn');
     const promises = [];
     const invested = [];
     for (let i = 0; i <= basketCount; i++) {
@@ -38,6 +38,7 @@ export class ContractService {
     let baskets = await Promise.all(promises);
     console.log(baskets);
     const investedVals = await Promise.all(invested);
+    console.log(investedVals, 'uniswap')
     baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value)).map((basket, idx) => ({
       ...basket,
       investedVals: investedVals[idx]
@@ -47,22 +48,21 @@ export class ContractService {
   }
 
   getAvailableBasketsCount(): Promise<any> {
-    console.log(this.contract$.value, 'size');
-    return this.contract$.value.methods.availableBaskets(0).call();
+    return this.contract$.value.methods.availableBasketsSize().call();
   }
 
   getAvailableBasket(basketIdx: number): Promise<any> {
-    return this.contract$.value.methods.getAvailableBasket(basketIdx).call();
+    return this.contract$.value.methods.availableBaskets(basketIdx).call();
   }
 
   async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo): Promise<any> {
     try {
       const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
         = basketPoolTokenInfo;
-      console.log(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights);
-
       const response = await this.contract$.value.methods
-        .createBasket(name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
+        .createBasket(
+          name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights
+        )
         .send({
           from: this.connectorService.providerUserInfo$.value.address, gas: 500000,
         });
@@ -73,8 +73,9 @@ export class ContractService {
   }
 
   getBalanceOf(basketIdx): Promise<any> {
+    //TODO: get balances of all polls...
     console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???');
-    return this.contract$.value.methods.balanceOf(this.connectorService.providerUserInfo$.value.address, basketIdx).call();
+    return this.contract$.value.methods.getAvailableBasketUniswapPools(basketIdx).call();
   }
 
   async investInBasket(basketIdxs: number[], weights: number[], amount: number): Promise<any> {
