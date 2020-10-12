@@ -70,12 +70,23 @@ export interface IBasketPoolsAndCoinInfo {
 
 export interface IBasket {
   name: any;
-  pools: {
-    addrs: string[] | string;
-    allocation: string;
-    name: string;
-  }[];
-  investedVals: string[];
+  investedETH: string[];
+  BalancerPools: {
+    pools: any,
+    weights: any;
+  };
+  UniswapPools: {
+      pools: any,
+    weights: any;
+  };
+  Tokens: {
+    pools: any,
+    weights: any;
+  };
+  MooniswapPools: {
+    pools: any,
+    weights: any;
+  };
 }
 
 export interface IGenerateBasketRequest {

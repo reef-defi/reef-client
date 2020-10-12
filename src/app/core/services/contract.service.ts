@@ -4,7 +4,7 @@ import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
-import { convertContractBasket } from '../utils/pools-utils';
+import { convertContractBasket, getBasketPoolNames } from '../utils/pools-utils';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class ContractService {
   constructor(
     private readonly connectorService: ConnectorService,
     private readonly notificationService: NotificationService,
-    private readonly basketService: ApiService) {
+    private readonly apiService: ApiService) {
   }
 
   connectToContract(): void {
@@ -27,22 +27,18 @@ export class ContractService {
   }
 
   async getAllBaskets(): Promise<any> {
-    const basketCount = (await this.getAvailableBasketsCount());
-    console.log(basketCount, 'basketcoutn');
-    const promises = [];
-    const invested = [];
+    const basketCount = await this.getAvailableBasketsCount();
+    const basketProms = [];
     for (let i = 0; i <= basketCount; i++) {
-      promises.push(this.getAvailableBasket(i));
-      invested.push(this.getBalanceOf(i));
+      basketProms.push(this.getAvailableBasket(i));
     }
-    let baskets = await Promise.all(promises);
-    console.log(baskets);
-    const investedVals = await Promise.all(invested);
-    console.log(investedVals, 'uniswap')
-    baskets = baskets.map((basket) => convertContractBasket(basket, this.basketService.tokens$.value)).map((basket, idx) => ({
+    const resolvedBaskets = await Promise.all(basketProms);
+    let baskets: IBasket[] = await Promise.all(resolvedBaskets.map(async (basket, idx) => ({
       ...basket,
-      investedVals: investedVals[idx]
-    }));
+      investedETH: await this.getUserInvestedBasketAmount(idx),
+      ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr}))
+    })));
+    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value);
     this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }
@@ -53,6 +49,10 @@ export class ContractService {
 
   getAvailableBasket(basketIdx: number): Promise<any> {
     return this.contract$.value.methods.availableBaskets(basketIdx).call();
+  }
+
+  getUserInvestedBasketAmount(idx: number): Promise<any> {
+    return this.contract$.value.methods.investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
   }
 
   async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo): Promise<any> {
@@ -73,9 +73,25 @@ export class ContractService {
   }
 
   getBalanceOf(basketIdx): Promise<any> {
-    //TODO: get balances of all polls...
+    // TODO: get balances of all polls...
     console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???');
     return this.contract$.value.methods.getAvailableBasketUniswapPools(basketIdx).call();
+  }
+
+  async getBasketPoolsAndTokens(basketIdx: number): Promise<any[]> {
+    const fns = [
+      'getAvailableBasketUniswapPools', 'getAvailableBasketTokens', 'getAvailableBasketBalancerPools', 'getAvailableBasketMooniswapPools',
+    ];
+    const unpack = async (fn) => {
+      const res = await this.contract$.value.methods[fn](basketIdx).call();
+      return {
+        pools: res[0],
+        weights: res[1],
+      };
+    };
+    return Promise.all(fns.map(async (fn: string) => ({
+      [fn.split('Basket')[1]]: await unpack(fn)
+    })));
   }
 
   async investInBasket(basketIdxs: number[], weights: number[], amount: number): Promise<any> {
