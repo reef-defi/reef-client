@@ -1,13 +1,10 @@
-<button class="btn btn-primary" [routerLink]="['/baskets/create-basket']">Create a basket</button>
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
-    <div class="d-flex flex-wrap mt-5">
-      <div *ngFor="let basket of allBaskets.slice(0, 5); let i = index;">
-        <app-basket
-          [basket]="basket"
-          [basketIndex]="i"
-          (invest)="onBasketInvest($event)"></app-basket>
-      </div>
+    <div class="mb-3" *ngFor="let basket of allBaskets.slice(0, 5); let i = index;">
+      <app-basket
+        [basket]="basket"
+        [basketIndex]="i"
+        (invest)="onBasketInvest($event)"></app-basket>
     </div>
   </ng-container>
 </ng-container>

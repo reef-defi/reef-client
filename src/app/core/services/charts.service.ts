@@ -102,7 +102,7 @@ export class ChartsService {
         enabled: true,
 
         formatter(val: number): string {
-          return val.toFixed(2) + '%';
+          return val + '%';
         },
         style: {
           fontFamily: 'inherit',

@@ -42,6 +42,13 @@
   line-height: 30px;
   color: map_get($theme-colors, lightest);
 }
+.subheading__md {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 11px;
+  line-height: 18px;
+  color: map_get($theme-colors, lightest);
+}
 
 .apexcharts-gridline:not(:last-child) {
   display: none;
