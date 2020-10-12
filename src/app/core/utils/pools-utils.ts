@@ -1,4 +1,4 @@
-import { IBasketPoolsAndCoinInfo, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
+import { IBasket, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
 import { animals, adjectives } from './basket-name-data';
 
 export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools: IPoolsMetadata[], allCoins: any)
@@ -94,4 +94,57 @@ export const convertToInt = (n: number) => {
   } else {
     return Math.floor(n);
   }
+};
+
+export const getBasketPoolNames = (baskets: IBasket[], pools: IPoolsMetadata[], tokens: any) => {
+  let newB = baskets.map(basket => {
+    const up = [];
+    const bp = [];
+    const mp = [];
+    for (let i = 0; i < pools.length; i++) {
+      const addr1 = pools[i].Assets[0].address.toLocaleLowerCase();
+      const addr2 = pools[i].Assets[1].address.toLocaleLowerCase();
+      if (pools[i].ExchangeName === 'Uniswap-v2') {
+        const pair = basket.UniswapPools.pools
+          .find(poolPair => poolPair[0].toLocaleLowerCase() === addr1 && poolPair[1].toLocaleLowerCase() === addr2);
+        if (pair) {
+          up.push({name: pools[i].Symbol, pair: [...pair]});
+        }
+      }
+      if (pools[i].ExchangeName === 'Balancer') {
+        const address = basket.BalancerPools.pools.find(addr => addr === pools[i].ExchangeAddress);
+        if (address) {
+          bp.push({name: pools[i].Symbol, address});
+        }
+      }
+      if (pools[i].ExchangeName === 'Mooniswap') {
+        const address = basket.MooniswapPools.pools.find(addr => addr === pools[i].ExchangeAddress);
+        if (address) {
+          mp.push({name: pools[i].Symbol, address});
+        }
+      }
+    }
+    return {
+      ...basket,
+      UniswapPools: {...basket.UniswapPools, pools: [...up]},
+      BalancerPools: {...basket.BalancerPools, pools: [...bp]},
+      MooniswapPools: {...basket.MooniswapPools, pools: [...mp]},
+    };
+  });
+
+  newB = newB.map(basket => {
+    const temp = [];
+    Object.keys(tokens).forEach(key => {
+      const addr = basket.Tokens.pools.find(token => token === tokens[key]);
+      if (addr) {
+        temp.push({name: key, address: tokens[key]});
+      }
+    });
+    return {
+      ...basket,
+      Tokens: {...basket.Tokens, pools: temp.length === basket.Tokens.pools.length ? [...temp] : [...basket.Tokens.pools]}
+    };
+  });
+
+  return newB;
 };

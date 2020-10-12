@@ -13,9 +13,9 @@ export class BasketComponent {
 
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
-    const labels = this.mBasket.pools.map(pool => pool.name);
-    const allocs = this.mBasket.pools.map(pool => pool.allocation);
-    this.poolChartOptions = this.charts.composeWeightAllocChart(labels, allocs);
+    // const labels = this.mBasket.pools.map(pool => pool.name);
+    // const allocs = this.mBasket.pools.map(pool => pool.allocation);
+    // this.poolChartOptions = this.charts.composeWeightAllocChart(labels, allocs);
   }
 
   get basket(): IBasket {
@@ -29,13 +29,13 @@ export class BasketComponent {
   }
 
   onInvest(): void {
-    const allocs = this.basket.pools.map(pool => +pool.allocation);
-    const value = {
-      basketIdx: this.basketIndex,
-      weights: allocs,
-      name: this.basket.name
-    };
-    this.invest.emit(value);
+    // const allocs = this.basket.pools.map(pool => +pool.allocation);
+    // const value = {
+    //   basketIdx: this.basketIndex,
+    //   weights: allocs,
+    //   name: this.basket.name
+    // };
+    // this.invest.emit(value);
   }
 
 }
