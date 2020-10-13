@@ -43,8 +43,9 @@ export class ChartsService {
       },
       xaxis: {
         categories: [...labels],
+        type: 'datetime',
         labels: {
-          offsetY: 10,
+          offsetY: 1,
           trim: true,
           style: {
             colors: 'white',

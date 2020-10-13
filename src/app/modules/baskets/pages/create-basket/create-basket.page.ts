@@ -59,23 +59,15 @@ export class CreateBasketPage implements OnInit {
       });
   }
 
-  generateBasket(): any {
+  generateBasket(subtractMonths: number = 1): any {
+    this.currentRoiTimespan = subtractMonths;
     return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_aversion: this.risk.value}).pipe(
       tap((data) => {
         this.basket = this.makeBasket(data);
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
-        console.log(this.basket, 'generated_basket');
       }),
-      switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data))
+      switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data, subtractMonths))
     ).subscribe((historicRoi: IBasketHistoricRoi) => {
-      const roi = this.extractRoi(historicRoi);
-      this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(historicRoi), roi);
-    });
-  }
-
-  getHistoricRoi(basket: IGenerateBasketResponse, subtractMonths: number): Subscription {
-    this.currentRoiTimespan = subtractMonths;
-    return this.basketsService.getHistoricRoi(basket, subtractMonths).subscribe((historicRoi: IBasketHistoricRoi) => {
       const roi = this.extractRoi(historicRoi);
       this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(historicRoi), roi);
     });

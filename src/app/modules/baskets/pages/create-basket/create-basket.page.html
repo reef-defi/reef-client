@@ -11,7 +11,7 @@
       [roiChartOptions]="roiChartOptions"
       [poolChartOptions]="poolChartOptions"
       [activeTimeSpan]="currentRoiTimespan"
-      (dateSpanChange)="getHistoricRoi(basket, $event)"
+      (dateSpanChange)="generateBasket($event)"
     >
     </app-basket-composition>
 <!--    <button (click)="createBasket()" class="btn btn-primary">Create this basket</button>-->

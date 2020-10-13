@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import { IBasketHistoricRoi, IGenerateBasketRequest, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
 import { subMonths } from 'date-fns';
+import { catchError } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -52,6 +53,8 @@ export class ApiService {
       start_date: startDate,
       basket: payload,
     };
-    return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions);
+    return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions).pipe(
+      catchError((err) =>  EMPTY)
+    );
   }
 }
