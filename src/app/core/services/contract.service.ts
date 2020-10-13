@@ -114,6 +114,23 @@ export class ContractService {
     }
   }
 
+  async disinvestInBasket(basketIdxs: number[], basketIdxPercentage: number[], yieldRatio: number): Promise<any> {
+    try {
+      console.log(basketIdxs, basketIdxPercentage, yieldRatio, 'Disinvest Params');
+      const res = await this.contract$.value.methods.disinvest(
+        basketIdxs,
+        basketIdxPercentage,
+        yieldRatio,
+        1
+      )
+        .send({from: this.connectorService.providerUserInfo$.value.address});
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash), 1000);
+    } catch (e) {
+      console.log(e);
+      this.notificationService.showNotification(e.message, 'Close', 'error');
+    }
+  }
+
   async createBasketTest(): Promise<any> {
     try {
       const response = await this.contract$.value.methods.createBasket(

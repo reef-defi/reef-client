@@ -1,6 +1,3 @@
-@import '~src/assets/scss/partials/variables';
-
-
 .create-basket__heading {
   margin-bottom: 40px;
 }
@@ -11,37 +8,6 @@
 
 .risk__wrapper {
   margin-bottom: 40px;
-}
-
-// Mat-Slider configs, jesus christ
-::ng-deep {
-  .mat-slider.mat-slider-horizontal .mat-slider-wrapper {
-    //top: 18px;
-  }
-  .mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
-    height: 8px;
-    border-radius: 8px
-  }
-  .mat-slider.mat-slider-horizontal .mat-slider-track-background,
-  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
-    height: 100%;
-  }
-
-  .mat-accent .mat-slider-thumb {
-    height: 26px;
-    width: 26px;
-    background-color: #DE5DA6;
-    bottom: -16px;
-    right: -16px;
-  }
-
-  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
-    background-color: #DE5DA6;
-  }
-
-  .mat-slider-track-background {
-    background: map-get($theme-colors, lightest);
-  }
 }
 
 

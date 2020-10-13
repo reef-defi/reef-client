@@ -1,0 +1,69 @@
+@import '_variables.scss';
+
+.error.mat-snack-bar-container {
+  background: map-get($theme-colors, danger);
+  color: white;
+}
+
+.success.mat-snack-bar-container {
+  background: map-get($theme-colors, success);
+  color: white;
+}
+
+.info.mat-snack-bar-container {
+  background: map-get($theme-colors, info);
+  color: white;
+}
+
+.mat-slider {}
+
+.mat-slider.mat-slider-horizontal .mat-slider-wrapper {
+  //top: 18px;
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+  height: 8px;
+  border-radius: 8px
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-background,
+.mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+  height: 100%;
+}
+
+.mat-accent .mat-slider-thumb {
+  height: 26px;
+  width: 26px;
+  background-color: #DE5DA6 !important;
+  bottom: -16px;
+  right: -16px;
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+  background-color: #DE5DA6;
+}
+
+.mat-slider-track-background {
+  background: map-get($theme-colors, lightest) !important;
+}
+
+.mat-dialog-container {
+  background: map-get($theme-colors, dark);
+  border-radius: 7px !important;
+}
+
+.mat-slide-toggle-bar {
+  background: map-get($theme-colors, lightest) !important;
+}
+
+.mat-slide-toggle-thumb {
+  background: #DE5DA6 !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background: map-get($theme-colors, lightest) !important;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background: #DE5DA6 !important;
+}

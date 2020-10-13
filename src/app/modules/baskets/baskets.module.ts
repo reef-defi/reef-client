@@ -10,9 +10,22 @@ import { BasketsPage } from './pages/baskets/baskets.page';
 import { BasketComponent } from './components/basket/basket.component';
 import { CreateBasketComponent } from './components/create-basket/create-basket.component';
 import { BasketCompositionComponent } from './components/basket-composition/basket-composition.component';
+import { LiquidateModalComponent } from './components/liquidate-modal/liquidate-modal.component';
+
+const pages = [
+  CreateBasketPage,
+  CustomBasketPage,
+  BasketsPage,
+];
+const components = [
+  BasketComponent,
+  CreateBasketComponent,
+  BasketCompositionComponent,
+  LiquidateModalComponent,
+];
 
 @NgModule({
-  declarations: [CreateBasketPage, CustomBasketPage, BasketsPage, BasketComponent, CreateBasketComponent, BasketCompositionComponent],
+  declarations: [...pages, ...components],
   imports: [
     CommonModule,
     FormsModule,

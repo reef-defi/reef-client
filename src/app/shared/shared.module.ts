@@ -16,6 +16,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatIconModule } from '@angular/material/icon';
 import { AddressShortenerComponent } from './components/address-shortener/address-shortener.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ContentBoxComponent } from './components/content-box/content-box.component';
 import { ButtonComponent } from './components/button/button.component';
@@ -28,7 +30,7 @@ const directives = [];
 const pipes = [FilterPipe];
 const modules = [
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
-  MatTooltipModule, ClipboardModule,
+  MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule,
 ];
 
 @NgModule({

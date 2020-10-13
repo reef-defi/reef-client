@@ -16,18 +16,3 @@ body {
 .c-pointer {
   cursor: pointer;
 }
-
-.error.mat-snack-bar-container {
-  background: map-get($theme-colors, danger);
-  color: white;
-}
-
-.success.mat-snack-bar-container {
-  background: map-get($theme-colors, success);
-  color: white;
-}
-
-.info.mat-snack-bar-container {
-  background: map-get($theme-colors, info);
-  color: white;
-}

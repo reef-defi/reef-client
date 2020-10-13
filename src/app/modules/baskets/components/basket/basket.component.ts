@@ -18,34 +18,27 @@ import { Subscription } from 'rxjs';
 export class BasketComponent {
   private mBasket: IBasket;
   @Input() basketIndex: number | undefined;
-
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
     const obj = this.getChartLabels(this.mBasket);
     this.poolChartOptions = this.charts.composeWeightAllocChart(Object.keys(obj), Object.values(obj));
     this.getHistoricRoi(obj, 1);
   }
-
   get basket(): IBasket {
     return this.mBasket;
   }
-
-  @Output() invest = new EventEmitter();
+  @Output() disinvest = new EventEmitter();
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiChartOptions: Partial<HistoricRoiChartOptions>;
+  public disinvestPercentage: number = 100;
 
   constructor(private readonly charts: ChartsService,
               private readonly apiService: ApiService) {
   }
 
-  onInvest(): void {
-    // const allocs = this.basket.pools.map(pool => +pool.allocation);
-    // const value = {
-    //   basketIdx: this.basketIndex,
-    //   weights: allocs,
-    //   name: this.basket.name
-    // };
-    // this.invest.emit(value);
+  onDisinvest(): void {
+    const data = [[this.basketIndex], [this.disinvestPercentage]];
+    this.disinvest.emit(data);
   }
 
   private getChartLabels(basket: IBasket): IGenerateBasketResponse {
