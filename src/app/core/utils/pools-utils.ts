@@ -17,7 +17,7 @@ export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools
     .filter(pool => pool.Symbol.toLocaleLowerCase().includes('balancer'))
     .map((pool: IPoolsMetadata) => ({
       name: pool.Symbol,
-      addresses: [pool.Assets[0].address, pool.Assets[1].address],
+      addresses: pool.ExchangeAddress,
       allocation: +basket[pool.Symbol]
     }));
 

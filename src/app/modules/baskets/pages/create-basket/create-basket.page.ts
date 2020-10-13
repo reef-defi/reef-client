@@ -64,7 +64,7 @@ export class CreateBasketPage implements OnInit {
       tap((data) => {
         this.basket = this.makeBasket(data);
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
-        console.log(data, 'generated_basket');
+        console.log(this.basket, 'generated_basket');
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data))
     ).subscribe((historicRoi: IBasketHistoricRoi) => {
@@ -111,7 +111,7 @@ export class CreateBasketPage implements OnInit {
     const weights = Object.values(b);
     const sum = weights.reduce((memo, curr) => memo + curr);
     if (sum === 100) {
-      return basket;
+      return b;
     }
     let max = Math.max(...weights);
     const poolMax = Object.keys(b).find(key => b[key] === max);

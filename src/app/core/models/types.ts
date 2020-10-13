@@ -60,11 +60,11 @@ export interface IPoolMetadataAsset {
 export interface IBasketPoolsAndCoinInfo {
   uniswapPools: string[][];
   uniSwapWeights: number[];
-  tokenPools: string[][];
+  tokenPools: string[];
   tokenWeights: number[];
-  balancerPools: string[][];
+  balancerPools: string[];
   balancerWeights: number[];
-  mooniswapPools: string[][];
+  mooniswapPools: string[];
   mooniswapWeights: number[];
 }
 
