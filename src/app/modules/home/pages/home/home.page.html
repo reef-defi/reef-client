@@ -23,7 +23,6 @@
             <ng-container *ngIf="contract$ | async as contract; else connectingContractTemplate">
               <div class="mb-5">
                 <div class="text-success small">Connected to contract</div>
-                <button class="button-large regular" (click)="createTestBasket()">Create a random basket</button>
               </div>
             </ng-container>
             <div>

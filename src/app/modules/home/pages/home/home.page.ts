@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { ContractService } from '../../../../core/services/contract.service';
-import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -18,13 +17,6 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.connectorService.currentProviderName$
-      .pipe(first(ev => !!ev))
-      .subscribe((data: any) => {
-        if (data) {
-          this.connectToContract();
-        }
-      });
   }
 
   onConnect(): void {
@@ -33,13 +25,5 @@ export class HomePage implements OnInit {
 
   onDisconnect(): void {
     this.connectorService.onDisconnect();
-  }
-
-  connectToContract(): void {
-    this.contractService.connectToContract();
-  }
-
-  async createTestBasket(): Promise<void> {
-    await this.contractService.createBasketTest();
   }
 }

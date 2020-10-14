@@ -47,11 +47,13 @@ export class ConnectorService {
   constructor(private readonly notificationService: NotificationService) {
     this.initWeb3Modal().then(() => {
       this.subToProviderEvents();
+    }).catch((err: any) => {
+      this.notificationService.showNotification('To proceed, connect your wallet', 'Ok.', 'info');
     });
   }
 
   public async onConnect(): Promise<any> {
-    this.currentProvider$.next(await this.web3Modal.connect());
+    this.currentProvider$.next(await this.web3Modal.connect())
     this.initWeb3(this.currentProvider$.value);
     await this.getUserProviderInfo();
   }

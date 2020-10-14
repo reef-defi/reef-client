@@ -1,5 +1,5 @@
 <div class="content__container">
-  <div class="heading__md create-basket__heading">
+  <div class="heading__lg create-basket__heading">
     Create Basket
   </div>
   <div class="amount__wrapper">
@@ -9,13 +9,13 @@
         class="create-basket__input form-control mr-2"
         id="ethAmount"
         [formControl]="ethAmount"
-        placeholder="Amount of ETH" type="text"/>
+        placeholder="Amount of ETH" type="number"/>
       <img width="50" height="50" src="../../../../../assets/images/eth.png"/>
     </div>
   </div>
   <div class="risk__wrapper">
     <div>
-      <label class="label__lg mb-3" for="risk">Risk</label>
+      <label class="heading__lg mb-2" for="risk">Risk</label>
     </div>
     <div>
       <mat-slider

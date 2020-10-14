@@ -22,7 +22,7 @@
   font-weight: 600;
   font-size: 20px;
   line-height: 27px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   color: map_get($theme-colors, lightest);
 }
 
@@ -42,11 +42,20 @@
   line-height: 30px;
   color: map_get($theme-colors, lightest);
 }
+
 .subheading__md {
   font-style: normal;
   font-weight: 300;
   font-size: 11px;
   line-height: 18px;
+  color: map_get($theme-colors, lightest);
+}
+
+.subheading__lg {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 20px;
   color: map_get($theme-colors, lightest);
 }
 

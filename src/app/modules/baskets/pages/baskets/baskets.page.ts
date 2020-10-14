@@ -21,18 +21,7 @@ export class BasketsPage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.contract$.value) {
-      this.getAllBaskets();
-    } else {
-      this.connectorService.providerUserInfo$
-        .pipe(first(ev => !!ev))
-        .subscribe((data: any) => {
-          if (data) {
-            this.connectToContract();
-            this.getAllBaskets();
-          }
-        });
-    }
+    this.getAllBaskets();
   }
 
   onBasketInvest(basketInfo: any): void {

@@ -1,4 +1,3 @@
-<!-- Image and text -->
 <nav
   [ngClass]="providerUserInfo ? 'bg-white' : 'bg-light'"
   class="header navbar bg-secondary">
@@ -17,6 +16,10 @@
       <div class="small">
         (1ETH = ${{ ethPrice.ethereum.usd }})
       </div>
+    </app-content-box>
+    <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
+      <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
+      <div class="small">USD</div>
     </app-content-box>
     <app-content-box>
       <app-address-shortener [address]="providerUserInfo.address"></app-address-shortener>

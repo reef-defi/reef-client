@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ContractService } from '../../../../core/services/contract.service';
 
 @Component({
   selector: 'app-reef',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReefPage implements OnInit {
 
-  constructor() { }
+  constructor(private contractService: ContractService) { }
 
   ngOnInit(): void {
   }

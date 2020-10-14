@@ -2,17 +2,17 @@
 
 .error.mat-snack-bar-container {
   background: map-get($theme-colors, danger);
-  color: white;
+  color: map-get($theme-colors, lightest);
 }
 
 .success.mat-snack-bar-container {
-  background: map-get($theme-colors, success);
-  color: white;
+  background: $dark-primary;
+  color: map-get($theme-colors, lightest);
 }
 
 .info.mat-snack-bar-container {
   background: map-get($theme-colors, info);
-  color: white;
+  color: map-get($theme-colors, lightest);
 }
 
 .mat-slider {}

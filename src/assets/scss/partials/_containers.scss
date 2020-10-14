@@ -1,5 +1,9 @@
 @import '_variables.scss';
 
+.page__wrapper {
+  margin: 15px;
+}
+
 .content__container {
   background: $dark-primary;
   padding: 30px;

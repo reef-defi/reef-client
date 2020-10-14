@@ -50,13 +50,6 @@ export class CreateBasketPage implements OnInit {
     ).subscribe(() => {
       this.generateBasket();
     });
-    this.connectorService.currentProviderName$
-      .pipe(first(ev => !!ev))
-      .subscribe((data: any) => {
-        if (data) {
-          this.connectToContract();
-        }
-      });
   }
 
   generateBasket(subtractMonths: number = 1): any {

@@ -1,6 +1,6 @@
 <div class="content__container">
   <div class="mb-4">
-    <div class="heading__md mb-2">Composition</div>
+    <div class="heading__lg mb-2">Composition</div>
     <div *ngIf="poolChartOptions; else loadingTemplate">
       <apx-chart
         [series]="poolChartOptions.series"
@@ -16,7 +16,7 @@
   </div>
 
   <div class="d-flex flex-column">
-    <div class="heading__md mb-2">
+    <div class="heading__lg mb-2">
       Historic Simulated Performance
     </div>
     <div class="d-flex flex-column" *ngIf="roiChartOptions; else loadingTemplate">

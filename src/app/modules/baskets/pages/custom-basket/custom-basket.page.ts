@@ -23,7 +23,6 @@ export class CustomBasketPage implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   addPool(poolName: string): void {

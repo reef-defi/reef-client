@@ -20,6 +20,7 @@ export class ApiService {
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
   private url = environment.testReefUrl;
+  private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
 
 
   constructor(private readonly http: HttpClient) {
@@ -54,7 +55,13 @@ export class ApiService {
       basket: payload,
     };
     return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions).pipe(
-      catchError((err) =>  EMPTY)
+      catchError((err) => EMPTY)
+    );
+  }
+
+  getReefEthPrice(): Observable<{ [key: string]: { [key: string]: number} }> {
+    return this.http.get<{ [key: string]: { [key: string]: number} }>(`${this.chartsUrl}/BTC,ETH?quote=USD`).pipe(
+      catchError(err => EMPTY)
     );
   }
 }
