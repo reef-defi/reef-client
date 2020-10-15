@@ -19,17 +19,19 @@ export class ChartsService {
       chart: {
         height: 350,
         type: 'area',
-        zoom: {
-          enabled: false
-        },
         toolbar: {
           show: false,
         },
       },
       fill: {
         opacity: 0.5,
-        type: 'solid',
-        colors: ['#DE5DA6']
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.9,
+          stops: [0, 90, 100]
+        }
       },
       colors: ['#DE5DA6'],
       dataLabels: {

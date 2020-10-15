@@ -66,6 +66,15 @@ export class CreateBasketPage implements OnInit {
     });
   }
 
+  getHistoricRoi(subtractMonths: number): void {
+    this.currentRoiTimespan = subtractMonths;
+    this.basketsService.getHistoricRoi(this.basket, subtractMonths).subscribe((hRoi: IBasketHistoricRoi) => {
+      const roi = this.extractRoi(hRoi);
+      this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(hRoi), roi);
+      console.log(this.roiChartOptions);
+    });
+  }
+
   async createBasket(): Promise<any> {
     console.log('Creating Basket...');
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.basket, this.pools$.value, this.tokens$.value);
