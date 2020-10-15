@@ -14,7 +14,7 @@ export class ChartsService {
         {
           name: 'Return of Investment',
           data: [...data]
-        }
+        },
       ],
       chart: {
         height: 350,
@@ -80,16 +80,21 @@ export class ChartsService {
     return {
       series: [
         {
-          name: 'Allocation',
           data: [...data]
+        },
+        {
+          data: data.map(d => 100 - d),
         }
       ],
+      colors: ['#DE5DA6', '#fff'],
       chart: {
         height: 350,
         type: 'bar',
         toolbar: {
           show: false,
-        }
+        },
+        stacked: true,
+        stackType: '100%',
       },
       grid: {
         show: false,
@@ -103,7 +108,7 @@ export class ChartsService {
       },
       dataLabels: {
         enabled: true,
-
+        enabledOnSeries: [0],
         formatter(val: number): string {
           return val + '%';
         },
@@ -123,7 +128,7 @@ export class ChartsService {
             colors: 'white',
             fontFamily: 'inherit',
             fontSize: '14px',
-            cssClass: 'chart-label'
+            cssClass: 'text-break'
           },
           show: true,
         },
@@ -140,8 +145,8 @@ export class ChartsService {
           fill: {
             type: 'gradient',
             gradient: {
-              colorFrom: '#D8E3F0',
-              colorTo: '#BED1E6',
+              colorFrom: '#fff',
+              colorTo: '#fff',
               stops: [0, 100],
               opacityFrom: 0.4,
               opacityTo: 0.5
@@ -149,13 +154,19 @@ export class ChartsService {
           }
         },
         tooltip: {
-          enabled: true,
+          enabled: false,
           offsetY: -35
         }
       },
+      tooltip: {
+        enabled: false,
+      },
+      legend: {
+        show: false,
+      },
       fill: {
-        colors: ['#DE5DA6'],
-        type: 'gradient',
+        // colors: ['#DE5DA6'],
+        // type: '',
         gradient: {
           shade: 'light',
           type: 'horizontal',
@@ -167,6 +178,7 @@ export class ChartsService {
         }
       },
       yaxis: {
+        max: 100,
         axisBorder: {
           show: false
         },

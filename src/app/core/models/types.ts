@@ -9,7 +9,7 @@ import {
   ApexYAxis,
   ApexFill,
   ApexGrid,
-  ApexStroke,
+  ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
 export interface IProviderUserInfo {
@@ -106,6 +106,8 @@ export interface IBasketHistoricRoi {
 }
 
 export type PoolsChartOptions = {
+  legend: ApexLegend;
+  tooltip: any;
   colors: any[];
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -116,6 +118,7 @@ export type PoolsChartOptions = {
   fill: ApexFill;
   title: ApexTitleSubtitle;
   grid: ApexGrid;
+  responsive: ApexResponsive;
 };
 
 export type HistoricRoiChartOptions = {
