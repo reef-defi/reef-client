@@ -21,6 +21,14 @@ export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools
       allocation: +basket[pool.Symbol]
     }));
 
+  const mooniswap = extractedPoolData
+    .filter(pool => pool.Symbol.toLocaleLowerCase().includes('mooniswap'))
+    .map((pool: IPoolsMetadata) => ({
+      name: pool.Symbol,
+      addresses: pool.ExchangeAddress,
+      allocation: +basket[pool.Symbol]
+    }));
+
   const coins = Object.keys(allCoins)
     .filter(coinName => coinNames.includes(coinName))
     .map(coinName => ({coinName, allocation: +basket[coinName], address: allCoins[coinName]}));
@@ -32,8 +40,8 @@ export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools
     tokenWeights: coins.map(coin => coin.allocation),
     balancerPools: balancer.map(balancerPool => balancerPool.addresses),
     balancerWeights: balancer.map(pool => pool.allocation),
-    mooniswapPools: [],
-    mooniswapWeights: [],
+    mooniswapPools: mooniswap.map(mp => mp.addresses),
+    mooniswapWeights: mooniswap.map(mp => mp.allocation),
   };
 };
 

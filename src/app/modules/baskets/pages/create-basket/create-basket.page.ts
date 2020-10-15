@@ -30,7 +30,7 @@ export class CreateBasketPage implements OnInit {
   public roiChartOptions: Partial<HistoricRoiChartOptions>;
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
-  ethAmount = new FormControl('1');
+  ethAmount = new FormControl(1);
   risk = new FormControl(10);
 
   constructor(
@@ -71,7 +71,7 @@ export class CreateBasketPage implements OnInit {
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
     console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
-    await this.contractService.createBasket(name, basketPoolAndCoinInfo);
+    await this.contractService.createBasket(name, basketPoolAndCoinInfo, this.ethAmount.value);
   }
 
   getAllPools(): void {
@@ -84,10 +84,6 @@ export class CreateBasketPage implements OnInit {
 
   private extractRoi(obj: IBasketHistoricRoi): number[] {
     return Object.values(obj).map((val: any) => +val.weighted_roi.toFixed(3));
-  }
-
-  private connectToContract(): void {
-    this.contractService.connectToContract();
   }
 
   private makeBasket(basket: IGenerateBasketResponse): IGenerateBasketResponse {

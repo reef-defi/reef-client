@@ -20,18 +20,6 @@ export class AppComponent {
     private readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly apiService: ApiService,
-    private readonly contractService: ContractService) {
-    this.connectorService.currentProviderName$
-      .pipe(first(ev => !!ev))
-      .subscribe((data: any) => {
-        if (data) {
-          this.connectToContract();
-        }
-      });
-  }
-
-  private connectToContract(): void {
-    this.contractService.connectToContract();
-  }
+    private readonly contractService: ContractService) {}
 
 }

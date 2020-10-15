@@ -22,12 +22,15 @@
     <div class="d-flex flex-column" *ngIf="roiChartOptions; else loadingTemplate">
       <div class="d-flex justify-content-end mb-2">
         <button
+          mat-ripple
           [class.regular]="activeTimeSpan === 1"
           class="button-small mr-2" (click)="onDateSpanChange(1)">1M</button>
         <button
+          mat-ripple
           [class.regular]="activeTimeSpan === 6"
           class="button-small mr-2" (click)="onDateSpanChange(6)">6M</button>
         <button
+          mat-ripple
           [class.regular]="activeTimeSpan === 12"
           class="button-small" (click)="onDateSpanChange(12)">1Y</button>
       </div>

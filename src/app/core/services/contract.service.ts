@@ -11,7 +11,7 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class ContractService {
-  contract$ = new BehaviorSubject(null);
+  contract$ = this.connectorService.contract$;
   baskets$ = new BehaviorSubject<IBasket[] | null>(null);
   transactionInterval = null;
 
@@ -19,11 +19,6 @@ export class ContractService {
     private readonly connectorService: ConnectorService,
     private readonly notificationService: NotificationService,
     private readonly apiService: ApiService) {
-  }
-
-  connectToContract(): void {
-    const contract = new this.connectorService.web3.eth.Contract((contractData.abi as any), contractData.addr);
-    this.contract$.next(contract);
   }
 
   async getAllBaskets(): Promise<any> {
@@ -55,19 +50,23 @@ export class ContractService {
     return this.contract$.value.methods.investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
   }
 
-  async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo): Promise<any> {
+  async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo, amountToInvest: number): Promise<any> {
     try {
+      const wei = this.connectorService.toWei(amountToInvest);
       const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
         = basketPoolTokenInfo;
+      console.log(this.contract$.value.options.jsonInterface, 'FROM_CREATE')
       const response = await this.contract$.value.methods
         .createBasket(
-          name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights
-        )
+          name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
         .send({
-          from: this.connectorService.providerUserInfo$.value.address, gas: 500000,
+          from: this.connectorService.providerUserInfo$.value.address.toLocaleLowerCase(),
+          value: `${wei}`,
+          gas: `12000000`,
         });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
     } catch (e) {
+      console.error(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }

@@ -11,6 +11,7 @@ import { BasketComponent } from './components/basket/basket.component';
 import { CreateBasketComponent } from './components/create-basket/create-basket.component';
 import { BasketCompositionComponent } from './components/basket-composition/basket-composition.component';
 import { LiquidateModalComponent } from './components/liquidate-modal/liquidate-modal.component';
+import { MatRippleModule } from '@angular/material/core';
 
 const pages = [
   CreateBasketPage,
@@ -32,6 +33,7 @@ const components = [
     ReactiveFormsModule,
     BasketsRoutingModule,
     SharedModule,
+    MatRippleModule,
   ]
 })
 export class BasketsModule {

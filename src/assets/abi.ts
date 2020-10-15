@@ -1,5 +1,5 @@
 export const contractData = {
-  addr: '0xBe2d90FC0869fa0cfB022ec7DB40b218508c8dF6',
+  addr: '0xE3AfACB510663CDf2FB4b93D76692A296FD4f4dE',
   abi: [
     {
       inputs: [
@@ -21,13 +21,32 @@ export const contractData = {
       anonymous: false,
       inputs: [
         {
-          indexed: false,
+          indexed: true,
+          internalType: 'uint256',
+          name: 'basketId',
+          type: 'uint256'
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'user',
+          type: 'address'
+        }
+      ],
+      name: 'BasketCreated',
+      type: 'event'
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
           internalType: 'address',
           name: 'user',
           type: 'address'
         },
         {
-          indexed: false,
+          indexed: true,
           internalType: 'uint256',
           name: 'basketId',
           type: 'uint256'
@@ -46,13 +65,13 @@ export const contractData = {
       anonymous: false,
       inputs: [
         {
-          indexed: false,
+          indexed: true,
           internalType: 'address',
           name: 'user',
           type: 'address'
         },
         {
-          indexed: false,
+          indexed: true,
           internalType: 'uint256',
           name: 'basketId',
           type: 'uint256'
@@ -131,9 +150,9 @@ export const contractData = {
           type: 'address'
         },
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'balanceOfBalancerPools',
@@ -155,9 +174,9 @@ export const contractData = {
           type: 'address'
         },
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'balanceOfMooniswapPools',
@@ -179,9 +198,9 @@ export const contractData = {
           type: 'address'
         },
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'balanceOfTokens',
@@ -203,9 +222,9 @@ export const contractData = {
           type: 'address'
         },
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'balanceOfUniswapPools',
@@ -281,9 +300,9 @@ export const contractData = {
     {
       inputs: [
         {
-          internalType: 'uint8[]',
+          internalType: 'uint256[]',
           name: '_basketIndexes',
-          type: 'uint8[]'
+          type: 'uint256[]'
         },
         {
           internalType: 'uint256[]',
@@ -315,9 +334,9 @@ export const contractData = {
     {
       inputs: [
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'getAvailableBasketBalancerPools',
@@ -339,9 +358,9 @@ export const contractData = {
     {
       inputs: [
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'getAvailableBasketMooniswapPools',
@@ -387,9 +406,9 @@ export const contractData = {
     {
       inputs: [
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'getAvailableBasketUniswapPools',
@@ -424,9 +443,9 @@ export const contractData = {
     {
       inputs: [
         {
-          internalType: 'uint8[]',
+          internalType: 'uint256[]',
           name: '_basketIndexes',
-          type: 'uint8[]'
+          type: 'uint256[]'
         },
         {
           internalType: 'uint256[]',
@@ -458,9 +477,9 @@ export const contractData = {
           type: 'address'
         },
         {
-          internalType: 'uint8',
+          internalType: 'uint256',
           name: '_basketIndex',
-          type: 'uint8'
+          type: 'uint256'
         }
       ],
       name: 'investedAmountInBasket',

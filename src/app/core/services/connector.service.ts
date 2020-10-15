@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IChainData, IProviderUserInfo } from '../models/types';
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
+import { contractData } from '../../../assets/abi';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -14,6 +15,7 @@ const Web3Modal = window.Web3Modal.default;
   providedIn: 'root'
 })
 export class ConnectorService {
+  contract$ = new BehaviorSubject(null);
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
@@ -47,6 +49,7 @@ export class ConnectorService {
   constructor(private readonly notificationService: NotificationService) {
     this.initWeb3Modal().then(() => {
       this.subToProviderEvents();
+      this.connectToContract();
     }).catch((err: any) => {
       this.notificationService.showNotification('To proceed, connect your wallet', 'Ok.', 'info');
     });
@@ -56,6 +59,7 @@ export class ConnectorService {
     this.currentProvider$.next(await this.web3Modal.connect())
     this.initWeb3(this.currentProvider$.value);
     await this.getUserProviderInfo();
+    this.connectToContract();
   }
 
   public async onDisconnect(): Promise<any> {
@@ -73,10 +77,14 @@ export class ConnectorService {
     return await this.web3.eth.getTransactionReceipt(txHash);
   }
 
-  public async toWei(amount: number): Promise<any> {
+  public toWei(amount: number): Promise<any> {
     return this.web3.utils.toWei(`${amount}`, 'ether');
   }
 
+  private connectToContract(): void {
+    const contract = new this.web3.eth.Contract((contractData.abi as any), contractData.addr);
+    this.contract$.next(contract);
+  }
 
   private async initWeb3Modal(): Promise<any> {
     this.web3Modal = new Web3Modal({
@@ -113,11 +121,12 @@ export class ConnectorService {
     });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on('accountsChanged', async (accounts: string[]) => {
-      this.providerUserInfo$.next({
-        ...this.providerUserInfo$.value,
-        address: accounts[0],
-        balance: await this.getUserBalance(accounts[0])
-      });
+      // this.providerUserInfo$.next({
+      //   ...this.providerUserInfo$.value,
+      //   address: accounts[0],
+      //   balance: await this.getUserBalance(accounts[0])
+      // });
+      window.location.reload();
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
       console.log(chainId);
