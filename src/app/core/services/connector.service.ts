@@ -85,6 +85,18 @@ export class ConnectorService {
     return this.web3.utils.fromWei(`${amount}`, unit);
   }
 
+  public async getUserProviderInfo(): Promise<void> {
+    const address = await this.getAddress();
+    const balance = await this.getUserBalance(address);
+    const chainInfo = await this.getChainInfo();
+    this.providerUserInfo$.next({
+      address,
+      balance,
+      chainInfo,
+    });
+    console.log(this.providerUserInfo$.value, 'VAL');
+  }
+
   private connectToContract(): void {
     const contract = new this.web3.eth.Contract((contractData.abi as any), contractData.addr);
     this.contract$.next(contract);
@@ -136,18 +148,6 @@ export class ConnectorService {
       console.log(chainId);
       window.location.reload();
     });
-  }
-
-  private async getUserProviderInfo(): Promise<void> {
-    const address = await this.getAddress();
-    const balance = await this.getUserBalance(address);
-    const chainInfo = await this.getChainInfo();
-    this.providerUserInfo$.next({
-      address,
-      balance,
-      chainInfo,
-    });
-    console.log(this.providerUserInfo$.value, 'VAL');
   }
 
   private async getUserBalance(address: string): Promise<string> {

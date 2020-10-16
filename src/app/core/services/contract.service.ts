@@ -38,6 +38,10 @@ export class ContractService {
     console.log(this.baskets$.value);
   }
 
+  async resetBaskets(): Promise<any> {
+    this.baskets$.next([]);
+  }
+
   getAvailableBasketsCount(): Promise<any> {
     return this.contract$.value.methods.availableBasketsSize().call();
   }
@@ -65,7 +69,7 @@ export class ContractService {
           value: `${wei}`,
           gas: 6721975,
         });
-      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash, 'updateUserDetails'), 1000);
     } catch (e) {
       console.error(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
@@ -127,7 +131,7 @@ export class ContractService {
           from: this.connectorService.providerUserInfo$.value.address,
           gas: 6721975,
         });
-      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash), 1000);
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash, 'getAllBaskets'), 1000);
     } catch (e) {
       console.log(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
@@ -151,13 +155,20 @@ export class ContractService {
     }
   }
 
-  private async checkIfTransactionSuccess(hash: string): Promise<any> {
+  private updateUserDetails() {
+    this.connectorService.getUserProviderInfo();
+  }
+
+  private async checkIfTransactionSuccess(hash: string, fn?: any): Promise<any> {
     if (!hash) {
       this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
       clearInterval(this.transactionInterval);
     }
     const receipt = await this.connectorService.getTransactionReceipt(hash);
     if (receipt && receipt.status) {
+      if (fn) {
+        this[fn]();
+      }
       this.notificationService.showNotification(`Tx Hash: ${hash}`, 'Okay', 'success');
       clearInterval(this.transactionInterval);
     }

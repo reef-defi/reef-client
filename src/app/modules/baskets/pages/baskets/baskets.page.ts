@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ContractService } from '../../../../core/services/contract.service';
 import { first, take } from 'rxjs/operators';
 import { ConnectorService } from '../../../../core/services/connector.service';
@@ -10,7 +10,7 @@ import { LiquidateModalComponent } from '../../components/liquidate-modal/liquid
   templateUrl: './baskets.page.html',
   styleUrls: ['./baskets.page.scss']
 })
-export class BasketsPage implements OnInit {
+export class BasketsPage implements OnInit, OnDestroy {
   contract$ = this.contractService.contract$;
   baskets$ = this.contractService.baskets$;
 
@@ -26,10 +26,8 @@ export class BasketsPage implements OnInit {
     ).subscribe(() => this.getAllBaskets());
   }
 
-  onBasketInvest(basketInfo: any): void {
-    console.log(basketInfo);
-    const {basketIdx, weights, name} = basketInfo;
-    this.contractService.investInBasket([0, 1], [50, 50], 1);
+  ngOnDestroy(): void {
+    this.contractService.resetBaskets();
   }
 
   onDisinvest(data: number[][]): void {
@@ -37,7 +35,9 @@ export class BasketsPage implements OnInit {
     dialogRef.afterClosed()
       .pipe(take(1))
       .subscribe((result) => {
-        this.disinvest(result);
+        if (result) {
+          this.disinvest(result);
+        }
       });
   }
 
