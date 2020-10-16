@@ -46,8 +46,9 @@ export class ContractService {
     return this.contract$.value.methods.availableBaskets(basketIdx).call();
   }
 
-  getUserInvestedBasketAmount(idx: number): Promise<any> {
-    return this.contract$.value.methods.investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
+  async getUserInvestedBasketAmount(idx: number): Promise<any> {
+    const invested = await this.contract$.value.methods.investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
+    return await this.connectorService.fromWei(invested);
   }
 
   async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo, amountToInvest: number): Promise<any> {
@@ -55,14 +56,14 @@ export class ContractService {
       const wei = this.connectorService.toWei(amountToInvest);
       const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
         = basketPoolTokenInfo;
-      console.log(this.contract$.value.options.jsonInterface, 'FROM_CREATE')
+      console.log(this.contract$.value.options.jsonInterface, 'FROM_CREATE');
       const response = await this.contract$.value.methods
         .createBasket(
           name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
         .send({
           from: this.connectorService.providerUserInfo$.value.address.toLocaleLowerCase(),
           value: `${wei}`,
-          gas: `12000000`,
+          gas: 6721975,
         });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash), 1000);
     } catch (e) {
@@ -122,7 +123,10 @@ export class ContractService {
         yieldRatio,
         1
       )
-        .send({from: this.connectorService.providerUserInfo$.value.address});
+        .send({
+          from: this.connectorService.providerUserInfo$.value.address,
+          gas: 6721975,
+        });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash), 1000);
     } catch (e) {
       console.log(e);

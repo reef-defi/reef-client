@@ -77,8 +77,12 @@ export class ConnectorService {
     return await this.web3.eth.getTransactionReceipt(txHash);
   }
 
-  public toWei(amount: number): Promise<any> {
-    return this.web3.utils.toWei(`${amount}`, 'ether');
+  public toWei(amount: number, unit = 'ether'): Promise<any> {
+    return this.web3.utils.toWei(`${amount}`, unit);
+  }
+
+  public fromWei(amount: number, unit = 'ether'): Promise<any> {
+    return this.web3.utils.fromWei(`${amount}`, unit);
   }
 
   private connectToContract(): void {

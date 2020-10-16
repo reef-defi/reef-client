@@ -114,7 +114,8 @@ export const getBasketPoolNames = (baskets: IBasket[], pools: IPoolsMetadata[], 
       const addr2 = pools[i].Assets[1].address.toLocaleLowerCase();
       if (pools[i].ExchangeName === 'Uniswap-v2') {
         const pair = basket.UniswapPools.pools
-          .find(poolPair => poolPair[0].toLocaleLowerCase() === addr1 && poolPair[1].toLocaleLowerCase() === addr2);
+          .find(poolPair => (poolPair[0].toLocaleLowerCase() === addr1 && poolPair[1].toLocaleLowerCase() === addr2)
+            || (poolPair[0].toLocaleLowerCase() === addr2 && poolPair[1].toLocaleLowerCase() === addr1));
         if (pair) {
           up.push({name: pools[i].Symbol, pair: [...pair]});
         }
@@ -134,9 +135,18 @@ export const getBasketPoolNames = (baskets: IBasket[], pools: IPoolsMetadata[], 
     }
     return {
       ...basket,
-      UniswapPools: {...basket.UniswapPools, pools: [...up]},
-      BalancerPools: {...basket.BalancerPools, pools: [...bp]},
-      MooniswapPools: {...basket.MooniswapPools, pools: [...mp]},
+      UniswapPools: {
+        ...basket.UniswapPools,
+        pools: getCorrectPool(basket.UniswapPools.pools, up, 'uniswap')
+      },
+      BalancerPools: {
+        ...basket.BalancerPools,
+        pools: getCorrectPool(basket.BalancerPools.pools, bp)
+      },
+      MooniswapPools: {
+        ...basket.MooniswapPools,
+        pools: getCorrectPool(basket.MooniswapPools.pools, mp)
+      },
     };
   });
 
@@ -156,3 +166,16 @@ export const getBasketPoolNames = (baskets: IBasket[], pools: IPoolsMetadata[], 
 
   return newB;
 };
+
+const getCorrectPool = (arr: string[], mapped: any, poolName = '') => {
+  if (mapped.length === arr.length) {
+    return [...mapped];
+  } else {
+    if (poolName === 'uniswap') {
+      return arr.map(x => ({ name: 'Uniswap Pool', pair: [...x]}));
+    } else {
+      return arr.map(x => ({ name: 'Uniswap Pool', address: x}));
+    }
+  }
+};
+

@@ -24,11 +24,13 @@ import { ButtonComponent } from './components/button/button.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
-  ContentBoxComponent,
+  ContentBoxComponent, ButtonComponent,
 ];
 const directives = [];
 const pipes = [FilterPipe];
 const modules = [
+  CommonModule,
+  RouterModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule,
 ];
@@ -39,11 +41,9 @@ const modules = [
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
-    CommonModule,
-    RouterModule,
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, RouterModule, ButtonComponent],
+  exports: [...components, ...directives, ...pipes, ...modules],
 })
 export class SharedModule {
 }

@@ -76,7 +76,7 @@ export interface IBasket {
     weights: any;
   };
   UniswapPools: {
-      pools: any,
+    pools: any,
     weights: any;
   };
   Tokens: {
