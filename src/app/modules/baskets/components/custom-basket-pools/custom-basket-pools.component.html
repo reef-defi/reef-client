@@ -1,0 +1,55 @@
+<div class="content__container">
+  <div>
+    <div class="heading__lg">Create your own custom basket</div>
+    <div class="subheading__lg text-break mb-3">
+      Search pools, add them to your basket, and allocate your funds <strong>to your own liking!</strong>
+    </div>
+    <label class="label__lg" for="searchPools">Search pools</label>
+    <input
+      #poolSearch
+      id="searchPools"
+      (keyup)="applyFilter($event)"
+      type="text"
+      placeholder="Exchange name or Pool name"
+      class="form-control w-50 mb-4"/>
+  </div>
+  <table mat-table [dataSource]="dataSource" class="w-100">
+    <ng-container matColumnDef="Exchange">
+      <mat-header-cell *matHeaderCellDef>Exchange</mat-header-cell>
+      <mat-cell *matCellDef="let pool">{{ pool.ExchangeName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Pool Name">
+      <mat-header-cell *matHeaderCellDef> Pool Name</mat-header-cell>
+      <mat-cell *matCellDef="let pool">{{ pool.Symbol }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Add">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let pool">
+        <button
+          *ngIf="canAddPools && !chartPoolData[pool.Symbol]"
+          (click)="onAddPool(pool.Symbol)"
+          matTooltip="Add {{ pool.Symbol }}"
+          mat-ripple
+          mat-icon-button
+        >
+          <mat-icon class="icon-button">
+            add
+          </mat-icon>
+        </button>
+        <mat-slider
+          [disabled]="disabledSlider"
+          *ngIf="chartPoolData[pool.Symbol] >= 0"
+          min="1" max="99"
+          (valueChange)="onAllocChange(pool.Symbol, $event)"
+          [value]="chartPoolData[pool.Symbol]"></mat-slider>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No pools found for "{{poolSearch.value}}"</td>
+    </tr>
+  </table>
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>

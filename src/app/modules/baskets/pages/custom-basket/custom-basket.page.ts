@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
-import { PoolsChartOptions, IPoolsMetadata, IBasketPoolsAndCoinInfo } from '../../../../core/models/types';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
+import { IBasketPoolsAndCoinInfo, IPoolsMetadata, PoolsChartOptions } from '../../../../core/models/types';
+import { BehaviorSubject } from 'rxjs';
+import { basketNameGenerator, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
+import { ContractService } from '../../../../core/services/contract.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-custom-basket',
@@ -17,9 +21,14 @@ export class CustomBasketPage implements OnInit {
   readonly tokens$: BehaviorSubject<any> = this.basketService.tokens$;
   public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
-  public poolsSearchVal = '';
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
-  constructor(private readonly basketService: ApiService, private readonly chartsService: ChartsService) {
+
+  constructor(
+    private readonly contractService: ContractService,
+    private readonly basketService: ApiService,
+    private readonly chartsService: ChartsService,
+    private readonly dialog: MatDialog
+  ) {
   }
 
   ngOnInit(): void {
@@ -41,7 +50,8 @@ export class CustomBasketPage implements OnInit {
     this.setChart();
   }
 
-  editBasketAllocation(poolName: string, percentage: number): void {
+  editBasketAllocation(config: any[]): void {
+    const [poolName, percentage] = config;
     const oldValue = this.chartPoolData[poolName] || 0;
     const newValue = this.chartPoolData[poolName] = percentage;
     const remainder = 100 - oldValue;
@@ -55,12 +65,22 @@ export class CustomBasketPage implements OnInit {
     this.setChart();
   }
 
-  formatSliderLabel(value: number): string {
-    return `${value}%`;
+  onInvest(): void {
+    const dialogRef = this.openDialog();
+    dialogRef.afterClosed()
+      .pipe(take(1))
+      .subscribe((result) => {
+        if (result) {
+          this.createBasket(result);
+        }
+      });
   }
 
-  disableSlider(): boolean {
-    return Object.keys(this.chartPoolData).length === 1;
+  async createBasket(ethAmount: number): Promise<any> {
+    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.chartPoolData, this.pools$.value, this.tokens$.value);
+    const name = basketNameGenerator();
+    console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
+    await this.contractService.createBasket(name, basketPoolAndCoinInfo, ethAmount);
   }
 
   private calculatePoolAllocation(): number {
@@ -82,5 +102,9 @@ export class CustomBasketPage implements OnInit {
 
   private setChart(): void {
     this.chartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.chartPoolData), Object.values(this.chartPoolData));
+  }
+
+  private openDialog(): MatDialogRef<CustomInvestModalComponent> {
+    return this.dialog.open(CustomInvestModalComponent);
   }
 }

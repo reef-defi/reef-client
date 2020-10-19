@@ -1,48 +1,61 @@
-<ng-container *ngIf="pools$ | async as pools">
-  <div>
-    <label for="searchPools">Search pools</label>
-    <input
-      id="searchPools"
-      [(ngModel)]="poolsSearchVal"
-      type="text"
-      class="form-control w-25" />
+<ng-container
+  *ngIf="pools$ | async as pools; else loadingTemplate">
+  <div class="row page__wrapper">
+    <div class="col-6">
+      <app-custom-basket-pools
+        [pools]="pools"
+        [disabledSlider]="Object.keys(chartPoolData).length === 1"
+        [canAddPools]="Object.keys(chartPoolData).length < COMPOSITION_LIMIT"
+        [chartPoolData]="chartPoolData"
+        (addPool)="addPool($event)"
+        (changeAllocation)="editBasketAllocation($event)"
+        (removePool)="removePool($event)"
+      >
+      </app-custom-basket-pools>
+    </div>
+    <div class="col-6">
+      <div class="content__container">
+        <ng-container *ngIf="chartOptions && Object.keys(chartPoolData).length > 0; else emptyChartsTemplate">
+          <div class="heading__lg">Composition</div>
+          <div class="subheading__lg mb-2">You can modify the allocated amount using the sliders</div>
+          <div class="row ml-2 mb-2">
+            <mat-chip-list>
+              <mat-chip
+                *ngFor="let poolSymbol of Object.keys(chartPoolData)"
+                [removable]="true"
+                (removed)="removePool(poolSymbol)">
+                {{ poolSymbol }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+          </div>
+          <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [dataLabels]="chartOptions.dataLabels"
+            [plotOptions]="chartOptions.plotOptions"
+            [yaxis]="chartOptions.yaxis"
+            [xaxis]="chartOptions.xaxis"
+            [fill]="chartOptions.fill"
+            [title]="chartOptions.title"
+            [colors]="chartOptions.colors"
+            [legend]="chartOptions.legend"
+            [tooltip]="chartOptions.tooltip"
+          ></apx-chart>
+          <div class="d-flex justify-content-center mt-3">
+            <button class="button-large regular" (click)="onInvest()">Invest</button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
-  <div *ngFor="let pool of pools.slice(0, 10) | filter: 'Symbol':poolsSearchVal">
-    {{ pool.Platform }} - {{ pool.Symbol }}
-    <button
-      *ngIf="Object.keys(chartPoolData).length < COMPOSITION_LIMIT && !chartPoolData[pool.Symbol]"
-      class="btn btn-primary"
-      (click)="addPool(pool.Symbol)">Add Pool to Basket
-    </button>
-    <button class="btn btn-secondary" *ngIf="chartPoolData[pool.Symbol]" (click)="removePool(pool.Symbol)">
-      Remove Pool
-    </button>
-    <mat-slider
-      [disabled]="disableSlider()"
-      *ngIf="chartOptions && chartPoolData[pool.Symbol] >= 0"
-      min="1" max="99"
-      thumbLabel
-      [displayWith]="formatSliderLabel"
-      (valueChange)="editBasketAllocation(pool.Symbol, $event)"
-      [value]="chartPoolData[pool.Symbol]"></mat-slider>
-  </div>
-</ng-container>
 
-<ng-container *ngIf="chartOptions && Object.keys(chartPoolData).length > 0; else emptyChartsTemplate">
-  <div>
-    <apx-chart
-      [series]="chartOptions.series"
-      [chart]="chartOptions.chart"
-      [dataLabels]="chartOptions.dataLabels"
-      [plotOptions]="chartOptions.plotOptions"
-      [yaxis]="chartOptions.yaxis"
-      [xaxis]="chartOptions.xaxis"
-      [fill]="chartOptions.fill"
-      [title]="chartOptions.title"
-    ></apx-chart>
-  </div>
 </ng-container>
 
 <ng-template #emptyChartsTemplate>
-  <h2>Add a pool to allocate funds</h2>
+  <div class="heading__lg">Add a pool to start customizing your basket</div>
+</ng-template>
+
+<ng-template #loadingTemplate>
+  <app-loading [isWholePage]="true"></app-loading>
 </ng-template>

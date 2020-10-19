@@ -1,0 +1,11 @@
+@import '~src/assets/scss/partials/variables';
+
+::ng-deep {
+  .mat-column-Add {
+    justify-content: flex-end;
+  }
+}
+
+.app-custom-basket-pools .mat-slider-track-background {
+  background: map-get($theme-colors, dark) !important;
+}

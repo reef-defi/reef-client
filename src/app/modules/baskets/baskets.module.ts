@@ -12,6 +12,8 @@ import { CreateBasketComponent } from './components/create-basket/create-basket.
 import { BasketCompositionComponent } from './components/basket-composition/basket-composition.component';
 import { LiquidateModalComponent } from './components/liquidate-modal/liquidate-modal.component';
 import { MatRippleModule } from '@angular/material/core';
+import { CustomBasketPoolsComponent } from './components/custom-basket-pools/custom-basket-pools.component';
+import { CustomInvestModalComponent } from './components/custom-invest-modal/custom-invest-modal.component';
 
 const pages = [
   CreateBasketPage,
@@ -23,10 +25,11 @@ const components = [
   CreateBasketComponent,
   BasketCompositionComponent,
   LiquidateModalComponent,
+  CustomBasketPoolsComponent,
 ];
 
 @NgModule({
-  declarations: [...pages, ...components],
+  declarations: [...pages, ...components, CustomInvestModalComponent,],
   imports: [
     CommonModule,
     FormsModule,

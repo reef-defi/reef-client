@@ -173,6 +173,4 @@ export class ContractService {
       clearInterval(this.transactionInterval);
     }
   }
-
-
 }
