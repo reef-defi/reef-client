@@ -6,6 +6,7 @@
 
 .content__container {
   background: $dark-primary;
+  color: map-get($theme-colors, lightest);
   padding: 30px;
   border: none;
   -webkit-border-radius: 7px;

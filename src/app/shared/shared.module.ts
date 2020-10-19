@@ -21,6 +21,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ContentBoxComponent } from './components/content-box/content-box.component';
 import { ButtonComponent } from './components/button/button.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatChipsModule } from '@angular/material/chips';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
@@ -32,7 +36,8 @@ const modules = [
   CommonModule,
   RouterModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
-  MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule,
+  MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
+  MatChipsModule,
 ];
 
 @NgModule({

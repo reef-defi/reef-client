@@ -1,0 +1,16 @@
+<div class="d-flex flex-column p-2">
+  <div class="heading__md mb-2">Satisfied with your basket?</div>
+  <label class="label__lg mb-2" for="customEthAmount">Enter your amount</label>
+  <div class="d-flex align-items-center mb-3">
+    <input
+      class="create-basket__input form-control mr-2"
+      id="customEthAmount"
+      [formControl]="ethAmount"
+      placeholder="Amount of ETH" type="number"/>
+    <img width="50" height="50" src="../../../../../assets/images/eth.png"/>
+  </div>
+  <div class="d-flex" mat-dialog-actions>
+    <button class="button-large inverse mr-3" (click)="onClose()">Cancel</button>
+    <button class="button-large regular" [mat-dialog-close]="onInvest()">Invest</button>
+  </div>
+</div>
