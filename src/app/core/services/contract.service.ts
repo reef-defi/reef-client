@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { contractData } from '../../../assets/abi';
 import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
-import { convertContractBasket, getBasketPoolNames } from '../utils/pools-utils';
+import { getBasketPoolNames } from '../utils/pools-utils';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -33,7 +32,7 @@ export class ContractService {
       investedETH: await this.getUserInvestedBasketAmount(idx),
       ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr}))
     })));
-    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value);
+    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value).filter(basket => +basket.investedETH > 0);
     this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }

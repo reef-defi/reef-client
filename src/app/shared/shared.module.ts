@@ -25,10 +25,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
+import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
-  ContentBoxComponent, ButtonComponent,
+  ContentBoxComponent, ButtonComponent, EmptyStateComponent
 ];
 const directives = [];
 const pipes = [FilterPipe];
@@ -41,7 +42,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, ButtonComponent,],
+  declarations: [...components, ...directives, ...pipes],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],

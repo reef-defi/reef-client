@@ -1,5 +1,5 @@
 export const contractData = {
-  addr: '0x91e6dd125bAFD01184A22cD6f2A60F84BaCeD70C',
+  addr: '0xa07EbD5417522F87E84A981144163E3C22cb460F',
   "abi": [
     {
       "inputs": [

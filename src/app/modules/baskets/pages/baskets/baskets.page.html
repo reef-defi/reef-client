@@ -1,13 +1,26 @@
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
-    <div class="mb-3" *ngFor="let basket of allBaskets.slice(0, 5); let i = index;">
-      <app-basket
-        [basket]="basket"
-        [basketIndex]="i"
-        (disinvest)="onDisinvest($event)"></app-basket>
-    </div>
+    <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
+      <div class="mb-3" *ngFor="let basket of allBaskets; let i = index;">
+        <app-basket
+          [basket]="basket"
+          [basketIndex]="i"
+          (disinvest)="onDisinvest($event)"></app-basket>
+      </div>
+    </ng-container>
   </ng-container>
 </ng-container>
+
 <ng-template #loadingTemplate>
   <app-loading [isWholePage]="true"></app-loading>
+</ng-template>
+
+<ng-template #emptyStateTemplate>
+  <app-empty-state
+    title="No baskets"
+    subtitle="You have not invested in any baskets"
+    [showCtaButton]="true"
+    ctaButtonText="Start Investing!"
+    (cta)="goToCreate()"
+  ></app-empty-state>
 </ng-template>

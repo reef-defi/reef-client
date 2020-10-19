@@ -4,6 +4,7 @@ import { first, take } from 'rxjs/operators';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LiquidateModalComponent } from '../../components/liquidate-modal/liquidate-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-baskets',
@@ -17,6 +18,7 @@ export class BasketsPage implements OnInit, OnDestroy {
   constructor(
     private readonly contractService: ContractService,
     private readonly connectorService: ConnectorService,
+    private router: Router,
     private readonly dialog: MatDialog) {
   }
 
@@ -39,6 +41,10 @@ export class BasketsPage implements OnInit, OnDestroy {
           this.disinvest(result);
         }
       });
+  }
+
+  goToCreate(): void {
+    this.router.navigate(['baskets/create-basket']);
   }
 
   private disinvest(data: any) {
