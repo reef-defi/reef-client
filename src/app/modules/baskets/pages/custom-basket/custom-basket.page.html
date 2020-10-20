@@ -29,19 +29,10 @@
               </mat-chip>
             </mat-chip-list>
           </div>
-          <apx-chart
-            [series]="chartOptions.series"
-            [chart]="chartOptions.chart"
-            [dataLabels]="chartOptions.dataLabels"
-            [plotOptions]="chartOptions.plotOptions"
-            [yaxis]="chartOptions.yaxis"
-            [xaxis]="chartOptions.xaxis"
-            [fill]="chartOptions.fill"
-            [title]="chartOptions.title"
-            [colors]="chartOptions.colors"
-            [legend]="chartOptions.legend"
-            [tooltip]="chartOptions.tooltip"
-          ></apx-chart>
+          <app-basket-composition
+            [isList]="true"
+            [basket]="chartPoolData"
+          ></app-basket-composition>
           <div class="d-flex justify-content-center mt-3">
             <button class="button-large regular" (click)="onInvest()">Invest</button>
           </div>

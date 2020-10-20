@@ -5,6 +5,7 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LiquidateModalComponent } from '../../components/liquidate-modal/liquidate-modal.component';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-baskets',
@@ -16,6 +17,7 @@ export class BasketsPage implements OnInit, OnDestroy {
   readonly baskets$ = this.contractService.baskets$;
   readonly basketsError$ = this.contractService.basketsError$;
   readonly loading$ = this.contractService.loading$;
+  public isList = new FormControl(true);
 
   constructor(
     private readonly contractService: ContractService,

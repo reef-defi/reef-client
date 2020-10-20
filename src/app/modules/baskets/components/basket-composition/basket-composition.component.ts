@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HistoricRoiChartOptions, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
+import { Component, Input } from '@angular/core';
+import { IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
 import { ThemePalette } from '@angular/material/core';
 
 @Component({
@@ -14,7 +14,7 @@ export class BasketCompositionComponent {
     'accent',
     'warn'];
   @Input() basket: IGenerateBasketResponse | undefined;
-  @Input() poolChartOptions: Partial<PoolsChartOptions>;
+  @Input() isList = false;
 
   constructor() {
   }

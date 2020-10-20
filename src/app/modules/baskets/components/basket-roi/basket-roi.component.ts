@@ -17,6 +17,7 @@ export class BasketRoiComponent {
     }
   }
   @Input() activeTimeSpan = 1;
+  @Input() isList = false;
   @Output() dateSpanChange = new EventEmitter<number>();
 
   constructor() {

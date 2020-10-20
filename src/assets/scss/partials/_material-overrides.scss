@@ -52,12 +52,12 @@
 }
 
 .mat-dialog-container {
-  background: map-get($theme-colors, dark);
+  background: map-get($theme-colors, lightest);
   border-radius: 7px !important;
 }
 
 .mat-slide-toggle-bar {
-  background: map-get($theme-colors, lightest) !important;
+  background: map-get($theme-colors, dark) !important;
 }
 
 .mat-slide-toggle-thumb {
@@ -66,7 +66,7 @@
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-  background: map-get($theme-colors, lightest) !important;
+  background: map-get($theme-colors, light) !important;
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
@@ -83,6 +83,10 @@
   font-family: 'Poppins', 'Roboto', sans-serif;
   font-size: 14px;
   font-weight: 500;
+}
+
+.mat-progress-bar-buffer {
+  background: map-get($theme-colors, lighter) !important;
 }
 
 .apexcharts-tooltip {

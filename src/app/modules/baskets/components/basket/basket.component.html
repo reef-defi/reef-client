@@ -1,46 +1,72 @@
-<div class="content__container w-100">
-  <div class="row ">
+<div
+  *ngIf="isListView"
+  class="content__container w-100">
+  <div class="row justify-content-between align-items-center">
     <div class="col-2 d-flex text-center flex-column justify-content-center align-content-center">
-      <div class="heading__lg mb-5">{{ basket.name }}</div>
-      <div class="heading__md mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
-      <div class="subheading__md mb-5">INVESTED</div>
-      <div class="heading__md mb-1">+51% ROI</div>
-      <div class="subheading__md mb-5">+ 5.61 ETH</div>
+      <div class="heading__lg font-weight-bold mb-5">{{ basket.name }}</div>
+      <div class="heading__lg font-weight-bold mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="subheading__lg mb-5">INVESTED</div>
+      <div class="heading__lg font-weight-bold mb-1 roi__percent">+51% ROI</div>
+      <div class="subheading__lg mb-5">+ 5.61 ETH</div>
       <div>
-        <button (click)="onDisinvest()" class="button-large regular">Liquidate</button>
+        <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-3">
       <ng-container *ngIf="poolChartOptions; else loadingTemplate">
-        <apx-chart
-          [series]="poolChartOptions.series"
-          [chart]="poolChartOptions.chart"
-          [dataLabels]="poolChartOptions.dataLabels"
-          [plotOptions]="poolChartOptions.plotOptions"
-          [yaxis]="poolChartOptions.yaxis"
-          [xaxis]="poolChartOptions.xaxis"
-          [fill]="poolChartOptions.fill"
-          [title]="poolChartOptions.title"
-          [colors]="poolChartOptions.colors"
-          [tooltip]="poolChartOptions.tooltip"
-          [legend]="poolChartOptions.legend"
-        ></apx-chart>
+        <app-basket-composition [basket]="pureBasket" [isList]="true">
+        </app-basket-composition>
       </ng-container>
     </div>
-    <div class="col-5">
-      <ng-container *ngIf="roiChartOptions; else loadingTemplate">
-        <apx-chart
-          [series]="roiChartOptions.series"
-          [chart]="roiChartOptions.chart"
-          [dataLabels]="roiChartOptions.dataLabels"
-          [grid]="roiChartOptions.grid"
-          [stroke]="roiChartOptions.stroke"
-          [xaxis]="roiChartOptions.xaxis"
-          [title]="roiChartOptions.title"
-          [colors]="roiChartOptions.colors"
-        ></apx-chart>
+    <div class="col-6">
+      <ng-container *ngIf="roiData; else loadingTemplate">
+        <app-basket-roi
+          [roiData]="roiData"
+          [isList]="true"
+          [activeTimeSpan]="activeTimeSpan"
+          (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
+        ></app-basket-roi>
       </ng-container>
     </div>
+  </div>
+</div>
+
+<div *ngIf="!isListView" class="content__container">
+  <div class="row mt-3 mb-4">
+    <div class="col-12 heading__lg font-weight-bold">
+      {{ basket.name }}
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-3">
+      <div class="heading__lg font-weight-bold mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="subheading__lg mb-5">INVESTED</div>
+    </div>
+    <div class="col-3">
+      <div class="heading__lg font-weight-bold mb-1 roi__percent">+51% ROI</div>
+      <div class="subheading__lg mb-5">+ 5.61 ETH</div>
+    </div>
+    <div class="col-6">
+      <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <app-basket-composition [basket]="pureBasket" [isList]="true">
+      </app-basket-composition>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <ng-container *ngIf="roiData; else loadingTemplate">
+      <div class="col-12 p-0">
+        <app-basket-roi
+          [roiData]="roiData"
+          [isList]="true"
+          [activeTimeSpan]="activeTimeSpan"
+          (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
+        ></app-basket-roi>
+      </div>
+    </ng-container>
   </div>
 </div>
 

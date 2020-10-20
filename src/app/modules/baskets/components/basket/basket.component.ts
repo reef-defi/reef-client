@@ -17,20 +17,23 @@ import { Subscription } from 'rxjs';
 })
 export class BasketComponent {
   private mBasket: IBasket;
+  private pureBasket: IGenerateBasketResponse | undefined;
+  @Input() isListView: boolean;
   @Input() basketIndex: number | undefined;
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
-    const obj = this.getChartLabels(this.mBasket);
-    this.poolChartOptions = this.charts.composeWeightAllocChart(Object.keys(obj), Object.values(obj));
-    this.getHistoricRoi(obj, 1);
+    this.pureBasket = this.getChartLabels(this.mBasket);
+    this.poolChartOptions = this.charts.composeWeightAllocChart(Object.keys(this.pureBasket), Object.values(this.pureBasket));
+    this.getHistoricRoi(this.pureBasket, 1);
   }
   get basket(): IBasket {
     return this.mBasket;
   }
   @Output() disinvest = new EventEmitter();
   public poolChartOptions: Partial<PoolsChartOptions>;
-  public roiChartOptions: Partial<HistoricRoiChartOptions>;
+  public roiData: number[][];
   public disinvestPercentage: number = 100;
+  public activeTimeSpan = 1;
 
   constructor(private readonly charts: ChartsService,
               private readonly apiService: ApiService) {
@@ -52,14 +55,14 @@ export class BasketComponent {
     return temp;
   }
 
-  private getHistoricRoi(basket: IGenerateBasketResponse, subtractMonths: number): Subscription {
+  public getHistoricRoi(basket: IGenerateBasketResponse, subtractMonths: number): Subscription {
+    this.activeTimeSpan = subtractMonths;
     return this.apiService.getHistoricRoi(basket, subtractMonths).subscribe((historicRoi: IBasketHistoricRoi) => {
-      const roi = this.extractRoi(historicRoi);
-      this.roiChartOptions = this.charts.composeHistoricRoiChart(Object.keys(historicRoi), roi);
+      this.roiData = this.charts.composeHighChart(this.extractRoi(historicRoi));
     });
   }
 
-  private extractRoi(obj: IBasketHistoricRoi): number[] {
-    return Object.values(obj).map((val: any) => +val.weighted_roi.toFixed(3));
+  private extractRoi(obj: IBasketHistoricRoi): number[][] {
+    return Object.keys(obj).map((key) => [new Date(key).getTime(), +obj[key].weighted_roi.toFixed(2)]);
   }
 }

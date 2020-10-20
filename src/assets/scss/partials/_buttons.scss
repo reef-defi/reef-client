@@ -13,6 +13,7 @@ button {
 
   &.danger {
     background: map-get($theme-colors, danger);
+    color: white;
   }
 
   &.button-large {

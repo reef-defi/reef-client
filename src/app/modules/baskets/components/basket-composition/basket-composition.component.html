@@ -1,16 +1,27 @@
-<div class="content__container">
+<div class="content__container" *ngIf="!isList">
   <div class="mb-4">
     <div class="heading__lg basket-composition__heading">COMPOSITION</div>
     <div *ngIf="basket; else loadingTemplate">
-      <div class="mb-4" *ngFor="let key of Object.keys(basket); let i = index;">
+      <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
         <div class="label__md mb-1">{{ key }}</div>
-        <div class="heading__md mb-1">{{basket[key]}}%</div>
+        <div class="heading__md mb-1">{{basket[key] | number:'1.1-2'}}%</div>
         <mat-progress-bar
           [color]="colors[i]"
           mode="determinate"
           [value]="basket[key]"></mat-progress-bar>
       </div>
     </div>
+  </div>
+</div>
+
+<div *ngIf="isList">
+  <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
+    <div class="label__md mb-1">{{ key }}</div>
+    <div class="heading__md mb-1">{{basket[key]}}%</div>
+    <mat-progress-bar
+      [color]="colors[i]"
+      mode="determinate"
+      [value]="basket[key]"></mat-progress-bar>
   </div>
 </div>
 

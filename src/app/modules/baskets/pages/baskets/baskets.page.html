@@ -1,16 +1,40 @@
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
     <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
-    <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
-      <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
-        <div class="mb-3" *ngFor="let basket of allBaskets; let i = index;">
-          <app-basket
-            [basket]="basket"
-            [basketIndex]="i"
-            (disinvest)="onDisinvest($event)"></app-basket>
-        </div>
+      <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
+        <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
+          <div class="d-flex justify-content-between">
+            <div class="heading__lg mb-3">MY BASKETS</div>
+            <div>
+              <mat-slide-toggle [formControl]="isList">
+                <div class="subheading__md">{{ isList.value ? 'List' : 'Grid' }} view</div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+          <div *ngIf="isList.value">
+            <div class="mb-3" *ngFor="let basket of allBaskets; let i = index;">
+              <app-basket
+                [isListView]="isList.value"
+                [basket]="basket"
+                [basketIndex]="i"
+                (disinvest)="onDisinvest($event)">
+              </app-basket>
+            </div>
+          </div>
+          <div *ngIf="!isList.value">
+            <div class="d-flex row">
+              <div class="col-6 mb-3" *ngFor="let basket of allBaskets; let i = index;">
+                <app-basket
+                  [isListView]="isList.value"
+                  [basket]="basket"
+                  [basketIndex]="i"
+                  (disinvest)="onDisinvest($event)">
+                </app-basket>
+              </div>
+            </div>
+          </div>
+        </ng-container>
       </ng-container>
-    </ng-container>
     </ng-container>
   </ng-container>
 </ng-container>
