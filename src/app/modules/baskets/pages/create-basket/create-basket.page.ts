@@ -1,19 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
-import {
-  PoolsChartOptions,
-  IGenerateBasketResponse,
-  HistoricRoiChartOptions,
-  IBasketHistoricRoi,
-  IBasketPoolsAndCoinInfo
-} from '../../../../core/models/types';
-import { first, merge, startWith, switchMap } from 'rxjs/operators';
+import { IBasketHistoricRoi, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
+import { startWith, switchMap } from 'rxjs/operators';
 import { PoolService } from '../../../../core/services/pool.service';
 import { FormControl } from '@angular/forms';
 import { tap } from 'rxjs/internal/operators/tap';
 import { ChartsService } from '../../../../core/services/charts.service';
-import { combineLatest, Subscription } from 'rxjs';
-import { basketNameGenerator, getBasketPoolsAndCoins, convertToInt } from '../../../../core/utils/pools-utils';
+import { combineLatest } from 'rxjs';
+import { basketNameGenerator, convertToInt, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
 import { ContractService } from '../../../../core/services/contract.service';
 import { ConnectorService } from '../../../../core/services/connector.service';
 
@@ -27,7 +21,7 @@ export class CreateBasketPage implements OnInit {
   readonly tokens$ = this.basketsService.tokens$;
   public basket: IGenerateBasketResponse = null;
   public poolChartOptions: Partial<PoolsChartOptions>;
-  public roiChartOptions: any;
+  public roiData: number[][];
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
   ethAmount = new FormControl(1);
@@ -61,14 +55,14 @@ export class CreateBasketPage implements OnInit {
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data, subtractMonths))
     ).subscribe((historicRoi: IBasketHistoricRoi) => {
-      this.roiChartOptions = this.chartsService.composeHighChart(this.extractRoi(historicRoi));
+      this.roiData = this.chartsService.composeHighChart(this.extractRoi(historicRoi));
     });
   }
 
   getHistoricRoi(subtractMonths: number): void {
     this.currentRoiTimespan = subtractMonths;
     this.basketsService.getHistoricRoi(this.basket, subtractMonths).subscribe((hRoi: IBasketHistoricRoi) => {
-      this.roiChartOptions = this.chartsService.composeHighChart(this.extractRoi(hRoi));
+      this.roiData = this.chartsService.composeHighChart(this.extractRoi(hRoi));
     });
   }
 

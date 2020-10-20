@@ -9,8 +9,8 @@ import * as Highcharts from 'highcharts';
 export class BasketRoiComponent {
   HighCharts: typeof Highcharts = Highcharts;
   public updateFlag: boolean;
-  public options: any = {};
-  @Input() set roiChartOptions(val: any) {
+  public options: Highcharts.Options | {} = {};
+  @Input() set roiData(val: number[][]) {
     if (val) {
       this.options = val;
       this.updateFlag = true;
