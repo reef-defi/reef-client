@@ -9,7 +9,7 @@ import * as Highcharts from 'highcharts';
 export class BasketRoiComponent {
   HighCharts: typeof Highcharts = Highcharts;
   public updateFlag: boolean;
-  public options: Highcharts.Options | {} = {};
+  public options: Highcharts.Options | any = {};
   @Input() set roiData(val: number[][]) {
     if (val) {
       this.options = val;
