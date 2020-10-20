@@ -24,7 +24,7 @@ export class HomePage implements OnInit {
   async onConnect(): Promise<any> {
     await this.connectorService.onConnect();
     if (this.contract$.value) {
-      await this.router.navigate(['/baskets/create-basket']);
+      await this.router.navigate(['/baskets']);
     }
   }
 
