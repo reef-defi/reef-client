@@ -5,7 +5,8 @@
   bottom: 0;
   padding: 20px;
   margin-left: $sidebar-width;
-  color: map-get($theme-colors, lightest)
+  color: map-get($theme-colors, dark);
+  background: map-get($theme-colors, light);
 }
 
 .footer__company {
@@ -14,5 +15,5 @@
 
 a {
   font-weight: 500;
-  color: map-get($theme-colors, lightest)
+  color: map-get($theme-colors, dark)
 }

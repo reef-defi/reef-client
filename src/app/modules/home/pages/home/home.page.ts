@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { ContractService } from '../../../../core/services/contract.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -10,17 +11,21 @@ import { ContractService } from '../../../../core/services/contract.service';
 export class HomePage implements OnInit {
   public contract$ = this.contractService.contract$;
   public isWalletConnected$ = this.connectorService.currentProviderName$;
-  public availableBasketCounts = 0;
 
   constructor(
-    private readonly connectorService: ConnectorService, private readonly contractService: ContractService) {
+    private readonly connectorService: ConnectorService,
+    private readonly contractService: ContractService,
+    private readonly router: Router) {
   }
 
   ngOnInit(): void {
   }
 
-  onConnect(): void {
-    this.connectorService.onConnect();
+  async onConnect(): Promise<any> {
+    await this.connectorService.onConnect();
+    if (this.contract$.value) {
+      await this.router.navigate(['/baskets/create-basket']);
+    }
   }
 
   onDisconnect(): void {

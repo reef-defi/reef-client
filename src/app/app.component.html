@@ -4,6 +4,7 @@
     <div
       class="main light min-vh-100 container-fluid">
       <app-header
+        *ngIf="obs.providerUserInfo"
         [ethPrice]="obs.ethPrice"
         [providerName]="obs.providerName"
         [providerUserInfo]="obs.providerUserInfo">

@@ -12,6 +12,8 @@ import { ApiService } from './api.service';
 export class ContractService {
   contract$ = this.connectorService.contract$;
   baskets$ = new BehaviorSubject<IBasket[] | null>(null);
+  readonly basketsError$ = new BehaviorSubject(null);
+  readonly loading$ = new BehaviorSubject(false);
   transactionInterval = null;
 
   constructor(
@@ -21,20 +23,28 @@ export class ContractService {
   }
 
   async getAllBaskets(): Promise<any> {
-    const basketCount = await this.getAvailableBasketsCount();
-    const basketProms = [];
-    for (let i = 0; i <= basketCount; i++) {
-      basketProms.push(this.getAvailableBasket(i));
+    this.loading$.next(true);
+    try {
+      const basketCount = await this.getAvailableBasketsCount();
+      const basketProms = [];
+      for (let i = 0; i <= basketCount; i++) {
+        basketProms.push(this.getAvailableBasket(i));
+      }
+      const resolvedBaskets = await Promise.all(basketProms);
+      let baskets: IBasket[] = await Promise.all(resolvedBaskets.map(async (basket, idx) => ({
+        ...basket,
+        investedETH: await this.getUserInvestedBasketAmount(idx),
+        ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr}))
+      })));
+      baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
+        .filter(basket => +basket.investedETH > 0);
+      this.baskets$.next(baskets);
+      this.basketsError$.next(false);
+      this.loading$.next(false);
+    } catch (e) {
+      this.basketsError$.next(true);
+      this.loading$.next(false);
     }
-    const resolvedBaskets = await Promise.all(basketProms);
-    let baskets: IBasket[] = await Promise.all(resolvedBaskets.map(async (basket, idx) => ({
-      ...basket,
-      investedETH: await this.getUserInvestedBasketAmount(idx),
-      ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr}))
-    })));
-    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
-      .filter(basket => +basket.investedETH > 0);
-    this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }
 

@@ -1,7 +1,10 @@
+@import '~src/assets/scss/partials/variables';
+$mid: 50%;
+
 .center-loader {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
+  top: calc(#{$mid} + #{$header-height - 50px});
+  left: calc(#{$mid} + #{$sidebar-width - 100px});
+  margin-right: calc(-#{$mid} + #{$sidebar-width});
   transform: translate(-50%, -50%);
 }

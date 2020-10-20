@@ -12,8 +12,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./baskets.page.scss']
 })
 export class BasketsPage implements OnInit, OnDestroy {
-  contract$ = this.contractService.contract$;
-  baskets$ = this.contractService.baskets$;
+  readonly contract$ = this.contractService.contract$;
+  readonly baskets$ = this.contractService.baskets$;
+  readonly basketsError$ = this.contractService.basketsError$;
+  readonly loading$ = this.contractService.loading$;
 
   constructor(
     private readonly contractService: ContractService,
