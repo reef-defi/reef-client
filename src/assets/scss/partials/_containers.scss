@@ -5,12 +5,20 @@
 }
 
 .content__container {
-  background: $dark-primary;
-  color: map-get($theme-colors, lightest);
+  height: 100%;
+  background: map-get($theme-colors, lightest);
+  color: map-get($font-colors, dark);
   padding: 30px;
   border: none;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  border-radius: 7px;
-  box-shadow: 0 0 10px rgba(210, 210, 210, 0.1);
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  box-shadow: 0 0 8px #00000029;
+  border-radius: 8px;
+}
+
+input {
+  background: #F3F3F3 !important;
+  border-radius: 10px !important;
+  padding: 5px;
+  border: 0 !important;
 }

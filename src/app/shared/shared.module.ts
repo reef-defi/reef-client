@@ -25,7 +25,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
+import { MatSelectModule } from '@angular/material/select';
+import { HighchartsChartModule } from 'highcharts-angular';
+
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
@@ -38,7 +42,7 @@ const modules = [
   RouterModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
-  MatChipsModule,
+  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule,
 ];
 
 @NgModule({

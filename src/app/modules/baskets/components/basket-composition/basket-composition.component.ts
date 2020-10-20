@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { HistoricRoiChartOptions, PoolsChartOptions } from '../../../../core/models/types';
+import { HistoricRoiChartOptions, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
+import { ThemePalette } from '@angular/material/core';
 
 @Component({
   selector: 'app-basket-composition',
@@ -7,16 +8,20 @@ import { HistoricRoiChartOptions, PoolsChartOptions } from '../../../../core/mod
   styleUrls: ['./basket-composition.component.scss']
 })
 export class BasketCompositionComponent {
+  Object = Object;
+  private mColors: ThemePalette[] = [
+    'primary',
+    'accent',
+    'warn'];
+  @Input() basket: IGenerateBasketResponse | undefined;
   @Input() poolChartOptions: Partial<PoolsChartOptions>;
-  @Input() roiChartOptions: Partial<HistoricRoiChartOptions>;
-  @Input() activeTimeSpan = 1;
-  @Output() dateSpanChange = new EventEmitter<number>();
 
   constructor() {
   }
 
-  onDateSpanChange(val: number): void {
-    this.dateSpanChange.emit(val);
+  get colors(): ThemePalette[] {
+    return [...this.mColors, ...this.mColors, ...this.mColors];
   }
+
 
 }

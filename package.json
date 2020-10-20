@@ -27,6 +27,8 @@
     "apexcharts": "^3.20.2",
     "bootstrap": "^4.5.2",
     "date-fns": "^2.16.1",
+    "highcharts": "^8.2.0",
+    "highcharts-angular": "^2.8.0",
     "ng-apexcharts": "^1.5.1",
     "ng5-slider": "^1.2.4",
     "rxjs": "~6.6.0",

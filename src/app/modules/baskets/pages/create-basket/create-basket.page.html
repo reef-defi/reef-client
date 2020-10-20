@@ -1,20 +1,26 @@
 <div class="row page__wrapper">
-  <div class="parameters__wrapper col-4">
+  <div class="parameters__wrapper col-6">
     <app-create-basket
       [ethAmount]="ethAmount"
       [riskAmount]="risk"
       (invest)="createBasket()">
     </app-create-basket>
   </div>
-  <div class="col-8 justify-content-right">
+  <div class="col-6 justify-content-right">
     <app-basket-composition
-      [roiChartOptions]="roiChartOptions"
+      [basket]="basket"
       [poolChartOptions]="poolChartOptions"
-      [activeTimeSpan]="currentRoiTimespan"
-      (dateSpanChange)="getHistoricRoi($event)"
     >
     </app-basket-composition>
-<!--    <button (click)="createBasket()" class="btn btn-primary">Create this basket</button>-->
-<!--    <button class="btn btn-primary" [routerLink]="['/baskets/custom-basket']">Create a custom basket</button>-->
+  </div>
+</div>
+
+<div class="row page__wrapper mt-4">
+  <div class="col-12">
+    <app-basket-roi
+      [activeTimeSpan]="currentRoiTimespan"
+      [roiChartOptions]="roiChartOptions"
+      (dateSpanChange)="getHistoricRoi($event)"
+    ></app-basket-roi>
   </div>
 </div>

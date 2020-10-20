@@ -32,7 +32,8 @@ export class ContractService {
       investedETH: await this.getUserInvestedBasketAmount(idx),
       ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr}))
     })));
-    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value).filter(basket => +basket.investedETH > 0);
+    baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
+      .filter(basket => +basket.investedETH > 0);
     this.baskets$.next(baskets);
     console.log(this.baskets$.value);
   }
@@ -68,7 +69,8 @@ export class ContractService {
           value: `${wei}`,
           gas: 6721975,
         });
-      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(response.transactionHash, 'updateUserDetails'), 1000);
+      this.transactionInterval = setInterval(async () =>
+        await this.checkIfTransactionSuccess(response.transactionHash, 'updateUserDetails'), 1000);
     } catch (e) {
       console.error(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');

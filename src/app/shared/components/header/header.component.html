@@ -1,10 +1,6 @@
 <nav
   [ngClass]="providerUserInfo ? 'bg-white' : 'bg-light'"
-  class="header navbar bg-secondary">
-  <div class="navbar-brand" href="#">
-    <img src="../../../../assets/images/reef/reef.svg" width="50" height="50"
-         class="d-inline-block align-top header__logo" alt="">
-  </div>
+  class="header bg-secondary">
   <div *ngIf="providerUserInfo; else noWalletTemplate" class="d-flex justify-content-center align-items-center">
     <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>
@@ -17,18 +13,16 @@
         (1ETH = ${{ ethPrice.ethereum.usd }})
       </div>
     </app-content-box>
-    <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
+    <app-content-box
+      class="mr-4"
+      *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
       <div class="small">USD</div>
     </app-content-box>
-    <app-content-box>
-      <app-address-shortener [address]="providerUserInfo.address"></app-address-shortener>
-    </app-content-box>
-    <!--      <div *ngIf="providerName">Connected to: {{ providerName }} on-->
-    <!--        chain {{ providerUserInfo.chainInfo.name || 'LOCAL' }}-->
-    <!--      </div>-->
-    <app-content-box>
-      <mat-icon aria-hidden="false" aria-label="select language">language</mat-icon>
+    <app-content-box
+      [isAddress]="true">
+      <app-address-shortener
+        [address]="providerUserInfo.address"></app-address-shortener>
     </app-content-box>
   </div>
 </nav>

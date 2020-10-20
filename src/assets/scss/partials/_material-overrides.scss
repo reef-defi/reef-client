@@ -38,17 +38,17 @@
 .mat-accent .mat-slider-thumb {
   height: 26px;
   width: 26px;
-  background-color: #DE5DA6 !important;
+  background-color: #F64E60 !important;
   bottom: -16px;
   right: -16px;
 }
 
 .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
-  background-color: #DE5DA6;
+  background-color: #F64E60;
 }
 
 .mat-slider-track-background {
-  background: map-get($theme-colors, lightest) !important;
+  background: #F3F3F3 !important;
 }
 
 .mat-dialog-container {
@@ -61,7 +61,7 @@
 }
 
 .mat-slide-toggle-thumb {
-  background: #DE5DA6 !important;
+  background: #F64E60 !important;
   z-index: 10000;
 }
 
@@ -70,12 +70,19 @@
 }
 
 .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
-  background: #DE5DA6 !important;
+  background: #F64E60 !important;
 }
 
 .mat-chip {
   background: #DE5DA6 !important;
   color: #ffffff !important;
+}
+
+.mat-select-value-text {
+  color: map-get($font-colors, dark);
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .apexcharts-tooltip {

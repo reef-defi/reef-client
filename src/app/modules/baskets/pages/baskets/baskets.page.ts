@@ -47,7 +47,7 @@ export class BasketsPage implements OnInit, OnDestroy {
     this.router.navigate(['baskets/create-basket']);
   }
 
-  private disinvest(data: any) {
+  private disinvest(data: any): void {
     this.contractService.disinvestInBasket(data[0], data[1], data[2]);
   }
 

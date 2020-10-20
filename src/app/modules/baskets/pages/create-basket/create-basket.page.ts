@@ -27,7 +27,7 @@ export class CreateBasketPage implements OnInit {
   readonly tokens$ = this.basketsService.tokens$;
   public basket: IGenerateBasketResponse = null;
   public poolChartOptions: Partial<PoolsChartOptions>;
-  public roiChartOptions: Partial<HistoricRoiChartOptions>;
+  public roiChartOptions: any;
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
   ethAmount = new FormControl(1);
@@ -61,17 +61,14 @@ export class CreateBasketPage implements OnInit {
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data, subtractMonths))
     ).subscribe((historicRoi: IBasketHistoricRoi) => {
-      const roi = this.extractRoi(historicRoi);
-      this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(historicRoi), roi);
+      this.roiChartOptions = this.chartsService.composeHighChart(this.extractRoi(historicRoi));
     });
   }
 
   getHistoricRoi(subtractMonths: number): void {
     this.currentRoiTimespan = subtractMonths;
     this.basketsService.getHistoricRoi(this.basket, subtractMonths).subscribe((hRoi: IBasketHistoricRoi) => {
-      const roi = this.extractRoi(hRoi);
-      this.roiChartOptions = this.chartsService.composeHistoricRoiChart(Object.keys(hRoi), roi);
-      console.log(this.roiChartOptions);
+      this.roiChartOptions = this.chartsService.composeHighChart(this.extractRoi(hRoi));
     });
   }
 
@@ -91,8 +88,8 @@ export class CreateBasketPage implements OnInit {
     this.poolService.getEthPrice().subscribe(console.log);
   }
 
-  private extractRoi(obj: IBasketHistoricRoi): number[] {
-    return Object.values(obj).map((val: any) => +val.weighted_roi.toFixed(3));
+  private extractRoi(obj: IBasketHistoricRoi): number[][] {
+    return Object.keys(obj).map((key) => [new Date(key).getTime(), +obj[key].weighted_roi.toFixed(2)]);
   }
 
   private makeBasket(basket: IGenerateBasketResponse): IGenerateBasketResponse {

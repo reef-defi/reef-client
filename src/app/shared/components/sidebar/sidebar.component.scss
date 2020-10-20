@@ -1,10 +1,9 @@
 @import '../../../../assets/scss/partials/variables';
 
 .sidebar {
-  margin-top: $header-height;
   width: $sidebar-width;
   min-height: 100vh;
-  background-color: $dark-primary;
+  background-color: $sidebar-primary;
   position: fixed;
   z-index: 999;
 }
@@ -15,17 +14,21 @@
   justify-content: center;
   align-items: center;
   margin-top: 40px;
+  color: #ffffff;
 }
 
-.menu-icon {
-  font-size: 2.5em;
-  color: white;
-  margin-bottom: 35px;
-  cursor: pointer;
+.menu-item {
+  font-size: 18px;
+  font-weight: 500;
+  &:hover {
+    background: #EAE8FD;
+    color: $sidebar-primary;
+    cursor: pointer;
+  }
 }
 
 .active {
-  background: $primary-gradient;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: #EAE8FD;
+  color: $sidebar-primary;
+  cursor: pointer;
 }

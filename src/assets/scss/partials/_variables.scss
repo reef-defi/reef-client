@@ -1,15 +1,21 @@
 $dark-primary: #10163A;
-$sidebar-width: 70px;
+$sidebar-width: 250px;
 $primary-gradient:  -webkit-linear-gradient(#A80DE6, #F37C8E);
 $header-height: 95px;
-
+$sidebar-primary: #887EF2;
 $theme-colors: (
-  "primary":    #364048,
+  "primary":    #887EF2,
   "secondary":  #B98EA7,
   "success":    #69DC9E,
   "info":       #10163A,
-  "light":      #F4F4F6,
+  "light":      #F8F8F8,
   "dark":       #252B48,
-  "danger":     #751446,
+  "danger":     #F64E60,
   "lightest":   #FFFFFF,
 );
+
+$font-colors: (
+  "primary":    #393939,
+  "light":      #848484,
+  "lightest":   #FFFFFF,
+)

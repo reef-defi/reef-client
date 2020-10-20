@@ -2,7 +2,7 @@
 
 button {
   &.regular {
-    background: $primary-gradient;
+    background: map-get($theme-colors, primary);
     color: white
   }
 
@@ -11,16 +11,21 @@ button {
     color: black;
   }
 
+  &.danger {
+    background: map-get($theme-colors, danger);
+  }
+
   &.button-large {
     width: 160px;
     height: 45px;
     -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
-    border-radius: 7px;
     border: none;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.4;
     font-size: 14px;
+    box-shadow: 0 0 5px #2C2296;
+    border-radius: 10px;
   }
 
   &.button-small {

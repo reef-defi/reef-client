@@ -56,7 +56,7 @@ export class ConnectorService {
   }
 
   public async onConnect(): Promise<any> {
-    this.currentProvider$.next(await this.web3Modal.connect())
+    this.currentProvider$.next(await this.web3Modal.connect());
     this.initWeb3(this.currentProvider$.value);
     await this.getUserProviderInfo();
     this.connectToContract();

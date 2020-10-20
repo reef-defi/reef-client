@@ -1,17 +1,12 @@
-.header__logo {
-  transform: scale(1.5);
-  margin-left: 10px;
-}
+@import '~src/assets/scss/partials/variables';
 
 .header {
-  position: fixed;
-  width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 15px 25px;
+  flex-direction: row-reverse;
+  margin-bottom: 30px;
   z-index: 998;
-}
-
-.header__shadow {
-  box-shadow: 0 3px 9px -1px #cccacc;
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00000024;
+  padding: 10px;
 }
