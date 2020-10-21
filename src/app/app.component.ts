@@ -15,11 +15,16 @@ export class AppComponent {
   provider$ = this.connectorService.currentProvider$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
-
+  public canEnter = false;
   constructor(
     private readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly apiService: ApiService,
-    private readonly contractService: ContractService) {}
+    private readonly contractService: ContractService) {
+    const pw = prompt('Welcome to Reef!');
+    if (pw === 'let me in master') {
+      this.canEnter = true;
+    }
+  }
 
 }
