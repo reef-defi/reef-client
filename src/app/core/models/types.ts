@@ -69,8 +69,9 @@ export interface IBasketPoolsAndCoinInfo {
 }
 
 export interface IBasket {
-  name: any;
+  name: string;
   investedETH: string[];
+  index: number;
   BalancerPools: {
     pools: any,
     weights: any;

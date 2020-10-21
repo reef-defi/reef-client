@@ -16,7 +16,7 @@
               <app-basket
                 [isListView]="isList.value"
                 [basket]="basket"
-                [basketIndex]="i"
+                [basketIndex]="basket.index"
                 (disinvest)="onDisinvest($event)">
               </app-basket>
             </div>
@@ -27,7 +27,7 @@
                 <app-basket
                   [isListView]="isList.value"
                   [basket]="basket"
-                  [basketIndex]="i"
+                  [basketIndex]="basket.index"
                   (disinvest)="onDisinvest($event)">
                 </app-basket>
               </div>

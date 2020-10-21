@@ -179,3 +179,20 @@ const getCorrectPool = (arr: string[], mapped: any, poolName = '') => {
   }
 };
 
+export const makeBasket = (basket: IGenerateBasketResponse): IGenerateBasketResponse => {
+  const b: IGenerateBasketResponse = Object.keys(basket)
+    .map(key => ({[key]: convertToInt(basket[key])})).reduce((memo, curr) => ({...memo, ...curr}));
+  const weights = Object.values(b);
+  const sum = weights.reduce((memo, curr) => memo + curr);
+  if (sum === 100) {
+    return b;
+  }
+  let max = Math.max(...weights);
+  const poolMax = Object.keys(b).find(key => b[key] === max);
+  max = sum > 100 ? max - (sum - 100) : max + (100 - sum);
+  return {
+    ...b,
+    [poolMax]: max
+  };
+}
+

@@ -3,7 +3,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { IBasketPoolsAndCoinInfo, IPoolsMetadata, PoolsChartOptions } from '../../../../core/models/types';
 import { BehaviorSubject } from 'rxjs';
-import { basketNameGenerator, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
+import { basketNameGenerator, getBasketPoolsAndCoins, makeBasket } from '../../../../core/utils/pools-utils';
 import { ContractService } from '../../../../core/services/contract.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
@@ -59,7 +59,7 @@ export class CustomBasketPage implements OnInit {
     const multiplier = (remainder - diff) / remainder;
     for (const pool in this.chartPoolData) {
       if (pool !== poolName) {
-        this.chartPoolData[pool] = +(this.chartPoolData[pool] * multiplier).toFixed(2);
+        this.chartPoolData[pool] = +Math.round(this.chartPoolData[pool] * multiplier);
       }
     }
     this.setChart();
@@ -77,7 +77,8 @@ export class CustomBasketPage implements OnInit {
   }
 
   async createBasket(ethAmount: number): Promise<any> {
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.chartPoolData, this.pools$.value, this.tokens$.value);
+    const basket = makeBasket(this.chartPoolData);
+    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
     console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
     await this.contractService.createBasket(name, basketPoolAndCoinInfo, ethAmount);
@@ -94,7 +95,7 @@ export class CustomBasketPage implements OnInit {
   private balancePoolAllocation(): void {
     const total = Object.keys(this.chartPoolData).length;
     Object.keys(this.chartPoolData).forEach(poolKey => {
-      this.chartPoolData[poolKey] = 100 / total;
+      this.chartPoolData[poolKey] = Math.floor(100 / total);
     });
     this.basketPayload = getBasketPoolsAndCoins(this.chartPoolData, this.pools$.value, this.tokens$.value);
     console.log(this.basketPayload);

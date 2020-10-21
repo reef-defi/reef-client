@@ -36,12 +36,6 @@
             add
           </mat-icon>
         </button>
-        <mat-slider
-          [disabled]="disabledSlider"
-          *ngIf="chartPoolData[pool.Symbol] >= 0"
-          min="1" max="99"
-          (valueChange)="onAllocChange(pool.Symbol, $event)"
-          [value]="chartPoolData[pool.Symbol]"></mat-slider>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
