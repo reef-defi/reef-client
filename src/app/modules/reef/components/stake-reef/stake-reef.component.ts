@@ -6,10 +6,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./stake-reef.component.scss']
 })
 export class StakeReefComponent {
-  @Output() stake = new EventEmitter();
+  @Output() stake = new EventEmitter<number>();
   constructor() { }
 
-  onStake(): void {
-    this.stake.emit();
+  onStake(amount: number): void {
+    this.stake.emit(amount);
   }
 }

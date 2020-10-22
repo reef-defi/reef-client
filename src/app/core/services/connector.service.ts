@@ -4,7 +4,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
-import { IChainData, IProviderUserInfo } from '../models/types';
+import { IChainData, IContract, IProviderUserInfo } from '../models/types';
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
 import { contractData } from '../../../assets/abi';
@@ -15,7 +15,10 @@ const Web3Modal = window.Web3Modal.default;
   providedIn: 'root'
 })
 export class ConnectorService {
-  contract$ = new BehaviorSubject(null);
+  basketContract$ = new BehaviorSubject<IContract>(null);
+  stakingContract$ = new BehaviorSubject<IContract>(null);
+  farmingContract$ = new BehaviorSubject<IContract>(null);
+  reefTokenContract$ = new BehaviorSubject<IContract>(null);
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
@@ -55,11 +58,12 @@ export class ConnectorService {
     });
   }
 
+
   public async onConnect(): Promise<any> {
     this.currentProvider$.next(await this.web3Modal.connect());
     this.initWeb3(this.currentProvider$.value);
-    await this.getUserProviderInfo();
     this.connectToContract();
+    await this.getUserProviderInfo();
   }
 
   public async onDisconnect(): Promise<any> {
@@ -89,17 +93,25 @@ export class ConnectorService {
     const address = await this.getAddress();
     const balance = await this.getUserBalance(address);
     const chainInfo = await this.getChainInfo();
+    const reefBalance = await this.getReefBalance(address);
     this.providerUserInfo$.next({
       address,
       balance,
       chainInfo,
+      reefBalance,
     });
     console.log(this.providerUserInfo$.value, 'VAL');
   }
 
   private connectToContract(): void {
-    const contract = new this.web3.eth.Contract((contractData.abi as any), contractData.addr);
-    this.contract$.next(contract);
+    const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
+    const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
+    const stakingC = new this.web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
+    const tokenC = new this.web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
+    this.basketContract$.next(basketsC);
+    this.farmingContract$.next(farmingC);
+    this.stakingContract$.next(stakingC);
+    this.reefTokenContract$.next(tokenC);
   }
 
   private async initWeb3Modal(): Promise<any> {
@@ -163,6 +175,11 @@ export class ConnectorService {
   private async getChainInfo(): Promise<IChainData> {
     const chainId = await this.web3.eth.getChainId();
     return getChainData(chainId);
+  }
+
+  private async getReefBalance(address: string): Promise<number> {
+    const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
+    return await this.web3.utils.fromWei(balance);
   }
 }
 

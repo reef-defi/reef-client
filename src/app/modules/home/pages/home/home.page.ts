@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.page.scss']
 })
 export class HomePage implements OnInit {
-  public contract$ = this.contractService.contract$;
+  public contract$ = this.contractService.basketContract$;
   public isWalletConnected$ = this.connectorService.currentProviderName$;
 
   constructor(
