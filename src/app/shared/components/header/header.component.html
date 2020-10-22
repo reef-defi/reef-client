@@ -5,7 +5,7 @@
     <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>
         <span>
-          {{ providerUserInfo.balance | slice:0:6 }}
+          {{ providerUserInfo.balance | number }}
         </span>
         <span class="cc ETH"></span>
       </div>
@@ -14,10 +14,20 @@
       </div>
     </app-content-box>
     <app-content-box
-      class="mr-4"
       *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
       <div class="small">USD</div>
+    </app-content-box>
+    <app-content-box class="mr-4">
+      <div>
+        <span>
+          {{ (providerUserInfo.reefBalance || 0) | number }}
+        </span>
+        <img src="../../../../assets/images/reef/reef-token.png" width="16" height="16">
+      </div>
+      <div class="small">
+        (1REEF = $1)
+      </div>
     </app-content-box>
     <app-content-box
       [isAddress]="true">

@@ -3,14 +3,17 @@ import { ConnectorService } from './connector.service';
 import { BehaviorSubject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
-import { getBasketPoolNames } from '../utils/pools-utils';
+import { getBasketPoolNames, MaxUint256 } from '../utils/pools-utils';
 import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContractService {
-  contract$ = this.connectorService.contract$;
+  basketContract$ = this.connectorService.basketContract$;
+  farmingContract$ = this.connectorService.farmingContract$;
+  stakingContract$ = this.connectorService.stakingContract$;
+  reefTokenContract$ = this.connectorService.reefTokenContract$;
   baskets$ = new BehaviorSubject<IBasket[] | null>(null);
   readonly basketsError$ = new BehaviorSubject(null);
   readonly loading$ = new BehaviorSubject(false);
@@ -21,6 +24,7 @@ export class ContractService {
     private readonly notificationService: NotificationService,
     private readonly apiService: ApiService) {
   }
+
 
   async getAllBaskets(): Promise<any> {
     this.loading$.next(true);
@@ -54,15 +58,16 @@ export class ContractService {
   }
 
   getAvailableBasketsCount(): Promise<any> {
-    return this.contract$.value.methods.availableBasketsSize().call();
+    return this.basketContract$.value.methods.availableBasketsSize().call();
   }
 
   getAvailableBasket(basketIdx: number): Promise<any> {
-    return this.contract$.value.methods.availableBaskets(basketIdx).call();
+    return this.basketContract$.value.methods.availableBaskets(basketIdx).call();
   }
 
   async getUserInvestedBasketAmount(idx: number): Promise<any> {
-    const invested = await this.contract$.value.methods.investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
+    const invested: number = await this.basketContract$.value.methods
+      .investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
     return await this.connectorService.fromWei(invested);
   }
 
@@ -71,8 +76,8 @@ export class ContractService {
       const wei = this.connectorService.toWei(amountToInvest);
       const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
         = basketPoolTokenInfo;
-      console.log(this.contract$.value.options.jsonInterface, 'FROM_CREATE');
-      const response = await this.contract$.value.methods
+      console.log(this.basketContract$.value.options.jsonInterface, 'FROM_CREATE');
+      const response = await this.basketContract$.value.methods
         .createBasket(
           name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
         .send({
@@ -80,7 +85,6 @@ export class ContractService {
           value: `${wei}`,
           gas: 6721975,
         });
-      console.log('STARING MINING...')
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(response.transactionHash, ['updateUserDetails']), 1000);
     } catch (e) {
@@ -92,7 +96,7 @@ export class ContractService {
   getBalanceOf(basketIdx): Promise<any> {
     // TODO: get balances of all polls...
     console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???');
-    return this.contract$.value.methods.getAvailableBasketUniswapPools(basketIdx).call();
+    return this.basketContract$.value.methods.getAvailableBasketUniswapPools(basketIdx).call();
   }
 
   async getBasketPoolsAndTokens(basketIdx: number): Promise<any[]> {
@@ -100,7 +104,7 @@ export class ContractService {
       'getAvailableBasketUniswapPools', 'getAvailableBasketTokens', 'getAvailableBasketBalancerPools', 'getAvailableBasketMooniswapPools',
     ];
     const unpack = async (fn) => {
-      const res = await this.contract$.value.methods[fn](basketIdx).call();
+      const res = await this.basketContract$.value.methods[fn](basketIdx).call();
       return {
         pools: res[0],
         weights: res[1],
@@ -114,7 +118,7 @@ export class ContractService {
   async disinvestInBasket(basketIdxs: number[], basketIdxPercentage: number[], yieldRatio: number): Promise<any> {
     try {
       console.log(basketIdxs, basketIdxPercentage, yieldRatio, 'Disinvest Params');
-      const res = await this.contract$.value.methods.disinvest(
+      const res = await this.basketContract$.value.methods.disinvest(
         basketIdxs,
         basketIdxPercentage,
         yieldRatio,
@@ -124,12 +128,45 @@ export class ContractService {
           from: this.connectorService.providerUserInfo$.value.address,
           gas: 6721975,
         });
-      console.log('STARING MINING...')
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash, ['getAllBaskets', 'updateUserDetails']), 1000);
     } catch (e) {
       console.log(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
+  }
+
+  async stakeReef(amount: number): Promise<any> {
+    try {
+      const value = await this.connectorService.toWei(amount);
+      const res = await this.stakingContract$.value.methods.stake(value)
+        .send({
+          from: this.connectorService.providerUserInfo$.value.address,
+          gas: 6721975
+        });
+      this.transactionInterval = setInterval(async () =>
+        await this.checkIfTransactionSuccess(res.transactionHash, ['updateUserDetails']), 1000);
+    } catch (e) {
+      this.notificationService.showNotification(e.message, 'Close', 'error');
+    }
+  }
+
+  async approveToken(token: any, spenderAddr: string): Promise<any> {
+    const allowance = await this.getAllowance(token, spenderAddr);
+    console.log(allowance, 'allowance');
+    if (allowance && +allowance > 0) {
+      return true;
+    }
+    return await token.methods.approve(
+      spenderAddr,
+      MaxUint256.toString()
+    ).send({
+      from: this.connectorService.providerUserInfo$.value.address, // hardcode
+    });
+  }
+
+
+  private async getAllowance(token: any, spenderAddr: string): Promise<any> {
+    return token.methods.allowance(this.connectorService.providerUserInfo$.value.address, spenderAddr).call();
   }
 
   private updateUserDetails() {

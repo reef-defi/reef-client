@@ -13,7 +13,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./baskets.page.scss']
 })
 export class BasketsPage implements OnInit, OnDestroy {
-  readonly contract$ = this.contractService.contract$;
+  readonly contract$ = this.contractService.basketContract$;
   readonly baskets$ = this.contractService.baskets$;
   readonly basketsError$ = this.contractService.basketsError$;
   readonly loading$ = this.contractService.loading$;
@@ -42,7 +42,7 @@ export class BasketsPage implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe((result) => {
         if (result) {
-          this.disinvest(result);
+          this.disinvestBasket(result);
         }
       });
   }
@@ -51,7 +51,7 @@ export class BasketsPage implements OnInit, OnDestroy {
     this.router.navigate(['baskets/create-basket']);
   }
 
-  private disinvest(data: any): void {
+  private disinvestBasket(data: any): void {
     this.contractService.disinvestInBasket(data[0], data[1], data[2]);
   }
 

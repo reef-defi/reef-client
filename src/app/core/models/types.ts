@@ -12,10 +12,67 @@ import {
   ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
+export interface IContract {
+  defaultAccount: string;
+  defaultBlock: number | string;
+  defaultHardFork: string;
+  defaultChain: string;
+  defaultCommon: {
+    customChain: any;
+    baseChain: string;
+    hardfork?: string;
+  };
+  transactionBlockTimeout: number;
+  transactionConfirmationBlocks: number;
+  transactionPollingTimeout: number;
+  handleRevert: boolean;
+  options: IContractOptions;
+  clone: () => IContract;
+  deploy: (opts: IContractOptions) => any;
+  methods: {
+    [key: string]: ContractMethod;
+  };
+  once: (event: string, options?: any, cb?: () => any) => undefined;
+  events: any;
+  getPastEvents: (event: string, options?: any, cb?: () => any) => Promise<any[]>;
+}
+
+type ContractMethod = (...params: any) => {
+  arguments: [];
+  call: <T>(
+    options?: { from?: string, gasPrice?: string, gas?: number },
+    defaultBlock?: number | string,
+    callback?: () => any,
+  ) => Promise<T>;
+  send: <T>(
+    options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number },
+    callback?: () => any,
+  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any}>;
+  estimateGas: (options?: { from?: string, gas?: number, value?: number | string}) => Promise<number>;
+  encodeAbi: () => string;
+};
+
+interface IContractOptions {
+  address: string;
+  jsonInterface: [];
+  data: string;
+  from: string;
+  gasPrice: string;
+  gas: number;
+  handleRevert: boolean;
+  transactionBlockTimeout: number;
+  transactionConfirmationBlocks: number;
+  transactionPollingTimeout: number;
+  chain: number;
+  hardfork: number;
+  common: number;
+}
+
 export interface IProviderUserInfo {
   address: string;
   balance: string;
   chainInfo: IChainData;
+  reefBalance: number;
 }
 
 export interface IChainData {
