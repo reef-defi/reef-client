@@ -137,9 +137,8 @@ export class ContractService {
 
   async stakeReef(amount: number): Promise<any> {
     try {
-      console.log(this.connectorService.providerUserInfo$.value, 'VALL...');
-      const hey = await this.connectorService.toWei(amount);
-      const res = await this.stakingContract$.value.methods.stake(hey)
+      const value = await this.connectorService.toWei(amount);
+      const res = await this.stakingContract$.value.methods.stake(value)
         .send({
           from: this.connectorService.providerUserInfo$.value.address,
           gas: 6721975
@@ -147,7 +146,7 @@ export class ContractService {
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res.transactionHash, ['updateUserDetails']), 1000);
     } catch (e) {
-      console.log(e);
+      this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }
 
