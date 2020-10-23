@@ -6,6 +6,7 @@
         class="main light min-vh-100 container-fluid">
         <app-header
           *ngIf="obs.providerUserInfo"
+          [version]="VERSION"
           [ethPrice]="obs.ethPrice"
           [providerName]="obs.providerName"
           [providerUserInfo]="obs.providerUserInfo">
@@ -16,8 +17,6 @@
     </div>
   </div>
   <ng-template #noPermissions>
-    <div class="heading__xl">
-      Sorry boss. VIP personnel only ¯\_(ツ)_/¯
-    </div>
+    <div class="no-permissions"></div>
   </ng-template>
 </ng-container>

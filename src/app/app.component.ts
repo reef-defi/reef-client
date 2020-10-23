@@ -10,6 +10,7 @@ import { ContractService } from './core/services/contract.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  readonly VERSION = '0.0.1-alpha';
   providerName$ = this.connectorService.currentProviderName$;
   provider$ = this.connectorService.currentProvider$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;

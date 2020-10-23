@@ -7,6 +7,7 @@ import { EthPrice, IProviderUserInfo } from '../../../core/models/types';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  @Input() version: string | undefined;
   @Input() providerName: string | undefined;
   @Input() providerUserInfo: IProviderUserInfo | undefined;
   @Input() ethPrice: EthPrice | undefined;

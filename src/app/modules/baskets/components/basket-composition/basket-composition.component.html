@@ -1,8 +1,8 @@
 <div
   id="createBasketComposition"
   class="content__container" *ngIf="!isList">
-  <div class="mb-4">
-    <div class="heading__lg basket-composition__heading">COMPOSITION</div>
+  <div>
+    <div class="heading__lg mb-3">COMPOSITION</div>
     <div *ngIf="basket; else loadingTemplate">
       <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
         <div class="label__md mb-1">{{ key }}</div>
