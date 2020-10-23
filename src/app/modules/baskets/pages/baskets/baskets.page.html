@@ -3,9 +3,8 @@
     <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
       <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
         <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
-          <div class="d-flex justify-content-between">
-            <div class="heading__lg mb-3">MY BASKETS</div>
-
+          <div class="d-flex justify-content-between mt-3 mb-3">
+            <div class="heading__lg">MY BASKETS</div>
             <div>
               <mat-slide-toggle [formControl]="isList">
                 <div class="subheading__md">{{ isList.value ? 'List' : 'Grid' }} view</div>
