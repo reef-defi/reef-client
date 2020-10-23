@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ConnectorService } from './core/services/connector.service';
 import { PoolService } from './core/services/pool.service';
 import { ApiService } from './core/services/api.service';
-import { first } from 'rxjs/operators';
 import { ContractService } from './core/services/contract.service';
 
 @Component({

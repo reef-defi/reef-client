@@ -138,15 +138,15 @@ export const getBasketPoolNames = (baskets: IBasket[], pools: IPoolsMetadata[], 
       ...basket,
       UniswapPools: {
         ...basket.UniswapPools,
-        pools: getCorrectPool(basket.UniswapPools.pools, up, 'uniswap')
+        pools: getCorrectPool(basket.UniswapPools.pools, up, 'Uniswap')
       },
       BalancerPools: {
         ...basket.BalancerPools,
-        pools: getCorrectPool(basket.BalancerPools.pools, bp)
+        pools: getCorrectPool(basket.BalancerPools.pools, bp, 'Balancer')
       },
       MooniswapPools: {
         ...basket.MooniswapPools,
-        pools: getCorrectPool(basket.MooniswapPools.pools, mp)
+        pools: getCorrectPool(basket.MooniswapPools.pools, mp, 'Mooniswap')
       },
     };
   });
@@ -173,9 +173,9 @@ const getCorrectPool = (arr: string[], mapped: any, poolName = '') => {
     return [...mapped];
   } else {
     if (poolName === 'uniswap') {
-      return arr.map(x => ({ name: 'Uniswap Pool', pair: [...x]}));
+      return arr.map(x => ({ name: `${poolName} Pool`, pair: [...x]}));
     } else {
-      return arr.map(x => ({ name: 'Uniswap Pool', address: x}));
+      return arr.map(x => ({ name: `${poolName} Pool`, address: x}));
     }
   }
 };

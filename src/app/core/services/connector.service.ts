@@ -64,9 +64,9 @@ export class ConnectorService {
   public async onConnect(): Promise<any> {
     this.currentProvider$.next(await this.web3Modal.connect());
     this.initWeb3(this.currentProvider$.value);
-    this.connectToContract();
     this.subToProviderEvents();
     await this.getUserProviderInfo();
+    await this.connectToContract();
   }
 
   public async onDisconnect(): Promise<any> {
@@ -77,7 +77,6 @@ export class ConnectorService {
       await this.web3.currentProvider.close();
     }
     await this.web3Modal.clearCachedProvider();
-    console.log('damn');
   }
 
   public async getTransactionReceipt(txHash: string): Promise<any> {
@@ -103,10 +102,9 @@ export class ConnectorService {
       chainInfo,
       reefBalance,
     });
-    console.log(this.providerUserInfo$.value, 'VAL');
   }
 
-  private connectToContract(): void {
+  private async connectToContract(): Promise<void> {
     const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
     const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
     const stakingC = new this.web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
@@ -115,6 +113,11 @@ export class ConnectorService {
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
     this.reefTokenContract$.next(tokenC);
+    const reefBalance = await this.getReefBalance(this.providerUserInfo$.value.address);
+    this.providerUserInfo$.next({
+      ...this.providerUserInfo$.value,
+      reefBalance
+    });
   }
 
   private async initWeb3Modal(): Promise<any> {
@@ -154,7 +157,6 @@ export class ConnectorService {
       window.location.reload();
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
-      console.log(chainId);
       window.location.reload();
     });
   }
@@ -174,9 +176,11 @@ export class ConnectorService {
     return getChainData(chainId);
   }
 
-  private async getReefBalance(address: string): Promise<number> {
-    const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
-    return await this.web3.utils.fromWei(balance);
+  private async getReefBalance(address: string): Promise<string> {
+    if (this.reefTokenContract$.value) {
+      const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
+      return await this.web3.utils.fromWei(balance);
+    }
   }
 }
 
