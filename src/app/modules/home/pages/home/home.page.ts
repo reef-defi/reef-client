@@ -13,7 +13,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
   styleUrls: ['./home.page.scss']
 })
 export class HomePage implements OnInit, AfterViewInit {
-  private readonly EnjoyHint = new (window as any).EnjoyHint({});
   public contract$ = this.contractService.basketContract$;
   public isWalletConnected$ = this.connectorService.currentProviderName$;
 
@@ -30,13 +29,14 @@ export class HomePage implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const hasViewed = localStorage.getItem('reef_tutorial_viewed');
     if (JSON.parse(hasViewed) !== true) {
+      const EnjoyHint = new (window as any).EnjoyHint({});
       this.isWalletConnected$.pipe(
         first((el) => !!el)
       ).subscribe((data) => {
         if (data) {
           setTimeout(() => {
-            this.EnjoyHint.set(hintSteps);
-            this.EnjoyHint.run();
+            EnjoyHint.set(hintSteps);
+            EnjoyHint.run();
           }, 1000);
           localStorage.setItem('reef_tutorial_viewed', 'true');
         }
