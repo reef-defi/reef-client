@@ -25,7 +25,6 @@ export class ContractService {
     private readonly apiService: ApiService) {
   }
 
-
   async getAllBaskets(): Promise<any> {
     this.loading$.next(true);
     try {
@@ -43,7 +42,6 @@ export class ContractService {
       })));
       baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
         .filter(basket => +basket.investedETH > 0);
-      console.log(baskets, 'wtf??')
       this.baskets$.next(baskets);
       this.basketsError$.next(false);
       this.loading$.next(false);

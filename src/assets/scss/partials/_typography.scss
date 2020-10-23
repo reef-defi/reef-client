@@ -68,6 +68,12 @@
   color: map_get($font-colors, dark);
 }
 
+p {
+  color: map_get($font-colors, light);
+  font-size: 14px;
+  font-weight: 300;
+}
+
 .apexcharts-gridline:not(:last-child) {
   display: none;
 }

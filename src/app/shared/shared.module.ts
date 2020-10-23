@@ -29,6 +29,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { MatSelectModule } from '@angular/material/select';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 const components = [
@@ -42,11 +43,11 @@ const modules = [
   RouterModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
-  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule,
+  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, ],
+  declarations: [...components, ...directives, ...pipes,],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
