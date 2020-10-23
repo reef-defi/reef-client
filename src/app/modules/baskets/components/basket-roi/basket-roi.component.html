@@ -1,10 +1,10 @@
 <div
-  *ngIf="!isList"
-  class="d-flex flex-column content__container">
-  <div class="heading__lg mb-2">
+  class="d-flex flex-column"
+  [class.content__container]="!isList">
+  <div *ngIf="!isList" class="heading__lg mb-2">
     HISTORIC SIMULATED PERFORMANCE
   </div>
-  <div class="d-flex flex-column" *ngIf="options && options.chart; else loadingTemplate">
+  <div class="d-flex flex-column">
     <div class="row">
       <div class="col-2 offset-10">
         <mat-select>
@@ -16,31 +16,7 @@
         </mat-select>
       </div>
     </div>
-    <div>
-      <highcharts-chart
-        [Highcharts]="HighCharts"
-        [options]="options"
-        [(update)]="updateFlag"
-        style="width: 100%; height: 400px; display: block;"
-      ></highcharts-chart>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="isList">
-  <div class="d-flex flex-column" *ngIf="options && options.chart; else loadingTemplate">
-    <div class="row">
-      <div class="col-2 offset-10">
-        <mat-select>
-          <mat-option
-            (click)="onDateSpanChange(time)"
-            *ngFor="let time of [1, 6, 12]" [value]="time">
-            Last {{ time }} month(s)
-          </mat-option>
-        </mat-select>
-      </div>
-    </div>
-    <div>
+    <div *ngIf="options && options.chart; else loadingTemplate">
       <highcharts-chart
         [Highcharts]="HighCharts"
         [options]="options"

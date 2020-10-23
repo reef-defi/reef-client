@@ -50,12 +50,14 @@ export class ConnectorService {
   public web3 = null;
 
   constructor(private readonly notificationService: NotificationService) {
-    this.initWeb3Modal().then(() => {
-      this.subToProviderEvents();
-      this.connectToContract();
-    }).catch((err: any) => {
-      this.notificationService.showNotification('To proceed, connect your wallet', 'Ok.', 'info');
+    this.web3Modal = new Web3Modal({
+      providerOptions: this.providerOptions,
+      cacheProvider: true,
+      disableInjectedProvider: false
     });
+    if (this.web3Modal.cachedProvider) {
+      this.onConnect();
+    }
   }
 
 
@@ -63,6 +65,7 @@ export class ConnectorService {
     this.currentProvider$.next(await this.web3Modal.connect());
     this.initWeb3(this.currentProvider$.value);
     this.connectToContract();
+    this.subToProviderEvents();
     await this.getUserProviderInfo();
   }
 
@@ -145,15 +148,9 @@ export class ConnectorService {
       return;
     }
     this.currentProvider$.value.on('connect', () => {
-      console.log('connected!');
     });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on('accountsChanged', async (accounts: string[]) => {
-      // this.providerUserInfo$.next({
-      //   ...this.providerUserInfo$.value,
-      //   address: accounts[0],
-      //   balance: await this.getUserBalance(accounts[0])
-      // });
       window.location.reload();
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {

@@ -25,7 +25,7 @@
         min="1" max="100" step="1" [formControl]="riskAmount"></mat-slider>
     </div>
   </div>
-  <div class="d-flex flex-column justify-content-center align-items-center">
+  <div class="d-flex flex-column justify-content-center align-items-center mt-auto">
     <button mat-ripple (click)="onInvest()" class="button-large regular mt-5 mb-3 w-100">INVEST</button>
     <a class="small" [routerLink]="['/baskets/custom-basket']">Create a custom basket instead?</a>
   </div>

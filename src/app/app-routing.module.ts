@@ -16,6 +16,10 @@ const routes: Routes = [
     path: 'reef',
     loadChildren: () => import('./modules/reef/reef.module').then(m => m.ReefModule),
     canActivate: [WalletGuard],
+  },
+  {
+    path: '**',
+    redirectTo: '/'
   }
 ];
 

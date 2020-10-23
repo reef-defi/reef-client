@@ -5,6 +5,8 @@
 }
 
 .content__container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   background: map-get($theme-colors, lightest);
   color: map-get($font-colors, dark);
