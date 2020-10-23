@@ -3,7 +3,7 @@
 button {
   &.regular {
     background: map-get($theme-colors, primary);
-    color: white
+    color: white;
   }
 
   &.inverse {
@@ -42,6 +42,55 @@ button {
   }
 }
 
+.enjoyhint_next_btn.regular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: map-get($theme-colors, primary);
+  color: white;
+  width: 55px;
+  height: 40px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 7px;
+  text-align: center;
+  border: 0.3px solid #DADADA;
+  border-radius: 3px;
+}
+
+.enjoyhint_skip_btn.danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: map-get($theme-colors, danger);
+  color: white;
+  width: 55px;
+  height: 40px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 7px;
+  text-align: center;
+  border: 0.3px solid #DADADA;
+  border-radius: 3px;
+}
+.enjoyhint_prev_btn.inverse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: black;
+  width: 55px;
+  height: 40px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 7px;
+  text-align: center;
+  border: 0.3px solid #DADADA;
+  border-radius: 3px;
+}
 .mat-icon.icon-button {
   color: #DE5DA6;
 }

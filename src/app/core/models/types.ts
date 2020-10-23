@@ -72,7 +72,7 @@ export interface IProviderUserInfo {
   address: string;
   balance: string;
   chainInfo: IChainData;
-  reefBalance: number;
+  reefBalance: string;
 }
 
 export interface IChainData {

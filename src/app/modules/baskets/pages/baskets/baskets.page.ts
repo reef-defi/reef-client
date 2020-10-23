@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ContractService } from '../../../../core/services/contract.service';
 import { first, take } from 'rxjs/operators';
 import { ConnectorService } from '../../../../core/services/connector.service';
@@ -6,13 +6,12 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LiquidateModalComponent } from '../../components/liquidate-modal/liquidate-modal.component';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-
 @Component({
   selector: 'app-baskets',
   templateUrl: './baskets.page.html',
   styleUrls: ['./baskets.page.scss']
 })
-export class BasketsPage implements OnInit, OnDestroy {
+export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   readonly contract$ = this.contractService.basketContract$;
   readonly baskets$ = this.contractService.baskets$;
   readonly basketsError$ = this.contractService.basketsError$;
@@ -30,6 +29,10 @@ export class BasketsPage implements OnInit, OnDestroy {
     this.contract$.pipe(
       first(ev => !!ev)
     ).subscribe(() => this.getAllBaskets());
+  }
+
+  ngAfterViewInit(): void {
+
   }
 
   ngOnDestroy(): void {

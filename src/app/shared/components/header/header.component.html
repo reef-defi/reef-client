@@ -2,7 +2,9 @@
   [ngClass]="providerUserInfo ? 'bg-white' : 'bg-light'"
   class="header bg-secondary">
   <div *ngIf="providerUserInfo; else noWalletTemplate" class="d-flex justify-content-center align-items-center">
-    <app-content-box *ngIf="ethPrice && ethPrice.ethereum.usd">
+    <app-content-box
+      id="ethWalletAmount"
+      *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>
         <span>
           {{ providerUserInfo.balance | number }}
@@ -14,11 +16,12 @@
       </div>
     </app-content-box>
     <app-content-box
+      id="usdAmount"
       *ngIf="ethPrice && ethPrice.ethereum.usd">
       <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
       <div class="small">USD</div>
     </app-content-box>
-    <app-content-box class="mr-4">
+    <app-content-box id="reefTokenAmount" class="mr-4">
       <div>
         <span>
           {{ (providerUserInfo.reefBalance || 0) | number }}

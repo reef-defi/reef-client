@@ -1,5 +1,5 @@
 <ng-container *ngIf="{ ethPrice: ethPrice$ | async, providerName: providerName$ | async, providerUserInfo: providerUserInfo$ | async } as obs">
-  <div class="min-vh-100">
+  <div id="mainContainer" class="min-vh-100">
     <div *ngIf="canEnter; else noPermissions">
       <app-sidebar *ngIf="obs.providerUserInfo"></app-sidebar>
       <div

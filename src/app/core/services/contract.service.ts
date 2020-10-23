@@ -47,6 +47,7 @@ export class ContractService {
       this.basketsError$.next(false);
       this.loading$.next(false);
     } catch (e) {
+      console.log(e, 'Fucking error');
       this.basketsError$.next(true);
       this.loading$.next(false);
     }
