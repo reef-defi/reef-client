@@ -5,7 +5,7 @@
         <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
           <div class="d-flex justify-content-between mt-3 mb-3">
             <div class="heading__lg">MY BASKETS</div>
-            <div>
+            <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
               <mat-slide-toggle [formControl]="isList">
                 <div class="subheading__md">{{ isList.value ? 'List' : 'Grid' }} view</div>
               </mat-slide-toggle>

@@ -1,10 +1,17 @@
-@import '~src/assets/scss/partials/variables';
+@import '~src/assets/scss/styles';
 $mid: 50%;
 
 .center-loader {
   position: absolute;
-  top: calc(#{$mid} + #{$header-height - 50px});
-  left: calc(#{$mid} + #{$sidebar-width - 100px});
-  margin-right: calc(-#{$mid} + #{$sidebar-width});
   transform: translate(-50%, -50%);
+  @include media-breakpoint-down(md) {
+    top: 50%;
+    left: 50%;
+    margin-right: calc(-#{$mid} + #{$mobile-sidebar-width});
+  }
+  @include media-breakpoint-up(md) {
+    top: calc(#{$mid} + #{$header-height - 50px});
+    left: calc(#{$mid} + #{$sidebar-width - 100px});
+    margin-right: calc(-#{$mid} + #{$sidebar-width});
+  }
 }

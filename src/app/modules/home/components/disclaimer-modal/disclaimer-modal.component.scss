@@ -1,0 +1,18 @@
+@import '~src/assets/scss/styles';
+
+.dialog__footer {
+  display: flex !important;
+  @include media-breakpoint-up(md) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  @include media-breakpoint-down(md) {
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: space-around;
+    div:nth-child(2) {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
