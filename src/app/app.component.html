@@ -3,6 +3,7 @@
     <div *ngIf="canEnter; else noPermissions">
       <app-sidebar *ngIf="obs.providerUserInfo"></app-sidebar>
       <div
+        [class.main__active]="obs.providerUserInfo"
         class="main light min-vh-100 container-fluid">
         <app-header
           *ngIf="obs.providerUserInfo"

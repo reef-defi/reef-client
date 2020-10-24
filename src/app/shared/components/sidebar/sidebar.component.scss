@@ -1,11 +1,29 @@
-@import '../../../../assets/scss/partials/variables';
+@import '~src/assets/scss/styles';
 
 .sidebar {
-  width: $sidebar-width;
   min-height: 100vh;
   background-color: $sidebar-primary;
   position: fixed;
   z-index: 999;
+  @include media-breakpoint-between(sm, xl) {
+    width: $sidebar-width;
+  }
+  @include media-breakpoint-down(md) {
+    width: $mobile-sidebar-width;
+  }
+}
+
+.sidebar__label {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}
+
+.sidebar__icon {
+  margin-left: 1rem;
+  @include media-breakpoint-down(md) {
+    margin: 0 5px;
+  }
 }
 
 .icon-container {
@@ -20,6 +38,7 @@
 .menu-item {
   font-size: 18px;
   font-weight: 500;
+
   &:hover {
     background: #EAE8FD;
     color: $sidebar-primary;

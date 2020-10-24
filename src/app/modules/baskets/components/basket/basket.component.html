@@ -2,23 +2,23 @@
   *ngIf="isListView"
   class="content__container w-100">
   <div class="row justify-content-between align-items-center">
-    <div class="col-2 d-flex text-center flex-column justify-content-center align-content-center">
-      <div class="heading__lg font-weight-bold mb-5">{{ basket.name }}</div>
+    <div class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center">
+      <div class="heading__lg font-weight-bold mb-3">{{ basket.name }}</div>
       <div class="heading__lg font-weight-bold mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
-      <div class="subheading__lg mb-5">INVESTED</div>
+      <div class="subheading__lg mb-3">INVESTED</div>
       <div class="heading__lg font-weight-bold mb-1 roi__percent">+51% ROI</div>
-      <div class="subheading__lg mb-5">+ 5.61 ETH</div>
-      <div>
+      <div class="subheading__lg mb-3">+ 5.61 ETH</div>
+      <div class="mb-3">
         <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>
       </div>
     </div>
-    <div class="col-3">
+    <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
       <ng-container *ngIf="poolChartOptions; else loadingTemplate">
         <app-basket-composition [basket]="pureBasket" [isList]="true">
         </app-basket-composition>
       </ng-container>
     </div>
-    <div class="col-6">
+    <div class="col-lg-6 col-xl-6 col-sm-12 col-md-12">
       <ng-container *ngIf="roiData; else loadingTemplate">
         <app-basket-roi
           [roiData]="roiData"
@@ -37,14 +37,14 @@
       {{ basket.name }}
     </div>
   </div>
-  <div class="row mb-3">
+  <div class="row mb-2">
     <div class="col-3">
       <div class="heading__lg font-weight-bold mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
-      <div class="subheading__lg mb-5">INVESTED</div>
+      <div class="subheading__lg mb-3">INVESTED</div>
     </div>
     <div class="col-3">
       <div class="heading__lg font-weight-bold mb-1 roi__percent">+51% ROI</div>
-      <div class="subheading__lg mb-5">+ 5.61 ETH</div>
+      <div class="subheading__lg mb-3">+ 5.61 ETH</div>
     </div>
     <div class="col-6">
       <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>

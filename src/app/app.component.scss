@@ -1,9 +1,15 @@
-@import '~src/assets/scss/partials/variables';
+@import '~src/assets/scss/styles';
 
 .main {
-  padding-left: $sidebar-width + 30px;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.main__active {
+  padding-left: $sidebar-width + 30px;
+  @include media-breakpoint-down(md) {
+    padding-left: $mobile-sidebar-width + 15px;
+  }
 }
 
 .dark {

@@ -1,12 +1,14 @@
-@import '../../../../assets/scss/partials/variables';
+@import '~src/assets/scss/styles';
 
 .footer {
   position: absolute;
   bottom: 0;
-  padding: 20px;
-  margin-left: $sidebar-width;
+  padding: 5px;
   color: map-get($theme-colors, dark);
   background: map-get($theme-colors, light);
+  @include media-breakpoint-up(md) {
+    margin-left: $sidebar-width;
+  }
 }
 
 .footer__company {

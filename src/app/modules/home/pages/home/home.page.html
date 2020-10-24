@@ -1,35 +1,34 @@
-<div class="row">
-  <div class="col-6 heading__container">
-    <div class="row">
-      <div class="col-10 offset-2">
-        <div id="welcome_to_reef" class="heading__xl mb-4">Welcome to Reef!</div>
-        <div class="row">
-          <div class="col-8">
-            <div class="subheading__xl mb-3 text-break">If you've never used Reef before, read through our quick
-              introduction
-              first.
-            </div>
-          </div>
-        </div>
+<div class="row align-items-center">
+  <div id="welcome_to_reef"
+       class="col-lg-6 col-md-12 heading__container d-flex flex-column align-items-center text-center">
+    <div class="heading__xl text-break heading__title">
+      <div class="mr-2 heading__title--welcome">
+        Welcome to
       </div>
+      <img
+        width="150"
+        height="75"
+        src="../../../../../assets/images/reef/reef-v2.svg"
+        class="img-fluid"/>
+    </div>
+    <div class="subheading__xl mb-3 text-break">
+      If you've never used Reef before, read through our quick
+      introduction
+      first.
     </div>
   </div>
-  <div class="col-6 wallet__container">
-    <div class="row">
-      <div class="col-10 wallet__wrapper content__container justify-content-center align-content-center">
-        <div class="heading__lg text-center mb-5">Connect your wallet!</div>
-        <div class="text-center">
-          <div *ngIf="isWalletConnected$ | async; else notConnectedTemplate">
-            <ng-container *ngIf="contract$ | async as contract; else connectingContractTemplate">
-              <div class="mb-5">
-                <div class="text-success small">Connected to contract</div>
-              </div>
-            </ng-container>
-            <div>
-              <button class="button-large" (click)="onDisconnect()">Disconnect from Wallet</button>
-            </div>
-          </div>
+  <div class="col-lg-6 col-md-12 heading__container d-flex flex-column align-items-center">
+    <h5>To start, connect your wallet</h5>
+    <div
+      class="d-flex flex-column align-items-center"
+      *ngIf="isWalletConnected$ | async; else notConnectedTemplate">
+      <ng-container *ngIf="contract$ | async as contract; else connectingContractTemplate">
+        <div class="mb-3">
+          <div class="text-success small">Connected to contract</div>
         </div>
+      </ng-container>
+      <div>
+        <button class="button-large danger" (click)="onDisconnect()">Disconnect from Wallet</button>
       </div>
     </div>
   </div>

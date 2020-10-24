@@ -1,47 +1,81 @@
-<nav
-  [ngClass]="providerUserInfo ? 'bg-white' : 'bg-light'"
-  class="header bg-secondary">
-  <div *ngIf="providerUserInfo; else noWalletTemplate" class="d-flex justify-content-center align-items-center">
-    <app-content-box
-      id="ethWalletAmount"
-      *ngIf="ethPrice && ethPrice.ethereum.usd">
-      <div>
+<div *ngIf="providerUserInfo">
+  <nav
+    *ngIf="!isMobileLayout; else mobileLayout"
+    class="header bg-white">
+    <div *ngIf="!isMobileLayout; else mobileLayout"
+         class="d-flex justify-content-center align-items-center">
+      <app-content-box
+        id="ethWalletAmount"
+        *ngIf="ethPrice && ethPrice.ethereum.usd">
+        <div>
         <span>
           {{ providerUserInfo.balance | number }}
         </span>
-        <span class="cc ETH"></span>
-      </div>
-      <div class="small">
-        (1ETH = ${{ ethPrice.ethereum.usd }})
-      </div>
-    </app-content-box>
-    <app-content-box
-      id="usdAmount"
-      *ngIf="ethPrice && ethPrice.ethereum.usd">
-      <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
-      <div class="small">USD</div>
-    </app-content-box>
-    <app-content-box id="reefTokenAmount" class="mr-4">
-      <div>
-        <span>
-          {{ (providerUserInfo.reefBalance || 0) | number }}
-        </span>
-        <img src="../../../../assets/images/reef/reef-token.png" width="16" height="16">
-      </div>
-      <div class="small">
-        (1REEF = $1)
-      </div>
-    </app-content-box>
-    <app-content-box
-      [isAddress]="true">
-      <app-address-shortener
-        [address]="providerUserInfo.address"></app-address-shortener>
-    </app-content-box>
-    <app-content-box>
-      <p class="p-0 m-0">{{version}}</p>
-    </app-content-box>
-  </div>
-</nav>
+          <span class="cc ETH"></span>
+        </div>
+        <div class="small">
+          (1ETH = ${{ ethPrice.ethereum.usd }})
+        </div>
+      </app-content-box>
+      <app-content-box
+        id="usdAmount"
+        *ngIf="ethPrice && ethPrice.ethereum.usd">
+        <div>${{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</div>
+        <div class="small">USD</div>
+      </app-content-box>
+      <app-content-box id="reefTokenAmount" class="mr-4">
+        <div class="d-flex align-items-center">
+          <span>
+            {{ (providerUserInfo.reefBalance || 0) | number }}
+          </span>
+          <img src="../../../../assets/images/reef/reef-token.png" width="16" height="16">
+        </div>
+        <div class="small">
+          (1REEF = $1)
+        </div>
+      </app-content-box>
+      <app-content-box
+        [isAddress]="true">
+        <app-address-shortener
+          [address]="providerUserInfo.address"></app-address-shortener>
+      </app-content-box>
+      <app-content-box>
+        <p class="p-0 m-0">{{version}}</p>
+      </app-content-box>
+    </div>
+  </nav>
+  <ng-template #mobileLayout>
+    <div class="d-flex align-items-center justify-content-end mb-4">
+      <app-content-box
+        class="mr-2"
+        [isAddress]="true">
+        <app-address-shortener
+          [address]="providerUserInfo.address"></app-address-shortener>
+      </app-content-box>
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Wallet Info">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div *ngIf="ethPrice && ethPrice.ethereum.usd"
+             mat-menu-item disabled>
+          <span class="cc ETH mr-3 ml-1 align-middle"></span>
+          <span class="align-middle">{{ providerUserInfo.balance | number }}</span>
+        </div>
+        <div
+          *ngIf="ethPrice && ethPrice.ethereum.usd"
+          mat-menu-item disabled>
+          <mat-icon class="mr-2">attach_money</mat-icon>
+          <span class="align-middle">{{ (providerUserInfo.balance * ethPrice.ethereum.usd) | number }}</span>
+        </div>
+        <div mat-menu-item disabled>
+          <img class="mr-3 ml-1 align-middle" src="../../../../assets/images/reef/reef-token.png" width="16"
+               height="16">
+          <span class="align-middle">{{ (providerUserInfo.reefBalance || 0) | number }}</span>
+        </div>
+      </mat-menu>
+    </div>
+  </ng-template>
+</div>
 
 <ng-template #noWalletTemplate>
   <div class="mr-2">

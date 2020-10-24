@@ -10,21 +10,21 @@ import { ContractService } from './core/services/contract.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  readonly VERSION = '0.0.2-alpha';
+  readonly VERSION = '0.0.3-alpha';
   providerName$ = this.connectorService.currentProviderName$;
   provider$ = this.connectorService.currentProvider$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
-  public canEnter = false;
+  public canEnter = true;
   constructor(
     private readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly apiService: ApiService,
     private readonly contractService: ContractService) {
-    const pw = prompt('Welcome to Reef!');
-    if (pw === 'let me in master') {
-      this.canEnter = true;
-    }
+    // const pw = prompt('Welcome to Reef!');
+    // if (pw === 'let me in master') {
+    //   this.canEnter = true;
+    // }
   }
 
 }

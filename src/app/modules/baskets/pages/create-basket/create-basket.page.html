@@ -1,12 +1,12 @@
 <div class="row page__wrapper justify-content-between">
-  <div class="parameters__wrapper col-5">
+  <div class="parameters__wrapper col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
     <app-create-basket
       [ethAmount]="ethAmount"
       [riskAmount]="risk"
       (invest)="createBasket()">
     </app-create-basket>
   </div>
-  <div class="col-5 justify-content-right">
+  <div class="justify-content-xl-right col-xl-6 col-md-12">
     <app-basket-composition
       [basket]="basket">
     </app-basket-composition>

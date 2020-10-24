@@ -57,7 +57,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   openDisclaimer(): void {
-    const ref = this.dialog.open(DisclaimerModalComponent, {width: '475px'});
+    const ref = this.dialog.open(DisclaimerModalComponent, {width: '475px', panelClass: 'dialog__responsive'});
     ref.afterClosed().pipe(
       take(1),
     ).subscribe((accepted: boolean) => {

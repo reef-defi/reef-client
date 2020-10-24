@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { EthPrice, IProviderUserInfo } from '../../../core/models/types';
 
 @Component({
@@ -7,6 +7,11 @@ import { EthPrice, IProviderUserInfo } from '../../../core/models/types';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  public isMobileLayout: boolean;
+  @HostListener('window:resize', [])
+  onResize(): void {
+    this.isMobileLayout = window.innerWidth < 992;
+  }
   @Input() version: string | undefined;
   @Input() providerName: string | undefined;
   @Input() providerUserInfo: IProviderUserInfo | undefined;
@@ -15,6 +20,7 @@ export class HeaderComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.isMobileLayout = window.innerWidth < 992;
   }
 
 }
