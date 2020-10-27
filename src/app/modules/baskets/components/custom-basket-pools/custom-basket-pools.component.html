@@ -2,18 +2,19 @@
   <div>
     <div class="heading__lg">Create your own custom basket</div>
     <div class="subheading__lg text-break mb-3">
-      Search pools, add them to your basket, and allocate your funds <strong>to your own liking!</strong>
+      Search <strong>pools</strong> or <strong>tokens</strong>,
+      add them to your basket, and allocate your funds <strong>to your own liking!</strong>
     </div>
     <label class="label__lg" for="searchPools">Search pools</label>
     <input
       #poolSearch
       id="searchPools"
-      (keyup)="applyFilter($event)"
+      (keyup)="applyFilter($event, 'poolsDataSource')"
       type="text"
       placeholder="Exchange name or Pool name"
       class="form-control w-50 mb-4"/>
   </div>
-  <table mat-table [dataSource]="dataSource" class="w-100">
+  <table mat-table [dataSource]="poolsDataSource" class="w-100">
     <ng-container matColumnDef="Exchange">
       <mat-header-cell *matHeaderCellDef>Exchange</mat-header-cell>
       <mat-cell *matCellDef="let pool">{{ pool.ExchangeName }}</mat-cell>
@@ -38,12 +39,51 @@
         </button>
       </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-header-row *matHeaderRowDef="displayedPoolsColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedPoolsColumns;"></mat-row>
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="4">No pools found for "{{poolSearch.value}}"</td>
     </tr>
   </table>
   <mat-paginator
+    #poolPaginator
+    [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  <label class="label__lg mt-4" for="searchPools">Search Tokens</label>
+  <input
+    #tokenSearch
+    id="searchTokens"
+    (keyup)="applyFilter($event, 'tokensDataSource')"
+    type="text"
+    placeholder="Token Name"
+    class="form-control w-50 mb-4"/>
+  <table mat-table [dataSource]="tokensDataSource" class="w-100">
+    <ng-container matColumnDef="Token">
+      <mat-header-cell *matHeaderCellDef>Token</mat-header-cell>
+      <mat-cell *matCellDef="let token">{{ token.name }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Add">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let token">
+        <button
+          *ngIf="canAddPools && !chartPoolData[token.name]"
+          (click)="onAddPool(token.name)"
+          matTooltip="Add {{ token.name }}"
+          mat-ripple
+          mat-icon-button
+        >
+          <mat-icon class="icon-button">
+            add
+          </mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedTokensColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedTokensColumns;"></mat-row>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No tokens matching "{{tokenSearch.value}}"</td>
+    </tr>
+  </table>
+  <mat-paginator
+    #tokenPaginator
     [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>

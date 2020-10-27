@@ -9,17 +9,24 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrls: ['./custom-basket-pools.component.scss']
 })
 export class CustomBasketPoolsComponent implements AfterViewInit {
-  dataSource;
+  poolsDataSource;
+  tokensDataSource;
   Object = Object;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
+  @ViewChild('poolPaginator') poolPaginator: MatPaginator;
+  @ViewChild('tokenPaginator') tokenPaginator: MatPaginator;
   @Input() set pools(val: IPoolsMetadata[] | undefined) {
     if (val) {
       const pools = val.filter((pool: IPoolsMetadata) => pool.ExchangeName.toLocaleLowerCase() !== 'curve');
-      this.dataSource = new MatTableDataSource(pools);
+      this.poolsDataSource = new MatTableDataSource(pools);
     }
   }
 
+  @Input() set tokens(val: any | undefined) {
+    if (val) {
+      const tokens = Object.keys(val).map((key: string) => ({ address: val[key], name: key}));
+      this.tokensDataSource = new MatTableDataSource(tokens);
+    }
+  }
   @Input() chartPoolData: any;
   @Input() canAddPools: boolean | undefined;
   @Input() disabledSlider: boolean | undefined;
@@ -27,14 +34,15 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
   @Output() removePool = new EventEmitter();
   @Output() changeAllocation = new EventEmitter();
 
-  public displayedColumns: string[] = ['Exchange', 'Pool Name', 'Add'];
+  public displayedPoolsColumns: string[] = ['Exchange', 'Pool Name', 'Add'];
+  public displayedTokensColumns: string[] = ['Token', 'Add'];
 
   constructor() {
   }
 
-  applyFilter(event: Event): void {
+  applyFilter(event: Event, source: string): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this[source].filter = filterValue.trim().toLowerCase();
   }
 
   onAddPool(symbol: string): void {
@@ -46,7 +54,8 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.poolsDataSource.paginator = this.poolPaginator;
+    this.tokensDataSource.paginator = this.tokenPaginator;
   }
 
 }

@@ -128,7 +128,9 @@ export class ContractService {
           from: this.connectorService.providerUserInfo$.value.address,
           gas: 6721975,
         });
-      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(res.transactionHash, ['getAllBaskets', 'updateUserDetails']), 1000);
+      this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(
+        res.transactionHash, ['getAllBaskets', 'updateUserDetails']
+      ), 1000);
     } catch (e) {
       console.log(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
