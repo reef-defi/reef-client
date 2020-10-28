@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { EthPrice, IProviderUserInfo } from '../../../core/models/types';
 
 @Component({
@@ -16,11 +16,16 @@ export class HeaderComponent implements OnInit {
   @Input() providerName: string | undefined;
   @Input() providerUserInfo: IProviderUserInfo | undefined;
   @Input() ethPrice: EthPrice | undefined;
+  @Output() signOut = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
     this.isMobileLayout = window.innerWidth < 992;
+  }
+
+  onSignOut(): void {
+    this.signOut.emit();
   }
 
 }

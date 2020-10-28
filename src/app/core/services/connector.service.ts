@@ -4,10 +4,11 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
-import { IChainData, IContract, IProviderUserInfo } from '../models/types';
+import { IChainData, IContract, IProviderUserInfo, ITransaction } from '../models/types';
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
 import { contractData } from '../../../assets/abi';
+import { REEF_BASKET, REEF_FARMING, REEF_STAKING, REEF_TOKEN } from '../../../assets/addresses';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -22,6 +23,7 @@ export class ConnectorService {
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
+  transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -104,6 +106,54 @@ export class ConnectorService {
     });
   }
 
+  public async getTransactionsForAddress(address: string, startBlock?: number, endBlock?: number): Promise<void> {
+    if (this.transactionsForAccount$.value && this.transactionsForAccount$.value.length > 0) {
+      this.transactionsForAccount$.next(this.transactionsForAccount$.value);
+      return;
+    }
+    if (!endBlock) {
+      endBlock = await this.web3.eth.getBlockNumber();
+    }
+    if (!startBlock) {
+      startBlock = endBlock - 10;
+    }
+    const transactions: ITransaction[] = [];
+    for (let i = startBlock; i <= endBlock; i++) {
+      const block = await this.web3.eth.getBlock(i, true);
+      if (block && block.transactions) {
+        const txs = block.transactions.filter((tx) =>
+          tx.to && (
+            tx.to === REEF_BASKET ||
+            tx.to === REEF_TOKEN ||
+            tx.to === REEF_STAKING ||
+            tx.to === REEF_FARMING
+          ) && tx.from === address
+        ).map((tx) => ({
+          ...tx,
+          value: this.fromWei(tx.value),
+          action: this.getTxAction(tx.to, tx.value),
+          timestamp: new Date(block.timestamp),
+        }));
+        if (txs && txs.length > 0) {
+          transactions.push(...txs);
+        }
+      }
+    }
+    this.transactionsForAccount$.next(transactions);
+  }
+
+  public async getTxByHash(hash: string): Promise<ITransaction | null> {
+    const tx = await this.web3.eth.getTransaction(hash);
+    if (!tx) {
+      return;
+    }
+    return {
+      ...tx,
+      value: this.fromWei(tx.value),
+      action: this.getTxAction(tx.to, tx.value),
+    };
+  }
+
   private async connectToContract(): Promise<void> {
     const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
     const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
@@ -180,6 +230,19 @@ export class ConnectorService {
     if (this.reefTokenContract$.value) {
       const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
       return await this.web3.utils.fromWei(balance);
+    }
+  }
+
+  private getTxAction(address: string, value: string): string {
+    switch (address) {
+      case REEF_TOKEN:
+        return 'Token Transaction';
+      case REEF_BASKET:
+        return +value > 0 ? 'Basket Investment' : 'Basket Liquidation';
+      case REEF_FARMING:
+        return 'Pool Investment';
+      case REEF_STAKING:
+        return 'Reef Staking';
     }
   }
 }

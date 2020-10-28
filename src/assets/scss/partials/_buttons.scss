@@ -2,6 +2,9 @@
 @import '~bootstrap';
 
 button {
+  &:hover {
+    box-shadow: 0 0 5px #2C2296;
+  }
   &.regular {
     background: map-get($theme-colors, primary);
     color: white;
@@ -10,6 +13,7 @@ button {
   &.inverse {
     background: white;
     color: black;
+    box-shadow: 0 0 5px #2C2296;
   }
 
   &.danger {
@@ -26,7 +30,6 @@ button {
     font-weight: 600;
     line-height: 1.4;
     font-size: 14px;
-    box-shadow: 0 0 5px #2C2296;
     border-radius: 10px;
   }
 
@@ -38,6 +41,7 @@ button {
     font-size: 11px;
     line-height: 7px;
     text-align: center;
+
     border: 0.3px solid #DADADA;
     border-radius: 3px;
   }

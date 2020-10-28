@@ -7,7 +7,7 @@
   color: map-get($theme-colors, dark);
   background: map-get($theme-colors, light);
   @include media-breakpoint-up(md) {
-    margin-left: $sidebar-width;
+    margin-left: 15px;
   }
 }
 

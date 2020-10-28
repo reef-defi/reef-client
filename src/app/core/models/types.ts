@@ -47,8 +47,8 @@ type ContractMethod = (...params: any) => {
   send: <T>(
     options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number },
     callback?: () => any,
-  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any}>;
-  estimateGas: (options?: { from?: string, gas?: number, value?: number | string}) => Promise<number>;
+  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }>;
+  estimateGas: (options?: { from?: string, gas?: number, value?: number | string }) => Promise<number>;
   encodeAbi: () => string;
 };
 
@@ -66,6 +66,22 @@ interface IContractOptions {
   chain: number;
   hardfork: number;
   common: number;
+}
+
+export interface ITransaction {
+  hash: string;
+  nonce: number;
+  blockHash: string | null;
+  blockNumber: number | null;
+  transactionIndex: number | null;
+  from: string;
+  to: string | null;
+  value: string;
+  gasPrice: string;
+  gas: number;
+  input: string;
+  timestamp: Date;
+  action?: string;
 }
 
 export interface IProviderUserInfo {

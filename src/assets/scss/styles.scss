@@ -11,6 +11,10 @@ body {
   font-family: 'Poppins', 'Roboto', sans-serif;
 }
 
+[data-js-focus-visible] :focus:not([data-focus-visible-added]) {
+  outline: none !important;
+}
+
 .c-pointer {
   cursor: pointer;
 }
