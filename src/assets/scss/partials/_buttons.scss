@@ -8,7 +8,6 @@ button {
   &.regular {
     background: map-get($theme-colors, primary);
     color: white;
-    border: 0.3px solid #DADADA;
   }
 
   &.inverse {
