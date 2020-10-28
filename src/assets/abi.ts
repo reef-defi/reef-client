@@ -1,6 +1,8 @@
+import { REEF_BASKET, REEF_FARMING, REEF_STAKING, REEF_TOKEN } from './addresses';
+
 export const contractData = {
   reefToken: {
-    addr: '0x3194cBDC3dbcd3E11a07892e7bA5c3394048Cc87',
+    addr: REEF_TOKEN,
     "abi": [
       {
         "inputs": [],
@@ -637,7 +639,7 @@ export const contractData = {
     ],
   },
   reefBasket: {
-    addr: '0x6b4BDe1086912A6Cb24ce3dB43b3466e6c72AFd3',
+    addr: REEF_BASKET,
     'abi': [
       {
         'inputs': [
@@ -1263,7 +1265,7 @@ export const contractData = {
     ],
   },
   reefFarming: {
-    addr: '0x9E4c14403d7d9A8A782044E86a93CAE09D7B2ac9',
+    addr: REEF_FARMING,
     "abi": [
       {
         "inputs": [
@@ -1735,7 +1737,7 @@ export const contractData = {
     ]
   },
   reefStaking: {
-    addr: '0xcCB53c9429d32594F404d01fbe9E65ED1DCda8D9',
+    addr: REEF_STAKING,
     "abi": [
       {
         "inputs": [

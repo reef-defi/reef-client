@@ -18,6 +18,11 @@ const routes: Routes = [
     canActivate: [WalletGuard],
   },
   {
+    path: 'dashboard',
+    loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [WalletGuard],
+  },
+  {
     path: '**',
     redirectTo: '/'
   }

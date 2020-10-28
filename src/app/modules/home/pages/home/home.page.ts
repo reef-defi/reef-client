@@ -6,6 +6,7 @@ import { hintSteps } from '../../../../shared/data/walkthrough_steps';
 import { MatDialog } from '@angular/material/dialog';
 import { DisclaimerModalComponent } from '../../components/disclaimer-modal/disclaimer-modal.component';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ export class HomePage implements OnInit, AfterViewInit {
     private readonly connectorService: ConnectorService,
     private readonly contractService: ContractService,
     private readonly notificationService: NotificationService,
+    private readonly router: Router,
     public dialog: MatDialog) {
   }
 
@@ -27,21 +29,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const hasViewed = localStorage.getItem('reef_tutorial_viewed');
-    if (JSON.parse(hasViewed) !== true) {
-      const EnjoyHint = new (window as any).EnjoyHint({});
-      this.isWalletConnected$.pipe(
-        first((el) => !!el)
-      ).subscribe((data) => {
-        if (data) {
-          setTimeout(() => {
-            EnjoyHint.set(hintSteps);
-            EnjoyHint.run();
-          }, 1000);
-          localStorage.setItem('reef_tutorial_viewed', 'true');
-        }
-      });
-    }
+    this.afterRender();
   }
 
   async onConnect(): Promise<any> {
@@ -65,6 +53,26 @@ export class HomePage implements OnInit, AfterViewInit {
         this.onConnect();
       } else {
         this.notificationService.showNotification('Please accept the terms in order to use our services', 'Close', 'error');
+      }
+    });
+  }
+
+  private afterRender(): void {
+    const hasViewed = JSON.parse(localStorage.getItem('reef_tutorial_viewed')) === true;
+    this.isWalletConnected$.pipe(
+      first((el) => !!el)
+    ).subscribe((data) => {
+      if (data) {
+        if (hasViewed) {
+          this.router.navigate(['/baskets']);
+        } else {
+          setTimeout(() => {
+            const EnjoyHint = new (window as any).EnjoyHint({});
+            EnjoyHint.set(hintSteps);
+            EnjoyHint.run();
+          }, 1000);
+          localStorage.setItem('reef_tutorial_viewed', 'true');
+        }
       }
     });
   }

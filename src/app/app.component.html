@@ -7,6 +7,7 @@
         class="main light min-vh-100 container-fluid">
         <app-header
           *ngIf="obs.providerUserInfo"
+          (signOut)="onSignOut()"
           [version]="VERSION"
           [ethPrice]="obs.ethPrice"
           [providerName]="obs.providerName"

@@ -86,7 +86,7 @@ export class ContractService {
           gas: 6721975,
         });
       this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(response.transactionHash, ['updateUserDetails']), 1000);
+        await this.checkIfTransactionSuccess(response, ['updateUserDetails']), 1000);
     } catch (e) {
       console.error(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
@@ -129,7 +129,7 @@ export class ContractService {
           gas: 6721975,
         });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(
-        res.transactionHash, ['getAllBaskets', 'updateUserDetails']
+        res, ['getAllBaskets', 'updateUserDetails']
       ), 1000);
     } catch (e) {
       console.log(e);
@@ -146,7 +146,7 @@ export class ContractService {
           gas: 6721975
         });
       this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res.transactionHash, ['updateUserDetails']), 1000);
+        await this.checkIfTransactionSuccess(res, ['updateUserDetails']), 1000);
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -175,17 +175,24 @@ export class ContractService {
     this.connectorService.getUserProviderInfo();
   }
 
-  private async checkIfTransactionSuccess(hash: string, fns?: string[]): Promise<any> {
-    if (!hash) {
+  private async checkIfTransactionSuccess(tx: any, fns?: string[]): Promise<any> {
+    console.log(tx);
+    if (!tx.transactionHash) {
       this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
       clearInterval(this.transactionInterval);
     }
-    const receipt = await this.connectorService.getTransactionReceipt(hash);
+    const receipt = await this.connectorService.getTransactionReceipt(tx.transactionHash);
     if (receipt && receipt.status) {
       if (fns && fns.length) {
         fns.forEach(fn => this[fn]());
       }
-      this.notificationService.showNotification(`Tx Hash: ${hash}`, 'Okay', 'success');
+      this.notificationService.showNotification(`Tx Hash: ${tx.transactionHash}`, 'Okay', 'success');
+      const latestTx = await this.connectorService.getTxByHash(tx.transactionHash);
+      if (this.connectorService.transactionsForAccount$.value) {
+        this.connectorService.transactionsForAccount$.next(
+          [...this.connectorService.transactionsForAccount$.value, latestTx]
+        );
+      }
       clearInterval(this.transactionInterval);
     }
   }

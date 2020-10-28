@@ -1,10 +1,14 @@
 <div
-  class="d-flex justify-content-center align-items-center"
+  class="d-flex align-items-center"
   *ngIf="address">
   <div
     [matTooltip]="address"
     class="mr-2">
-    {{address.slice(0, 5)}}...{{address.slice(address.length - 5, address.length)}}
+    <div
+      [class.subheading__lg]="standalone"
+      [class.label__lg]="!standalone">
+      {{address.slice(0, 5)}}...{{address.slice(address.length - 5, address.length)}}
+    </div>
   </div>
   <div
     class="c-pointer"
