@@ -8,11 +8,13 @@ button {
   &.regular {
     background: map-get($theme-colors, primary);
     color: white;
+    border: 0.3px solid #DADADA;
   }
 
   &.inverse {
     background: white;
     color: black;
+    box-shadow: 0 0 5px #2C2296;
   }
 
   &.danger {
