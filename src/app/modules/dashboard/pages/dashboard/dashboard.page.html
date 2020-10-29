@@ -31,10 +31,18 @@
             <div class="subheading__lg font-weight-bold">Reef</div>
           </div>
           <div class="col">
-            <div class="subheading__lg mr-1">{{ (userInfo.reefBalance || 0) | number }}</div>
+            <div class="subheading__lg mr-1">
+              <app-number-counter
+                [end]="userInfo.reefBalance || 0">
+              </app-number-counter>
+            </div>
           </div>
           <div class="col">
-            <div class="subheading__lg mr-1">${{ (userInfo.reefBalance || 0) * 0.01 | number }}</div>
+            <div class="subheading__lg mr-1">
+              $<app-number-counter
+                [end]="(userInfo.reefBalance || 0) * 0.01">
+              </app-number-counter>
+            </div>
           </div>
           <div class="col-auto">
             <button
@@ -49,10 +57,14 @@
             <div class="subheading__lg font-weight-bold">Ethereum</div>
           </div>
           <div class="col">
-            <div class="subheading__lg mr-1">{{ (userInfo.balance || 0) | number }}</div>
+            <div class="subheading__lg mr-1">
+              <app-number-counter [end]="userInfo.balance || 0"></app-number-counter>
+            </div>
           </div>
           <div class="col" *ngIf="ethPrice$ | async as ethPrice">
-            <div class="subheading__lg mr-1">${{ (userInfo.balance * ethPrice.ethereum.usd) | number }}</div>
+            <div class="subheading__lg mr-1">
+              <app-number-counter [end]="userInfo.balance * ethPrice.ethereum.usd"></app-number-counter>
+            </div>
           </div>
           <div class="col-auto">
             <button
@@ -91,7 +103,7 @@
             </div>
           </div>
           <div
-            class="row d-flex justify-content-between"
+            class="row d-flex justify-content-between mb-1 align-items-center"
             *ngFor="let transaction of transactions">
             <div class="col-4">
               <app-address-shortener

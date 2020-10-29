@@ -31,10 +31,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { NumberCounterComponent } from './components/number-counter/number-counter.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
-  ContentBoxComponent, ButtonComponent, EmptyStateComponent
+  ContentBoxComponent, ButtonComponent, EmptyStateComponent, NumberCounterComponent
 ];
 const directives = [];
 const pipes = [FilterPipe];
@@ -47,7 +48,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes,],
+  declarations: [...components, ...directives, ...pipes],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],

@@ -236,13 +236,13 @@ export class ConnectorService {
   private getTxAction(address: string, value: string): string {
     switch (address) {
       case REEF_TOKEN:
-        return 'Token Transaction';
+        return 'Transaction';
       case REEF_BASKET:
-        return +value > 0 ? 'Basket Investment' : 'Basket Liquidation';
+        return +value > 0 ? 'Investment' : 'Liquidation';
       case REEF_FARMING:
-        return 'Pool Investment';
+        return 'Farming';
       case REEF_STAKING:
-        return 'Reef Staking';
+        return 'Staking';
     }
   }
 }
