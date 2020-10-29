@@ -19,7 +19,7 @@ export class NumberCounterComponent implements OnDestroy {
     }
   }
 
-  @Input() countInterval = 50;
+  @Input() countInterval = 100;
   public currentNumber = 0;
   private mCounterSub$ = new Subject();
   private mOnDestroy$ = new Subject();
@@ -52,7 +52,7 @@ export class NumberCounterComponent implements OnDestroy {
   }
 
   private calculateCountStep(endRange: number): number {
-    return endRange / 50;
+    return endRange / 5;
   }
 
   ngOnDestroy(): void {

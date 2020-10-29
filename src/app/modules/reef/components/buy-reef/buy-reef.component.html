@@ -14,11 +14,16 @@
     <div class="d-flex justify-content-center">
       <app-content-box class="mb-2 w-50">
         <div class="subheading__md text-dark">Reef per ETH</div>
-        <div class="heading__md text-dark">35,312</div>
+        <div class="heading__md text-dark">
+          <app-number-counter [end]="32312"></app-number-counter>
+        </div>
       </app-content-box>
       <app-content-box class="w-50">
         <div class="subheading__md text-dark">Reef/USD</div>
-        <div class="heading__md text-dark">0.032 USD</div>
+        <div class="heading__md text-dark">
+          <app-number-counter [end]="0.032"></app-number-counter>
+          USD
+        </div>
       </app-content-box>
     </div>
   </div>

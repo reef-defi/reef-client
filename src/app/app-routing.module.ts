@@ -23,6 +23,11 @@ const routes: Routes = [
     canActivate: [WalletGuard],
   },
   {
+    path: 'vaults',
+    loadChildren: () => import('./modules/vaults/vaults.module').then(m => m.VaultsModule),
+    canActivate: [WalletGuard],
+  },
+  {
     path: '**',
     redirectTo: '/'
   }
@@ -32,4 +37,5 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

@@ -32,6 +32,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { NumberCounterComponent } from './components/number-counter/number-counter.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
@@ -42,6 +43,7 @@ const pipes = [FilterPipe];
 const modules = [
   CommonModule,
   RouterModule,
+  ReactiveFormsModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
   MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule
