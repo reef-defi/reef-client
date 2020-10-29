@@ -1,0 +1,20 @@
+<ng-container *ngIf="vaults; else loadingTemplate">
+  <div class="row page__wrapper justify-content-between">
+    <div class="col">
+      <app-diversify-vaults
+        [ethAmount]="ethAmount"
+        (diversifyChange)="onDiversifyChange($event)"
+        (invest)="onInvest()"
+      ></app-diversify-vaults>
+    </div>
+    <div class="col">
+      <app-vaults-list
+        (vaultAllocChanged)="editVaultAlloc($event)"
+        [vaults]="currentVaults"></app-vaults-list>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loadingTemplate>
+  <app-loading></app-loading>
+</ng-template>

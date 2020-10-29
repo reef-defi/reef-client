@@ -12,6 +12,25 @@ import {
   ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
+export interface Vault {
+  [key: string]: string;
+}
+
+export interface VaultAPY {
+  [key: string]: {
+    APY: number;
+  };
+}
+
+export interface IVault {
+  [key: string]: {
+    APY: number;
+    address: string;
+    percentage?: number;
+  };
+}
+
+
 export interface IContract {
   defaultAccount: string;
   defaultBlock: number | string;
