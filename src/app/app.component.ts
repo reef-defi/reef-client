@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  readonly VERSION = '0.0.6-alpha';
+  readonly VERSION = '0.0.7-alpha';
   providerName$ = this.connectorService.currentProviderName$;
   provider$ = this.connectorService.currentProvider$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;

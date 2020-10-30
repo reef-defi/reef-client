@@ -7,6 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { DisclaimerModalComponent } from '../../components/disclaimer-modal/disclaimer-modal.component';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Router } from '@angular/router';
+import ParticlesConfig from '../../../../../assets/particles-config';
+
+declare const particlesJS: any;
 
 @Component({
   selector: 'app-home',
@@ -29,6 +32,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    particlesJS('particles', ParticlesConfig, null);
     this.afterRender();
   }
 

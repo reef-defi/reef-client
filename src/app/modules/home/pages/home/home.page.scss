@@ -1,8 +1,26 @@
 @import '~src/assets/scss/styles';
+$mid: 50%;
 
+#particles {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: map-get($theme-colors, light);
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.center {
+  @include media-breakpoint-up(md) {
+    position: fixed;
+    top: 45%;
+    left: calc(#{$mid} + #{$sidebar-width - 150px});
+    margin-right: calc(-#{$mid} + #{$sidebar-width});
+    transform: translate(-50%, -50%);
+  }
+}
 .heading__container {
   @include media-breakpoint-up(md) {
-    margin-top: 200px;
     height: 100%;
   }
   @include media-breakpoint-down(md) {
