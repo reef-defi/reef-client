@@ -43,18 +43,7 @@ export class VaultsPage implements OnInit {
     this.currentVaults = this.getVaultPercentage(vaults);
   }
 
-  private getVaultPercentage(vaults: IVault): IVault {
-    const ln = Object.keys(vaults).length;
-    return Object.keys(vaults).reduce((memo, curr) => ({
-      ...memo,
-      [curr]: {
-        ...vaults[curr],
-        percentage: Math.round(100 / ln),
-      }
-    }), {});
-  }
-
-  private editVaultAlloc([name, percentage]): void {
+  editVaultAlloc([name, percentage]): void {
     const oldValue = this.currentVaults[name].percentage || 0;
     const newValue = this.currentVaults[name].percentage = percentage;
     const remainder = 100 - oldValue;
@@ -65,6 +54,16 @@ export class VaultsPage implements OnInit {
         this.currentVaults[key].percentage = +Math.round(this.currentVaults[key].percentage * multiplier);
       }
     }
+  }
+  private getVaultPercentage(vaults: IVault): IVault {
+    const ln = Object.keys(vaults).length;
+    return Object.keys(vaults).reduce((memo, curr) => ({
+      ...memo,
+      [curr]: {
+        ...vaults[curr],
+        percentage: Math.round(100 / ln),
+      }
+    }), {});
   }
 
 }

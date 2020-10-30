@@ -40,7 +40,11 @@
 </ng-container>
 
 <ng-template #loadingTemplate>
-  <app-loading [isWholePage]="true"></app-loading>
+  <div class="content__container w-100">
+    <app-skeleton-loading
+      animation="pulse"
+      type="basket"></app-skeleton-loading>
+  </div>
 </ng-template>
 
 <ng-template #emptyStateTemplate>
