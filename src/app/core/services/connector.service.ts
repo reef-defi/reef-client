@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import Web3 from 'web3';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
+import Torus from '@toruslabs/torus-embed';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
 import { IChainData, IContract, IProviderUserInfo, ITransaction } from '../models/types';
@@ -35,6 +36,14 @@ export class ConnectorService {
         infuraId: '8043bb2cf99347b1bfadfb233c5325c0'
       },
     },
+    torus: {
+      package: Torus,
+      options: {
+        networkParams: {
+          host: 'http://localhost:8600' // TODO: remove this for prod
+        }
+      },
+    },
     'custom-walletlink': {
       display: {
         name: 'Wallet Link',
@@ -66,9 +75,9 @@ export class ConnectorService {
   public async onConnect(): Promise<any> {
     this.currentProvider$.next(await this.web3Modal.connect());
     this.initWeb3(this.currentProvider$.value);
-    this.subToProviderEvents();
     await this.getUserProviderInfo();
     await this.connectToContract();
+    this.subToProviderEvents();
   }
 
   public async onDisconnect(): Promise<any> {
@@ -98,6 +107,7 @@ export class ConnectorService {
     const balance = await this.getUserBalance(address);
     const chainInfo = await this.getChainInfo();
     const reefBalance = await this.getReefBalance(address);
+    console.log(address, balance, chainInfo, reefBalance);
     this.providerUserInfo$.next({
       address,
       balance,
@@ -168,6 +178,7 @@ export class ConnectorService {
       ...this.providerUserInfo$.value,
       reefBalance
     });
+    console.log(basketsC, 'BNasket...');
   }
 
   private async initWeb3Modal(): Promise<any> {
@@ -204,7 +215,9 @@ export class ConnectorService {
     });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on('accountsChanged', async (accounts: string[]) => {
-      window.location.reload();
+      if (!this.currentProvider$.value.isTorus) {
+        window.location.reload();
+      }
     });
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
       window.location.reload();
