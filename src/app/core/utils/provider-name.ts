@@ -26,6 +26,10 @@ export const getProviderName = (web3: any): string => {
     return 'Coinbase';
   }
 
+  if (web3.currentProvider.isTorus) {
+    return 'Torus';
+  }
+
   if (web3.currentProvider.constructor.name === 'WalletConnectProvider') {
     return 'Wallet Connect';
   }

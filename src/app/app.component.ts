@@ -32,7 +32,7 @@ export class AppComponent {
 
   async onSignOut(): Promise<void> {
     await this.connectorService.onDisconnect();
-    await this.router.navigate(['/']);
+    window.location.reload();
   }
 
 }

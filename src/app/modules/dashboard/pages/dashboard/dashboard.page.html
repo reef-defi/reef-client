@@ -63,7 +63,7 @@
           </div>
           <div class="col" *ngIf="ethPrice$ | async as ethPrice">
             <div class="subheading__lg mr-1">
-              <app-number-counter [end]="userInfo.balance * ethPrice.ethereum.usd"></app-number-counter>
+              $<app-number-counter [end]="userInfo.balance * ethPrice.ethereum.usd"></app-number-counter>
             </div>
           </div>
           <div class="col-auto">
