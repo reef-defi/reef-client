@@ -51,7 +51,7 @@ export class VaultsPage implements OnInit {
     const multiplier = (remainder - diff) / remainder;
     for (const key in this.currentVaults) {
       if (key !== name) {
-        this.currentVaults[key].percentage = +Math.round(this.currentVaults[key].percentage * multiplier);
+        this.currentVaults[key].percentage = +(this.currentVaults[key].percentage * multiplier).toFixed(2);
       }
     }
   }

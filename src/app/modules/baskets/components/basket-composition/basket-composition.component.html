@@ -3,7 +3,7 @@
   class="content__container" *ngIf="!isList">
   <div>
     <div class="heading__lg mb-3">COMPOSITION</div>
-    <div *ngIf="basket; else loadingTemplate">
+    <div *ngIf="!isList && basket && Object.keys(basket).length > 0; else loadingTemplate">
       <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
         <div class="label__md mb-1">{{ key }}</div>
         <div class="heading__md mb-1">{{basket[key] | number:'1.1-2'}}%</div>
@@ -16,17 +16,19 @@
   </div>
 </div>
 
-<div *ngIf="isList && basket; else loadingTemplate">
-  <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
-    <div class="label__md mb-1">{{ key }}</div>
-    <div class="heading__md mb-1">{{basket[key]}}%</div>
-    <mat-progress-bar
-      [color]="colors[i]"
-      mode="determinate"
-      [value]="basket[key]"></mat-progress-bar>
+<ng-container *ngIf="isList">
+  <div *ngIf="basket && Object.keys(basket).length > 0">
+    <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
+      <div class="label__md mb-1">{{ key }}</div>
+      <div class="heading__md mb-1">{{basket[key]}}%</div>
+      <mat-progress-bar
+        [color]="colors[i]"
+        mode="determinate"
+        [value]="basket[key]"></mat-progress-bar>
+    </div>
   </div>
-</div>
+</ng-container>
 
 <ng-template #loadingTemplate>
-  <app-skeleton-loading type="composition" count="2"></app-skeleton-loading>
+  <app-skeleton-loading type="composition" count="6"></app-skeleton-loading>
 </ng-template>

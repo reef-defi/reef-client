@@ -19,6 +19,11 @@ $mid: 50%;
     transform: translate(-50%, -50%);
   }
 }
+
+.connected__separator {
+  left: calc(#{$mid} + #{$sidebar-width});
+}
+
 .heading__container {
   @include media-breakpoint-up(md) {
     height: 100%;

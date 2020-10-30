@@ -12,10 +12,9 @@
       </button>
       <mat-menu #bigMenu="matMenu">
         <button
-          mat-menu-item
-          [routerLink]="['/dashboard']">
-          <mat-icon color="primary">dashboard</mat-icon>
-          <span>Dashboard</span>
+          mat-menu-item>
+          <app-address-shortener [address]="providerUserInfo.address">
+          </app-address-shortener>
         </button>
         <button
           (click)="onSignOut()"

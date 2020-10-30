@@ -19,7 +19,8 @@
       <mat-slider
         class="w-100 slider mt-n3"
         [disabled]="disabledSlider"
-        min="1" max="99"
+        min="1"
+        [max]="100 - Object.keys(basket).length"
         step="1"
         thumbLabel
         (valueChange)="onAllocChange(key, $event)"

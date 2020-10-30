@@ -32,16 +32,12 @@
           </div>
           <div class="col">
             <div class="subheading__lg mr-1">
-              <app-number-counter
-                [end]="userInfo.reefBalance || 0">
-              </app-number-counter>
+              {{ (userInfo.reefBalance || 0) | number }}
             </div>
           </div>
           <div class="col">
             <div class="subheading__lg mr-1">
-              $<app-number-counter
-                [end]="(userInfo.reefBalance || 0) * 0.01">
-              </app-number-counter>
+              ${{((userInfo.reefBalance || 0) * 0.01) | number}}
             </div>
           </div>
           <div class="col-auto">
@@ -58,12 +54,12 @@
           </div>
           <div class="col">
             <div class="subheading__lg mr-1">
-              <app-number-counter [end]="userInfo.balance || 0"></app-number-counter>
+              {{ (userInfo.balance || 0) | number }}
             </div>
           </div>
           <div class="col" *ngIf="ethPrice$ | async as ethPrice">
             <div class="subheading__lg mr-1">
-              $<app-number-counter [end]="userInfo.balance * ethPrice.ethereum.usd"></app-number-counter>
+              ${{ (userInfo.balance * ethPrice.ethereum.usd) | number }}
             </div>
           </div>
           <div class="col-auto">
