@@ -2,7 +2,7 @@
 $mid: 50%;
 .center {
   position: absolute;
-  top: calc(#{$mid} + #{$header-height - 50px});
+  top: $mid;
   left: calc(#{$mid} + #{$sidebar-width - 100px});
   margin-right: calc(-#{$mid} + #{$sidebar-width});
   transform: translate(-50%, -50%);
