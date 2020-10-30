@@ -13,11 +13,11 @@ export class SkeletonLoadingComponent implements OnInit {
   @Input() animation = 'progress';
   public styles: { [key: string]: { [key: string]: string } } = {
     composition: {
-      height: '25px',
+      height: '30px',
     },
     vault: {
       height: '30px',
-      'background-color': 'rgb(246, 78, 96, 0.1)',
+      'background-color': 'rgb(124, 181, 236, 0.2)',
     },
     chart: {
       'margin-top': '0',

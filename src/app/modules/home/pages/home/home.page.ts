@@ -32,7 +32,6 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    particlesJS('particles', ParticlesConfig, null);
     this.afterRender();
   }
 
@@ -62,14 +61,12 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private afterRender(): void {
+    particlesJS('particles', ParticlesConfig, null);
     const hasViewed = JSON.parse(localStorage.getItem('reef_tutorial_viewed')) === true;
     this.isWalletConnected$.pipe(
       first((el) => !!el)
     ).subscribe((data) => {
-      if (data) {
-        if (hasViewed) {
-          this.router.navigate(['/baskets']);
-        } else {
+      if (data && !hasViewed) {
           setTimeout(() => {
             const EnjoyHint = new (window as any).EnjoyHint({});
             EnjoyHint.set(hintSteps);
@@ -77,7 +74,6 @@ export class HomePage implements OnInit, AfterViewInit {
           }, 1000);
           localStorage.setItem('reef_tutorial_viewed', 'true');
         }
-      }
     });
   }
 }
