@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div *ngIf="isList">
+<div *ngIf="isList && basket; else loadingTemplate">
   <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index;">
     <div class="label__md mb-1">{{ key }}</div>
     <div class="heading__md mb-1">{{basket[key]}}%</div>
@@ -28,5 +28,5 @@
 </div>
 
 <ng-template #loadingTemplate>
-  <app-loading></app-loading>
+  <app-skeleton-loading type="composition" count="2"></app-skeleton-loading>
 </ng-template>

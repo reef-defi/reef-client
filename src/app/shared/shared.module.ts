@@ -33,10 +33,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { NumberCounterComponent } from './components/number-counter/number-counter.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton-loading.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
-  ContentBoxComponent, ButtonComponent, EmptyStateComponent, NumberCounterComponent
+  ContentBoxComponent, ButtonComponent, EmptyStateComponent, NumberCounterComponent, SkeletonLoadingComponent
 ];
 const directives = [];
 const pipes = [FilterPipe];
@@ -46,7 +48,7 @@ const modules = [
   ReactiveFormsModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
-  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule
+  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule
 ];
 
 @NgModule({

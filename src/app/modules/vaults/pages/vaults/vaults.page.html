@@ -1,4 +1,4 @@
-<ng-container *ngIf="vaults; else loadingTemplate">
+<ng-container>
   <div class="row page__wrapper justify-content-between">
     <div class="col">
       <app-diversify-vaults
@@ -14,7 +14,3 @@
     </div>
   </div>
 </ng-container>
-
-<ng-template #loadingTemplate>
-  <app-loading></app-loading>
-</ng-template>

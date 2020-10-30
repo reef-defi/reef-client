@@ -81,27 +81,27 @@
       <div class="heading__lg mb-3">
         Transactions
       </div>
+      <div class="row mb-2 d-flex justify-content-between">
+        <div class="col-4">
+          <div class="label__lg">Tx Hash</div>
+        </div>
+        <div class="col-3">
+          <div class="label__lg">Tx Date</div>
+        </div>
+        <div class="col-3">
+          <div class="label__lg">Action</div>
+        </div>
+        <div class="col-2 col-auto">
+          <div class="label__lg">Tokens</div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col">
+          <mat-divider></mat-divider>
+        </div>
+      </div>
       <div *ngIf="transactionsForAccount$ | async as transactions; else loadingTemplate">
         <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
-          <div class="row mb-2 d-flex justify-content-between">
-            <div class="col-4">
-              <div class="label__lg">Tx Hash</div>
-            </div>
-            <div class="col-3">
-              <div class="label__lg">Tx Date</div>
-            </div>
-            <div class="col-3">
-              <div class="label__lg">Action</div>
-            </div>
-            <div class="col-2 col-auto">
-              <div class="label__lg">Tokens</div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col">
-              <mat-divider></mat-divider>
-            </div>
-          </div>
           <div
             class="row d-flex justify-content-between mb-1 align-items-center"
             *ngFor="let transaction of transactions">
@@ -133,7 +133,7 @@
     </div>
   </div>
   <ng-template #loadingTemplate>
-    <app-loading></app-loading>
+    <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
   </ng-template>
   <ng-template #emptyTransactions>
     <div class="d-flex justify-content-center align-items-center">
