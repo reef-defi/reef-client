@@ -1,16 +1,17 @@
+<div class="d-flex justify-content-between mt-3 mb-3">
+  <div class="heading__lg">MY BASKETS</div>
+  <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
+    <mat-slide-toggle [formControl]="isList">
+      <div class="subheading__md">{{ isList.value ? 'List' : 'Grid' }} view</div>
+    </mat-slide-toggle>
+  </div>
+</div>
+
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
     <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
       <ng-container *ngIf="baskets$ | async as allBaskets; else loadingTemplate">
         <ng-container *ngIf="allBaskets.length; else emptyStateTemplate">
-          <div class="d-flex justify-content-between mt-3 mb-3">
-            <div class="heading__lg">MY BASKETS</div>
-            <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
-              <mat-slide-toggle [formControl]="isList">
-                <div class="subheading__md">{{ isList.value ? 'List' : 'Grid' }} view</div>
-              </mat-slide-toggle>
-            </div>
-          </div>
           <div *ngIf="isList.value">
             <div class="mb-3" *ngFor="let basket of allBaskets; let i = index;">
               <app-basket
@@ -40,7 +41,7 @@
 </ng-container>
 
 <ng-template #loadingTemplate>
-  <div class="content__container w-100">
+  <div class="content__container w-100 mt-3">
     <app-skeleton-loading
       animation="pulse"
       type="basket"></app-skeleton-loading>

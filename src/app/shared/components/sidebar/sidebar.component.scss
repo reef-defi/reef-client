@@ -5,6 +5,9 @@
   background-color: $sidebar-primary;
   position: fixed;
   z-index: 999;
+  -webkit-box-shadow: 1px 0 5px 0 darken(map-get($theme-colors, light), 50);
+  -moz-box-shadow: 1px 0 5px 0 darken(map-get($theme-colors, light), 50);
+  box-shadow: 1px 0 5px 0 darken(map-get($theme-colors, light), 50);
   @include media-breakpoint-between(sm, xl) {
     width: $sidebar-width;
   }
@@ -31,7 +34,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
   color: #ffffff;
 }
 

@@ -1,18 +1,14 @@
 <ng-container *ngIf="{ ethPrice: ethPrice$ | async, providerName: providerName$ | async, providerUserInfo: providerUserInfo$ | async } as obs">
   <div id="mainContainer" class="min-vh-100">
     <div *ngIf="canEnter; else noPermissions">
-      <app-sidebar *ngIf="obs.providerUserInfo"></app-sidebar>
+      <app-sidebar
+        [version]="VERSION"
+        [currentAddress]="obs.providerUserInfo?.address"
+        (signOut)="onSignOut()"
+        *ngIf="obs.providerUserInfo"></app-sidebar>
       <div
         [class.main__active]="obs.providerUserInfo"
         class="main light min-vh-100 container-fluid">
-        <app-header
-          *ngIf="obs.providerUserInfo"
-          (signOut)="onSignOut()"
-          [version]="VERSION"
-          [ethPrice]="obs.ethPrice"
-          [providerName]="obs.providerName"
-          [providerUserInfo]="obs.providerUserInfo">
-        </app-header>
         <router-outlet></router-outlet>
       </div>
       <app-footer *ngIf="!obs.providerUserInfo"></app-footer>
