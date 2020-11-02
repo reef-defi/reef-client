@@ -81,13 +81,13 @@
         <div class="col-4">
           <div class="label__lg">Tx Hash</div>
         </div>
-        <div class="col-3">
+        <div class="col-2">
           <div class="label__lg">Tx Date</div>
         </div>
         <div class="col-3">
           <div class="label__lg">Action</div>
         </div>
-        <div class="col-2 col-auto">
+        <div class="col-3 col-auto">
           <div class="label__lg">Tokens</div>
         </div>
       </div>
@@ -107,7 +107,7 @@
                 [address]="transaction.hash">
               </app-address-shortener>
             </div>
-            <div class="col-3">
+            <div class="col-2">
               <div class="label__lg">
                 {{ transaction.timestamp | date:'shortDate' }}
               </div>
@@ -117,9 +117,9 @@
                 {{ transaction.action }}
               </div>
             </div>
-            <div class="col-2 col-auto">
-                <span class="subheading__lg font-weight-bold mr-1">
-                  {{ transaction.value }}
+            <div class="col-3 col-auto d-flex justify-content-between">
+                <span class="subheading__lg font-weight-bold">
+                  {{ transaction.value | number }}
                 </span>
               <span class="cc ETH"></span>
             </div>
@@ -133,7 +133,7 @@
   </ng-template>
   <ng-template #emptyTransactions>
     <div class="d-flex justify-content-center align-items-center">
-      <span class="subheading__lg">You have not made any transactions in the recent past.</span>
+      <span class="subheading__lg mt-2">You have not made any transactions in the recent past.</span>
     </div>
   </ng-template>
 </div>

@@ -1,0 +1,9 @@
+<ng-container *ngIf="value">
+  <div class="d-flex align-items-center justify-content-around w-100">
+    <button
+      (click)="onSelectPercentage(num)"
+      mat-raised-button *ngFor="let num of percentages">
+      {{ num * 100 }}%
+    </button>
+  </div>
+</ng-container>

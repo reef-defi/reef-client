@@ -9,9 +9,15 @@ import { FormControl } from '@angular/forms';
 export class CreateBasketComponent {
   @Input() ethAmount: FormControl | undefined;
   @Input() riskAmount: FormControl | undefined;
+  @Input() ethBalance: string;
   @Output() invest = new EventEmitter<void>();
+  @Output() selectPercentage = new EventEmitter<number>();
 
   onInvest(): void {
     this.invest.emit();
+  }
+
+  onPercentageChange(val: number): void {
+    this.selectPercentage.emit(val);
   }
 }

@@ -8,8 +8,10 @@ import { FormControl } from '@angular/forms';
 })
 export class DiversifyVaultsComponent {
   @Input() ethAmount: FormControl | undefined;
+  @Input() ethBalance: string | undefined;
   @Output() invest = new EventEmitter();
   @Output() diversifyChange = new EventEmitter<number>();
+  @Output() percentageChange = new EventEmitter<number>();
 
   onInvest(): void {
     this.invest.emit();
@@ -17,5 +19,9 @@ export class DiversifyVaultsComponent {
 
   onDiversifyChange(amount: number): void {
     this.diversifyChange.emit(amount);
+  }
+
+  onPercentageChange(amount: number): void {
+    this.percentageChange.emit(amount);
   }
 }
