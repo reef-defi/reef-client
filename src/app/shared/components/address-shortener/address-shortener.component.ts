@@ -8,5 +8,6 @@ import { Component, Input } from '@angular/core';
 export class AddressShortenerComponent {
   @Input() address: string | null;
   @Input() standalone = true;
+  @Input() showCopy = true;
   constructor() { }
 }

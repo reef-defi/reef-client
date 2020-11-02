@@ -43,7 +43,7 @@
   </div>
   <div class="d-flex flex-column justify-content-center align-items-center mt-auto">
     <button
-      [disabled]="!ethAmount.value || ethAmount.value === 0 || ethAmount.value > +ethBalance"
+      [disabled]="!ethAmount.value || ethAmount.value <= 0 || ethAmount.value > +ethBalance"
       mat-ripple (click)="onInvest()" class="button-large regular mb-3 w-100">INVEST</button>
   </div>
 </div>
