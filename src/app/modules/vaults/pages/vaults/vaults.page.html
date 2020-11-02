@@ -2,7 +2,9 @@
   <div class="row page__wrapper justify-content-between">
     <div class="col">
       <app-diversify-vaults
+        [ethBalance]="(userInfo | async)?.balance"
         [ethAmount]="ethAmount"
+        (percentageChange)="onPercentageChange($event)"
         (diversifyChange)="onDiversifyChange($event)"
         (invest)="onInvest()"
       ></app-diversify-vaults>

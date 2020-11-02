@@ -3,6 +3,8 @@
     <app-create-basket
       [ethAmount]="ethAmount"
       [riskAmount]="risk"
+      [ethBalance]="(userInfo | async)?.balance"
+      (selectPercentage)="onPercentageChange($event)"
       (invest)="createBasket()">
     </app-create-basket>
   </div>

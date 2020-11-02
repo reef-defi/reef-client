@@ -19,6 +19,7 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 export class CreateBasketPage implements OnInit {
   readonly pools$ = this.basketsService.pools$;
   readonly tokens$ = this.basketsService.tokens$;
+  public userInfo = this.connectorService.providerUserInfo$;
   public basket: IGenerateBasketResponse = null;
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiData: number[][];
@@ -72,6 +73,10 @@ export class CreateBasketPage implements OnInit {
     const name = basketNameGenerator();
     console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
     await this.contractService.createBasket(name, basketPoolAndCoinInfo, this.ethAmount.value);
+  }
+
+  onPercentageChange(val: number): void {
+    this.ethAmount.patchValue(val);
   }
 
   getAllPools(): void {

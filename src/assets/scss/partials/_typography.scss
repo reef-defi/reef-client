@@ -1,5 +1,11 @@
 @import './variables';
 
+@each $name, $color in $font-colors {
+  .font-#{$name} {
+    color: $color
+  }
+}
+
 .label__lg {
   font-weight: 400;
   font-size: 12px;

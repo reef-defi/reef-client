@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { FormControl } from '@angular/forms';
 import { IVault } from '../../../../core/models/types';
+import { ConnectorService } from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-vaults',
@@ -12,10 +13,13 @@ export class VaultsPage implements OnInit {
   readonly vaults$ = this.apiService.getVaults();
   readonly ethAmount = new FormControl(0);
   readonly diversifyAmount = new FormControl(3);
+  readonly userInfo = this.connectorService.providerUserInfo$;
   public currentVaults: IVault = {};
   public vaults = {};
 
-  constructor(private readonly apiService: ApiService) {
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly connectorService: ConnectorService) {
   }
 
   ngOnInit(): void {
@@ -43,6 +47,10 @@ export class VaultsPage implements OnInit {
     this.currentVaults = this.getVaultPercentage(vaults);
   }
 
+  onPercentageChange(val: number): void {
+    this.ethAmount.patchValue(val);
+  }
+
   editVaultAlloc([name, percentage]): void {
     const oldValue = this.currentVaults[name].percentage || 0;
     const newValue = this.currentVaults[name].percentage = percentage;
@@ -55,6 +63,7 @@ export class VaultsPage implements OnInit {
       }
     }
   }
+
   private getVaultPercentage(vaults: IVault): IVault {
     const ln = Object.keys(vaults).length;
     return Object.keys(vaults).reduce((memo, curr) => ({

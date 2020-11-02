@@ -35,10 +35,12 @@ import { NumberCounterComponent } from './components/number-counter/number-count
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton-loading.component';
+import { PercentageButtonsComponent } from './components/percentage-buttons/percentage-buttons.component';
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
-  ContentBoxComponent, ButtonComponent, EmptyStateComponent, NumberCounterComponent, SkeletonLoadingComponent
+  ContentBoxComponent, ButtonComponent, EmptyStateComponent, NumberCounterComponent, SkeletonLoadingComponent,
+  PercentageButtonsComponent,
 ];
 const directives = [];
 const pipes = [FilterPipe];
