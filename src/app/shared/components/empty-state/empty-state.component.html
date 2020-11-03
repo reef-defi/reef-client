@@ -1,8 +1,13 @@
 <div
   id="emptyState"
   class="center d-flex flex-column align-items-center">
-  <div class="heading__xl mb-2">{{ title }}</div>
-  <div class="subheading__xl mb-4">{{ subtitle }}</div>
+  <img
+    class="img-fluid"
+    height="256"
+    width="256"
+    src="../../../../assets/images/emptystate.svg" alt="Empty State">
+  <h2 class="mb-1">{{ title }}</h2>
+  <div class="subheading__lg mb-2">{{ subtitle }}</div>
   <div *ngIf="showCtaButton">
     <button class="button-large regular" (click)="onCta()">{{ ctaButtonText }}</button>
   </div>
