@@ -1,14 +1,12 @@
 @import '~src/assets/scss/styles';
 
 .footer {
-  position: absolute;
+  position: sticky;
   bottom: 0;
-  padding: 5px;
+  padding: 1px 10px;
+  width: 100%;
   color: map-get($theme-colors, dark);
   background: map-get($theme-colors, light);
-  @include media-breakpoint-up(md) {
-    margin-left: 15px;
-  }
 }
 
 .footer__company {

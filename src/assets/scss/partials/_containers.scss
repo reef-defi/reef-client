@@ -27,7 +27,7 @@
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   transition: 0.3s;
-  margin: 1.5rem 1rem 3rem 1rem;
+  margin: 1.5rem 1rem 2rem 1rem;
   &:hover {
     cursor: pointer;
     background: darken(map-get($theme-colors, dark), 20)

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from
 import { IPoolsMetadata } from '../../../../core/models/types';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatRadioChange } from '@angular/material/radio';
 
 @Component({
   selector: 'app-custom-basket-pools',
@@ -10,23 +11,16 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class CustomBasketPoolsComponent implements AfterViewInit {
   poolsDataSource;
-  tokensDataSource;
   Object = Object;
   @ViewChild('poolPaginator') poolPaginator: MatPaginator;
-  @ViewChild('tokenPaginator') tokenPaginator: MatPaginator;
-  @Input() set pools(val: IPoolsMetadata[] | undefined) {
+
+  @Input() set poolsAndTokens(val: IPoolsMetadata[] | undefined) {
     if (val) {
       const pools = val.filter((pool: IPoolsMetadata) => pool.ExchangeName.toLocaleLowerCase() !== 'curve');
       this.poolsDataSource = new MatTableDataSource(pools);
     }
   }
 
-  @Input() set tokens(val: any | undefined) {
-    if (val) {
-      const tokens = Object.keys(val).map((key: string) => ({ address: val[key], name: key}));
-      this.tokensDataSource = new MatTableDataSource(tokens);
-    }
-  }
   @Input() chartPoolData: any;
   @Input() canAddPools: boolean | undefined;
   @Input() disabledSlider: boolean | undefined;
@@ -34,15 +28,22 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
   @Output() removePool = new EventEmitter();
   @Output() changeAllocation = new EventEmitter();
 
-  public displayedPoolsColumns: string[] = ['Exchange', 'Pool Name', 'Add'];
-  public displayedTokensColumns: string[] = ['Token', 'Add'];
+  public displayedPoolsColumns: string[] = ['Type', 'Name', 'Exchange', 'Add'];
 
   constructor() {
   }
 
-  applyFilter(event: Event, source: string): void {
+  search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    this[source].filter = filterValue.trim().toLowerCase();
+    this.poolsDataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  filterBy(event: MatRadioChange): void {
+    if (event.value) {
+      this.poolsDataSource.filter = event.value;
+    } else {
+      this.poolsDataSource.filter = '';
+    }
   }
 
   onAddPool(symbol: string): void {
@@ -55,7 +56,6 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.poolsDataSource.paginator = this.poolPaginator;
-    this.tokensDataSource.paginator = this.tokenPaginator;
   }
 
 }

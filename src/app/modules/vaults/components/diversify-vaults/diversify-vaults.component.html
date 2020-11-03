@@ -16,8 +16,10 @@
         placeholder="Amount of ETH" type="number"/>
       <img width="40" height="40" src="../../../../../assets/images/eth.png"/>
     </div>
-    <div *ngIf="ethAmount.value > +ethBalance">
-      <p class="font-danger">You don't have enough resources to proceed.</p>
+    <div class="my-1">
+      <div *ngIf="ethAmount.value > +ethBalance">
+        <p class="font-danger">You can invest a maximum of <strong>{{ ethBalance }}</strong></p>
+      </div>
     </div>
     <div *ngIf="ethBalance">
       <app-percentage-buttons
@@ -44,6 +46,7 @@
   <div class="d-flex flex-column justify-content-center align-items-center mt-auto">
     <button
       [disabled]="!ethAmount.value || ethAmount.value <= 0 || ethAmount.value > +ethBalance"
-      mat-ripple (click)="onInvest()" class="button-large regular mb-3 w-100">INVEST</button>
+      mat-ripple (click)="onInvest()" class="button-large regular mb-3 w-100">INVEST
+    </button>
   </div>
 </div>

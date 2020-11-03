@@ -36,6 +36,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton-loading.component';
 import { PercentageButtonsComponent } from './components/percentage-buttons/percentage-buttons.component';
+import { MatRadioModule } from '@angular/material/radio';
+
 
 const components = [
   FooterComponent, HeaderComponent, SidebarComponent, NotificationComponent, LoadingComponent, AddressShortenerComponent,
@@ -50,7 +52,8 @@ const modules = [
   ReactiveFormsModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
-  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule
+  MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule,
+  MatRadioModule
 ];
 
 @NgModule({

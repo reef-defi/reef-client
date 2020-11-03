@@ -1,11 +1,9 @@
 <ng-container
-  *ngIf="pools$ | async as pools; else loadingTemplate">
-  <ng-container *ngIf="tokens$ | async as tokens; else loadingTemplate">
+  *ngIf="poolsAndTokens$ | async as poolsAndTokens; else loadingTemplate">
     <div class="row page__wrapper">
       <div class="col-6">
         <app-custom-basket-pools
-          [pools]="pools"
-          [tokens]="tokens"
+          [poolsAndTokens]="poolsAndTokens"
           [canAddPools]="Object.keys(chartPoolData).length < COMPOSITION_LIMIT"
           [chartPoolData]="chartPoolData"
           (addPool)="addPool($event)"
@@ -22,7 +20,6 @@
         </app-custom-basket-composition>
       </div>
     </div>
-  </ng-container>
 </ng-container>
 
 <ng-template #loadingTemplate>

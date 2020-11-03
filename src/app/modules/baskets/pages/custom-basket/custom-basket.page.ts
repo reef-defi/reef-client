@@ -7,7 +7,8 @@ import { basketNameGenerator, getBasketPoolsAndCoins, makeBasket } from '../../.
 import { ContractService } from '../../../../core/services/contract.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 
 @Component({
   selector: 'app-custom-basket',
@@ -19,6 +20,13 @@ export class CustomBasketPage implements OnInit {
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
   readonly pools$: BehaviorSubject<IPoolsMetadata[]> = this.basketService.pools$;
   readonly tokens$: BehaviorSubject<any> = this.basketService.tokens$;
+  readonly poolsAndTokens$ = combineLatest(this.pools$, this.tokens$).pipe(
+    map(([pools, tokens]: [IPoolsMetadata[], any]) => {
+      const arr = Object.keys(tokens).map((key) => ({ Symbol: key, ExchangeName: 'N/A', type: 'Token' }));
+      const pols = pools.map(pool => ({ ...pool, type: 'Pool'}));
+      return [...pols, ...arr];
+    })
+  );
   public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
@@ -32,6 +40,10 @@ export class CustomBasketPage implements OnInit {
   }
 
   ngOnInit(): void {
+    const basketRef = history.state?.data;
+    if (basketRef) {
+      this.chartPoolData = basketRef;
+    }
   }
 
   addPool(poolName: string): void {
