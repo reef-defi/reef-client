@@ -1,8 +1,11 @@
 @import '~src/assets/scss/styles';
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: $sidebar-primary;
+  background: rgb(136,126,242);
+  background: linear-gradient(180deg, rgba(136,126,242,1) 0%, rgba(0,212,255,1) 100%);
   position: fixed;
   z-index: 999;
   -webkit-box-shadow: 1px 0 5px 0 darken(map-get($theme-colors, light), 50);
@@ -38,9 +41,9 @@
 }
 
 .menu-item {
-  font-size: 18px;
-  font-weight: 500;
-
+  font-size: 15px;
+  font-weight: 400;
+  transition: 0.3s;
   &:hover {
     background: #EAE8FD;
     color: $sidebar-primary;
