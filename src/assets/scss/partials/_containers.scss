@@ -19,9 +19,9 @@
 }
 
 .sidebar__address {
-  background: map-get($theme-colors, dark);
+  background: map-get($theme-colors, light);
   font-weight: 500;
-  color: white;
+  color: map-get($theme-colors, dark);;
   border: none;
   border-radius: 15px;
   -webkit-border-radius: 15px;
@@ -30,11 +30,38 @@
   margin: 1.5rem 1rem 2rem 1rem;
   &:hover {
     cursor: pointer;
-    background: darken(map-get($theme-colors, dark), 20)
+    background: darken(map-get($theme-colors, light), 10)
   }
   .address__circle {
     color: map-get($theme-colors, success);
     transform: scale(0.5);
+  }
+}
+
+.reef__menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: $sidebar-width;
+  margin-top: -25px;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(136,126,242,1) 0%, rgba(0,212,255,1) 100%);
+  color: map-get($theme-colors, lightest);
+  cursor: pointer;
+}
+
+.reef__menu--item {
+  font-size: 15px;
+  font-weight: 400;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  &:hover {
+    background: #EAE8FD;
+    color: $sidebar-primary;
   }
 }
 
@@ -43,8 +70,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background: map-get($theme-colors, dark);
-  color: white;
+  background: map-get($theme-colors, light);
+  color: map-get($theme-colors, dark);
   cursor: pointer;
 }
 
@@ -56,7 +83,7 @@
   transition: 0.3s;
   margin-bottom: 5px;
   &:hover {
-    background: darken(map-get($theme-colors, dark), 20)
+    background: darken(map-get($theme-colors, light), 10)
   }
 }
 

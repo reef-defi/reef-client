@@ -32,6 +32,12 @@
   }
 }
 
+.sidebar__divider {
+  background: map-get($theme-colors, light);
+  opacity: 0.4;
+  width: 90%;
+}
+
 .icon-container {
   display: flex;
   flex-direction: column;
