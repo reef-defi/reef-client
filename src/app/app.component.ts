@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  readonly VERSION = '0.1.1';
+  readonly VERSION = '0.2.0';
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
@@ -24,7 +24,7 @@ export class AppComponent {
     private readonly contractService: ContractService,
     private readonly router: Router) {
     const pw = prompt('Welcome to Reef!');
-    if (pw === 'let me in master') {
+    if (pw === 'open sesame') {
       this.canEnter = true;
     }
   }

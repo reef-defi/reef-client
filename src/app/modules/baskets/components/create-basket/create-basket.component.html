@@ -31,11 +31,11 @@
       <label class="label__lg mb-2" for="risk">Risk</label>
     </div>
     <div>
-      <mat-slider
-        id="risk"
-        thumbLabel
-        class="w-100"
-        min="1" max="99" step="1" [formControl]="riskAmount"></mat-slider>
+      <mat-radio-group id="risk" [formControl]="riskAmount">
+        <mat-radio-button class="subheading__lg mr-3" value="low">Low</mat-radio-button>
+        <mat-radio-button class="subheading__lg mr-3" value="medium">Medium</mat-radio-button>
+        <mat-radio-button class="subheading__lg mr-3" value="high">High</mat-radio-button>
+      </mat-radio-group>
     </div>
   </div>
   <div class="d-flex flex-column justify-content-center align-items-center mt-auto">

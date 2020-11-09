@@ -1,5 +1,13 @@
 <div class="sidebar">
   <p class="p-0 m-0 font-success">{{ version }}</p>
+  <div *ngIf="!chainInfo || (chainInfo && chainInfo.chain_id !== 1)"
+       class="d-flex justify-content-center align-items-center w-100 py-2 my-1 bg-danger">
+    <div class="label__md">
+      <span class="font-lightest">
+        You are not on mainnet
+      </span>
+    </div>
+  </div>
   <div class="icon-container">
     <div class="d-flex justify-content-center align-items-center">
       <div
@@ -26,13 +34,13 @@
       <div
         [cdkCopyToClipboard]="currentAddress"
         class="address__menu--item">
-        <div class="la la-copy mr-2 font-success"></div>
+        <div class="la la-lg la-copy mr-2 font-success"></div>
         <div>Copy your address</div>
       </div>
       <div
         (click)="onSignOut()"
         class="address__menu--item">
-        <div class="la la-sign-out-alt mr-2 font-danger"></div>
+        <div class="la la-lg la-sign-out-alt mr-2 font-danger"></div>
         <div>Sign out</div>
       </div>
     </mat-menu>
@@ -43,8 +51,19 @@
       routerLinkActive="active"
       class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
       <div
-        class="la la-pie-chart mr-2 pl-3"></div>
+        class="la la-lg la-pie-chart mr-2 pl-3"></div>
       <div class="sidebar__label">DASHBOARD</div>
+    </div>
+    <div
+      id="reefMenu"
+      [routerLink]="['/reef']"
+      routerLinkActive="active"
+      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-2">
+      <div class="la la-lg la-swimming-pool mr-2 pl-3"></div>
+      <div class="sidebar__label">REEF</div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center mb-2 w-100">
+      <mat-divider class="sidebar__divider"></mat-divider>
     </div>
     <div
       id="myBaskets"
@@ -53,7 +72,7 @@
       routerLinkActive="active"
       class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
       <div
-        class="la la-balance-scale mr-2 pl-3"></div>
+        class="la la-lg la-balance-scale mr-2 pl-3"></div>
       <div class="sidebar__label">MY BASKETS</div>
     </div>
     <div
@@ -63,18 +82,8 @@
       routerLinkActive="active"
       class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
       <div
-        class="la la-shopping-basket mr-2 pl-3"></div>
+        class="la la-lg la-shopping-basket mr-2 pl-3"></div>
       <div class="sidebar__label">CREATE BASKET</div>
-    </div>
-    <div
-      id="buyReef"
-      [routerLink]="['/reef']"
-      [routerLinkActiveOptions]="{exact: true}"
-      routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div
-        class="la la-swimming-pool mr-2 pl-3"></div>
-      <div class="sidebar__label">BUY REEF</div>
     </div>
     <div
       id="vaults"
@@ -83,7 +92,7 @@
       routerLinkActive="active"
       class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
       <div
-        class="la la-coins mr-2 pl-3"></div>
+        class="la la-lg la-coins mr-2 pl-3"></div>
       <div class="sidebar__label">VAULTS</div>
     </div>
   </div>

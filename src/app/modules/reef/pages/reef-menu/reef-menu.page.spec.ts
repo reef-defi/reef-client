@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StakeReefComponent } from './stake-reef.component';
+import { ReefMenuPage } from './reef-menu.page';
 
-describe('PoolsPage', () => {
-  let component: StakeReefComponent;
-  let fixture: ComponentFixture<StakeReefComponent>;
+describe('ReefMenuPage', () => {
+  let component: ReefMenuPage;
+  let fixture: ComponentFixture<ReefMenuPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StakeReefComponent ]
+      declarations: [ ReefMenuPage ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StakeReefComponent);
+    fixture = TestBed.createComponent(ReefMenuPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -32,7 +32,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { NumberCounterComponent } from './components/number-counter/number-counter.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton-loading.component';
 import { PercentageButtonsComponent } from './components/percentage-buttons/percentage-buttons.component';
@@ -51,6 +51,7 @@ const modules = [
   CommonModule,
   RouterModule,
   ReactiveFormsModule,
+  FormsModule,
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
   MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule,

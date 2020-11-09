@@ -1,0 +1,31 @@
+<ng-container *ngIf="!(loading$ | async); else loadingTemplate">
+  <ng-container *ngIf="address$ | async as address; else errorTemplate">
+    <ng-container *ngIf="lpContract$ | async as contract">
+      <ng-container *ngIf="tokenBalance$ | async as tokenBalance">
+        <div>
+          Balance: {{ tokenBalance }} LP Tokens.
+        </div>
+        <p *ngIf="reefReward$ | async as rewards">
+          You have {{ rewards | number }} REEF accumulated in this pool.
+        </p>
+        <input
+          #amount
+          placeholder="Stake LP" type="number">
+        <button (click)="deposit(contract, address, amount.value)">Stake</button>
+        <button (click)="withdraw(address, amount.value)">Withdraw</button>
+        <button (click)="withdraw(address, 0)">Harvest</button>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
+
+<ng-template #errorTemplate>
+  <app-empty-state
+    title="Wrong address"
+    subtitle="You have the wrong address, or we do not support that pool currently.">
+  </app-empty-state>
+</ng-template>
+
+<ng-template #loadingTemplate>
+  <app-loading [isWholePage]="true"></app-loading>
+</ng-template>

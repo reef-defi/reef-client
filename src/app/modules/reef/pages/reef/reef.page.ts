@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContractService } from '../../../../core/services/contract.service';
+import { ConnectorService } from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-reef',
@@ -10,14 +11,15 @@ export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
 
-  constructor(private contractService: ContractService) {
+  constructor(private contractService: ContractService,
+              private readonly connectorService: ConnectorService) {
   }
 
   ngOnInit(): void {
   }
 
   async stakeReef(amount: number): Promise<void> {
-    const canStake = await this.contractService.approveToken(
+    const canStake = await this.connectorService.approveToken(
       this.reefToken$.value,
       this.reefStaking$.value.options.address
     );

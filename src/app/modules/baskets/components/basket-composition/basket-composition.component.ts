@@ -15,7 +15,7 @@ export class BasketCompositionComponent {
     'warn'];
   @Input() basket: IGenerateBasketResponse | undefined;
   @Input() isList = false;
-
+  @Input() canCustomize = true;
   constructor() {
   }
 

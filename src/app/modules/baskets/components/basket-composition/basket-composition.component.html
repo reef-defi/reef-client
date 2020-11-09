@@ -12,7 +12,9 @@
           mode="determinate"
           [value]="basket[key]"></mat-progress-bar>
       </div>
-      <div class="d-flex justify-content-center align-items-center mt-3">
+      <div
+        *ngIf="canCustomize"
+        class="d-flex justify-content-center align-items-center mt-3">
         <a [routerLink]="['/baskets/custom-basket']" [state]="{ data: basket }">Customize this basket</a>
       </div>
     </div>
@@ -29,7 +31,7 @@
         mode="determinate"
         [value]="basket[key]"></mat-progress-bar>
     </div>
-    <div class="d-flex justify-content-center align-items-center mt-auto">
+    <div *ngIf="canCustomize" class="d-flex justify-content-center align-items-center mt-auto">
       <a [routerLink]="['/baskets/custom-basket']" [state]="{ data: basket }">Customize this basket</a>
     </div>
   </div>

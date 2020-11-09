@@ -97,11 +97,14 @@
 .mat-progress-bar-buffer {
   background: map-get($theme-colors, lighter) !important;
 }
-//
-//ngx-skeleton-loader .loader {
-//  margin-bottom: 1px !important;
-//}
 
+.mat-radio-container {
+  transform: scale(0.87)
+}
+
+.mat-radio-label-content {
+  padding-left: 4px !important;
+}
 
 .apexcharts-tooltip {
   color: #DE5DA6;

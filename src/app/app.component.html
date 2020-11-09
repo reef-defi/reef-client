@@ -4,6 +4,7 @@
       <app-sidebar
         [version]="VERSION"
         [currentAddress]="obs.providerUserInfo?.address"
+        [chainInfo]="obs.providerUserInfo?.chainInfo"
         (signOut)="onSignOut()"
         *ngIf="obs.providerUserInfo"></app-sidebar>
       <div

@@ -4,6 +4,7 @@ import { PoolService } from '../../../../core/services/pool.service';
 import { first } from 'rxjs/operators';
 import { IProviderUserInfo, ITransaction } from '../../../../core/models/types';
 import { Observable } from 'rxjs';
+import { UniswapService } from '../../../../core/services/uniswap.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,11 +16,13 @@ export class DashboardPage implements OnInit {
   readonly provider$ = this.connectorService.currentProvider$;
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly ethPrice$ = this.poolService.getEthPrice();
+  readonly slippagePercent$ = this.uniswapService.slippagePercent$;
   readonly transactionsForAccount$: Observable<ITransaction[]> =
     this.connectorService.transactionsForAccount$;
 
   constructor(private readonly connectorService: ConnectorService,
-              private readonly poolService: PoolService) {
+              private readonly poolService: PoolService,
+              private readonly uniswapService: UniswapService) {
   }
 
   ngOnInit(): void {
@@ -28,6 +31,10 @@ export class DashboardPage implements OnInit {
     ).subscribe((res: IProviderUserInfo) => {
       this.getTransactionsForAccount(res.address);
     });
+  }
+
+  public setSlippage(percent: number) {
+    this.uniswapService.setSlippage(percent);
   }
 
   private async getTransactionsForAccount(address: string): Promise<void> {

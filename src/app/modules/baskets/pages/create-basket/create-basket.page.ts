@@ -26,7 +26,7 @@ export class CreateBasketPage implements OnInit {
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
   ethAmount = new FormControl(1);
-  risk = new FormControl(10);
+  risk = new FormControl('low');
 
   constructor(
     private readonly basketsService: ApiService,
@@ -41,7 +41,7 @@ export class CreateBasketPage implements OnInit {
     this.getEthPrice();
     combineLatest(
       this.ethAmount.valueChanges.pipe(startWith(this.ethAmount.value)),
-      this.risk.valueChanges.pipe(startWith(100 - this.risk.value)),
+      this.risk.valueChanges.pipe(startWith('low')),
     ).subscribe(() => {
       this.generateBasket();
     });
@@ -49,7 +49,7 @@ export class CreateBasketPage implements OnInit {
 
   generateBasket(subtractMonths: number = 1): any {
     this.currentRoiTimespan = subtractMonths;
-    return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_aversion: 100 - this.risk.value}).pipe(
+    return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_level: this.risk.value}).pipe(
       tap((data) => {
         this.basket = this.makeBasket(data);
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
