@@ -30,6 +30,10 @@ export interface IVault {
   };
 }
 
+export interface IReefPricePerToken {
+  REEF_PER_TOKEN: string;
+  TOKEN_PER_REEF: string;
+}
 
 export interface IContract {
   defaultAccount: string;
@@ -64,7 +68,7 @@ type ContractMethod = (...params: any) => {
     callback?: () => any,
   ) => Promise<T>;
   send: <T>(
-    options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number },
+    options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number, amount?: string },
     callback?: () => any,
   ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }>;
   estimateGas: (options?: { from?: string, gas?: number, value?: number | string }) => Promise<number>;
@@ -184,7 +188,7 @@ export interface IBasket {
 
 export interface IGenerateBasketRequest {
   amount: string;
-  risk_aversion: number;
+  risk_level: number;
 }
 
 export interface IGenerateBasketResponse {

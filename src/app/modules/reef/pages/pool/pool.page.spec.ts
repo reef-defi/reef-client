@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StakeReefComponent } from './stake-reef.component';
+import { PoolPage } from './pool.page';
 
-describe('PoolsPage', () => {
-  let component: StakeReefComponent;
-  let fixture: ComponentFixture<StakeReefComponent>;
+describe('PoolPage', () => {
+  let component: PoolPage;
+  let fixture: ComponentFixture<PoolPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StakeReefComponent ]
+      declarations: [ PoolPage ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StakeReefComponent);
+    fixture = TestBed.createComponent(PoolPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

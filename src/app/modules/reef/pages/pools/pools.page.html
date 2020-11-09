@@ -1,0 +1,64 @@
+<div class="page__wrapper justify-content-around">
+  <div class="row">
+    <div class="col">
+      <div class="content__container d-flex flex-column justify-content-around">
+        <div class="d-flex align-items-center justify-content-center">
+          <img
+            width="75"
+            height="75"
+            src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
+          <img
+            width="75"
+            height="75"
+            src="../../../../../assets/images/eth.png" alt="eth-token">
+        </div>
+        <div
+          class="d-flex flex-column align-items-center justify-content-center">
+          <div class="heading__lg">
+            REEF & ETH
+          </div>
+          <div class="subheading__lg mb-1">
+            Invest REEF and ETH into this pool to get
+            <strong class="font-weight-bold">REEF-ETH</strong>
+            LP Tokens
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+          <button [routerLink]="['/reef/pool', 'WETH']" class="button-large regular">
+            Invest into REEF/WETH
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="content__container d-flex flex-column justify-content-around">
+        <div class="d-flex align-items-center justify-content-center">
+          <img
+            width="75"
+            height="75"
+            src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
+          <img
+            width="60"
+            height="60"
+            src="../../../../../assets/images/usdt.png" alt="usdt-token">
+        </div>
+        <div
+          class="d-flex flex-column align-items-center justify-content-center">
+          <div class="heading__lg">
+            REEF & USDT
+          </div>
+          <div class="subheading__lg">
+            Invest REEF and USDT into this pool to get
+            <strong class="font-weight-bold">REEF-USDT</strong>
+            LP Tokens
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+          <button [routerLink]="['/reef/pool', 'USDT']" class="button-large regular">
+            Invest into REEF/USDT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

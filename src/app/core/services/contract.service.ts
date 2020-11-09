@@ -46,7 +46,6 @@ export class ContractService {
       this.basketsError$.next(false);
       this.loading$.next(false);
     } catch (e) {
-      console.log(e, 'Fucking error');
       this.basketsError$.next(true);
       this.loading$.next(false);
     }
@@ -139,7 +138,7 @@ export class ContractService {
 
   async stakeReef(amount: number): Promise<any> {
     try {
-      const value = await this.connectorService.toWei(amount);
+      const value = this.connectorService.toWei(amount);
       const res = await this.stakingContract$.value.methods.stake(value)
         .send({
           from: this.connectorService.providerUserInfo$.value.address,
@@ -152,24 +151,6 @@ export class ContractService {
     }
   }
 
-  async approveToken(token: any, spenderAddr: string): Promise<any> {
-    const allowance = await this.getAllowance(token, spenderAddr);
-    console.log(allowance, 'allowance');
-    if (allowance && +allowance > 0) {
-      return true;
-    }
-    return await token.methods.approve(
-      spenderAddr,
-      MaxUint256.toString()
-    ).send({
-      from: this.connectorService.providerUserInfo$.value.address, // hardcode
-    });
-  }
-
-
-  private async getAllowance(token: any, spenderAddr: string): Promise<any> {
-    return token.methods.allowance(this.connectorService.providerUserInfo$.value.address, spenderAddr).call();
-  }
 
   private updateUserDetails() {
     this.connectorService.getUserProviderInfo();

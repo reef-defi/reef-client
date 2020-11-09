@@ -9,8 +9,9 @@ import { IChainData, IContract, IProviderUserInfo, ITransaction } from '../model
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
 import { contractData } from '../../../assets/abi';
-import { REEF_BASKET, REEF_FARMING, REEF_STAKING, REEF_TOKEN } from '../../../assets/addresses';
-
+import { addresses, addresses as addrs } from '../../../assets/addresses';
+import { MaxUint256 } from '../utils/pools-utils';
+const { REEF_TOKEN, REEF_BASKET, REEF_FARMING, REEF_STAKING } = addrs;
 const Web3Modal = window.Web3Modal.default;
 
 @Injectable({
@@ -21,6 +22,7 @@ export class ConnectorService {
   stakingContract$ = new BehaviorSubject<IContract>(null);
   farmingContract$ = new BehaviorSubject<IContract>(null);
   reefTokenContract$ = new BehaviorSubject<IContract>(null);
+  uniswapRouterContract$ = new BehaviorSubject<IContract>(null);
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
@@ -94,7 +96,7 @@ export class ConnectorService {
     return await this.web3.eth.getTransactionReceipt(txHash);
   }
 
-  public toWei(amount: number, unit = 'ether'): Promise<any> {
+  public toWei(amount: number, unit = 'ether'): string {
     return this.web3.utils.toWei(`${amount}`, unit);
   }
 
@@ -107,7 +109,6 @@ export class ConnectorService {
     const balance = await this.getUserBalance(address);
     const chainInfo = await this.getChainInfo();
     const reefBalance = await this.getReefBalance(address);
-    console.log(address, balance, chainInfo, reefBalance);
     this.providerUserInfo$.next({
       address,
       balance,
@@ -164,15 +165,21 @@ export class ConnectorService {
     };
   }
 
+  public createLpContract(tokenSymbol: string): IContract {
+    return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
+  }
+
   private async connectToContract(): Promise<void> {
     const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
     const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
     const stakingC = new this.web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
     const tokenC = new this.web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
+    const uniswapC = new this.web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
     this.basketContract$.next(basketsC);
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
     this.reefTokenContract$.next(tokenC);
+    this.uniswapRouterContract$.next(uniswapC);
     const reefBalance = await this.getReefBalance(this.providerUserInfo$.value.address);
     this.providerUserInfo$.next({
       ...this.providerUserInfo$.value,
@@ -204,7 +211,6 @@ export class ConnectorService {
     });
     this.currentProviderName$.next(getProviderName(this.web3));
     this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
-    console.log(this.currentProviderName$.value);
   }
 
   private subToProviderEvents(): void {
@@ -257,6 +263,25 @@ export class ConnectorService {
       case REEF_STAKING:
         return 'Staking';
     }
+  }
+
+
+  async approveToken(token: IContract | any, spenderAddr: string): Promise<any> {
+    const allowance = await this.getAllowance(token, spenderAddr);
+    console.log(allowance, 'allowance');
+    if (allowance && +allowance > 0) {
+      return true;
+    }
+    return await token.methods.approve(
+      spenderAddr,
+      MaxUint256.toString()
+    ).send({
+      from: this.providerUserInfo$.value.address, // hardcode
+    });
+  }
+
+  private async getAllowance(token: any, spenderAddr: string): Promise<any> {
+    return token.methods.allowance(this.providerUserInfo$.value.address, spenderAddr).call();
   }
 }
 

@@ -92,7 +92,6 @@ export class CustomBasketPage implements OnInit {
     const basket = makeBasket(this.chartPoolData);
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
-    console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
     await this.contractService.createBasket(name, basketPoolAndCoinInfo, ethAmount);
   }
 

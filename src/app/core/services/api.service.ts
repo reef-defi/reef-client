@@ -50,7 +50,7 @@ export class ApiService {
   }
 
   generateBasket(payload: IGenerateBasketRequest): Observable<IGenerateBasketResponse> {
-    if (!payload.amount || !payload.risk_aversion) {
+    if (!payload.amount || !payload.risk_level) {
       return EMPTY;
     }
     return this.http.post<IGenerateBasketResponse>(`${this.url}/generate_basket`, payload, httpOptions);

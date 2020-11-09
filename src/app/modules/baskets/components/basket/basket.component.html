@@ -14,7 +14,9 @@
     </div>
     <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
       <ng-container *ngIf="poolChartOptions; else loadingTemplate">
-        <app-basket-composition [basket]="pureBasket" [isList]="true">
+        <app-basket-composition
+          [canCustomize]="false"
+          [basket]="pureBasket" [isList]="true">
         </app-basket-composition>
       </ng-container>
     </div>
@@ -52,7 +54,9 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <app-basket-composition [basket]="pureBasket" [isList]="true">
+      <app-basket-composition
+        [canCustomize]="false"
+        [basket]="pureBasket" [isList]="true">
       </app-basket-composition>
     </div>
   </div>

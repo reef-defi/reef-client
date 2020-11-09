@@ -7,7 +7,7 @@
 .content__container {
   display: flex;
   flex-direction: column;
-  min-height: 400px;
+  min-height: 350px;
   background: map-get($theme-colors, lightest);
   color: map-get($font-colors, dark);
   padding: 15px;
