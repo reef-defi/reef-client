@@ -20,7 +20,7 @@ export class LiquidateModalComponent {
   }
 
   onLiquidate(): any {
-    return [...this.data.data, this.percentage.value];
+    return [...this.data.data, this.percentage.value, this.isReefStake.value];
   }
 
 }

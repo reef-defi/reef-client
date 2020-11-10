@@ -184,6 +184,7 @@ export interface IBasket {
     pools: any,
     weights: any;
   };
+  referrer: string;
 }
 
 export interface IGenerateBasketRequest {

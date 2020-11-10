@@ -8,12 +8,12 @@
 </ng-container>
 
 <ng-container *ngIf="data.type === 'success'">
-  <h5>Success</h5>
+  <div class="heading__md">Success</div>
   <div class="subheading__lg text-break mb-2">
     {{ data.message }}
   </div>
   <div>
-    <button class="button-small regular" mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+    <button class="button-small inverse" mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
   </div>
 </ng-container>
 

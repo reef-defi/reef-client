@@ -32,7 +32,7 @@ export class BasketComponent {
   @Output() disinvest = new EventEmitter();
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiData: number[][];
-  public disinvestPercentage: number = 100;
+  public disinvestPercentage = 100;
   public activeTimeSpan = 1;
 
   constructor(private readonly charts: ChartsService,
@@ -40,7 +40,7 @@ export class BasketComponent {
   }
 
   onDisinvest(): void {
-    const data = [[this.basketIndex], [this.disinvestPercentage]];
+    const data = [this.basketIndex, this.disinvestPercentage];
     this.disinvest.emit(data);
   }
 

@@ -41,7 +41,7 @@ export class ContractService {
         index: idx,
       })));
       baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
-        .filter(basket => +basket.investedETH > 0);
+        .filter(basket => +basket.investedETH > 0 && basket.referrer === this.connectorService.providerUserInfo$.value.address);
       this.baskets$.next(baskets);
       this.basketsError$.next(false);
       this.loading$.next(false);
@@ -114,14 +114,14 @@ export class ContractService {
     })));
   }
 
-  async disinvestInBasket(basketIdxs: number[], basketIdxPercentage: number[], yieldRatio: number): Promise<any> {
+  async disinvestInBasket(basketIdxs: number, basketIdxPercentage: number, yieldRatio: number, shouldRestake: boolean): Promise<any> {
     try {
       console.log(basketIdxs, basketIdxPercentage, yieldRatio, 'Disinvest Params');
       const res = await this.basketContract$.value.methods.disinvest(
         basketIdxs,
         basketIdxPercentage,
         yieldRatio,
-        1
+        shouldRestake,
       )
         .send({
           from: this.connectorService.providerUserInfo$.value.address,
