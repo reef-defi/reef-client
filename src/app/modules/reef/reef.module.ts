@@ -23,4 +23,5 @@ const pages = [ReefPage, FarmsPage, PoolPage, FarmsPage, FarmPage, ReefMenuPage,
     SharedModule,
   ]
 })
-export class ReefModule { }
+export class ReefModule {
+}

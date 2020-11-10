@@ -8,6 +8,7 @@ import { addMinutes, getUnixTime } from 'date-fns';
 import { BehaviorSubject, from } from 'rxjs';
 import BigNumber from 'bignumber.js';
 import { getKey } from '../utils/pools-utils';
+import { Router } from '@angular/router';
 
 const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
 
@@ -22,7 +23,8 @@ export class UniswapService {
   transactionInterval = null;
 
   constructor(private readonly connectorService: ConnectorService,
-              private readonly notificationService: NotificationService) {
+              private readonly notificationService: NotificationService,
+              private readonly router: Router) {
   }
 
   public createLpContract(tokenSymbol: string): IContract {
@@ -88,7 +90,7 @@ export class UniswapService {
         gas: 6721975
       });
       this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, []), 1000);
+        await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -115,7 +117,7 @@ export class UniswapService {
         value: `${weiEthAmount}`
       });
       this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, []), 1000);
+        await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -135,14 +137,15 @@ export class UniswapService {
           gas: 6721975,
         });
         this.transactionInterval = setInterval(async () =>
-          await this.checkIfTransactionSuccess(res, []), 1000);
+          await this.checkIfTransactionSuccess(res, [],
+            `You have deposited ${amount} LP Tokens! Your REEF Rewards will now start to accumulate.`), 1000);
       } catch (e) {
         this.notificationService.showNotification(e.message, 'Close', 'error');
       }
     }
   }
 
-  public async withdraw(poolAddress: string, tokenAmount: string): Promise<any> {
+  public async withdraw(poolAddress: string, tokenAmount: string | number): Promise<any> {
     try {
       const amount = new BigNumber(tokenAmount).toNumber();
       const poolSymbol = getKey(addresses, poolAddress);
@@ -177,16 +180,15 @@ export class UniswapService {
     this.slippagePercent$.next(percent);
   }
 
-  public async getERC20TokenBalance(contract: IContract, userAddress: string): Promise<string> {
-    const balance = await contract.methods.balanceOf(userAddress).call();
-    return await this.web3.utils.fromWei(balance);
-  }
-
   private getSlippage(amount: string | number): string {
     return new BigNumber(amount).multipliedBy(this.slippagePercent$.value / 100).toString();
   }
 
-  private async checkIfTransactionSuccess(tx: any, fns?: string[]): Promise<any> {
+  private goToReef() {
+    this.router.navigate(['/reef']);
+  }
+
+  private async checkIfTransactionSuccess(tx: any, fns?: string[], text?: string): Promise<any> {
     console.log(tx);
     if (!tx.transactionHash) {
       this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
@@ -197,7 +199,8 @@ export class UniswapService {
       if (fns && fns.length) {
         fns.forEach(fn => this[fn]());
       }
-      this.notificationService.showNotification(`Tx Hash: ${tx.transactionHash}`, 'Okay', 'success');
+      console.log(receipt, 'REC');
+      this.notificationService.showNotification(text || `Tx Hash: ${tx.transactionHash}`, 'Okay', 'success');
       const latestTx = await this.connectorService.getTxByHash(tx.transactionHash);
       if (this.connectorService.transactionsForAccount$.value) {
         this.connectorService.transactionsForAccount$.next(

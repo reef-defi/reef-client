@@ -1,5 +1,5 @@
 <ng-container *ngIf="data.type === 'error'">
-  <div class="text-break mb-2">
+  <div class="subheading__lg text-break mb-2">
     {{ data.message }}
   </div>
   <div>
@@ -9,7 +9,7 @@
 
 <ng-container *ngIf="data.type === 'success'">
   <h5>Success</h5>
-  <div class="text-break mb-2">
+  <div class="subheading__lg text-break mb-2">
     {{ data.message }}
   </div>
   <div>
@@ -18,7 +18,7 @@
 </ng-container>
 
 <ng-container *ngIf="data.type === 'info'">
-  <div class="text-break mb-2">
+  <div class="subheading__lg text-break mb-2">
     {{ data.message }}
   </div>
   <div>
