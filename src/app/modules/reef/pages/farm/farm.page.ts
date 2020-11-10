@@ -15,17 +15,20 @@ import { ConnectorService } from '../../../../core/services/connector.service';
   styleUrls: ['./farm.page.scss']
 })
 export class FarmPage implements OnInit {
+  public reefAmount = 0;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly loading$ = new BehaviorSubject(false);
   readonly lpContract$ = new BehaviorSubject<IContract | null>(null);
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
   readonly reefReward$ = new BehaviorSubject<number | null>(null);
+  readonly tokenSymbol$ = new BehaviorSubject<string | null>(null);
   readonly address$ = this.route.params.pipe(
     first(addr => !!addr),
     map((params) => params.address),
     tap(() => this.loading$.next(true)),
     filter(this.uniswapService.isSupportedERC20),
     tap((address: string) => {
+      this.tokenSymbol$.next(getKey(addresses, address).split('_')[1]);
       const validAddrs = Object.values(addresses);
       if (validAddrs.includes(address)) {
         const contract = this.createContract(address);
@@ -47,7 +50,7 @@ export class FarmPage implements OnInit {
     await this.uniswapService.deposit(contract, poolAddress, amount);
   }
 
-  public async withdraw(poolAddress: string, amount: string): Promise<void> {
+  public async withdraw(poolAddress: string, amount: string | number): Promise<void> {
     await this.uniswapService.withdraw(poolAddress, amount);
   }
 
