@@ -7,7 +7,7 @@
 }
 
 .success.mat-snack-bar-container {
-  background: $dark-primary;
+  background: map-get($theme-colors, success);
   color: map-get($theme-colors, lightest);
 }
 

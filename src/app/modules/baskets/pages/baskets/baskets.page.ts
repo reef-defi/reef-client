@@ -39,7 +39,7 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
     this.contractService.resetBaskets();
   }
 
-  onDisinvest(data: number[][]): void {
+  onDisinvest(data: number[]): void {
     const dialogRef = this.openDialog(data);
     dialogRef.afterClosed()
       .pipe(take(1))
@@ -55,7 +55,8 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private disinvestBasket(data: any): void {
-    this.contractService.disinvestInBasket(data[0], data[1], data[2]);
+    console.log(data, 'DATA');
+    this.contractService.disinvestInBasket(data[0], data[1], data[2], data[3]);
   }
 
   async getAllBaskets(): Promise<any> {
