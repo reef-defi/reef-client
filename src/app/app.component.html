@@ -16,6 +16,9 @@
     </div>
   </div>
   <ng-template #noPermissions>
-    <div class="no-permissions"></div>
+    <app-empty-state
+      title="Wrong Password"
+      subtitle="Contact the Reef Team if you want access to the closed beta.">
+    </app-empty-state>
   </ng-template>
 </ng-container>

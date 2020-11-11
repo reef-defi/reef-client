@@ -1,10 +1,13 @@
 <div class="sidebar">
   <p class="p-0 m-0 font-success">{{ version }}</p>
-  <div *ngIf="!chainInfo || (chainInfo && chainInfo.chain_id !== 1)"
-       class="d-flex justify-content-center align-items-center w-100 py-2 my-1 bg-danger">
-    <div class="label__md">
-      <span class="font-lightest">
-        You are not on mainnet
+  <div *ngIf="chainInfo && chainInfo.chain_id"
+       class="d-flex justify-content-center align-items-center w-100 p-2 my-1 bg-danger">
+    <div
+      (click)="openInfoDialog(rpcInfoDialog)"
+      class="subheading__md c-pointer">
+      <span class="font-lightest text-break">
+        Connect to our custom RPC to use the app.
+        Click here to see how.
       </span>
     </div>
   </div>
@@ -102,3 +105,33 @@
     <div class="subheading__md">Reef Inc {{ currentYear }}</div>
   </div>
 </div>
+
+<!-- TODO: Remove this for prod -->
+<ng-template #rpcInfoDialog>
+  <div matDialogTitle>How to connect to the REEF RPC</div>
+  <mat-dialog-content>
+    <div class="subheading__lg">1. In MetaMask, click on Settings, and go to Networks</div>
+    <div class="subheading__lg">2. Click on Add Network</div>
+    <div class="subheading__lg mb-1">3. Enter this information:</div>
+    <div class="subheading__lg mb-1">
+      <div>
+        Network Name: <span class="font-weight-bold">REEF_RPC</span>
+      </div>
+      <div>
+        New RPC Url: <span class="font-weight-bold">http://46.101.215.206:8600</span>
+      </div>
+      <div>
+        Chain ID: <span class="font-weight-bold">0x539</span>
+      </div>
+    </div>
+    <div class="subheading__lg">
+      4. Click Save
+    </div>
+    <div class="subheading__lg">
+      5. Select the REEF_RPC from the network dropdown, and refresh the page.
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button class="button-small inverse" mat-dialog-close>Got it</button>
+  </mat-dialog-actions>
+</ng-template>

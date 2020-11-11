@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { IChainData } from '../../../core/models/types';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,7 +14,13 @@ export class SidebarComponent {
   @Input() currentAddress: string | undefined;
   @Output() signOut = new EventEmitter();
 
+  constructor(private dialog: MatDialog) {}
+
   onSignOut(): void {
     this.signOut.emit();
+  }
+
+  openInfoDialog(dialogRef: TemplateRef<any>): void {
+    this.dialog.open(dialogRef);
   }
 }
