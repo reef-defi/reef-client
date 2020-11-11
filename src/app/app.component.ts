@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  readonly VERSION = '0.2.1';
+  readonly VERSION = '0.2.2';
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
