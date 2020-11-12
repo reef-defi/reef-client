@@ -3,10 +3,10 @@
   class="content__container w-100">
   <div class="row justify-content-between align-items-center">
     <div class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center">
-      <div class="heading__lg font-weight-bold mb-3">{{ basket.name }}</div>
-      <div class="heading__lg font-weight-bold">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="heading__lg font-weight-bold mb-3">{{ vault.name }}</div>
+      <div class="heading__lg font-weight-bold">{{ vault.investedETH | number: '1.2-2' }} ETH</div>
       <div class="subheading__lg mb-3">INVESTED</div>
-      <div class="heading__lg font-weight-bold">Pool Basket</div>
+      <div class="heading__lg font-weight-bold">Vault Basket</div>
       <div class="subheading__lg mb-3">TYPE</div>
       <div class="heading__lg font-weight-bold roi__percent">+51% ROI</div>
       <div class="subheading__lg mb-3">+ 5.61 ETH</div>
@@ -15,21 +15,20 @@
       </div>
     </div>
     <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
-      <ng-container *ngIf="poolChartOptions; else loadingTemplate">
-        <app-basket-composition
-          [canCustomize]="false"
-          [basket]="pureBasket" [isList]="true">
-        </app-basket-composition>
+      <ng-container *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate">
+        <app-vaults-composition
+          [vaults]="vault.vaults"
+          [isList]="true">
+        </app-vaults-composition>
       </ng-container>
     </div>
     <div class="col-lg-6 col-xl-6 col-sm-12 col-md-12">
-      <ng-container *ngIf="roiData; else loadingTemplate">
-        <app-basket-roi
-          [roiData]="roiData"
+      <ng-container *ngIf="chartRoiData; else loadingTemplate">
+        <app-vaults-roi-chart
+          [roiChartData]="chartRoiData"
           [isList]="true"
-          [activeTimeSpan]="activeTimeSpan"
-          (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
-        ></app-basket-roi>
+          (dateSpanChange)="getHistoricRoi(payload, $event)"
+        ></app-vaults-roi-chart>
       </ng-container>
     </div>
   </div>
@@ -38,15 +37,15 @@
 <div *ngIf="!isListView" class="content__container">
   <div class="row d-flex justify-content-between align-items-center mt-3 mb-4">
     <div class="col-7 heading__lg font-weight-bold">
-      {{ basket.name }}
+      {{ vault.name }}
     </div>
     <div class="col-4 heading__lg font-weight-bold">
-      Pool Basket
+      Vault Basket
     </div>
   </div>
   <div class="row mb-2">
     <div class="col-3">
-      <div class="heading__lg font-weight-bold mb-1">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="heading__lg font-weight-bold mb-1">{{ vault.investedETH | number: '1.2-2' }} ETH</div>
       <div class="subheading__lg mb-3">INVESTED</div>
     </div>
     <div class="col-3">
@@ -58,22 +57,23 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-12">
-      <app-basket-composition
-        [canCustomize]="false"
-        [basket]="pureBasket" [isList]="true">
-      </app-basket-composition>
+    <div class="col-12 mb-2">
+      <ng-container *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate">
+        <app-vaults-composition
+          [vaults]="vault.vaults"
+          [isList]="true">
+        </app-vaults-composition>
+      </ng-container>
     </div>
   </div>
   <div class="row mt-3 mt-auto">
-    <ng-container *ngIf="roiData; else loadingTemplate">
+    <ng-container *ngIf="chartRoiData; else loadingTemplate">
       <div class="col-12 p-0">
-        <app-basket-roi
-          [roiData]="roiData"
+        <app-vaults-roi-chart
+          [roiChartData]="chartRoiData"
           [isList]="true"
-          [activeTimeSpan]="activeTimeSpan"
-          (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
-        ></app-basket-roi>
+          (dateSpanChange)="getHistoricRoi(payload, $event)"
+        ></app-vaults-roi-chart>
       </div>
     </ng-container>
   </div>

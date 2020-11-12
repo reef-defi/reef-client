@@ -23,6 +23,7 @@ export class ConnectorService {
   farmingContract$ = new BehaviorSubject<IContract>(null);
   reefTokenContract$ = new BehaviorSubject<IContract>(null);
   uniswapRouterContract$ = new BehaviorSubject<IContract>(null);
+  vaultsContract$ = new BehaviorSubject<IContract>(null);
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
@@ -100,7 +101,7 @@ export class ConnectorService {
     return this.web3.utils.toWei(`${amount}`, unit);
   }
 
-  public fromWei(amount: number, unit = 'ether'): Promise<any> {
+  public fromWei(amount: number | string, unit = 'ether'): Promise<any> {
     return this.web3.utils.fromWei(`${amount}`, unit);
   }
 
@@ -175,11 +176,13 @@ export class ConnectorService {
     const stakingC = new this.web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
     const tokenC = new this.web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
     const uniswapC = new this.web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
+    const vaultsC = new this.web3.eth.Contract((contractData.reefVaults.abi as any), contractData.reefVaults.addr);
     this.basketContract$.next(basketsC);
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
     this.reefTokenContract$.next(tokenC);
     this.uniswapRouterContract$.next(uniswapC);
+    this.vaultsContract$.next(vaultsC);
     const reefBalance = await this.getReefBalance(this.providerUserInfo$.value.address);
     this.providerUserInfo$.next({
       ...this.providerUserInfo$.value,
@@ -236,8 +239,8 @@ export class ConnectorService {
   }
 
   private async getAddress(): Promise<string> {
-    const addresses = await this.web3.eth.getAccounts();
-    return addresses[0];
+    const allAccs = await this.web3.eth.getAccounts();
+    return allAccs[0];
   }
 
   private async getChainInfo(): Promise<IChainData> {

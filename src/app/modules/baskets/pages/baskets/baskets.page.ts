@@ -6,6 +6,12 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LiquidateModalComponent } from '../../components/liquidate-modal/liquidate-modal.component';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { VaultsService } from '../../../../core/services/vaults.service';
+import { BehaviorSubject } from 'rxjs';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { IVaultBasket } from '../../../../core/models/types';
+import { ApiService } from '../../../../core/services/api.service';
+
 @Component({
   selector: 'app-baskets',
   templateUrl: './baskets.page.html',
@@ -13,7 +19,9 @@ import { FormControl } from '@angular/forms';
 })
 export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   readonly contract$ = this.contractService.basketContract$;
+  readonly vaultsContract$ = this.connectorService.vaultsContract$;
   readonly baskets$ = this.contractService.baskets$;
+  readonly vaults$ = new BehaviorSubject<IVaultBasket[]>(null);
   readonly basketsError$ = this.contractService.basketsError$;
   readonly loading$ = this.contractService.loading$;
   public isList = new FormControl(true);
@@ -21,14 +29,20 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private readonly contractService: ContractService,
     private readonly connectorService: ConnectorService,
+    private readonly vaultsService: VaultsService,
+    private readonly apiService: ApiService,
+    private readonly dialog: MatDialog,
     private router: Router,
-    private readonly dialog: MatDialog) {
+  ) {
   }
 
   ngOnInit(): void {
-    this.contract$.pipe(
-      first(ev => !!ev)
-    ).subscribe(() => this.getAllBaskets());
+    combineLatest(this.contract$, this.vaultsContract$).pipe(
+      first(([a, b]) => !!a && !!b)
+    ).subscribe(() => {
+      this.getAllBaskets();
+      this.getVaultsBaskets();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -39,13 +53,13 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
     this.contractService.resetBaskets();
   }
 
-  onDisinvest(data: number[]): void {
+  onDisinvest(data: number[], type: 'vault' | 'pool'): void {
     const dialogRef = this.openDialog(data);
     dialogRef.afterClosed()
       .pipe(take(1))
       .subscribe((result) => {
         if (result) {
-          this.disinvestBasket(result);
+          type === 'vault' ? this.disinvestVaultBasket(result) : this.disinvestBasket(result);
         }
       });
   }
@@ -57,6 +71,15 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   private disinvestBasket(data: any): void {
     console.log(data, 'DATA');
     this.contractService.disinvestInBasket(data[0], data[1], data[2], data[3]);
+  }
+
+  private disinvestVaultBasket(data: any): void {
+    this.vaultsService.disinvestFromVaults(data[0], data[1], data[2], data[3]);
+  }
+
+  private async getVaultsBaskets(): Promise<any> {
+    const vaults = await this.vaultsService.getBasketVaults();
+    this.vaults$.next(vaults);
   }
 
   async getAllBaskets(): Promise<any> {

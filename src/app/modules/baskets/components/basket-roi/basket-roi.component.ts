@@ -13,6 +13,7 @@ export class BasketRoiComponent {
   @Input() set roiData(val: number[][]) {
     if (val) {
       this.options = val;
+      console.log(this.options, 'Hmm...')
       this.updateFlag = true;
     }
   }

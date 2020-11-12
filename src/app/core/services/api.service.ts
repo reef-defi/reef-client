@@ -28,6 +28,7 @@ export class ApiService {
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
+  public vaults$ = new BehaviorSubject(null);
   private url = environment.testReefUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
 
@@ -35,6 +36,7 @@ export class ApiService {
   constructor(private readonly http: HttpClient) {
     this.listPools();
     this.listTokens();
+    this.getVaults();
   }
 
   listPools(): Subscription {
@@ -68,7 +70,7 @@ export class ApiService {
     );
   }
 
-  getVaults(): Observable<IVault> {
+  getVaults(): Subscription {
     return combineLatest(this.getAllVaults(), this.getVaultsAPY()).pipe(
       map(([vaults, apyVaults]: [Vault, VaultAPY]) => {
         return Object.keys(apyVaults)
@@ -83,7 +85,7 @@ export class ApiService {
           .reduce((memo, curr) => ({...memo, ...curr}));
       }),
       catchError((err) => EMPTY)
-    );
+    ).subscribe(vaults => this.vaults$.next(vaults));
   }
 
   getAllVaults(): Observable<Vault> {
