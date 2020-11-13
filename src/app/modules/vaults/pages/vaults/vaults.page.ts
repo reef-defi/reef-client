@@ -76,6 +76,7 @@ export class VaultsPage implements OnInit {
         this.currentVaults[key].percentage = Math.round(this.currentVaults[key].percentage * multiplier);
       }
     }
+    this.setChart(this.chartMonthsSpan);
   }
 
   setChart(subtractMonths: number = 1): void {
