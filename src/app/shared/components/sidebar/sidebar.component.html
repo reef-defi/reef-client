@@ -35,6 +35,25 @@
       xPosition="after"
       #addressMenu="matMenu">
       <div
+        *ngIf="slippagePercent$ | async as slippagePercent"
+        class="d-flex flex-column align-items-center justify-content-around">
+        <div class="label__lg">Set Slippage</div>
+        <div class="d-flex align-items-center justify-content-around px-2 py-1 m-1">
+          <button
+            class="py-1"
+            [class.regular]="slippagePercent === 0.1" (click)="setSlippage(0.1)" mat-raised-button>0.1%
+          </button>
+          <button
+            class="py-1"
+            [class.regular]="slippagePercent === 0.5" (click)="setSlippage(0.5)" mat-raised-button>0.5%
+          </button>
+          <button
+            class="py-1"
+            [class.regular]="slippagePercent === 1" (click)="setSlippage(1)" mat-raised-button>1%
+          </button>
+        </div>
+      </div>
+      <div
         [cdkCopyToClipboard]="currentAddress"
         class="address__menu--item">
         <div class="la la-lg la-copy mr-2 font-success"></div>

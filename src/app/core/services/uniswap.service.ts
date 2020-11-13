@@ -18,7 +18,7 @@ const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
 export class UniswapService {
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
-  readonly slippagePercent$ = new BehaviorSubject<number | null>(0.5);
+  readonly slippagePercent$ = new BehaviorSubject<number | null>(this.getSlippageIfSet());
   readonly web3 = this.connectorService.web3;
   transactionInterval = null;
 
@@ -178,6 +178,7 @@ export class UniswapService {
 
   public setSlippage(percent: number): void {
     this.slippagePercent$.next(percent);
+    localStorage.setItem('reef_slippage', `${percent}`);
   }
 
   private getSlippage(amount: string | number): string {
@@ -209,6 +210,10 @@ export class UniswapService {
       }
       clearInterval(this.transactionInterval);
     }
+  }
+
+  private getSlippageIfSet(): number {
+    return +localStorage.getItem('reef_slippage') || 0.5;
   }
 
 }
