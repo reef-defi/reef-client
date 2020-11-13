@@ -53,7 +53,7 @@ export class VaultsService {
     try {
       console.log(name, 'name');
       const res = await this.vaultsContract$.value.methods.createBasket(
-        name, ['0x2994529C0652D127b7842094103715ec5299bBed'], [100], [2] // TODO: revert once I can create vaults from API
+        name, vaults, vaultsWeights, vaultsTypes
       ).send({
         from: this.userInfo.value.address,
         gas: 6721975,

@@ -15,7 +15,7 @@ export class AppComponent {
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
-  public canEnter = true;
+  public canEnter = false;
 
   constructor(
     private readonly connectorService: ConnectorService,
@@ -23,10 +23,10 @@ export class AppComponent {
     private readonly apiService: ApiService,
     private readonly contractService: ContractService,
     private readonly router: Router) {
-    // const pw = prompt('Welcome to Reef!');
-    // if (pw === 'open sesame') {
-    //   this.canEnter = true;
-    // }
+    const pw = prompt('Welcome to Reef!');
+    if (pw === 'open sesame') {
+      this.canEnter = true;
+    }
   }
 
   async onSignOut(): Promise<void> {
