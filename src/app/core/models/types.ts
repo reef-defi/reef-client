@@ -164,6 +164,25 @@ export interface IBasketPoolsAndCoinInfo {
   mooniswapWeights: number[];
 }
 
+export interface IVaultBasket {
+  name: string;
+  investedETH: string;
+  index: number;
+  referrer: string;
+  vaults: IVaultInfo;
+  vaultsBalance: string[];
+  isVault: boolean;
+}
+
+export interface IVaultInfo {
+  vaults: {
+    name: string;
+    address: string;
+  }[];
+  weights: string[];
+  types: string[];
+}
+
 export interface IBasket {
   name: string;
   investedETH: string[];
@@ -185,6 +204,7 @@ export interface IBasket {
     weights: any;
   };
   referrer: string;
+  isVault: boolean;
 }
 
 export interface IGenerateBasketRequest {

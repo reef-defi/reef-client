@@ -39,6 +39,7 @@ export class ContractService {
         investedETH: await this.getUserInvestedBasketAmount(idx),
         ...(await this.getBasketPoolsAndTokens(idx)).reduce((memo, curr) => ({...memo, ...curr})),
         index: idx,
+        isVault: false,
       })));
       baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
         .filter(basket => +basket.investedETH > 0 && basket.referrer === this.connectorService.providerUserInfo$.value.address);
@@ -80,7 +81,7 @@ export class ContractService {
         .createBasket(
           name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
         .send({
-          from: this.connectorService.providerUserInfo$.value.address.toLocaleLowerCase(),
+          from: this.connectorService.providerUserInfo$.value.address,
           value: `${wei}`,
           gas: 6721975,
         });

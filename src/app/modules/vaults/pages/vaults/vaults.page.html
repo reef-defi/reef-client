@@ -1,18 +1,24 @@
-<ng-container>
-  <div class="row page__wrapper justify-content-between">
-    <div class="col">
-      <app-diversify-vaults
-        [ethBalance]="(userInfo | async)?.balance"
-        [ethAmount]="ethAmount"
-        (percentageChange)="onPercentageChange($event)"
-        (diversifyChange)="onDiversifyChange($event)"
-        (invest)="onInvest()"
-      ></app-diversify-vaults>
-    </div>
-    <div class="col">
-      <app-vaults-list
-        (vaultAllocChanged)="editVaultAlloc($event)"
-        [vaults]="currentVaults"></app-vaults-list>
-    </div>
+<div class="row page__wrapper justify-content-between">
+  <div class="col">
+    <app-diversify-vaults
+      [ethBalance]="(userInfo | async)?.balance"
+      [ethAmount]="ethAmount"
+      (percentageChange)="onPercentageChange($event)"
+      (diversifyChange)="onDiversifyChange($event)"
+      (invest)="onInvest()"
+    ></app-diversify-vaults>
   </div>
-</ng-container>
+  <div class="col">
+    <app-vaults-list
+      (vaultAllocChanged)="editVaultAlloc($event)"
+      [vaults]="currentVaults"></app-vaults-list>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <app-vaults-roi-chart
+      [roiChartData]="vaultRoiChart"
+      (dateSpanChange)="setChart($event)"
+    ></app-vaults-roi-chart>
+  </div>
+</div>

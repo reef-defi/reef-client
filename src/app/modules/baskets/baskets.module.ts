@@ -16,6 +16,9 @@ import { CustomBasketPoolsComponent } from './components/custom-basket-pools/cus
 import { CustomInvestModalComponent } from './components/custom-invest-modal/custom-invest-modal.component';
 import { BasketRoiComponent } from './components/basket-roi/basket-roi.component';
 import { CustomBasketCompositionComponent } from './components/custom-basket-composition/custom-basket-composition.component';
+import { VaultComponent } from './components/vault/vault.component';
+import { VaultsCompositionComponent } from './components/vaults-composition/vaults-composition.component';
+import { VaultsModule } from '../vaults/vaults.module';
 
 const pages = [
   CreateBasketPage,
@@ -31,6 +34,8 @@ const components = [
   CustomBasketPoolsComponent,
   CustomInvestModalComponent,
   CustomBasketCompositionComponent,
+  VaultComponent,
+  VaultsCompositionComponent
 ];
 
 @NgModule({
@@ -42,6 +47,7 @@ const components = [
     BasketsRoutingModule,
     SharedModule,
     MatRippleModule,
+    VaultsModule,
   ]
 })
 export class BasketsModule {
