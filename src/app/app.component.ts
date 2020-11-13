@@ -23,9 +23,15 @@ export class AppComponent {
     private readonly apiService: ApiService,
     private readonly contractService: ContractService,
     private readonly router: Router) {
-    const pw = prompt('Welcome to Reef!');
-    if (pw === 'open sesame') {
+    // TODO: Remove this once we go live
+    if (localStorage.getItem('demo_pw') === 'open sesame') {
       this.canEnter = true;
+    } else {
+      const pw = prompt('Welcome to Reef!');
+      if (pw === 'open sesame') {
+        this.canEnter = true;
+        localStorage.setItem('demo_pw', 'open sesame');
+      }
     }
   }
 

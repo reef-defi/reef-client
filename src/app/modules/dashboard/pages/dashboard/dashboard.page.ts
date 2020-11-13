@@ -33,7 +33,7 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  public setSlippage(percent: number) {
+  public setSlippage(percent: number): void {
     this.uniswapService.setSlippage(percent);
   }
 
