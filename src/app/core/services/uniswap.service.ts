@@ -5,7 +5,7 @@ import { ConnectorService } from './connector.service';
 import { IContract, IReefPricePerToken } from '../models/types';
 import { NotificationService } from './notification.service';
 import { addMinutes, getUnixTime } from 'date-fns';
-import { BehaviorSubject, from } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import BigNumber from 'bignumber.js';
 import { getKey } from '../utils/pools-utils';
 import { Router } from '@angular/router';
@@ -61,7 +61,7 @@ export class UniswapService {
     if (addresses[tokenSymbol]) {
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
-      const tokenB = new Token(ChainId.MAINNET, checkSummed, 18);
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
       return {
@@ -170,6 +170,12 @@ export class UniswapService {
   public async getBalanceOf(tokenContract: IContract, ownerAddress: string): Promise<string> {
     const balance = await tokenContract.methods.balanceOf(ownerAddress).call<number>();
     return this.connectorService.fromWei(balance);
+  }
+
+  public async getStaked(poolAddress: string): Promise<any> {
+    const address = this.connectorService.providerUserInfo$.value.address;
+    const poolSymbol = getKey(addresses, poolAddress);
+    return await this.farmingContract$.value.methods.userInfo(reefPools[poolSymbol], address).call<number>();
   }
 
   public isSupportedERC20(address: string): boolean {
