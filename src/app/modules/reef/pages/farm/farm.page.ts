@@ -22,6 +22,7 @@ export class FarmPage implements OnInit {
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
   readonly reefReward$ = new BehaviorSubject<number | null>(null);
   readonly tokenSymbol$ = new BehaviorSubject<string | null>(null);
+  readonly stakedAmount$ = new BehaviorSubject<string | null>(null);
   readonly address$ = this.route.params.pipe(
     first(addr => !!addr),
     map((params) => params.address),
@@ -48,15 +49,22 @@ export class FarmPage implements OnInit {
 
   public async deposit(contract: IContract, poolAddress: string, amount: string): Promise<void> {
     await this.uniswapService.deposit(contract, poolAddress, amount);
+    await this.getBalances(this.lpContract$.value);
   }
 
   public async withdraw(poolAddress: string, amount: string | number): Promise<void> {
     await this.uniswapService.withdraw(poolAddress, amount);
+    await this.getBalances(this.lpContract$.value);
   }
 
   private async getReefRewards(poolAddress: string): Promise<void> {
     const rewards = await this.uniswapService.getReefRewards(poolAddress);
     this.reefReward$.next(rewards);
+  }
+
+  private async getStaked(poolAddress: string): Promise<void> {
+    const info = await this.uniswapService.getStaked(poolAddress);
+    this.stakedAmount$.next(info.amount);
   }
 
   private async getBalance(lpContract: IContract, address: string): Promise<void> {
@@ -77,6 +85,7 @@ export class FarmPage implements OnInit {
     ).subscribe(async (info: IProviderUserInfo) => {
       await this.getBalance(lpContract, info.address);
       await this.getReefRewards(lpContract.options.address);
+      await this.getStaked(lpContract.options.address);
     });
   }
 }
