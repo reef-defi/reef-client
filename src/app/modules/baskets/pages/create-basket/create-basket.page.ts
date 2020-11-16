@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { IBasketHistoricRoi, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
-import { startWith, switchMap } from 'rxjs/operators';
+import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { PoolService } from '../../../../core/services/pool.service';
 import { FormControl } from '@angular/forms';
 import { tap } from 'rxjs/internal/operators/tap';
@@ -10,6 +10,8 @@ import { combineLatest } from 'rxjs';
 import { basketNameGenerator, convertToInt, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
 import { ContractService } from '../../../../core/services/contract.service';
 import { ConnectorService } from '../../../../core/services/connector.service';
+import { ActivatedRoute } from '@angular/router';
+import { binanceCoins } from '../../../../../assets/addresses';
 
 @Component({
   selector: 'app-my-baskets',
@@ -25,6 +27,7 @@ export class CreateBasketPage implements OnInit {
   public roiData: number[][];
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
+  public isBinance = false;
   ethAmount = new FormControl(1);
   risk = new FormControl('low');
 
@@ -33,7 +36,8 @@ export class CreateBasketPage implements OnInit {
     private readonly poolService: PoolService,
     private readonly chartsService: ChartsService,
     private readonly contractService: ContractService,
-    private readonly connectorService: ConnectorService) {
+    private readonly connectorService: ConnectorService,
+    private readonly route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -42,16 +46,28 @@ export class CreateBasketPage implements OnInit {
     combineLatest(
       this.ethAmount.valueChanges.pipe(startWith(this.ethAmount.value)),
       this.risk.valueChanges.pipe(startWith('low')),
-    ).subscribe(() => {
-      this.generateBasket();
-    });
+    ).pipe(
+      switchMap(([amount, risk]) => {
+        return this.route.queryParams.pipe(
+          map(params => params.basket)
+        );
+      })
+    )
+      .subscribe((res: string) => {
+        this.isBinance = res && res === 'binance';
+        this.generateBasket();
+      });
   }
 
   generateBasket(subtractMonths: number = 1): any {
     this.currentRoiTimespan = subtractMonths;
     return this.basketsService.generateBasket({amount: this.ethAmount.value, risk_level: this.risk.value}).pipe(
       tap((data) => {
-        this.basket = this.makeBasket(data);
+        if (this.isBinance) {
+          this.basket = this.makeBasket(binanceCoins);
+        } else {
+          this.basket = this.makeBasket(data);
+        }
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
       }),
       switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data, subtractMonths))
@@ -69,6 +85,7 @@ export class CreateBasketPage implements OnInit {
 
   async createBasket(): Promise<any> {
     console.log('Creating Basket...');
+    console.log(this.basket, 'CREATING...')
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(this.basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
     console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');

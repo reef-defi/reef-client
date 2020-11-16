@@ -73,6 +73,7 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async disinvestVaultBasket(data: any): Promise<void> {
+    console.log(data, 'DISINVEST')
     await this.vaultsService.disinvestFromVaults(data[0], data[1], data[2], data[3]);
     await this.getVaultsBaskets();
   }

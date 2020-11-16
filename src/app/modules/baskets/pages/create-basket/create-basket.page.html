@@ -1,3 +1,17 @@
+<div *ngIf="isBinance" class="row mb-2">
+  <div class="col-12 d-flex justify-content-center align-items-center">
+    <img
+      height="100"
+      width="300"
+      src="../../../../../assets/images/binance_full.svg" alt="">
+    <div class="mx-3">x</div>
+    <img
+      height="75"
+      width="150"
+      src="../../../../../assets/images/reef/reef-v2.svg" alt="">
+  </div>
+</div>
+
 <div class="row page__wrapper justify-content-between">
   <div class="parameters__wrapper col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
     <app-create-basket
@@ -14,7 +28,9 @@
     </app-basket-composition>
   </div>
 </div>
-<div class="row">
+<div
+  *ngIf="!isBinance"
+  class="row">
   <div class="col-12">
     <app-basket-roi
       [activeTimeSpan]="currentRoiTimespan"

@@ -68,6 +68,7 @@ export class VaultsService {
 
   public async disinvestFromVaults(basketIdx: number, percent: number, yieldRatio: number, shouldRestake: boolean): Promise<any> {
     try {
+      console.log(basketIdx, percent, yieldRatio, shouldRestake, 'disinvest params.')
       const res = await this.vaultsContract$.value.methods.disinvest(basketIdx, percent, yieldRatio, shouldRestake).send({
         from: this.userInfo.value.address,
         gas: 6721975,

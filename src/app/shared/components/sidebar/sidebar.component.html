@@ -80,9 +80,22 @@
       id="reefMenu"
       [routerLink]="['/reef']"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-2">
+      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
       <div class="la la-lg la-swimming-pool mr-2 pl-3"></div>
       <div class="sidebar__label">REEF</div>
+    </div>
+    <div
+      id="binanceBasket"
+      [routerLink]="['/baskets/create-basket']"
+      [queryParams]="{ basket: 'binance' }"
+      routerLinkActive="active"
+      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-2">
+      <img
+        height="35"
+        width="35"
+        class="img-fluid mr-2 pl-3"
+        src="../../../../assets/images/binance-logo.svg" alt="binance">
+      <div class="sidebar__label">B-BASKET</div>
     </div>
     <div class="d-flex justify-content-center align-items-center mb-2 w-100">
       <mat-divider class="sidebar__divider"></mat-divider>

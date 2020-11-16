@@ -16,3 +16,10 @@ export const reefPools = {
   REEF_WETH_POOL: 0,
   REEF_USDT_POOL: 1,
 };
+
+export const binanceCoins = {
+  BBTC: 0.25,
+  BDOT: 0.25,
+  BFIL: 0.25,
+  BWRX: 0.25 ,
+};
