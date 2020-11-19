@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { IBasketHistoricRoi, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
-import { startWith, switchMap } from 'rxjs/operators';
+import { first, startWith, switchMap } from 'rxjs/operators';
 import { PoolService } from '../../../../core/services/pool.service';
 import { FormControl } from '@angular/forms';
 import { tap } from 'rxjs/internal/operators/tap';
@@ -25,6 +25,7 @@ export class CreateBasketPage implements OnInit {
   public roiData: number[][];
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
+  public minimalInvestment: string | undefined;
   ethAmount = new FormControl(1);
   risk = new FormControl('low');
 
@@ -44,6 +45,11 @@ export class CreateBasketPage implements OnInit {
       this.risk.valueChanges.pipe(startWith('low')),
     ).subscribe(() => {
       this.generateBasket();
+    });
+    this.contractService.basketContract$.pipe(
+      first(val => !!val)
+    ).subscribe(async () => {
+      this.minimalInvestment = await this.getMinimalInvestment();
     });
   }
 
@@ -85,6 +91,10 @@ export class CreateBasketPage implements OnInit {
 
   getEthPrice(): void {
     this.poolService.getEthPrice().subscribe(console.log);
+  }
+
+  getMinimalInvestment(): Promise<string> {
+    return this.contractService.getMinimalInvestment();
   }
 
   private extractRoi(obj: IBasketHistoricRoi): number[][] {

@@ -10,6 +10,7 @@ export class CreateBasketComponent {
   @Input() ethAmount: FormControl | undefined;
   @Input() riskAmount: FormControl | undefined;
   @Input() ethBalance: string;
+  @Input() minimalInvestment: string | undefined;
   @Output() invest = new EventEmitter<void>();
   @Output() selectPercentage = new EventEmitter<number>();
 

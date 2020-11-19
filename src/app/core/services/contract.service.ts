@@ -152,6 +152,10 @@ export class ContractService {
     }
   }
 
+  async getMinimalInvestment(): Promise<string> {
+    const investment = await this.basketContract$.value.methods.minimalInvestment().call();
+    return this.connectorService.fromWei(investment as string);
+  }
 
   private updateUserDetails() {
     this.connectorService.getUserProviderInfo();
