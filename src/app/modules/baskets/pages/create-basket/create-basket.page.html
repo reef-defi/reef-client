@@ -4,6 +4,7 @@
       [ethAmount]="ethAmount"
       [riskAmount]="risk"
       [ethBalance]="(userInfo | async)?.balance"
+      [minimalInvestment]="minimalInvestment"
       (selectPercentage)="onPercentageChange($event)"
       (invest)="createBasket()">
     </app-create-basket>
