@@ -7,12 +7,12 @@ import {
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
-  IVault,
+  IVault, QuotePayload,
   Vault,
   VaultAPY
 } from '../models/types';
 import { subMonths } from 'date-fns';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 
 const httpOptions = {
@@ -29,7 +29,8 @@ export class ApiService {
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
   public vaults$ = new BehaviorSubject(null);
-  private url = environment.testReefUrl;
+  private url = environment.reefApiUrl;
+  private binanceApiUrl = environment.reefBinanceApiUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
 
 
@@ -97,6 +98,57 @@ export class ApiService {
   getVaultsAPY(): Observable<VaultAPY> {
     return this.http.get<VaultAPY>(`${this.url}/vault_estimate_apy`).pipe(
       catchError((err) => EMPTY)
+    );
+  }
+
+  registerBinanceUser(email: string, address: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/register`, {email, address}).pipe(
+      take(1),
+    );
+  }
+
+  bindBinanceUser(email: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/redirect`, {email}).pipe(
+      take(1),
+    );
+  }
+
+  getBindingStatus(address: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/bindingStatus`, {address}).pipe(
+      take(1),
+    );
+  }
+
+  getBinanceQuote(params: QuotePayload): Observable<any> {
+    const { cryptoCurrency, baseCurrency, requestedAmount, address, email } = params;
+    return this.http.post(`${this.binanceApiUrl}/getQuote`, {
+      cryptoCurrency, baseCurrency, requestedAmount, address, email
+    }).pipe(
+      take(1),
+    );
+  }
+
+  executeTrade(address: string, quoteId: string, orderId?: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/execute`, {address, quoteId, orderId}).pipe(
+      take(1),
+    );
+  }
+
+  getBinanceTransactions(address: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/transactions`, {address}).pipe(
+      take(1),
+    );
+  }
+
+  createUserAfterBind(email: string, address: string, userId: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/create-user`, {email, address, userId}).pipe(
+      take(1),
+    );
+  }
+
+  checkIfUserRegistered(address: string): Observable<any> {
+    return this.http.post(`${this.binanceApiUrl}/registrationStatus`, {address}).pipe(
+      take(1),
     );
   }
 

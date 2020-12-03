@@ -28,6 +28,11 @@ const routes: Routes = [
     canActivate: [WalletGuard],
   },
   {
+    path: 'binance',
+    loadChildren: () => import('./modules/binance/binance.module').then(m => m.BinanceModule),
+    canActivate: [WalletGuard],
+  },
+  {
     path: '**',
     redirectTo: '/'
   }

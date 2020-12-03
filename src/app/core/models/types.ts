@@ -12,6 +12,24 @@ import {
   ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
+export interface QuoteResponse {
+  quotationExpiredTime: string;
+  quotationTime: string;
+  quoteId: string;
+  quotePrice: number;
+  status: string;
+  totalAmount: number;
+  totalPrice: number;
+}
+
+export interface QuotePayload {
+  cryptoCurrency: string;
+  baseCurrency: string;
+  requestedAmount?: number;
+  address: string;
+  email: string;
+}
+
 export interface Vault {
   [key: string]: string;
 }
