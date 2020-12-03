@@ -1,0 +1,136 @@
+<div class="page__wrapper justify-content-around">
+  <div class="row justify-content-between mb-5">
+    <div class="col">
+      <div class="heading__lg">
+        BUY CRYPTO
+      </div>
+    </div>
+    <div class="col d-flex flex-column align-items-end">
+      <div class="subheading__lg">
+        Powered by
+      </div>
+      <img
+        width="120"
+        height="60"
+        class="img-fluid"
+        src="../../../../../assets/images/binance_logo_full.svg" alt="binance-logo">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6 offset-3">
+      <div class="content__container d-flex flex-column justify-content-around">
+        <ng-container *ngIf="hasBound; else newCustomerTemplate">
+          <ng-container *ngIf="binanceUserInfo$ | async as binanceUserInfo">
+            <div class="d-flex justify-content-around">
+              <div class="label__md">Welcome,
+                <span class="font-weight-bold">{{ binanceUserInfo.email }}</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-around">
+              <div>
+                <div class="label__lg mb-3">What would you like to buy?</div>
+                <div>
+                  <mat-select
+                    (valueChange)="selectedCrypto = $event; getQuote()"
+                    [value]="selectedCrypto">
+                    <mat-option [value]="crypto" *ngFor="let crypto of cryptoCurrencies">
+                      <div class="d-flex align-items-center">
+                        <img
+                          class="mr-1"
+                          width="18"
+                          height="18"
+                          src='../../../../../assets/images/{{crypto.src}}' alt="">
+                        {{ crypto.currency }}
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div>
+                <div class="label__lg mb-1">
+                  <div class="d-flex align-items-center">
+                    Enter
+                    <img
+                      width="15"
+                      height="15"
+                      class="mx-1"
+                      src="../../../../../assets/images/{{selectedCrypto.src}}" alt="">
+                    amount
+                  </div>
+                </div>
+                <input
+                  [ngModel]="amount"
+                  (ngModelChange)="amount = $event; getQuote()"
+                  placeholder="0.00" class="form-control" type="number">
+              </div>
+            </div>
+            <ng-container *ngIf="loading">
+              <app-loading [diameter]="20"></app-loading>
+            </ng-container>
+            <div *ngIf="quoteInformation | async as quote" class="align-self-center">
+              <ng-container *ngIf="error && !loading">
+                <div class="label__md font-danger">Something went wrong with getting an offer. Try again.</div>
+              </ng-container>
+              <ng-container *ngIf="!loading && !error">
+                <div class="d-flex align-items-center justify-content-center mb-1">
+                  <div class="label__md">
+                    Price for
+                    <span class="font-weight-bold">
+                    {{ amount | number }} {{ selectedCrypto.currency}}:
+                      {{ quote.totalAmount | number }} USD
+                  </span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-center label__md">
+                  This trade expires on
+                  <span class="font-weight-bold ml-1">
+                   {{ quote.quotationExpiredTime | date:'short'}}
+                </span>
+                </div>
+              </ng-container>
+            </div>
+            <div class="align-self-center">
+              <button
+                (click)="executeTrade()"
+                class="button-large regular">
+                Buy
+                <img
+                  width="18"
+                  height="18"
+                  src='../../../../../assets/images/{{selectedCrypto.src}}' alt="">
+                {{ selectedCrypto.currency }}
+              </button>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #newCustomerTemplate>
+  <div class="d-flex align-items-center justify-content-center mb-3">
+    <img
+      width="90"
+      height="45"
+      class="img-fluid"
+      src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-logo">
+    <div class="mx-2">
+      <span class="la la-plus"></span>
+    </div>
+    <img
+      width="140"
+      height="75"
+      class="img-fluid"
+      src="../../../../../assets/images/binance_logo_full.svg" alt="binance-logo">
+  </div>
+  <div class="d-flex align-items-center justify-content-center">
+    <div class="label__lg mb-3">
+      To buy crypto from our platform, you need a Binance account.
+    </div>
+  </div>
+  <div class="d-flex align-items-center justify-content-center">
+    <button (click)="openDialog('redirect')" class="button-large inverse mr-5">I have a Binance Account</button>
+    <button (click)="openDialog('register')" class="button-large regular">Register</button>
+  </div>
+</ng-template>
