@@ -8,7 +8,7 @@
     <div class="d-flex mb-3">
       <label class="label__lg mr-1" for="ethAmount">Enter your amount</label>
       <div class="label__lg">(Minimal investment:
-        <span class="font-weight-bold">{{ minimalInvestment }} ETH</span>)
+        <span class="font-weight-bold">{{ minimalInvestment | number:'1.2-5' }} ETH</span>)
       </div>
     </div>
     <div class="d-flex align-items-center mb-3">
@@ -21,7 +21,7 @@
     </div>
     <div class="my-1">
       <div *ngIf="ethAmount.value > +ethBalance">
-        <p class="font-danger">You can invest a maximum of <strong>{{ ethBalance }}</strong></p>
+        <p class="font-danger">You can invest a maximum of <strong>{{ ethBalance | number:'1.2-5' }} ETH</strong></p>
       </div>
     </div>
     <div *ngIf="ethBalance">

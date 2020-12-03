@@ -60,7 +60,7 @@ export class CreateBasketPage implements OnInit {
         this.basket = this.makeBasket(data);
         this.poolChartOptions = this.chartsService.composeWeightAllocChart(Object.keys(this.basket), Object.values(this.basket));
       }),
-      switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(data, subtractMonths))
+      switchMap((data: IGenerateBasketResponse) => this.basketsService.getHistoricRoi(this.basket, subtractMonths))
     ).subscribe((historicRoi: IBasketHistoricRoi) => {
       this.roiData = this.chartsService.composeHighChart(this.extractRoi(historicRoi));
     });
