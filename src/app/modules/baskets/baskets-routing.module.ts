@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateBasketPage } from './pages/create-basket/create-basket.page';
 import { CustomBasketPage } from './pages/custom-basket/custom-basket.page';
 import { BasketsPage } from './pages/baskets/baskets.page';
+import { BasketTypesPage } from './pages/basket-types/basket-types.page';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'custom-basket',
     component: CustomBasketPage,
+  },
+  {
+    path: 'basket-types',
+    component: BasketTypesPage,
   }
 ];
 

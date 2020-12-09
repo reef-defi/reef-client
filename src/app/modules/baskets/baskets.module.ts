@@ -19,11 +19,13 @@ import { CustomBasketCompositionComponent } from './components/custom-basket-com
 import { VaultComponent } from './components/vault/vault.component';
 import { VaultsCompositionComponent } from './components/vaults-composition/vaults-composition.component';
 import { VaultsModule } from '../vaults/vaults.module';
+import { BasketTypesPage } from './pages/basket-types/basket-types.page';
 
 const pages = [
   CreateBasketPage,
   CustomBasketPage,
   BasketsPage,
+  BasketTypesPage,
 ];
 const components = [
   BasketComponent,
