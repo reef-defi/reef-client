@@ -42,11 +42,6 @@ export class ConnectorService {
     },
     torus: {
       package: Torus,
-      options: {
-        networkParams: {
-          host: 'http://localhost:8600' // TODO: remove this for prod
-        }
-      },
     },
     'custom-walletlink': {
       display: {
@@ -176,9 +171,9 @@ export class ConnectorService {
     localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
   }
 
-  public getGasPrice(): number {
+  public getGasPrice(): string {
     console.log(this.selectedGasPrice$.value.price, 'price')
-    const gwei = +this.toWei(Math.round(this.selectedGasPrice$.value.price), 'Gwei');
+    const gwei = this.toWei(Math.round(this.selectedGasPrice$.value.price), 'Gwei');
     console.log(gwei, 'gwei')
     return gwei;
   }

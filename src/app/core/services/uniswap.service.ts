@@ -51,12 +51,14 @@ export class UniswapService {
           ).send({
             from: to,
             value: weiAmount,
+            gasPrice: this.connectorService.getGasPrice()
           });
         } else {
           res = await this.routerContract$.value.methods.swapExactTokensForTokens(
             +amount, amountOutMin, path, to, deadline
           ).send({
             from: to,
+            gasPrice: this.connectorService.getGasPrice()
           });
         }
         this.transactionInterval = setInterval(async () =>
@@ -141,6 +143,7 @@ export class UniswapService {
         tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
       ).send({
         from: to,
+        gasPrice: this.connectorService.getGasPrice()
       });
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
@@ -166,7 +169,8 @@ export class UniswapService {
         token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
       ).send({
         from: to,
-        value: `${weiEthAmount}`
+        value: `${weiEthAmount}`,
+        gasPrice: this.connectorService.getGasPrice()
       });
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
@@ -202,7 +206,7 @@ export class UniswapService {
       const poolSymbol = getKey(addresses, poolAddress);
       const res = await this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
         from: this.connectorService.providerUserInfo$.value.address,
-        gas: this.connectorService.getGasPrice(),
+        gasPrice: this.connectorService.getGasPrice()
       });
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res, []), 1000);
