@@ -26,7 +26,7 @@ export class SidebarComponent {
     this.dialog.open(dialogRef);
   }
 
-  setSlippage(percent: number): void {
+  setSlippage(percent: string): void {
     this.slippagePercent$.next(percent);
   }
 }

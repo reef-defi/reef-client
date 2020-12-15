@@ -28,6 +28,7 @@ export class ConnectorService {
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
+  selectedGasPrice$ = new BehaviorSubject(null);
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -168,6 +169,18 @@ export class ConnectorService {
 
   public createLpContract(tokenSymbol: string): IContract {
     return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
+  }
+
+  public setSelectedGas(type: string, price: number): void {
+    this.selectedGasPrice$.next({ type, price });
+    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+  }
+
+  public getGasPrice(): number {
+    console.log(this.selectedGasPrice$.value.price, 'price')
+    const gwei = +this.toWei(Math.round(this.selectedGasPrice$.value.price), 'Gwei');
+    console.log(gwei, 'gwei')
+    return gwei;
   }
 
   private async connectToContract(): Promise<void> {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChainId, Fetcher, Pair, Price, Route, Token, TokenAmount, Trade, TradeType, WETH } from '@uniswap/sdk';
+import { ChainId, Fetcher, Pair, Percent, Price, Route, Token, TokenAmount, Trade, TradeType, WETH } from '@uniswap/sdk';
 import { addresses, reefPools } from '../../../assets/addresses';
 import { ConnectorService } from './connector.service';
 import { IContract, IReefPricePerToken } from '../models/types';
@@ -18,13 +18,53 @@ const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
 export class UniswapService {
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
-  readonly slippagePercent$ = new BehaviorSubject<number | null>(this.getSlippageIfSet());
+  readonly slippagePercent$ = new BehaviorSubject<string | null>(this.getSlippageIfSet());
   readonly web3 = this.connectorService.web3;
   transactionInterval = null;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly notificationService: NotificationService,
               private readonly router: Router) {
+  }
+
+  public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
+    if (addresses[tokenSymbol]) {
+      const weiAmount = this.connectorService.toWei(amount);
+      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
+      const pair = await Fetcher.fetchPairData(REEF, tokenB);
+      const route = new Route([pair], tokenB);
+      const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+      const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
+      const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+      const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
+      const path = [tokenB.address, REEF.address];
+      const to = this.connectorService.providerUserInfo$.value.address;
+      const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      console.log(slippageTolerance.toSignificant(5));
+      try {
+        let res;
+        if (tokenSymbol === 'WETH') {
+          res = await this.routerContract$.value.methods.swapExactETHForTokens(
+            amountOutMin, path, to, deadline
+          ).send({
+            from: to,
+            value: weiAmount,
+          });
+        } else {
+          res = await this.routerContract$.value.methods.swapExactTokensForTokens(
+            +amount, amountOutMin, path, to, deadline
+          ).send({
+            from: to,
+          });
+        }
+        this.transactionInterval = setInterval(async () =>
+          await this.checkIfTransactionSuccess(res, ['goToReef'], 'Success!'), 1000);
+      } catch (e) {
+        this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+      }
+    }
   }
 
   public createLpContract(tokenSymbol: string): IContract {
@@ -57,16 +97,30 @@ export class UniswapService {
     return pair;
   }
 
-  public async getReefPricePer(tokenSymbol: string): Promise<IReefPricePerToken> {
+  public async getReefPricePer(tokenSymbol: string, amount?: number): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
+      const totalReef = await pair.reserveOf(REEF).toExact();
+      if (amount) {
+        const weiAmount = this.connectorService.toWei(amount);
+        const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+        const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
+        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+        return {
+          REEF_PER_TOKEN: route.midPrice.toSignificant(),
+          TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+          totalReefReserve: totalReef,
+          amountOutMin: +amountOutMin,
+        };
+      }
       return {
         REEF_PER_TOKEN: route.midPrice.toSignificant(),
-        TOKEN_PER_REEF: route.midPrice.invert().toSignificant()
+        TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+        totalReefReserve: totalReef,
       };
     }
   }
@@ -87,7 +141,6 @@ export class UniswapService {
         tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
       ).send({
         from: to,
-        gas: 6721975
       });
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
@@ -113,7 +166,6 @@ export class UniswapService {
         token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
       ).send({
         from: to,
-        gas: 6721975,
         value: `${weiEthAmount}`
       });
       this.transactionInterval = setInterval(async () =>
@@ -134,7 +186,6 @@ export class UniswapService {
         console.log(reefPools[poolSymbol], amount, 'hello...');
         const res = await this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
           from: this.connectorService.providerUserInfo$.value.address,
-          gas: 6721975,
         });
         this.transactionInterval = setInterval(async () =>
           await this.checkIfTransactionSuccess(res, [],
@@ -151,7 +202,7 @@ export class UniswapService {
       const poolSymbol = getKey(addresses, poolAddress);
       const res = await this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
         from: this.connectorService.providerUserInfo$.value.address,
-        gas: 6721975,
+        gas: this.connectorService.getGasPrice(),
       });
       this.transactionInterval = setInterval(async () =>
         await this.checkIfTransactionSuccess(res, []), 1000);
@@ -182,16 +233,16 @@ export class UniswapService {
     return !!getKey(addresses, address);
   }
 
-  public setSlippage(percent: number): void {
+  public setSlippage(percent: string): void {
     this.slippagePercent$.next(percent);
     localStorage.setItem('reef_slippage', `${percent}`);
   }
 
   private getSlippage(amount: string | number): string {
-    return new BigNumber(amount).multipliedBy(this.slippagePercent$.value / 100).toString();
+    return new BigNumber(amount).multipliedBy(+this.slippagePercent$.value / 100).toString();
   }
 
-  private goToReef() {
+  private goToReef(): void {
     this.router.navigate(['/reef']);
   }
 
@@ -218,8 +269,8 @@ export class UniswapService {
     }
   }
 
-  private getSlippageIfSet(): number {
-    return +localStorage.getItem('reef_slippage') || 0.5;
+  private getSlippageIfSet(): string {
+    return localStorage.getItem('reef_slippage') || '0.5';
   }
 
 }

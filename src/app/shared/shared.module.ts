@@ -38,6 +38,7 @@ import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton
 import { PercentageButtonsComponent } from './components/percentage-buttons/percentage-buttons.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatRippleModule } from '@angular/material/core';
+import { MatListModule } from '@angular/material/list';
 
 
 const components = [
@@ -55,7 +56,7 @@ const modules = [
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
   MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule,
-  MatRadioModule, MatRippleModule
+  MatRadioModule, MatRippleModule, MatListModule,
 ];
 
 @NgModule({

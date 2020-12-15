@@ -10,6 +10,7 @@ export const environment = {
   ethPriceUrl: 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd',
   curvePoolUrl: 'https://www.curve.fi/raw-stats/apys.json',
   uniswapPoolUrl: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+  gasPriceUrl: 'https://www.etherchain.org/api/gasPriceOracle',
 };
 
 /*

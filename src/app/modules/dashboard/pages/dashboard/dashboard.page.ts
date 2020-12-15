@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 import { IProviderUserInfo, ITransaction } from '../../../../core/models/types';
 import { Observable } from 'rxjs';
 import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,7 @@ import { UniswapService } from '../../../../core/services/uniswap.service';
   styleUrls: ['./dashboard.page.scss']
 })
 export class DashboardPage implements OnInit {
+  Object = Object;
   readonly providerName$ = this.connectorService.currentProviderName$;
   readonly provider$ = this.connectorService.currentProvider$;
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
@@ -19,10 +21,13 @@ export class DashboardPage implements OnInit {
   readonly slippagePercent$ = this.uniswapService.slippagePercent$;
   readonly transactionsForAccount$: Observable<ITransaction[]> =
     this.connectorService.transactionsForAccount$;
+  readonly gasPrices$ = this.apiService.gasPrices$;
+  readonly selectedGas$ = this.connectorService.selectedGasPrice$;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,
-              private readonly uniswapService: UniswapService) {
+              private readonly uniswapService: UniswapService,
+              private readonly apiService: ApiService) {
   }
 
   ngOnInit(): void {
@@ -33,8 +38,12 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  public setSlippage(percent: number): void {
+  public setSlippage(percent: string): void {
     this.uniswapService.setSlippage(percent);
+  }
+
+  public setGas(type: string, price: number): void {
+    this.connectorService.setSelectedGas(type, price);
   }
 
   private async getTransactionsForAccount(address: string): Promise<void> {

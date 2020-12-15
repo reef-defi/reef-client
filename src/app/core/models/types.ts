@@ -51,6 +51,8 @@ export interface IVault {
 export interface IReefPricePerToken {
   REEF_PER_TOKEN: string;
   TOKEN_PER_REEF: string;
+  totalReefReserve: string;
+  amountOutMin?: number;
 }
 
 export interface IContract {

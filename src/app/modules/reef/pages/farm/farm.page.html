@@ -84,10 +84,13 @@
                     (click)="deposit(contract, address, reefAmount)" class="button-large regular mr-2">
                     Deposit Tokens
                   </button>
-                  <button
-                    (click)="withdraw(address, reefAmount)" class="button-large regular mr-2">
-                    Withdraw Funds
-                  </button>
+                  <div *ngIf="stakedAmount$ | async as staked">
+                    <button
+                      [disabled]="staked <= 0"
+                      (click)="withdraw(address, reefAmount)" class="button-large regular mr-2">
+                      Withdraw Funds
+                    </button>
+                  </div>
                   <div *ngIf="reefReward$ | async as reward">
                     <button
                       [disabled]="reward <= 0"

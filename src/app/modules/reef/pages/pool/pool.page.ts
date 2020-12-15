@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js';
 import { addresses } from '../../../../../assets/addresses';
 import { ConnectorService } from '../../../../core/services/connector.service';
 
-const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
+const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab'; // TODO change this when mainnet REEF pools available
 
 @Component({
   selector: 'app-pool-page',
@@ -98,6 +98,7 @@ export class PoolPage implements OnInit {
         this.tokenAmount = +prices.TOKEN_PER_REEF;
       }),
       catchError((e) => {
+        console.log(e, 'wtf?')
         this.error$.next(true);
         return EMPTY;
       }),
