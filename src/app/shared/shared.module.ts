@@ -39,6 +39,8 @@ import { PercentageButtonsComponent } from './components/percentage-buttons/perc
 import { MatRadioModule } from '@angular/material/radio';
 import { MatRippleModule } from '@angular/material/core';
 import { MatListModule } from '@angular/material/list';
+import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
+import { PageTitleComponent } from './components/page-title/page-title.component';
 
 
 const components = [
@@ -60,14 +62,14 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules],
+  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent],
 })
 export class SharedModule {
 }

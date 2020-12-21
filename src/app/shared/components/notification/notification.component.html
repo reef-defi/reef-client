@@ -1,27 +1,33 @@
 <ng-container *ngIf="data.type === 'error'">
-  <div class="subheading__lg text-break mb-2">
+  <div class="small text-break mb-2">
     {{ data.message }}
   </div>
   <div>
-    <button mat-raised-button class="button-small inverse" (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+    <button mat-raised-button class="btn btn-sm btn-light" (click)="snackBarRef.dismiss()">
+      <span class="small font-weight-bold">{{ data.buttonText }}</span>
+    </button>
   </div>
 </ng-container>
 
 <ng-container *ngIf="data.type === 'success'">
   <div class="heading__md">Success</div>
-  <div class="subheading__lg text-break mb-2">
+  <div class="small text-break mb-2">
     {{ data.message }}
   </div>
   <div>
-    <button class="button-small inverse" mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+    <button class="btn btn-sm btn-light" (click)="snackBarRef.dismiss()">
+      <span class="small font-weight-bold">{{ data.buttonText }}</span>
+    </button>
   </div>
 </ng-container>
 
 <ng-container *ngIf="data.type === 'info'">
-  <div class="subheading__lg text-break mb-2">
+  <div class="small text-break mb-2">
     {{ data.message }}
   </div>
   <div>
-    <button class="button-small regular" mat-raised-button (click)="snackBarRef.dismiss()">{{ data.buttonText }}</button>
+    <button class="btn btn-sm btn-light" (click)="snackBarRef.dismiss()">
+      <span class="small font-weight-bold">{{ data.buttonText }}</span>
+    </button>
   </div>
 </ng-container>

@@ -1,5 +1,9 @@
 <div class="sidebar">
-  <p class="p-0 m-0 font-success">{{ version }}</p>
+  <div class="my-4 ml-1">
+    <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
+      <img class="mr-2" style="width: 80px" src="../../../../assets/images/reef/reef-v2.svg">
+    </a>
+  </div>
   <div class="icon-container">
     <div class="d-flex justify-content-center align-items-center">
       <div
@@ -26,19 +30,22 @@
       <div
         *ngIf="slippagePercent$ | async as slippagePercent"
         class="d-flex flex-column align-items-center justify-content-around">
-        <div class="label__lg">Set Slippage</div>
+        <span class="small">Set Slippage</span>
         <div class="d-flex align-items-center justify-content-around px-2 py-1 m-1">
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === '0.1'" (click)="setSlippage('0.1')" mat-raised-button>0.1%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '0.1'" (click)="setSlippage('0.1')">
+            <span class="small">0.1%</span>
           </button>
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === '0.5'" (click)="setSlippage('0.5')" mat-raised-button>0.5%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '0.5'" (click)="setSlippage('0.5')">
+            <span class="small">0.5%</span>
           </button>
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === '1'" (click)="setSlippage('1')" mat-raised-button>1%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '1'" (click)="setSlippage('1')">
+            <span class="small">1.0%</span>
           </button>
         </div>
       </div>
@@ -55,16 +62,15 @@
         <div>Sign out</div>
       </div>
     </mat-menu>
-    <div
+    <a
       id="dashboardBtn"
       [routerLink]="['/dashboard']"
       [routerLinkActiveOptions]="{exact: true}"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div
-        class="la la-lg la-pie-chart mr-2 pl-3"></div>
-      <div class="sidebar__label">DASHBOARD</div>
-    </div>
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body my-4">
+      <app-svg-icon icon="dashboard"></app-svg-icon>
+      Dashboard
+    </a>
     <!--    <div-->
     <!--      id="buy-crypto"-->
     <!--      [routerLink]="['/binance']"-->
@@ -78,17 +84,14 @@
     <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
     <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
     <!--    </div>-->
-    <div class="d-flex justify-content-center align-items-center mb-3 w-100">
-      <mat-divider class="sidebar__divider"></mat-divider>
-    </div>
-    <div
+    <a
       id="reefMenu"
       [routerLink]="['/reef']"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div class="la la-lg la-swimming-pool mr-2 pl-3"></div>
-      <div class="sidebar__label">REEF</div>
-    </div>
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-3">
+      <app-svg-icon icon="reef"></app-svg-icon>
+      Reef
+    </a>
     <!--    <div-->
     <!--      id="myBaskets"-->
     <!--      [routerLink]="['/baskets']"-->
@@ -111,8 +114,8 @@
     <!--    </div>-->
   </div>
   <div class="mt-auto mb-2 d-flex flex-column align-items-center justify-content-center">
-    <a href="https://www.reef.finance/terms_and_conditions.html" class="subheading__md mb-1">Terms & Conditions</a>
-    <a href="https://www.reef.finance/privacy.html" class="subheading__md mb-1">Privacy Policy</a>
-    <div class="subheading__md">Reef Inc {{ currentYear }}</div>
+    <a href="https://www.reef.finance/terms_and_conditions.html" class="small text-body mb-1">Terms & Conditions</a>
+    <a href="https://www.reef.finance/privacy.html" class="small text-body mb-1">Privacy Policy</a>
+    <div class="small text-body">Reef Inc {{ currentYear }}</div>
   </div>
 </div>
