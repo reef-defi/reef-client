@@ -38,6 +38,17 @@
                   </div>
                   <div class="d-flex flex-column align-items-center justify-content-center mb-4">
                     <div class="small text-muted mb-1">
+                      Pool APY
+                    </div>
+                    <div
+                      class="small">
+                    <span class="font-weight-bold">
+                      {{ apy | number }} %
+                    </span>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-column align-items-center justify-content-center mb-4">
+                    <div class="small text-muted mb-1">
                       Staked LP Tokens
                     </div>
                     <div
@@ -79,7 +90,9 @@
                     </span>
                     </div>
                   </div>
-                  <div class="d-flex align-items-center justify-content-around">
+                  <div
+                    *ngIf="!loading"
+                    class="d-flex align-items-center justify-content-around">
                     <button
                       [disabled]="!reefAmount ||
                             reefAmount > tokenBalance || reefAmount <= 0"
@@ -100,6 +113,9 @@
                         Harvest Tokens
                       </button>
                     </div>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-around">
+                    <app-loading *ngIf="loading" diameter="25"></app-loading>
                   </div>
                 </div>
               </div>

@@ -39,7 +39,7 @@
           <div
             *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
             class="small text-danger">
-            Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve }} REEF
+            Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
           </div>
         </div>
       </div>

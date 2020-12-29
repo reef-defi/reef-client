@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, map, mergeMap, tap } from 'rxjs/operators';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { BehaviorSubject, EMPTY, from, Observable, of } from 'rxjs';
-import { IContract, IReefPricePerToken } from '../../../../core/models/types';
-import { first } from 'rxjs/internal/operators/first';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {catchError, finalize, map, mergeMap, tap} from 'rxjs/operators';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {BehaviorSubject, EMPTY, from, Observable, of} from 'rxjs';
+import {IContract, IReefPricePerToken} from '../../../../core/models/types';
+import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
-import { addresses } from '../../../../../assets/addresses';
-import { ConnectorService } from '../../../../core/services/connector.service';
+import {addresses} from '../../../../../assets/addresses';
+import {ConnectorService} from '../../../../core/services/connector.service';
 
 const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab'; // TODO change this when mainnet REEF pools available
 
@@ -28,6 +28,7 @@ export class PoolPage implements OnInit {
   public userTokenBalance = '';
   public reefAmount = 0;
   public tokenAmount = 0;
+  public loading = false;
 
   constructor(private readonly route: ActivatedRoute,
               private readonly uniswapService: UniswapService,
@@ -64,25 +65,32 @@ export class PoolPage implements OnInit {
   }
 
   async addLiquidity(tokenB: string): Promise<void> {
-    const hasAllowance = await this.uniswapService.approveToken(this.lpTokenContract$.value);
-    const hasAllowance2 = await this.uniswapService.approveToken(this.reefContract$.value);
-    if (hasAllowance) {
-      if (tokenB === 'WETH' || tokenB === 'ETH') {
-        await this.uniswapService.addLiquidityETH(
-          REEF_TOKEN,
-          this.reefAmount,
-          this.tokenAmount,
-          10
-        );
-      } else {
-        await this.uniswapService.addLiquidity(
-          REEF_TOKEN,
-          addresses[tokenB],
-          this.reefAmount,
-          this.tokenAmount,
-          10
-        );
+    this.loading = true;
+    try {
+      const hasAllowance = await this.uniswapService.approveToken(this.lpTokenContract$.value);
+      const hasAllowance2 = await this.uniswapService.approveToken(this.reefContract$.value);
+      if (hasAllowance) {
+        if (tokenB === 'WETH' || tokenB === 'ETH') {
+          await this.uniswapService.addLiquidityETH(
+            REEF_TOKEN,
+            this.reefAmount,
+            this.tokenAmount,
+            10
+          );
+        } else {
+          await this.uniswapService.addLiquidity(
+            REEF_TOKEN,
+            addresses[tokenB],
+            this.reefAmount,
+            this.tokenAmount,
+            10
+          );
+        }
+        this.loading = false;
       }
+      this.loading = false;
+    } catch (e) {
+      this.loading = false;
     }
   }
 

@@ -11,6 +11,7 @@ import { addresses } from '../../../../../assets/addresses';
 export class FarmsPage implements OnInit {
   readonly REEF_WETH_POOL = addresses.REEF_WETH_POOL;
   readonly REEF_USDT_POOL = addresses.REEF_USDT_POOL;
+  readonly PURE_REEF_POOL = addresses.PURE_REEF_POOL;
 
   constructor(private readonly contractService: ContractService,
               private readonly uniswapService: UniswapService,) {

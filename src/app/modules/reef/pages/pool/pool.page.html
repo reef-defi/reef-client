@@ -109,12 +109,14 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-center">
                   <button
+                    *ngIf="!loading"
                     [disabled]="!reefAmount ||
                   reefAmount > userInfo.reefBalance || reefAmount <= 0
                    || (token === 'WETH' ? tokenAmount > userInfo.balance : tokenAmount > userTokenBalance)"
                     (click)="addLiquidity(token)" class="btn btn-primary">
                     Add Liquidity
                   </button>
+                  <app-loading *ngIf="loading" diameter="25"></app-loading>
                 </div>
               </div>
             </div>

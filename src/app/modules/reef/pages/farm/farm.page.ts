@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { filter, finalize, first, map } from 'rxjs/operators';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { addresses } from '../../../../../assets/addresses';
-import { tap } from 'rxjs/internal/operators/tap';
-import { BehaviorSubject } from 'rxjs';
-import { IContract, IProviderUserInfo } from '../../../../core/models/types';
-import { getKey } from '../../../../core/utils/pools-utils';
-import { ConnectorService } from '../../../../core/services/connector.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {filter, finalize, first, map} from 'rxjs/operators';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {addresses, reefPools} from '../../../../../assets/addresses';
+import {tap} from 'rxjs/internal/operators/tap';
+import {BehaviorSubject} from 'rxjs';
+import {IContract, IProviderUserInfo} from '../../../../core/models/types';
+import {getKey} from '../../../../core/utils/pools-utils';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {contractData} from '../../../../../assets/abi';
+import {combineLatest} from "rxjs/internal/observable/combineLatest";
 
 @Component({
   selector: 'app-farm-page',
@@ -16,7 +18,11 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 })
 export class FarmPage implements OnInit {
   public reefAmount = 0;
+  public apy = 0;
+  public loading = false;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
+  readonly farmingContract$ = this.uniswapService.farmingContract$;
+  readonly web3 = this.connectorSerivce.web3;
   readonly loading$ = new BehaviorSubject(false);
   readonly lpContract$ = new BehaviorSubject<IContract | null>(null);
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
@@ -45,17 +51,37 @@ export class FarmPage implements OnInit {
   }
 
   ngOnInit(): void {
+    combineLatest(this.route.params, this.farmingContract$).pipe(
+      first(([_, cont]) => !!cont)
+    ).subscribe(([{address}, contract]) => {
+      const key = getKey(addresses, address);
+      const pId = reefPools[key];
+      this.calcApy(pId);
+    });
   }
 
   public async deposit(contract: IContract, poolAddress: string, amount: string): Promise<void> {
-    await this.uniswapService.deposit(contract, poolAddress, amount);
-    await this.getBalances(this.lpContract$.value);
+    this.loading = true;
+    try {
+      await this.uniswapService.deposit(contract, poolAddress, amount);
+      await this.getBalances(this.lpContract$.value);
+      this.loading = false
+    } catch (e) {
+      this.loading = false;
+    }
   }
 
   public async withdraw(poolAddress: string, amount: string | number): Promise<void> {
-    await this.uniswapService.withdraw(poolAddress, amount);
-    await this.getBalances(this.lpContract$.value);
+    this.loading = true;
+    try {
+      await this.uniswapService.withdraw(poolAddress, amount);
+      await this.getBalances(this.lpContract$.value);
+      this.loading = false;
+    } catch (e) {
+      this.loading = false;
+    }
   }
+
 
   private async getReefRewards(poolAddress: string): Promise<void> {
     const rewards = await this.uniswapService.getReefRewards(poolAddress);
@@ -87,5 +113,21 @@ export class FarmPage implements OnInit {
       await this.getReefRewards(lpContract.options.address);
       await this.getStaked(lpContract.options.address);
     });
+  }
+
+  public async calcApy(pId: number): Promise<number> {
+    const {lpToken} = await this.farmingContract$.value.methods.poolInfo(pId).call();
+    console.log(lpToken, 'hmm')
+    const tokenContract = new this.web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
+    const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
+    console.log(totalStaked)
+    if (totalStaked == 0) {
+      return this.apy = 0;
+    }
+    const reward = this.connectorSerivce.fromWei(await this.farmingContract$.value.methods.reefPerBlock().call());
+    console.log(reward, totalStaked)
+    console.log('calcd', 1 + Number(reward) * 2409000 / totalStaked)
+    // TODO: How to calculate APY if totalStaked is 0?
+    return this.apy = 1 + Number(reward) * 2409000 / totalStaked;
   }
 }

@@ -23,6 +23,9 @@ export class DashboardPage implements OnInit {
     this.connectorService.transactionsForAccount$;
   readonly gasPrices$ = this.apiService.gasPrices$;
   readonly selectedGas$ = this.connectorService.selectedGasPrice$;
+  public usdTBalance = null;
+  public reefEthLpBalance = null;
+  public reefUSDTLpBalance = null;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,
@@ -35,6 +38,7 @@ export class DashboardPage implements OnInit {
       first(ev => !!ev)
     ).subscribe((res: IProviderUserInfo) => {
       this.getTransactionsForAccount(res.address);
+      this.getTokenBalancesForAccount(res.address);
     });
   }
 
@@ -48,5 +52,14 @@ export class DashboardPage implements OnInit {
 
   private async getTransactionsForAccount(address: string): Promise<void> {
     await this.connectorService.getTransactionsForAddress(address);
+  }
+
+  private async getTokenBalancesForAccount(address: string): Promise<any> {
+    const usdToken = this.connectorService.createLpContract('USDT')
+    const reefEthLP = this.connectorService.createLpContract('REEF_WETH_POOL');
+    const reefUSDTLP = this.connectorService.createLpContract('REEF_USDT_POOL');
+    this.reefEthLpBalance = await reefEthLP.methods.balanceOf(address).call();
+    this.reefUSDTLpBalance = await reefUSDTLP.methods.balanceOf(address).call();
+    this.usdTBalance = await usdToken.methods.balanceOf(address).call();
   }
 }

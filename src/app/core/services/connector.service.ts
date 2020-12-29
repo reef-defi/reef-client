@@ -29,6 +29,7 @@ export class ConnectorService {
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   selectedGasPrice$ = new BehaviorSubject(null);
+  confirmingTransaction$ = new BehaviorSubject(false);
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -239,6 +240,7 @@ export class ConnectorService {
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
       window.location.reload();
     });
+    // const subscription = this.web3.eth.subscribe('pendingTransactions').on('data', (tx) => { console.log(tx, 'from sub')})
   }
 
   private async getUserBalance(address: string): Promise<string> {

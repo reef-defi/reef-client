@@ -90,7 +90,7 @@ type ContractMethod = (...params: any) => {
   send: <T>(
     options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number, amount?: string },
     callback?: () => any,
-  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }>;
+  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }> | any;
   estimateGas: (options?: { from?: string, gas?: number, value?: number | string }) => Promise<number>;
   encodeAbi: () => string;
 };

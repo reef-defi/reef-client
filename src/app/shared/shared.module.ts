@@ -41,6 +41,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatListModule } from '@angular/material/list';
 import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
+import { TransactionConfirmationComponent } from './components/transaction-confirmation/transaction-confirmation.component';
 
 
 const components = [
@@ -62,7 +63,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],

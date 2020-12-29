@@ -70,13 +70,6 @@
                 ${{((userInfo.reefBalance || 0) * 0.01) | number}}
               </div>
             </div>
-            <div class="col-auto">
-              <button
-                [routerLink]="['/reef']"
-                class="btn btn-sm btn-primary small">
-                <span class="small">Buy</span>
-              </button>
-            </div>
           </div>
           <div class="row d-flex align-items-center justify-content-between mb-2">
             <div class="col d-flex align-items-center">
@@ -93,12 +86,59 @@
                 ${{ (userInfo.balance * ethPrice.ethereum.usd) | number }}
               </div>
             </div>
-            <div class="col-auto">
-              <button
-                [routerLink]="['/reef']"
-                class="btn btn-primary btn-sm">
-                <span class="small">Buy</span>
-              </button>
+          </div>
+          <div
+            *ngIf="usdTBalance"
+            class="row d-flex align-items-center justify-content-between mb-2">
+            <div class="col d-flex align-items-center">
+              <span class="cc USDT mr-1"></span>
+              <div class="small font-weight-bolder">USDT</div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+                {{ (usdTBalance || 0) | number }}
+              </div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+                ${{ (usdTBalance) | number }}
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="reefEthLpBalance"
+            class="row d-flex align-items-center justify-content-between mb-2">
+            <div class="col d-flex align-items-center">
+              <span class="cc ETH mr-1"></span>
+              <div class="small font-weight-bolder">REEF/ETH LP Token</div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+                {{ (reefEthLpBalance || 0) | number }}
+              </div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+<!--                ${{ (usdTBalance) | number }}-->
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="reefUSDTLpBalance"
+            class="row d-flex align-items-center justify-content-between mb-2">
+            <div class="col d-flex align-items-center">
+              <span class="cc USDT mr-1"></span>
+              <div class="small font-weight-bolder">REEF/USDT LP Token</div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+                {{ (reefUSDTLpBalance || 0) | number }}
+              </div>
+            </div>
+            <div class="col">
+              <div class="text-monospace small">
+<!--                ${{ (usdTBalance) | number }}-->
+              </div>
             </div>
           </div>
         </ng-container>
