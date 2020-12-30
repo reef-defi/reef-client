@@ -22,6 +22,7 @@ export class UniswapService {
   readonly farmingContract$ = this.connectorService.farmingContract$;
   readonly slippagePercent$ = new BehaviorSubject<string | null>(this.getSlippageIfSet());
   readonly web3 = this.connectorService.web3;
+  readonly pendingTx$ = this.connectorService.pendingTransaction$;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly notificationService: NotificationService,
@@ -56,7 +57,16 @@ export class UniswapService {
           })
             .on('confirmation', (cNumber, receipt) => {
               dialogRef.close();
+              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+            })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.connectorService.setPendingTxs(hash);
+            })
+            .on('receipt', (receipt) => {
+              this.connectorService.deletePending();
+              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
             })
             .on('error', (err) => {
               dialogRef.close();
@@ -71,7 +81,16 @@ export class UniswapService {
           })
             .on('confirmation', (cNumber, receipt) => {
               dialogRef.close();
+              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+            })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.connectorService.setPendingTxs(hash);
+            })
+            .on('receipt', (receipt) => {
+              this.connectorService.deletePending();
+              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
             })
             .on('error', (err) => {
               dialogRef.close();
@@ -163,7 +182,16 @@ export class UniswapService {
       })
         .on('confirmation', (cNumber, receipt) => {
           dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -197,7 +225,16 @@ export class UniswapService {
       })
         .on('confirmation', (cNumber, receipt) => {
           dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -222,7 +259,16 @@ export class UniswapService {
         })
           .on('confirmation', (cNumber, receipt) => {
             dialogRef.close();
+            this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+          })
+          .on('transactionHash', (hash) => {
+            dialogRef.close();
             this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+            this.connectorService.setPendingTxs(hash);
+          })
+          .on('receipt', (receipt) => {
+            this.connectorService.deletePending();
+            this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
           })
           .on('error', (err) => {
             dialogRef.close();
@@ -245,7 +291,16 @@ export class UniswapService {
       })
         .on('confirmation', (cNumber, receipt) => {
           dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
         })
         .on('error', (err) => {
           dialogRef.close();

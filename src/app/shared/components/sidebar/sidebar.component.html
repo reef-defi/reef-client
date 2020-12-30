@@ -104,7 +104,7 @@
       id="reefLiquidity"
       [routerLink]="['/reef/pools']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-3">
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-5">
       <app-svg-icon icon="flag"></app-svg-icon>
       Get LP Tokens
     </a>
@@ -129,9 +129,14 @@
     <!--      <div class="sidebar__label">CREATE BASKET</div>-->
     <!--    </div>-->
   </div>
-<!--  <div class="mt-auto mb-2 d-flex flex-column align-items-center justify-content-center">-->
-<!--    <a href="https://www.reef.finance/terms_and_conditions.html" class="small text-body mb-1">Terms & Conditions</a>-->
-<!--    <a href="https://www.reef.finance/privacy.html" class="small text-body mb-1">Privacy Policy</a>-->
-<!--    <div class="small text-body">Reef Inc {{ currentYear }}</div>-->
-<!--  </div>-->
+  <div class="mb-2 d-flex flex-column align-items-center justify-content-center" *ngIf="pendingTx$ | async as pendingTx">
+    <div class="small text-monospace text-center text-break mb-2 px-2">You have a transaction pending. Check it out on
+      <a
+        target="_blank"
+        href="https://etherscan.io/tx/{{ pendingTx.hash }}" class="font-weight-bold">Etherscan</a>
+    </div>
+    <div class="mb-2">
+      <app-loading diameter="25"></app-loading>
+    </div>
+  </div>
 </div>

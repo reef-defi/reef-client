@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   ethPrice$ = this.poolService.getEthPrice();
+  public canEnter = false;
 
   constructor(
     private readonly connectorService: ConnectorService,
@@ -23,6 +24,15 @@ export class AppComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly contractService: ContractService,
     private readonly router: Router) {
+    if (localStorage.getItem('demo_pw') === 'open sesame') {
+      this.canEnter = true;
+    } else {
+      const pw = prompt('Welcome to Reef!');
+      if (pw === 'open sesame') {
+        this.canEnter = true;
+        localStorage.setItem('demo_pw', 'open sesame');
+      }
+    }
   }
 
   ngOnInit(): void {

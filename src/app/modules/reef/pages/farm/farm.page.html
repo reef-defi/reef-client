@@ -13,6 +13,7 @@
                       height="75"
                       src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
                     <img
+                      *ngIf="token !== 'TOKEN'"
                       width="60"
                       height="60"
                       src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
@@ -26,13 +27,13 @@
                         width="50"
                         height="50"
                         src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
-                      & {{ token }}
+                      <span *ngIf="token !== 'TOKEN'">& {{ token }}</span>
                     </div>
                     <div class="text-monospace text-muted small text-center mb-2">
                       Stake your
                       <strong class="font-weight-bold">UNI-V2 LP Tokens</strong>
                       in the
-                      <strong class="font-weight-bold">REEF/{{token}}</strong>
+                      <strong class="font-weight-bold">REEF<span *ngIf="token !== 'TOKEN'">/{{ token }}</span></strong>
                       pool to earn REEF!
                     </div>
                   </div>
@@ -55,7 +56,7 @@
                       *ngIf="stakedAmount$ | async as staked"
                       class="small">
                     <span class="font-weight-bold">
-                      {{ staked | number }} LP Tokens
+                      {{ staked | number }} {{ token !== 'TOKEN' ? ' LP Tokens' : 'REEF' }}
                     </span>
                     </div>
                   </div>
@@ -74,9 +75,12 @@
                   <div
                     class="d-flex flex-column align-items-center mb-4">
                     <div class="d-flex justify-content-start align-items-center mb-2">
-                      <div class="small text-muted align-self-start mr-1">LP Tokens Amount</div>
+                      <div class="small text-muted align-self-start mr-1">
+                        {{ token !== 'TOKEN' ? 'LP Tokens' : 'REEF' }} amount
+                      </div>
                       <div class="small">
-                        (Balance: <span class="font-weight-bold">{{tokenBalance | number}}</span> LP Tokens)
+                        (Balance: <span class="font-weight-bold">{{tokenBalance | number}}</span>
+                        {{ token !== 'TOKEN' ? 'LP Tokens' : 'REEF' }})
                       </div>
                     </div>
                     <input

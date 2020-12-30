@@ -5,7 +5,7 @@ import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
-import { IChainData, IContract, IProviderUserInfo, ITransaction } from '../models/types';
+import {IChainData, IContract, IProviderUserInfo, ITransaction, PendingTransaction} from '../models/types';
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
 import { contractData } from '../../../assets/abi';
@@ -29,7 +29,7 @@ export class ConnectorService {
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   selectedGasPrice$ = new BehaviorSubject(null);
-  confirmingTransaction$ = new BehaviorSubject(false);
+  pendingTransaction$ = new BehaviorSubject(null);
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -177,6 +177,16 @@ export class ConnectorService {
     const gwei = this.toWei(Math.round(this.selectedGasPrice$.value.price), 'Gwei');
     console.log(gwei, 'gwei')
     return gwei;
+  }
+
+  public setPendingTxs(hash: string) {
+    this.pendingTransaction$.next({
+      hash,
+    });
+  }
+
+  public deletePending() {
+    this.pendingTransaction$.next(null);
   }
 
   private async connectToContract(): Promise<void> {

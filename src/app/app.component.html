@@ -1,5 +1,7 @@
-<ng-container *ngIf="{ ethPrice: ethPrice$ | async, providerName: providerName$ | async, providerUserInfo: providerUserInfo$ | async } as obs">
+<ng-container
+  *ngIf="{ ethPrice: ethPrice$ | async, providerName: providerName$ | async, providerUserInfo: providerUserInfo$ | async } as obs">
   <div id="mainContainer" class="min-vh-100">
+    <div *ngIf="canEnter; else noPermissions">
       <app-sidebar
         [version]="VERSION"
         [currentAddress]="obs.providerUserInfo?.address"
@@ -13,4 +15,11 @@
       </div>
       <app-footer *ngIf="obs.providerUserInfo"></app-footer>
     </div>
+  </div>
+  <ng-template #noPermissions>
+    <app-empty-state
+      title="Wrong Password"
+      subtitle="Contact the Reef Team if you want access to the closed beta.">
+    </app-empty-state>
+  </ng-template>
 </ng-container>

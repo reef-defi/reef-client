@@ -12,6 +12,11 @@ import {
   ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
+export interface PendingTransaction {
+  hash: string;
+  pendingTxs: number;
+}
+
 export interface QuoteResponse {
   quotationExpiredTime: string;
   quotationTime: string;
