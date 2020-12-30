@@ -12,6 +12,11 @@ import {
   ApexStroke, ApexResponsive, ApexLegend,
 } from 'ng-apexcharts';
 
+export interface PendingTransaction {
+  hash: string;
+  pendingTxs: number;
+}
+
 export interface QuoteResponse {
   quotationExpiredTime: string;
   quotationTime: string;
@@ -51,6 +56,8 @@ export interface IVault {
 export interface IReefPricePerToken {
   REEF_PER_TOKEN: string;
   TOKEN_PER_REEF: string;
+  totalReefReserve: string;
+  amountOutMin?: number;
 }
 
 export interface IContract {
@@ -88,7 +95,7 @@ type ContractMethod = (...params: any) => {
   send: <T>(
     options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number, amount?: string },
     callback?: () => any,
-  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }>;
+  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }> | any;
   estimateGas: (options?: { from?: string, gas?: number, value?: number | string }) => Promise<number>;
   encodeAbi: () => string;
 };

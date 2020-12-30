@@ -4,9 +4,9 @@
   [class.connected__separator]="obs.walletConnected && obs.contractConnected"
   class="row align-items-center center">
   <div id="welcome_to_reef"
-       class="col-lg-8 col-md-12 heading__container d-flex flex-column align-items-center text-center">
-    <div class="heading__xl text-break heading__title">
-      <div class="mr-2 heading__title--welcome">
+       class="col-lg-7 col-md-12 heading__container d-flex flex-column align-items-center text-center">
+    <div class="d-flex align-items-center mb-2">
+      <div class="mr-2 h2">
         Welcome to
       </div>
       <img
@@ -15,16 +15,16 @@
         src="../../../../../assets/images/reef/reef-v2.svg"
         class="img-fluid"/>
     </div>
-    <div class="subheading__xl mb-3 text-break">
+    <div class="text-monospace mb-3 text-break">
       If you've never used Reef before, read through our quick
       introduction
       first.
     </div>
   </div>
-  <div *ngIf="!obs.walletConnected" class="col-lg-4 col-md-12 heading__container d-flex flex-column align-items-center">
-    <div class="subheading__lg mb-2">To start, connect your wallet</div>
+  <div *ngIf="!obs.walletConnected" class="col-lg-5 col-md-12 heading__container d-flex flex-column align-items-center">
+    <div class="text-monospace mb-2">To start, connect your wallet</div>
     <div>
-      <button class="button-large inverse" (click)="openDisclaimer()">Connect to Wallet</button>
+      <button class="btn btn-light btn-lg" (click)="openDisclaimer()">Connect</button>
     </div>
   </div>
 </div>

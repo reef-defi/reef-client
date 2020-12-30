@@ -5,7 +5,7 @@ import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject } from 'rxjs';
-import { IChainData, IContract, IProviderUserInfo, ITransaction } from '../models/types';
+import {IChainData, IContract, IProviderUserInfo, ITransaction, PendingTransaction} from '../models/types';
 import { getChainData } from '../utils/chains';
 import { NotificationService } from './notification.service';
 import { contractData } from '../../../assets/abi';
@@ -28,6 +28,8 @@ export class ConnectorService {
   currentProviderName$ = new BehaviorSubject<string | null>(null);
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
+  selectedGasPrice$ = new BehaviorSubject(null);
+  pendingTransaction$ = new BehaviorSubject(null);
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -41,11 +43,6 @@ export class ConnectorService {
     },
     torus: {
       package: Torus,
-      options: {
-        networkParams: {
-          host: 'http://localhost:8600' // TODO: remove this for prod
-        }
-      },
     },
     'custom-walletlink': {
       display: {
@@ -170,6 +167,28 @@ export class ConnectorService {
     return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
   }
 
+  public setSelectedGas(type: string, price: number): void {
+    this.selectedGasPrice$.next({ type, price });
+    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+  }
+
+  public getGasPrice(): string {
+    console.log(this.selectedGasPrice$.value.price, 'price')
+    const gwei = this.toWei(Math.round(this.selectedGasPrice$.value.price), 'Gwei');
+    console.log(gwei, 'gwei')
+    return gwei;
+  }
+
+  public setPendingTxs(hash: string) {
+    this.pendingTransaction$.next({
+      hash,
+    });
+  }
+
+  public deletePending() {
+    this.pendingTransaction$.next(null);
+  }
+
   private async connectToContract(): Promise<void> {
     const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
     const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
@@ -231,6 +250,7 @@ export class ConnectorService {
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
       window.location.reload();
     });
+    // const subscription = this.web3.eth.subscribe('pendingTransactions').on('data', (tx) => { console.log(tx, 'from sub')})
   }
 
   private async getUserBalance(address: string): Promise<string> {

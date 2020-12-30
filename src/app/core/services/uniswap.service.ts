@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
-import { ChainId, Fetcher, Pair, Price, Route, Token, TokenAmount, Trade, TradeType, WETH } from '@uniswap/sdk';
-import { addresses, reefPools } from '../../../assets/addresses';
-import { ConnectorService } from './connector.service';
-import { IContract, IReefPricePerToken } from '../models/types';
-import { NotificationService } from './notification.service';
-import { addMinutes, getUnixTime } from 'date-fns';
-import { BehaviorSubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ChainId, Fetcher, Pair, Percent, Price, Route, Token, TokenAmount, Trade, TradeType, WETH} from '@uniswap/sdk';
+import {addresses, reefPools} from '../../../assets/addresses';
+import {ConnectorService} from './connector.service';
+import {IContract, IReefPricePerToken} from '../models/types';
+import {NotificationService} from './notification.service';
+import {addMinutes, getUnixTime} from 'date-fns';
+import {BehaviorSubject} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import { getKey } from '../utils/pools-utils';
-import { Router } from '@angular/router';
+import {getKey} from '../utils/pools-utils';
+import {Router} from '@angular/router';
+import {MatDialog} from "@angular/material/dialog";
+import {TransactionConfirmationComponent} from "../../shared/components/transaction-confirmation/transaction-confirmation.component";
 
 const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
 
@@ -18,13 +20,87 @@ const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
 export class UniswapService {
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
-  readonly slippagePercent$ = new BehaviorSubject<number | null>(this.getSlippageIfSet());
+  readonly slippagePercent$ = new BehaviorSubject<string | null>(this.getSlippageIfSet());
   readonly web3 = this.connectorService.web3;
-  transactionInterval = null;
+  readonly pendingTx$ = this.connectorService.pendingTransaction$;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly notificationService: NotificationService,
-              private readonly router: Router) {
+              private readonly router: Router,
+              public dialog: MatDialog) {
+  }
+
+  public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
+    if (addresses[tokenSymbol]) {
+      const weiAmount = this.connectorService.toWei(amount);
+      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
+      const pair = await Fetcher.fetchPairData(REEF, tokenB);
+      const route = new Route([pair], tokenB);
+      const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+      const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
+      const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+      const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
+      const path = [tokenB.address, REEF.address];
+      const to = this.connectorService.providerUserInfo$.value.address;
+      const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      try {
+        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+        if (tokenSymbol === 'WETH') {
+          this.routerContract$.value.methods.swapExactETHForTokens(
+            amountOutMin, path, to, deadline
+          ).send({
+            from: to,
+            value: weiAmount,
+            gasPrice: this.connectorService.getGasPrice()
+          })
+            .on('confirmation', (cNumber, receipt) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+            })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.connectorService.setPendingTxs(hash);
+            })
+            .on('receipt', (receipt) => {
+              this.connectorService.deletePending();
+              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
+            })
+            .on('error', (err) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+            })
+        } else {
+          this.routerContract$.value.methods.swapExactTokensForTokens(
+            +amount, amountOutMin, path, to, deadline
+          ).send({
+            from: to,
+            gasPrice: this.connectorService.getGasPrice()
+          })
+            .on('confirmation', (cNumber, receipt) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+            })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.connectorService.setPendingTxs(hash);
+            })
+            .on('receipt', (receipt) => {
+              this.connectorService.deletePending();
+              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
+            })
+            .on('error', (err) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+            })
+        }
+      } catch (e) {
+        this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+      }
+    }
   }
 
   public createLpContract(tokenSymbol: string): IContract {
@@ -57,16 +133,30 @@ export class UniswapService {
     return pair;
   }
 
-  public async getReefPricePer(tokenSymbol: string): Promise<IReefPricePerToken> {
+  public async getReefPricePer(tokenSymbol: string, amount?: number): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
+      const totalReef = await pair.reserveOf(REEF).toExact();
+      if (amount) {
+        const weiAmount = this.connectorService.toWei(amount);
+        const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+        const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
+        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+        return {
+          REEF_PER_TOKEN: route.midPrice.toSignificant(),
+          TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+          totalReefReserve: totalReef,
+          amountOutMin: +amountOutMin,
+        };
+      }
       return {
         REEF_PER_TOKEN: route.midPrice.toSignificant(),
-        TOKEN_PER_REEF: route.midPrice.invert().toSignificant()
+        TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+        totalReefReserve: totalReef,
       };
     }
   }
@@ -83,14 +173,30 @@ export class UniswapService {
     const weiA = this.connectorService.toWei(amountA);
     const weiB = this.connectorService.toWei(amountB);
     try {
-      const res = await this.routerContract$.value.methods.addLiquidity(
+      const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+      this.routerContract$.value.methods.addLiquidity(
         tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
       ).send({
         from: to,
-        gas: 6721975
-      });
-      this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
+        gasPrice: this.connectorService.getGasPrice()
+      })
+        .on('confirmation', (cNumber, receipt) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
+        })
+        .on('error', (err) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+        })
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -109,15 +215,31 @@ export class UniswapService {
     const tokenSlippage = this.getSlippage(tokenAmount);
     const ethSlippage = this.getSlippage(weiEthAmount);
     try {
-      const res = await this.routerContract$.value.methods.addLiquidityETH(
+      const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+      this.routerContract$.value.methods.addLiquidityETH(
         token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
       ).send({
         from: to,
-        gas: 6721975,
-        value: `${weiEthAmount}`
-      });
-      this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, ['goToReef'], 'Great! Go to Farms to invest your LP Tokens to gain REEF!'), 1000);
+        value: `${weiEthAmount}`,
+        gasPrice: this.connectorService.getGasPrice()
+      })
+        .on('confirmation', (cNumber, receipt) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
+        })
+        .on('error', (err) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+        })
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -130,15 +252,28 @@ export class UniswapService {
       const amount = new BigNumber(tokenAmount).toNumber();
       console.log(amount, 'amount');
       try {
+        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         const poolSymbol = getKey(addresses, poolAddress);
-        console.log(reefPools[poolSymbol], amount, 'hello...');
-        const res = await this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
+        this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
           from: this.connectorService.providerUserInfo$.value.address,
-          gas: 6721975,
-        });
-        this.transactionInterval = setInterval(async () =>
-          await this.checkIfTransactionSuccess(res, [],
-            `You have deposited ${amount} LP Tokens! Your REEF Rewards will now start to accumulate.`), 1000);
+        })
+          .on('confirmation', (cNumber, receipt) => {
+            dialogRef.close();
+            this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
+          })
+          .on('transactionHash', (hash) => {
+            dialogRef.close();
+            this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+            this.connectorService.setPendingTxs(hash);
+          })
+          .on('receipt', (receipt) => {
+            this.connectorService.deletePending();
+            this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
+          })
+          .on('error', (err) => {
+            dialogRef.close();
+            this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+          })
       } catch (e) {
         this.notificationService.showNotification(e.message, 'Close', 'error');
       }
@@ -149,12 +284,28 @@ export class UniswapService {
     try {
       const amount = new BigNumber(tokenAmount).toNumber();
       const poolSymbol = getKey(addresses, poolAddress);
-      const res = await this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
+      const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+      this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
         from: this.connectorService.providerUserInfo$.value.address,
-        gas: 6721975,
-      });
-      this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, []), 1000);
+        gasPrice: this.connectorService.getGasPrice()
+      })
+        .on('confirmation', (cNumber, receipt) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now confirmed!', 'Ok', 'info')
+        })
+        .on('transactionHash', (hash) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+          this.connectorService.setPendingTxs(hash);
+        })
+        .on('receipt', (receipt) => {
+          this.connectorService.deletePending();
+          this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
+        })
+        .on('error', (err) => {
+          dialogRef.close();
+          this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+        })
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
@@ -163,6 +314,7 @@ export class UniswapService {
   public async getReefRewards(poolAddress: string): Promise<number> {
     const address = this.connectorService.providerUserInfo$.value.address;
     const poolSymbol = getKey(addresses, poolAddress);
+    console.log(poolSymbol, 'hello')
     const amount = await this.farmingContract$.value.methods.pendingRewards(reefPools[poolSymbol], address).call<number>();
     return this.connectorService.fromWei(amount);
   }
@@ -182,44 +334,21 @@ export class UniswapService {
     return !!getKey(addresses, address);
   }
 
-  public setSlippage(percent: number): void {
+  public setSlippage(percent: string): void {
     this.slippagePercent$.next(percent);
     localStorage.setItem('reef_slippage', `${percent}`);
   }
 
   private getSlippage(amount: string | number): string {
-    return new BigNumber(amount).multipliedBy(this.slippagePercent$.value / 100).toString();
+    return new BigNumber(amount).multipliedBy(+this.slippagePercent$.value / 100).toString();
   }
 
-  private goToReef() {
+  private goToReef(): void {
     this.router.navigate(['/reef']);
   }
 
-  private async checkIfTransactionSuccess(tx: any, fns?: string[], text?: string): Promise<any> {
-    console.log(tx);
-    if (!tx.transactionHash) {
-      this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
-      clearInterval(this.transactionInterval);
-    }
-    const receipt = await this.connectorService.getTransactionReceipt(tx.transactionHash);
-    if (receipt && receipt.status) {
-      if (fns && fns.length) {
-        fns.forEach(fn => this[fn]());
-      }
-      console.log(receipt, 'REC');
-      this.notificationService.showNotification(text || `Tx Hash: ${tx.transactionHash}`, 'Okay', 'success');
-      const latestTx = await this.connectorService.getTxByHash(tx.transactionHash);
-      if (this.connectorService.transactionsForAccount$.value) {
-        this.connectorService.transactionsForAccount$.next(
-          [...this.connectorService.transactionsForAccount$.value, latestTx]
-        );
-      }
-      clearInterval(this.transactionInterval);
-    }
-  }
-
-  private getSlippageIfSet(): number {
-    return +localStorage.getItem('reef_slippage') || 0.5;
+  private getSlippageIfSet(): string {
+    return localStorage.getItem('reef_slippage') || '0.5';
   }
 
 }

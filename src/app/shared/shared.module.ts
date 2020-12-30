@@ -38,6 +38,10 @@ import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton
 import { PercentageButtonsComponent } from './components/percentage-buttons/percentage-buttons.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatRippleModule } from '@angular/material/core';
+import { MatListModule } from '@angular/material/list';
+import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
+import { PageTitleComponent } from './components/page-title/page-title.component';
+import { TransactionConfirmationComponent } from './components/transaction-confirmation/transaction-confirmation.component';
 
 
 const components = [
@@ -55,18 +59,18 @@ const modules = [
   MatSliderModule, MatSnackBarModule, MatButtonModule, MatProgressSpinnerModule, MatCardModule, NgApexchartsModule, MatIconModule,
   MatTooltipModule, MatDialogModule, ClipboardModule, MatSlideToggleModule, ScrollingModule, MatTableModule, MatPaginatorModule,
   MatChipsModule, MatProgressBarModule, MatSelectModule, HighchartsChartModule, MatDividerModule, MatMenuModule, NgxSkeletonLoaderModule,
-  MatRadioModule, MatRippleModule
+  MatRadioModule, MatRippleModule, MatListModule,
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules],
+  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent],
 })
 export class SharedModule {
 }

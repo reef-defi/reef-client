@@ -29,8 +29,10 @@ export class ApiService {
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
   public vaults$ = new BehaviorSubject(null);
+  public gasPrices$ = new BehaviorSubject(null);
   private url = environment.reefApiUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
+  private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
 
 
@@ -50,6 +52,10 @@ export class ApiService {
     return this.http.get<{ [key: string]: string }>(`${this.url}/list_tokens`).subscribe((tokens: { [key: string]: string }) => {
       this.tokens$.next(tokens);
     });
+  }
+
+  getGasPrices(): Observable<any> {
+    return this.http.get(`${this.gasPricesUrl}`);
   }
 
   generateBasket(payload: IGenerateBasketRequest): Observable<IGenerateBasketResponse> {
@@ -120,7 +126,7 @@ export class ApiService {
   }
 
   getBinanceQuote(params: QuotePayload): Observable<any> {
-    const { cryptoCurrency, baseCurrency, requestedAmount, address, email } = params;
+    const {cryptoCurrency, baseCurrency, requestedAmount, address, email} = params;
     return this.http.post(`${this.binanceApiUrl}/getQuote`, {
       cryptoCurrency, baseCurrency, requestedAmount, address, email
     }).pipe(

@@ -3,18 +3,190 @@
 @import "~bootstrap";
 
 
-html, body {
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+table {
+  width: 100%;
+}
+
+p {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+}
+
+
+.reef-logo {
+  background-image: url('https://reef.finance/img/logo/Reef.png');
+  background-size: cover;
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+  height: 8px;
+  border-radius: 8px
+}
+.mat-slider.mat-slider-horizontal .mat-slider-track-background,
+.mat-slider.mat-slider-horizontal .mat-slider-track-fill {
   height: 100%;
 }
-
+.mat-accent .mat-slider-thumb {
+  height: 26px;
+  width: 26px;
+  background-color: #673ab7 !important;
+  bottom: -16px;
+  right: -16px;
+}
+.mat-slider-thumb-label {
+  background-color: #673ab7 !important;
+}
+.mat-slider-thumb-label-text {
+  color: #F3F3F3!important;
+}
+.mat-slider-horizontal {
+  width: 100%;
+}
+.mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+  background-color: #673ab7;
+}
+.mat-slider-track-background {
+  background: #F3F3F3 !important;
+}
+.bold {
+  font-weight: bold!important;
+}
 body {
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  //  background: mediumpurple;
 }
-
-[data-js-focus-visible] :focus:not([data-focus-visible-added]) {
-  outline: none !important;
+//.mat-tab-label {
+//  color: white;
+//}
+//.mat-tab-label-active {
+//  opacity: 1!important;
+//}
+.header-card {
+  box-shadow: none!important;
+  border-radius: 0!important;
+  padding-bottom: 0!important;
 }
-
-.c-pointer {
+.side-selected {
+  span {
+    color: white!important;;
+  }
+  background: mediumpurple;
+  :hover {
+    background: mediumpurple;
+    opacity: 0.9!important;
+  }
+}
+mat-tab-header {
+  display: none!important;
+}
+.text-center {
+  text-align: center;
+}
+.claimed-icon{
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  font-size: 30px;
+  color: #6610f2;
+}
+.text-left {
+  text-align: left;
+}
+.card {
+  overflow: hidden;
+}
+.card-body .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+.card-body .rotate i {
+  color: rgba(20, 20, 20, 0.15);
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}
+.display-4 {
+  font-size: 2rem!important;
+  font-weight: 300;
+  line-height: 1.2;
+}
+.display-3 {
+  font-size: 1rem!important;
+  font-weight: 300;
+  line-height: 1.2;
+}
+.text-uppercase {
+  text-transform: uppercase!important;
+}
+.h6, h6 {
+  font-size: 1rem!important;
+}
+.bg-purple {
+  background: #6610f2;
+}
+.token-number-text {
+  font-size: 2rem!important;
+  font-weight: 300;
+  line-height: 1.2;
+}
+.spinner-container {
+  background: grey;
+  opacity: 0.8;
+  top: 0;
+  z-index: 100;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.spinner-container-inner {
+  position: absolute;
+  left: 45%;
+  width: 5%;
+  height: 5%;
+  top: 50%;
+}
+.cdk-overlay-container {
+  z-index: 9999;
+}
+.ptr {
   cursor: pointer;
+}
+tr.mat-row, tr.mat-footer-row {
+  height: 28px!important;
+}
+.no-margin {
+  margin: 0!important;
+}
+.navbar-mobile-float {
+  position: absolute;
+  z-index: 12321;
+  width: 100%;
+  top: 0;
+  flex-wrap: wrap;
+  border-bottom: 1px solid grey;
+  align-items: self-start;
+  align-content: baseline;
+  //height: 100%;
+
+}
+.nav-open {
+  height: 100% !important;
+}
+body {
+  touch-action: manipulation;
+}
+.new-split {
+  background: rgba(192,192,192,0.5)
 }

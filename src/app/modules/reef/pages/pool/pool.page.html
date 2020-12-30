@@ -4,112 +4,120 @@
       <ng-container *ngIf="providerUserInfo$ | async as userInfo">
         <div class="page__wrapper row">
           <div class="col-6 offset-3">
-            <div class="content__container d-flex flex-column align-items-center justify-content-around">
-              <div class="d-flex align-items-center justify-content-center mb-3">
-                <img
-                  width="75"
-                  height="75"
-                  src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
-                <img
-                  width="60"
-                  height="60"
-                  src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
-              </div>
-              <div
-                class="d-flex flex-column align-items-center justify-content-center mb-4">
-                <div class="heading__lg">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center mb-3">
                   <img
-                    class="mb-1"
-                    width="50"
-                    height="50"
-                    src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
-                  & {{ token }}
+                    width="75"
+                    height="75"
+                    src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
+                  <img
+                    width="60"
+                    height="60"
+                    src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
                 </div>
-                <div class="subheading__lg">
-                  Get UNI-V2 LP Tokens by adding liquidity to the
-                  <strong class="font-weight-bold">REEF/{{token}}</strong>
-                  pool
-                </div>
-              </div>
-              <div
-                class="d-flex flex-column align-items-center mb-4">
-                <div class="d-flex justify-content-start align-items-center mb-2">
-                  <div class="label__lg align-self-start mr-1">REEF Amount</div>
-                  <div class="label__md">
-                    (Balance: {{userInfo.reefBalance | number}} REEF)
+                <div
+                  class="d-flex flex-column align-items-center justify-content-center mb-3">
+                  <div class="h6">
+                    <img
+                      class="mb-1"
+                      width="50"
+                      height="50"
+                      src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
+                    & {{ token }}
+                  </div>
+                  <div class="text-monospace text-muted small text-center mb-2">
+                    Get UNI-V2 LP Tokens by adding liquidity to the
+                    <strong class="font-weight-bold">REEF/{{token}}</strong>
+                    pool
                   </div>
                 </div>
-                <input
-                  [ngModel]="reefAmount"
-                  (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF)"
-                  class="form-control"
-                  id="reefAmount"
-                  placeholder="0.0" type="number"/>
-                <div class="label__md mt-1" *ngIf="reefAmount > userInfo.reefBalance">
-                  <span class="font-danger">
-                    Insufficient Reef Tokens
-                  </span>
-                </div>
-              </div>
-              <div
-                class="d-flex flex-column align-items-center mb-4">
-                <div class="d-flex justify-content-start align-items-center mb-2">
-                  <div class="label__lg align-self-start mr-1">{{ token }} Amount</div>
-                  <div *ngIf="token === 'WETH' || token === 'ETH'">
-                    <div class="label__md">
-                      (Balance: {{userInfo.balance | number}} ETH)
+                <div
+                  class="d-flex flex-column align-items-center mb-4">
+                  <div class="d-flex justify-content-start align-items-center mb-2">
+                    <div class="small align-self-start mr-1">REEF Amount</div>
+                    <div class="small font-weight-bold">
+                      (Balance: {{userInfo.reefBalance | number}} REEF)
                     </div>
                   </div>
-                  <div
-                    class="label__md"
-                    *ngIf="token !== 'WETH' && token !== 'ETH'">
-                    (Balance: {{userTokenBalance | number }} {{ token }})
+                  <input
+                    [ngModel]="reefAmount"
+                    (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF)"
+                    class="form-control w-50 text-monospace small"
+                    id="reefAmount"
+                    placeholder="0.0" type="number"/>
+                  <div class="small mt-1" *ngIf="reefAmount > userInfo.reefBalance">
+                    <span class="text-danger">
+                      Insufficient Reef Tokens
+                    </span>
                   </div>
                 </div>
-                <input
-                  [ngModel]="tokenAmount"
-                  (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN)"
-                  class="form-control"
-                  id="tokenAmount"
-                  placeholder="0.0" type="number"/>
-                <div *ngIf="token === 'WETH' || token === 'ETH'">
-                  <div class="label__md mt-1" *ngIf="tokenAmount > userInfo.balance">
-                    <span class="font-danger">
+                <div
+                  class="d-flex flex-column align-items-center mb-4">
+                  <div class="d-flex justify-content-start align-items-center mb-2">
+                    <div class="small align-self-start mr-1">{{ token }} Amount</div>
+                    <div *ngIf="token === 'WETH' || token === 'ETH'">
+                      <div class="small font-weight-bold">
+                        (Balance: {{userInfo.balance | number}} ETH)
+                      </div>
+                    </div>
+                    <div
+                      class="small font-weight-bold"
+                      *ngIf="token !== 'WETH' && token !== 'ETH'">
+                      (Balance: {{userTokenBalance | number }} {{ token }})
+                    </div>
+                  </div>
+                  <input
+                    [ngModel]="tokenAmount"
+                    (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN)"
+                    class="form-control w-50 text-monospace small"
+                    id="tokenAmount"
+                    placeholder="0.0" type="number"/>
+                  <div *ngIf="token === 'WETH' || token === 'ETH'">
+                    <div class="small mt-1" *ngIf="tokenAmount > userInfo.balance">
+                    <span class="text-danger">
                       Insufficient ETH Coins
                     </span>
+                    </div>
                   </div>
-                </div>
-                <div *ngIf="token !== 'WETH' && token !== 'ETH'">
-                  <div class="label__md mt-1" *ngIf="tokenAmount > userTokenBalance">
-                    <span class="font-danger">
+                  <div *ngIf="token !== 'WETH' && token !== 'ETH'">
+                    <div class="small mt-1" *ngIf="tokenAmount > userTokenBalance">
+                    <span class="text-danger">
                       Buy some {{ token }} to execute this Trade
                     </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="d-flex align-items-center justify-content-center mb-4">
-                <app-content-box class="w-50">
-                  <div class="subheading__md text-dark">Reef per {{ token }}</div>
-                  <div class="heading__md text-dark">
-                    {{ price.REEF_PER_TOKEN }}
+                <div
+                  class="d-flex align-items-center justify-content-around mb-5">
+                  <div class="card">
+                    <div class="card-body bg-purple">
+                      <div class="small text-monospace text-center text-white">Reef per {{ token }}</div>
+                      <div class="text-monospace text-center text-white">
+                        {{ price.REEF_PER_TOKEN }}
+                      </div>
+                    </div>
                   </div>
-                </app-content-box>
-                <app-content-box class="w-50">
-                  <div class="subheading__md text-dark">{{ token }} per Reef</div>
-                  <div class="heading__md text-dark">
-                    {{ price.TOKEN_PER_REEF }}
+                  <div class="card">
+                    <div class="card-body bg-purple">
+                      <div class="small text-monospace text-center text-white">{{ token }} per Reef</div>
+                      <div class="text-monospace text-center text-white">
+                        {{ price.TOKEN_PER_REEF }}
+                      </div>
+                    </div>
                   </div>
-                </app-content-box>
-              </div>
-              <div class="d-flex align-items-center justify-content-center">
-                <button
-                  [disabled]="!reefAmount ||
+                </div>
+                <div class="d-flex align-items-center justify-content-center">
+                  <button
+                    *ngIf="!loading"
+                    [disabled]="!reefAmount ||
                   reefAmount > userInfo.reefBalance || reefAmount <= 0
                    || (token === 'WETH' ? tokenAmount > userInfo.balance : tokenAmount > userTokenBalance)"
-                  (click)="addLiquidity(token)" class="button-large regular">
-                  Add Liquidity
-                </button>
+                    (click)="addLiquidity(token)" class="btn btn-primary">
+                    Add Liquidity
+                  </button>
+                  <app-loading *ngIf="loading" diameter="25"></app-loading>
+                </div>
               </div>
             </div>
           </div>

@@ -1,15 +1,8 @@
 <div class="sidebar">
-  <p class="p-0 m-0 font-success">{{ version }}</p>
-  <div *ngIf="chainInfo && chainInfo.chain_id"
-       class="d-flex justify-content-center align-items-center w-100 p-2 my-1 bg-danger">
-    <div
-      (click)="openInfoDialog(rpcInfoDialog)"
-      class="subheading__md c-pointer">
-      <span class="font-lightest text-break">
-        Connect to our custom RPC to use the app.
-        Click here to see how.
-      </span>
-    </div>
+  <div class="my-4 ml-1">
+    <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
+      <img class="mr-2" style="width: 80px" src="../../../../assets/images/reef/reef-v2.svg">
+    </a>
   </div>
   <div class="icon-container">
     <div class="d-flex justify-content-center align-items-center">
@@ -37,19 +30,22 @@
       <div
         *ngIf="slippagePercent$ | async as slippagePercent"
         class="d-flex flex-column align-items-center justify-content-around">
-        <div class="label__lg">Set Slippage</div>
+        <span class="small">Set Slippage</span>
         <div class="d-flex align-items-center justify-content-around px-2 py-1 m-1">
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === 0.1" (click)="setSlippage(0.1)" mat-raised-button>0.1%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '0.1'" (click)="setSlippage('0.1')">
+            <span class="small">0.1%</span>
           </button>
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === 0.5" (click)="setSlippage(0.5)" mat-raised-button>0.5%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '0.5'" (click)="setSlippage('0.5')">
+            <span class="small">0.5%</span>
           </button>
           <button
-            class="py-1"
-            [class.regular]="slippagePercent === 1" (click)="setSlippage(1)" mat-raised-button>1%
+            class="btn btn-sm btn-outline-primary mr-1"
+            [class.regular]="slippagePercent === '1'" (click)="setSlippage('1')">
+            <span class="small">1.0%</span>
           </button>
         </div>
       </div>
@@ -66,94 +62,81 @@
         <div>Sign out</div>
       </div>
     </mat-menu>
-    <div
+    <a
       id="dashboardBtn"
       [routerLink]="['/dashboard']"
       [routerLinkActiveOptions]="{exact: true}"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div
-        class="la la-lg la-pie-chart mr-2 pl-3"></div>
-      <div class="sidebar__label">DASHBOARD</div>
-    </div>
-    <div
-      id="reefMenu"
-      [routerLink]="['/reef']"
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body my-4">
+      <app-svg-icon icon="dashboard"></app-svg-icon>
+      Dashboard
+    </a>
+    <!--    <div-->
+    <!--      id="buy-crypto"-->
+    <!--      [routerLink]="['/binance']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <img-->
+    <!--        height="45"-->
+    <!--        width="35"-->
+    <!--        class="img-fluid mr-2 pl-3"-->
+    <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
+    <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
+    <!--    </div>-->
+    <a
+      id="buyReef"
+      [routerLink]="['/reef/buy']"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div class="la la-lg la-swimming-pool mr-2 pl-3"></div>
-      <div class="sidebar__label">REEF</div>
-    </div>
-    <div
-      id="buy-crypto"
-      [routerLink]="['/binance']"
-      [routerLinkActiveOptions]="{exact: true}"
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
+      <app-svg-icon icon="reef"></app-svg-icon>
+      Buy Reef
+    </a>
+    <a
+      id="farmReef"
+      [routerLink]="['/reef/farms']"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <img
-        height="45"
-        width="35"
-        class="img-fluid mr-2 pl-3"
-        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">
-      <div class="sidebar__label">BUY CRYPTO</div>
-    </div>
-    <div class="d-flex justify-content-center align-items-center mb-3 w-100">
-      <mat-divider class="sidebar__divider"></mat-divider>
-    </div>
-    <div
-      id="myBaskets"
-      [routerLink]="['/baskets']"
-      [routerLinkActiveOptions]="{exact: true}"
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
+      <app-svg-icon icon="currency"></app-svg-icon>
+      Farm Reef
+    </a>
+    <a
+      id="reefLiquidity"
+      [routerLink]="['/reef/pools']"
       routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div
-        class="la la-lg la-balance-scale mr-2 pl-3"></div>
-      <div class="sidebar__label">MY BASKETS</div>
-    </div>
-    <div
-      id="createBasket"
-      [routerLink]="['/baskets/basket-types']"
-      [routerLinkActiveOptions]="{exact: true}"
-      routerLinkActive="active"
-      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">
-      <div
-        class="la la-lg la-shopping-basket mr-2 pl-3"></div>
-      <div class="sidebar__label">CREATE BASKET</div>
-    </div>
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-5">
+      <app-svg-icon icon="flag"></app-svg-icon>
+      Get LP Tokens
+    </a>
+    <!--    <div-->
+    <!--      id="myBaskets"-->
+    <!--      [routerLink]="['/baskets']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <div-->
+    <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
+    <!--      <div class="sidebar__label">MY BASKETS</div>-->
+    <!--    </div>-->
+    <!--    <div-->
+    <!--      id="createBasket"-->
+    <!--      [routerLink]="['/baskets/basket-types']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <div-->
+    <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
+    <!--      <div class="sidebar__label">CREATE BASKET</div>-->
+    <!--    </div>-->
   </div>
-  <div class="mt-auto mb-2 d-flex flex-column align-items-center justify-content-center">
-    <a href="https://www.reef.finance/terms_and_conditions.html" class="subheading__md mb-1">Terms & Conditions</a>
-    <a href="https://www.reef.finance/privacy.html" class="subheading__md mb-1">Privacy Policy</a>
-    <div class="subheading__md">Reef Inc {{ currentYear }}</div>
+  <div class="mb-2 d-flex flex-column align-items-center justify-content-center" *ngIf="pendingTx$ | async as pendingTx">
+    <div class="small text-monospace text-center text-break mb-2 px-2">You have a transaction pending. Check it out on
+      <a
+        target="_blank"
+        href="https://etherscan.io/tx/{{ pendingTx.hash }}" class="font-weight-bold">Etherscan</a>
+    </div>
+    <div class="mb-2">
+      <app-loading diameter="25"></app-loading>
+    </div>
   </div>
 </div>
-
-<!-- TODO: Remove this for prod -->
-<ng-template #rpcInfoDialog>
-  <div matDialogTitle>How to connect to the REEF RPC</div>
-  <mat-dialog-content>
-    <div class="subheading__lg">1. In MetaMask, click on Settings, and go to Networks</div>
-    <div class="subheading__lg">2. Click on Add Network</div>
-    <div class="subheading__lg mb-1">3. Enter this information:</div>
-    <div class="subheading__lg mb-1">
-      <div>
-        Network Name: <span class="font-weight-bold">REEF_RPC</span>
-      </div>
-      <div>
-        New RPC Url: <span class="font-weight-bold">http://46.101.215.206:8600</span>
-      </div>
-      <div>
-        Chain ID: <span class="font-weight-bold">0x539</span>
-      </div>
-    </div>
-    <div class="subheading__lg">
-      4. Click Save
-    </div>
-    <div class="subheading__lg">
-      5. Select the REEF_RPC from the network dropdown, and refresh the page.
-    </div>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button class="button-small inverse" mat-dialog-close>Got it</button>
-  </mat-dialog-actions>
-</ng-template>

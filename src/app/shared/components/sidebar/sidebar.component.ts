@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '
 import { IChainData } from '../../../core/models/types';
 import { MatDialog } from '@angular/material/dialog';
 import { UniswapService } from '../../../core/services/uniswap.service';
+import {ConnectorService} from "../../../core/services/connector.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -15,8 +16,10 @@ export class SidebarComponent {
   @Input() currentAddress: string | undefined;
   @Output() signOut = new EventEmitter();
   readonly slippagePercent$ = this.uniswapService.slippagePercent$;
+  readonly pendingTx$ = this.connectorService.pendingTransaction$;
 
-  constructor(private dialog: MatDialog, private readonly uniswapService: UniswapService) {}
+  constructor(private dialog: MatDialog, private readonly uniswapService: UniswapService,
+              private readonly connectorService: ConnectorService) {}
 
   onSignOut(): void {
     this.signOut.emit();
@@ -26,7 +29,9 @@ export class SidebarComponent {
     this.dialog.open(dialogRef);
   }
 
-  setSlippage(percent: number): void {
+  setSlippage(percent: string): void {
     this.slippagePercent$.next(percent);
   }
+
+
 }
