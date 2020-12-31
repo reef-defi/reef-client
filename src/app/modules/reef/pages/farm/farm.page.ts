@@ -35,6 +35,7 @@ export class FarmPage implements OnInit {
     tap(() => this.loading$.next(true)),
     filter(this.uniswapService.isSupportedERC20),
     tap((address: string) => {
+      console.log(address, 'this is from obs')
       this.tokenSymbol$.next(getKey(addresses, address).split('_')[1]);
       const validAddrs = Object.values(addresses);
       if (validAddrs.includes(address)) {
@@ -109,6 +110,7 @@ export class FarmPage implements OnInit {
     this.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).subscribe(async (info: IProviderUserInfo) => {
+      console.log(lpContract.options.address, 'this is from getBalances')
       await this.getBalance(lpContract, info.address);
       await this.getReefRewards(lpContract.options.address);
       await this.getStaked(lpContract.options.address);

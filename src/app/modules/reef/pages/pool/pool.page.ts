@@ -9,8 +9,6 @@ import BigNumber from 'bignumber.js';
 import {addresses} from '../../../../../assets/addresses';
 import {ConnectorService} from '../../../../core/services/connector.service';
 
-const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab'; // TODO change this when mainnet REEF pools available
-
 @Component({
   selector: 'app-pool-page',
   templateUrl: './pool.page.html',
@@ -72,14 +70,14 @@ export class PoolPage implements OnInit {
       if (hasAllowance) {
         if (tokenB === 'WETH' || tokenB === 'ETH') {
           await this.uniswapService.addLiquidityETH(
-            REEF_TOKEN,
+            addresses.REEF_TOKEN,
             this.reefAmount,
             this.tokenAmount,
             10
           );
         } else {
           await this.uniswapService.addLiquidity(
-            REEF_TOKEN,
+            addresses.REEF_TOKEN,
             addresses[tokenB],
             this.reefAmount,
             this.tokenAmount,

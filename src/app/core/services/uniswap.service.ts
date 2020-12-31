@@ -12,8 +12,6 @@ import {Router} from '@angular/router';
 import {MatDialog} from "@angular/material/dialog";
 import {TransactionConfirmationComponent} from "../../shared/components/transaction-confirmation/transaction-confirmation.component";
 
-const REEF_TOKEN = '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -34,7 +32,7 @@ export class UniswapService {
     if (addresses[tokenSymbol]) {
       const weiAmount = this.connectorService.toWei(amount);
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-      const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
+      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
@@ -113,7 +111,7 @@ export class UniswapService {
   }
 
   public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
-    const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
+    const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
     const tokenB = new Token(ChainId.MAINNET, addresses[tokenSymbol], 18);
     const pair = await Fetcher.fetchPairData(REEF, tokenB);
     console.log(Pair.getAddress(REEF, tokenB), 'PAIR ADDRESS');
@@ -136,7 +134,7 @@ export class UniswapService {
   public async getReefPricePer(tokenSymbol: string, amount?: number): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-      const REEF = new Token(ChainId.MAINNET, REEF_TOKEN, 18);
+      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
@@ -313,6 +311,8 @@ export class UniswapService {
 
   public async getReefRewards(poolAddress: string): Promise<number> {
     const address = this.connectorService.providerUserInfo$.value.address;
+    poolAddress = poolAddress.toLocaleLowerCase();
+    console.log(poolAddress, 'hmmm...')
     const poolSymbol = getKey(addresses, poolAddress);
     console.log(poolSymbol, 'hello')
     const amount = await this.farmingContract$.value.methods.pendingRewards(reefPools[poolSymbol], address).call<number>();
@@ -326,6 +326,7 @@ export class UniswapService {
 
   public async getStaked(poolAddress: string): Promise<any> {
     const address = this.connectorService.providerUserInfo$.value.address;
+    poolAddress = poolAddress.toLocaleLowerCase();
     const poolSymbol = getKey(addresses, poolAddress);
     return await this.farmingContract$.value.methods.userInfo(reefPools[poolSymbol], address).call<number>();
   }
