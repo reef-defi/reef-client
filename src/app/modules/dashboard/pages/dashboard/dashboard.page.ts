@@ -58,8 +58,11 @@ export class DashboardPage implements OnInit {
     const usdToken = this.connectorService.createLpContract('USDT')
     const reefEthLP = this.connectorService.createLpContract('REEF_WETH_POOL');
     const reefUSDTLP = this.connectorService.createLpContract('REEF_USDT_POOL');
-    this.reefEthLpBalance = await reefEthLP.methods.balanceOf(address).call();
-    this.reefUSDTLpBalance = await reefUSDTLP.methods.balanceOf(address).call();
-    this.usdTBalance = await usdToken.methods.balanceOf(address).call();
+    const reefEthLpBalance: string = await reefEthLP.methods.balanceOf(address).call();
+    const reefUSDTLpBalance: string = await reefUSDTLP.methods.balanceOf(address).call();
+    const usdTBalance: string = await usdToken.methods.balanceOf(address).call();
+    this.reefEthLpBalance = this.connectorService.fromWei(reefEthLpBalance)
+    this.reefUSDTLpBalance = this.connectorService.fromWei(reefUSDTLpBalance)
+    this.usdTBalance = this.connectorService.fromWei(usdTBalance)
   }
 }
