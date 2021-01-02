@@ -45,6 +45,7 @@ export class UniswapService {
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
       try {
         const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+        let firstConfirm = true;
         if (tokenSymbol === 'WETH') {
           this.routerContract$.value.methods.swapExactETHForTokens(
             amountOutMin, path, to, deadline
@@ -53,18 +54,19 @@ export class UniswapService {
             value: weiAmount,
             gasPrice: this.connectorService.getGasPrice()
           })
-            .on('confirmation', (cNumber, receipt) => {
-              dialogRef.close();
-              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
-            })
             .on('transactionHash', (hash) => {
               dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
               this.connectorService.setPendingTxs(hash);
             })
-            .on('receipt', (receipt) => {
+            .on('receipt', async (receipt) => {
               this.connectorService.deletePending();
-              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
+              this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
+              const reefBalance = await this.connectorService.getReefBalance(to);
+              this.connectorService.providerUserInfo$.next({
+                ...this.connectorService.providerUserInfo$.value,
+                reefBalance,
+              })
             })
             .on('error', (err) => {
               dialogRef.close();
@@ -77,10 +79,6 @@ export class UniswapService {
             from: to,
             gasPrice: this.connectorService.getGasPrice()
           })
-            .on('confirmation', (cNumber, receipt) => {
-              dialogRef.close();
-              this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
-            })
             .on('transactionHash', (hash) => {
               dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
@@ -178,10 +176,6 @@ export class UniswapService {
         from: to,
         gasPrice: this.connectorService.getGasPrice()
       })
-        .on('confirmation', (cNumber, receipt) => {
-          dialogRef.close();
-          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
-        })
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
@@ -221,10 +215,6 @@ export class UniswapService {
         value: `${weiEthAmount}`,
         gasPrice: this.connectorService.getGasPrice()
       })
-        .on('confirmation', (cNumber, receipt) => {
-          dialogRef.close();
-          this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
-        })
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
@@ -255,10 +245,6 @@ export class UniswapService {
         this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
           from: this.connectorService.providerUserInfo$.value.address,
         })
-          .on('confirmation', (cNumber, receipt) => {
-            dialogRef.close();
-            this.notificationService.showNotification('The transaction is now confirmed!.', 'Ok', 'info')
-          })
           .on('transactionHash', (hash) => {
             dialogRef.close();
             this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
@@ -287,10 +273,6 @@ export class UniswapService {
         from: this.connectorService.providerUserInfo$.value.address,
         gasPrice: this.connectorService.getGasPrice()
       })
-        .on('confirmation', (cNumber, receipt) => {
-          dialogRef.close();
-          this.notificationService.showNotification('The transaction is now confirmed!', 'Ok', 'info')
-        })
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')

@@ -54,8 +54,8 @@ export class PoolPage implements OnInit {
     if (val && val > 0) {
       const x = new BigNumber(val);
       const y = new BigNumber(reefPerToken);
-      this.reefAmount = x.multipliedBy(y).toNumber();
-      this.tokenAmount = x.toNumber();
+      this.reefAmount = +x.multipliedBy(y).toNumber();
+      this.tokenAmount = +x.toNumber();
     } else {
       this.reefAmount = undefined;
       this.tokenAmount = undefined;
@@ -114,7 +114,7 @@ export class PoolPage implements OnInit {
   private async initContracts(token: string): Promise<void> {
     const contract = this.uniswapService.createLpContract(token);
     this.lpTokenContract$.next(contract);
-    this.reefContract$.next(this.uniswapService.createLpContract('TESTR'));
+    this.reefContract$.next(this.uniswapService.createLpContract('REEF_TOKEN'));
     if (this.providerUserInfo$.value) {
       this.userTokenBalance = await this.uniswapService.getBalanceOf(contract, this.providerUserInfo$.value.address);
     } else {

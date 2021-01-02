@@ -23,9 +23,9 @@ export class DashboardPage implements OnInit {
     this.connectorService.transactionsForAccount$;
   readonly gasPrices$ = this.apiService.gasPrices$;
   readonly selectedGas$ = this.connectorService.selectedGasPrice$;
-  public usdTBalance = null;
-  public reefEthLpBalance = null;
-  public reefUSDTLpBalance = null;
+  public transactions$;
+  public tokens$;
+
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,
@@ -37,8 +37,10 @@ export class DashboardPage implements OnInit {
     this.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).subscribe((res: IProviderUserInfo) => {
-      this.getTransactionsForAccount(res.address);
-      this.getTokenBalancesForAccount(res.address);
+      console.log(res, 'hmmmm')
+      this.transactions$ = this.getTransactionsForAccount(res.address);
+      this.tokens$ = this.getTokenBalances(res.address);
+      this.getPricing();
     });
   }
 
@@ -50,19 +52,15 @@ export class DashboardPage implements OnInit {
     this.connectorService.setSelectedGas(type, price);
   }
 
-  private async getTransactionsForAccount(address: string): Promise<void> {
-    await this.connectorService.getTransactionsForAddress(address);
+  private getTransactionsForAccount(address: string): any {
+    return this.apiService.getTransactions(address);
   }
 
-  private async getTokenBalancesForAccount(address: string): Promise<any> {
-    const usdToken = this.connectorService.createLpContract('USDT')
-    const reefEthLP = this.connectorService.createLpContract('REEF_WETH_POOL');
-    const reefUSDTLP = this.connectorService.createLpContract('REEF_USDT_POOL');
-    const reefEthLpBalance: string = await reefEthLP.methods.balanceOf(address).call();
-    const reefUSDTLpBalance: string = await reefUSDTLP.methods.balanceOf(address).call();
-    const usdTBalance: string = await usdToken.methods.balanceOf(address).call();
-    this.reefEthLpBalance = this.connectorService.fromWei(reefEthLpBalance)
-    this.reefUSDTLpBalance = this.connectorService.fromWei(reefUSDTLpBalance)
-    this.usdTBalance = this.connectorService.fromWei(usdTBalance)
+  private getTokenBalances(address: string) {
+    return this.apiService.getTokenBalances(address);
+  }
+
+  private getPricing() {
+    this.apiService.getReefPricing().subscribe(console.log)
   }
 }

@@ -53,94 +53,28 @@
               <mat-divider></mat-divider>
             </div>
           </div>
-          <div class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <img
-                class="img-fluid mr-1"
-                src="../../../../../assets/images/reef/reef-token.png" height="15" width="15">
-              <div class="small font-weight-bolder">Reef</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (userInfo.reefBalance || 0) | number }}
+          <ng-container *ngIf="tokens$ | async as tokens; else loadingTemplate">
+            <div
+              *ngFor="let token of tokens"
+              class="row d-flex align-items-center justify-content-between mb-2">
+              <div class="col d-flex align-items-center">
+                <img
+                  class="img-fluid mr-1"
+                  [src]="token.logo_url" height="20" width="20">
+                <div class="small font-weight-bolder">{{ token.contract_ticker_symbol }}</div>
+              </div>
+              <div class="col">
+                <div class="text-monospace small">
+                  {{ (token.balance || 0) | number }}
+                </div>
+              </div>
+              <div class="col">
+                <div class="text-monospace small">
+                  ${{(token.quote_rate * token.balance) | number}}
+                </div>
               </div>
             </div>
-            <div class="col">
-              <div class="text-monospace small">
-                ${{((userInfo.reefBalance || 0) * 0.01) | number}}
-              </div>
-            </div>
-          </div>
-          <div class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc ETH mr-1"></span>
-              <div class="small font-weight-bolder">Ethereum</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (userInfo.balance || 0) | number }}
-              </div>
-            </div>
-            <div class="col" *ngIf="ethPrice$ | async as ethPrice">
-              <div class="text-monospace small">
-                ${{ (userInfo.balance * ethPrice.ethereum.usd) | number }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="usdTBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc USDT mr-1"></span>
-              <div class="small font-weight-bolder">USDT</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (usdTBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                ${{ (usdTBalance) | number }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="reefEthLpBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc ETH mr-1"></span>
-              <div class="small font-weight-bolder">REEF/ETH LP Token</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (reefEthLpBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-<!--                ${{ (usdTBalance) | number }}-->
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="reefUSDTLpBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc USDT mr-1"></span>
-              <div class="small font-weight-bolder">REEF/USDT LP Token</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (reefUSDTLpBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-<!--                ${{ (usdTBalance) | number }}-->
-              </div>
-            </div>
-          </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
@@ -159,7 +93,7 @@
             <div class="text-monospace small text-muted">Date</div>
           </div>
           <div class="col-3">
-            <div class="text-monospace small text-muted">Action</div>
+            <div class="text-monospace small text-muted">To Address</div>
           </div>
           <div class="col-3 col-auto">
             <div class="text-monospace small text-muted">Tokens</div>
@@ -170,7 +104,7 @@
             <mat-divider></mat-divider>
           </div>
         </div>
-        <div *ngIf="transactionsForAccount$ | async as transactions; else loadingTemplate">
+        <div *ngIf="transactions$ | async as transactions; else loadingTemplate">
           <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
             <div
               class="row d-flex justify-content-between mb-1 align-items-center"
@@ -178,24 +112,26 @@
               <div class="col-4">
                 <app-address-shortener
                   [standalone]="false"
-                  [address]="transaction.hash">
+                  [address]="transaction.tx_hash">
                 </app-address-shortener>
               </div>
               <div class="col-2">
                 <div class="small">
-                  {{ transaction.timestamp | date:'shortDate' }}
+                  {{ transaction.block_signed_at | date:'shortDate' }}
                 </div>
               </div>
               <div class="col-3">
-                <div class="small">
-                  {{ transaction.action }}
+                <div>
+                  <app-address-shortener
+                    [standalone]="false"
+                    [address]="transaction.to_address">
+                  </app-address-shortener>
                 </div>
               </div>
               <div class="col-3 col-auto d-flex justify-content-between">
                 <span class="small font-weight-bold">
-                  {{ transaction.value | number }}
+                  {{ transaction.value }}
                 </span>
-                <span class="cc ETH"></span>
               </div>
             </div>
           </div>

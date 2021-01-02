@@ -14,6 +14,7 @@ import {
 import { subMonths } from 'date-fns';
 import { catchError, map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import BigNumber from "bignumber.js";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -31,9 +32,12 @@ export class ApiService {
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
   private url = environment.reefApiUrl;
+  private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
+  private covalentUrl = environment.covalentApiUrl;
+  private API_KEY = 'ckey_02c001945c67428eaff497033d2';
 
 
   constructor(private readonly http: HttpClient) {
@@ -74,6 +78,12 @@ export class ApiService {
     };
     return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions).pipe(
       catchError((err) => EMPTY)
+    );
+  }
+
+  getCMCReefPrice(): Observable<any> {
+    return this.http.get<any>(this.reefPriceUrl).pipe(
+      map(res => res.data.market_pairs[0].quote.USD.price)
     );
   }
 
@@ -162,5 +172,30 @@ export class ApiService {
     return this.http.get<{ [key: string]: { [key: string]: number } }>(`${this.chartsUrl}/BTC,ETH?quote=USD`).pipe(
       catchError(err => EMPTY)
     );
+  }
+
+  /**
+   * COVALENT
+   */
+
+  getTokenBalances(address: string) {
+    return this.http.get<any>(`${this.covalentUrl}/1/address/${address}/balances_v2/?key=${this.API_KEY}`).pipe(
+      map(res => res.data.items.map(item =>
+        ({
+          ...item,
+          balance: item.balance / +`1e${item.contract_decimals}`
+        })
+      ))
+    )
+  }
+
+  getTransactions(address: string) {
+    return this.http.get<any>(`${this.covalentUrl}/1/address/${address}/transactions_v2/?key=${this.API_KEY}`).pipe(
+      map(res => res.data.items.map((item => ({ ...item, value: item.value / 1e18 }))))
+    )
+  }
+
+  getReefPricing() {
+    return this.http.get<any>(`${this.covalentUrl}/pricing/historical/USD/REEF/?key=${this.API_KEY}`)
   }
 }

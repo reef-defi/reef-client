@@ -10,7 +10,7 @@
                   <img
                     width="75"
                     height="75"
-                    src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
+                    src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                   <img
                     width="60"
                     height="60"
@@ -36,7 +36,9 @@
                   class="d-flex flex-column align-items-center mb-4">
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">REEF Amount</div>
-                    <div class="small font-weight-bold">
+                    <div
+                      (click)="reefAmount = +userInfo.reefBalance; calcTokenAmount(reefAmount, price.TOKEN_PER_REEF)"
+                      class="small font-weight-bold c-pointer">
                       (Balance: {{userInfo.reefBalance | number}} REEF)
                     </div>
                   </div>
@@ -57,12 +59,14 @@
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">{{ token }} Amount</div>
                     <div *ngIf="token === 'WETH' || token === 'ETH'">
-                      <div class="small font-weight-bold">
+                      <div
+                        (click)="calcReefAmount(+userInfo.balance, price.REEF_PER_TOKEN)"
+                        class="c-pointer small font-weight-bold">
                         (Balance: {{userInfo.balance | number}} ETH)
                       </div>
                     </div>
                     <div
-                      class="small font-weight-bold"
+                      class="c-pointer small font-weight-bold"
                       *ngIf="token !== 'WETH' && token !== 'ETH'">
                       (Balance: {{userTokenBalance | number }} {{ token }})
                     </div>

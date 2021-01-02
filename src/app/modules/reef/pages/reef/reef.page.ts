@@ -31,16 +31,6 @@ export class ReefPage implements OnInit {
     this.apiService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
   }
 
-  async stakeReef(amount: number): Promise<void> {
-    const canStake = await this.connectorService.approveToken(
-      this.reefToken$.value,
-      this.reefStaking$.value.options.address
-    );
-    if (canStake) {
-      await this.contractService.stakeReef(amount);
-    }
-  }
-
   async onTokenChange(tokenSymbol: string): Promise<any> {
     this.tokenPrices = undefined;
     await this.getReefPricePer(tokenSymbol, this.tokenAmount);
