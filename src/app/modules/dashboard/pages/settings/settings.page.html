@@ -1,0 +1,66 @@
+<div class="row">
+  <app-page-title
+    title="Settings"
+    subtitle="Modify the gas price, Set Uniswap Slippage"></app-page-title>
+</div>
+
+<div class="page__wrapper">
+  <div class="row">
+    <div class="col-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div *ngIf="gasPrices$ | async as gasPrices">
+            <div *ngIf="selectedGas$ | async as selectedGas">
+              <div class="text-monospace small text-muted font-weight-bold mb-2">Select Gas Price</div>
+              <div
+                (click)="setGas('safeLow', gasPrices['safeLow'])"
+                [class.gas-price__item--selected]="selectedGas.type === 'safeLow'"
+                class="d-flex align-items-center small gas-price__item p-1">
+                Slow: {{ gasPrices['safeLow'] }} Gwei
+              </div>
+              <div
+                (click)="setGas('standard', gasPrices['standard'])"
+                [class.gas-price__item--selected]="selectedGas.type === 'standard'"
+                class="d-flex align-items-center small gas-price__item p-1">
+                Standard: {{ gasPrices['standard'] }} Gwei
+              </div>
+              <div
+                (click)="setGas('fast', gasPrices['fast'])"
+                [class.gas-price__item--selected]="selectedGas.type === 'fast'"
+                class="d-flex align-items-center small gas-price__item p-1">
+                Fast: {{ gasPrices['fast'] }} Gwei
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div
+            *ngIf="slippagePercent$ | async as slippagePercent">
+            <div class="text-monospace small text-muted font-weight-bold mb-2">Set Uniswap Slippage</div>
+            <div
+              class="d-flex align-items-center small gas-price__item p-1"
+              [class.gas-price__item--selected]="slippagePercent === '0.1'" (click)="setSlippage('0.1')">
+              0.1%
+            </div>
+            <div
+              class="d-flex align-items-center small gas-price__item p-1"
+              [class.gas-price__item--selected]="slippagePercent === '0.5'" (click)="setSlippage('0.5')">
+              0.5%
+            </div>
+            <div
+              class="d-flex align-items-center small gas-price__item p-1"
+              [class.gas-price__item--selected]="slippagePercent === '1'" (click)="setSlippage('1')">
+              1.0%
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
