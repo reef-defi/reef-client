@@ -15,7 +15,6 @@ export class SidebarComponent {
   @Input() version: string | undefined;
   @Input() currentAddress: string | undefined;
   @Output() signOut = new EventEmitter();
-  readonly slippagePercent$ = this.uniswapService.slippagePercent$;
   readonly pendingTx$ = this.connectorService.pendingTransaction$;
 
   constructor(private dialog: MatDialog, private readonly uniswapService: UniswapService,
@@ -24,14 +23,5 @@ export class SidebarComponent {
   onSignOut(): void {
     this.signOut.emit();
   }
-
-  openInfoDialog(dialogRef: TemplateRef<any>): void {
-    this.dialog.open(dialogRef);
-  }
-
-  setSlippage(percent: string): void {
-    this.slippagePercent$.next(percent);
-  }
-
 
 }
