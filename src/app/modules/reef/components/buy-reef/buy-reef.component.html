@@ -7,11 +7,15 @@
         <div class="h6 mb-4">Buy REEF</div>
         <div class="small text-muted mb-1">Enter your amount</div>
         <div class="d-flex align-items-center">
-          <input
-            [(ngModel)]="tokenAmount"
-            (ngModelChange)="onAmountChange($event)"
-            class="w-75 form-control mr-2" type="number"/>
-          <div class="d-flex align-items-center">
+          <div class="input-group">
+            <input
+              [(ngModel)]="tokenAmount"
+              (ngModelChange)="onAmountChange($event)"
+              class="w-75 form-control mr-2" type="number"/>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">max</span>
+            </div>
+          </div><div class="d-flex align-items-center">
             <img
               *ngIf="selectedToken === 'WETH'"
               alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
@@ -34,6 +38,10 @@
               </mat-option>
             </mat-select>
           </div>
+          <ng-container *ngIf="(this.connectorService.providerUserInfo$|async) as addr">
+            {{addr|json}}
+<!--            s={{this.getTokenBalances(addr)|async|json}}-->
+          </ng-container>
         </div>
         <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-1">
           <div

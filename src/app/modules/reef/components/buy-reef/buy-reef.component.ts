@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IReefPricePerToken } from '../../../../core/models/types';
+import {ApiService} from '../../../../core/services/api.service';
+import {ConnectorService} from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-buy-reef',
@@ -16,7 +18,8 @@ export class BuyReefComponent {
   @Output() buy = new EventEmitter();
   @Output() tokenChange = new EventEmitter();
   @Output() amountChange = new EventEmitter();
-  constructor() { }
+
+  constructor(public connectorService: ConnectorService, public apiService: ApiService) { }
 
   onBuy(tokenAmount: number): void {
     this.buy.emit(tokenAmount);
@@ -28,5 +31,9 @@ export class BuyReefComponent {
 
   onAmountChange(amount: number): void {
     this.amountChange.emit(amount);
+  }
+
+  getTokenBalances(addr: string) {
+
   }
 }
