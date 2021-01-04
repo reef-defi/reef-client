@@ -12,16 +12,18 @@
             (ngModelChange)="onAmountChange($event)"
             class="w-75 form-control mr-2" type="number"/>
           <div class="d-flex align-items-center">
-            <img
-              *ngIf="selectedToken === 'WETH'"
-              alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
-            <img
-              *ngIf="selectedToken === 'USDT'"
-              alt="token-logo" width="26" height="26" src="../../../../../assets/images/usdt.png"/>
-            <div class="small mx-1">{{ selectedToken }}</div>
-            <mat-select
-              [value]="selectedToken"
-              (valueChange)="selectedToken = $event; onTokenChange(selectedToken)">
+            <img (click)="tokenSelect.open()"
+                 *ngIf="selectedToken === 'WETH'"
+                 class="c-pointer"
+                 alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
+            <img (click)="tokenSelect.open()"
+                 *ngIf="selectedToken === 'USDT'"
+                 class="c-pointer"
+                 alt="token-logo" width="26" height="26" src="../../../../../assets/images/usdt.png"/>
+            <div class="small mx-1 c-pointer" (click)="tokenSelect.open()">{{ selectedToken }}</div>
+            <mat-select #tokenSelect
+                        [value]="selectedToken"
+                        (valueChange)="selectedToken = $event; onTokenChange(selectedToken)">
               <mat-option [value]="token.symbol" *ngFor="let token of supportedTokens">
                 <div class="d-flex align-items-center">
                   <img
