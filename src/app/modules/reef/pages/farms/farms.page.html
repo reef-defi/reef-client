@@ -12,8 +12,7 @@
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-5">
             <img
-              width="65"
-              height="65"
+              class="img-size-top-65"
               src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
           </div>
           <div
@@ -41,29 +40,27 @@
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-5">
             <img
-              width="65"
-              height="65"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-            <img
-              width="75"
-              height="75"
+              class="img-size-top-70"
               src="../../../../../assets/images/eth.png" alt="eth-token">
+            <img
+              class="img-size-top-65"
+              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
           </div>
           <div
             class="d-flex flex-column align-items-center justify-content-center mb-5">
             <div class="h6">
-              REEF & ETH
+              WETH & REEF
             </div>
             <div class="text-monospace text-muted small text-center mb-1">
               Stake your LP Tokens into
-              <strong class="font-weight-bold">REEF-ETH</strong>
+              <strong class="font-weight-bold">WETH-REEF</strong>
               pool to earn
               <strong class="font-weight-bold">REEF tokens</strong>
             </div>
           </div>
           <div class="d-flex align-items-center justify-content-center">
             <button [routerLink]="['/reef/farm', REEF_WETH_POOL]" class="btn btn-primary">
-              Stake into REEF/WETH
+              Stake into WETH/REEF
             </button>
           </div>
         </div>
@@ -74,30 +71,27 @@
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-5">
             <img
-              width="60"
-              height="60"
-              class="mr-1"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-            <img
-              width="60"
-              height="60"
+              class="img-size-top-60"
               src="../../../../../assets/images/usdt.png" alt="usdt-token">
+            <img
+              class="mr-1 img-size-top-60"
+              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
           </div>
           <div
             class="d-flex flex-column align-items-center justify-content-center mb-5">
             <div class="h6">
-              REEF & USDT
+              USDT & REEF
             </div>
             <div class="text-monospace text-muted small text-center">
               Stake your LP Tokens into
-              <strong class="font-weight-bold">REEF-USDT</strong>
+              <strong class="font-weight-bold">USDT-REEF</strong>
               pool to earn
               <strong class="font-weight-bold">REEF tokens</strong>
             </div>
           </div>
           <div class="d-flex align-items-center justify-content-center">
             <button [routerLink]="['/reef/farm', REEF_USDT_POOL]" class="btn btn-primary">
-              Stake into REEF/USDT
+              Stake into USDT/REEF
             </button>
           </div>
         </div>
