@@ -1,0 +1,12 @@
+.gas-price__item {
+  &:hover {
+    background-color: #6f42c1;
+    color: white;
+  }
+  cursor: pointer;
+}
+
+.gas-price__item--selected {
+  background-color: #6f42c1;
+  color: white;
+}

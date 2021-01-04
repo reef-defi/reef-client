@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardPage } from './pages/dashboard/dashboard.page';
 import { SharedModule } from '../../shared/shared.module';
+import { SettingsPage } from './pages/settings/settings.page';
 
 
 @NgModule({
-  declarations: [DashboardPage],
+  declarations: [DashboardPage, SettingsPage],
   imports: [
     CommonModule,
     DashboardRoutingModule,

@@ -1,7 +1,7 @@
 <div class="row">
   <app-page-title
     title="Dashboard"
-    subtitle="Modify the gas price, view your transactions, balances and more."></app-page-title>
+    subtitle="View your transactions, balances, and more."></app-page-title>
 </div>
 
 <div class="page__wrapper row justify-content-between">
@@ -9,50 +9,12 @@
     <div class="card h-100">
       <div class="card-body">
         <div class="h6 mb-4">
-          Account Info
+          Balances
+        </div>
+        <div class="mb-4">
+          <mat-divider></mat-divider>
         </div>
         <ng-container *ngIf="providerUserInfo$ | async as userInfo; else loadingTemplate">
-          <div class="row mb-3">
-            <div class="col-6">
-              <div class="text-monospace small text-muted font-weight-bold mb-2">Address</div>
-              <app-content-box
-                [isAddress]="true">
-                <app-address-shortener
-                  class="d-flex justify-content-center align-items-center"
-                  [address]="userInfo.address"
-                ></app-address-shortener>
-              </app-content-box>
-            </div>
-            <div class="col-6" *ngIf="gasPrices$ | async as gasPrices">
-              <div *ngIf="selectedGas$ | async as selectedGas">
-                <div class="text-monospace small text-muted font-weight-bold mb-2">Select Gas Price</div>
-                <div
-                  (click)="setGas('safeLow', gasPrices['safeLow'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'safeLow'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Slow: {{ gasPrices['safeLow'] }} Gwei
-                </div>
-                <div
-                  (click)="setGas('standard', gasPrices['standard'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'standard'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Standard: {{ gasPrices['standard'] }} Gwei
-                </div>
-                <div
-                  (click)="setGas('fast', gasPrices['fast'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'fast'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Fast: {{ gasPrices['fast'] }} Gwei
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col">
-              <div class="text-monospace small text-muted font-weight-bold mb-2">Balances</div>
-              <mat-divider></mat-divider>
-            </div>
-          </div>
           <ng-container *ngIf="tokens$ | async as tokens; else loadingTemplate">
             <div
               *ngFor="let token of tokens"

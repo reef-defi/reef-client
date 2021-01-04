@@ -28,26 +28,10 @@
       xPosition="after"
       #addressMenu="matMenu">
       <div
-        *ngIf="slippagePercent$ | async as slippagePercent"
-        class="d-flex flex-column align-items-center justify-content-around">
-        <span class="small">Set Slippage</span>
-        <div class="d-flex align-items-center justify-content-around px-2 py-1 m-1">
-          <button
-            class="btn btn-sm btn-outline-primary mr-1"
-            [class.regular]="slippagePercent === '0.1'" (click)="setSlippage('0.1')">
-            <span class="small">0.1%</span>
-          </button>
-          <button
-            class="btn btn-sm btn-outline-primary mr-1"
-            [class.regular]="slippagePercent === '0.5'" (click)="setSlippage('0.5')">
-            <span class="small">0.5%</span>
-          </button>
-          <button
-            class="btn btn-sm btn-outline-primary mr-1"
-            [class.regular]="slippagePercent === '1'" (click)="setSlippage('1')">
-            <span class="small">1.0%</span>
-          </button>
-        </div>
+        [routerLink]="['/dashboard/settings']"
+        class="address__menu--item">
+        <div class="la la-lg la-gear mr-2"></div>
+        <div>Settings</div>
       </div>
       <div
         [cdkCopyToClipboard]="currentAddress"
