@@ -50,7 +50,7 @@
           class="d-flex justify-content-between">
           <div class="card w-50 mr-2">
             <div class="card-body bg-purple">
-              <div class="small text-monospace text-white">Reef per {{ selectedToken }}</div>
+              <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
               <div class="text-monospace text-white">
                 {{ tokenPrices.REEF_PER_TOKEN | number }}
               </div>
@@ -58,7 +58,7 @@
           </div>
           <div class="card w-50">
             <div class="card-body bg-purple">
-              <div class="small text-monospace text-white">Reef/USD</div>
+              <div class="small text-monospace text-white">Price</div>
               <div class="text-monospace text-white">
                 {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
                 USD
