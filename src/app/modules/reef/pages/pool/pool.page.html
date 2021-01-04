@@ -8,12 +8,12 @@
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-center mb-3">
                   <img
-                    width="75"
-                    height="75"
+                    width="65"
+                    height="65"
                     src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                   <img
-                    width="60"
-                    height="60"
+                    width="65"
+                    height="65"
                     src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
                 </div>
                 <div
@@ -130,7 +130,33 @@
     </ng-container>
   </ng-container>
   <ng-template #loadingTemplate>
-    <app-loading [isWholePage]="true"></app-loading>
+    <div class="row">
+      <div class="col-6 offset-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+              <div class="d-flex align-items-center mb-5">
+                <div class="w-50">
+                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                </div>
+                <div class="w-50">
+                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                </div>
+              </div>
+              <div class="mb-5 w-50">
+                <app-skeleton-loading [count]="1" type="transaction"></app-skeleton-loading>
+              </div>
+              <div class="mb-3 w-50">
+                <app-skeleton-loading [count]="2" type="vault"></app-skeleton-loading>
+              </div>
+              <div class="mb-3 w-50">
+                <app-skeleton-loading [count]="1" type="composition"></app-skeleton-loading>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-template>
 
   <ng-template #errorTemplate>
