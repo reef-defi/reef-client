@@ -8,27 +8,23 @@
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-center mb-3">
                   <img
-                    width="65"
-                    height="65"
-                    src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-                  <img
-                    width="65"
-                    height="65"
+                    class="img-size-top-65"
                     src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
+                  <img
+                    class="img-size-top-65"
+                    src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                 </div>
                 <div
                   class="d-flex flex-column align-items-center justify-content-center mb-3">
                   <div class="h6">
+                    {{ token }} &
                     <img
-                      class="mb-1"
-                      width="50"
-                      height="50"
+                      class="mb-1 img-size-top-50"
                       src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
-                    & {{ token }}
                   </div>
                   <div class="text-monospace text-muted small text-center mb-2">
                     Get UNI-V2 LP Tokens by adding liquidity to the
-                    <strong class="font-weight-bold">REEF/{{token}}</strong>
+                    <strong class="font-weight-bold">{{token}}/REEF</strong>
                     pool
                   </div>
                 </div>
