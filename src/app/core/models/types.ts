@@ -1,15 +1,16 @@
 import {
-  ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle,
   ApexDataLabels,
-  ApexPlotOptions,
-  ApexYAxis,
   ApexFill,
   ApexGrid,
-  ApexStroke, ApexResponsive, ApexLegend,
+  ApexLegend,
+  ApexPlotOptions,
+  ApexResponsive,
+  ApexStroke,
+  ApexTitleSubtitle,
+  ApexXAxis,
+  ApexYAxis,
 } from 'ng-apexcharts';
 
 export interface PendingTransaction {
@@ -281,4 +282,15 @@ export interface EthPrice {
   ethereum: {
     usd: number
   };
+}
+
+export interface TokenBalance {
+  contract_ticker_symbol: string;
+  balance: number;
+}
+
+export enum TokenSymbol {
+  ETH = 'ETH',
+  WETH = 'WETH',
+  USDT = 'USDT'
 }
