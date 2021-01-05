@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "reef-app-v2"
+  "defaultProject": "reef-app-v2",
+  "cli": {
+    "analytics": false
+  }
 }
