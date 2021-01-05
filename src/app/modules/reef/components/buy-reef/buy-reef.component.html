@@ -36,11 +36,21 @@
               </mat-option>
             </mat-select>
           </div>
-          <ng-container *ngIf="(this.connectorService.providerUserInfo$|async) as addr">
-            {{addr|json}}
-<!--            s={{this.getTokenBalances(addr)|async|json}}-->
-          </ng-container>
         </div>
+        <ng-container *ngIf="balances && balances.length">
+          <div class="small-text text-muted ">
+            Set amount to:
+            <span *ngFor="let balance of balances;let last = last">
+              <a href="#"
+                 (click)="$event.preventDefault();tokenAmount=balance.balance;onAmountChange(balance.balance)">{{balance.balance}} {{balance.contract_ticker_symbol}}
+              </a>
+              <span *ngIf="!last">, </span>
+            </span>
+            <span (click)="onTokenChange(selectedToken)">
+              <mat-icon color="accent">account_circle</mat-icon>
+            </span>
+          </div>
+        </ng-container>
         <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-1">
           <div
             *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
@@ -51,9 +61,8 @@
       </div>
       <div class="mb-3">
         <div class="h6 mb-3">Prices</div>
-        <div
-          *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
-          class="d-flex justify-content-between">
+        <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
+             class="d-flex justify-content-between">
           <div class="card w-50 mr-2">
             <div class="card-body bg-purple">
               <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
