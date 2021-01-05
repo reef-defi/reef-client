@@ -7,28 +7,21 @@
             <div class="card">
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-center mb-3">
+                  [<ng-container *ngIf="token !== 'TOKEN'">{{ token }} – </ng-container>REEF]
+                </div>
+                <div class="d-flex align-items-center justify-content-center mb-3">
                   <img
-                    width="75"
-                    height="75"
-                    src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
-                  <img
-                    width="60"
-                    height="60"
+                    class="img-size-top-65"
                     src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
+                  <img
+                    class="img-size-top-65"
+                    src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                 </div>
                 <div
                   class="d-flex flex-column align-items-center justify-content-center mb-3">
-                  <div class="h6">
-                    <img
-                      class="mb-1"
-                      width="50"
-                      height="50"
-                      src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
-                    & {{ token }}
-                  </div>
                   <div class="text-monospace text-muted small text-center mb-2">
                     Get UNI-V2 LP Tokens by adding liquidity to the
-                    <strong class="font-weight-bold">REEF/{{token}}</strong>
+                    <strong class="font-weight-bold">{{token}}/REEF</strong>
                     pool
                   </div>
                 </div>
@@ -36,7 +29,9 @@
                   class="d-flex flex-column align-items-center mb-4">
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">REEF Amount</div>
-                    <div class="small font-weight-bold">
+                    <div
+                      (click)="reefAmount = +userInfo.reefBalance; calcTokenAmount(reefAmount, price.TOKEN_PER_REEF)"
+                      class="small font-weight-bold c-pointer">
                       (Balance: {{userInfo.reefBalance | number}} REEF)
                     </div>
                   </div>
@@ -57,12 +52,14 @@
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">{{ token }} Amount</div>
                     <div *ngIf="token === 'WETH' || token === 'ETH'">
-                      <div class="small font-weight-bold">
+                      <div
+                        (click)="calcReefAmount(+userInfo.balance, price.REEF_PER_TOKEN)"
+                        class="c-pointer small font-weight-bold">
                         (Balance: {{userInfo.balance | number}} ETH)
                       </div>
                     </div>
                     <div
-                      class="small font-weight-bold"
+                      class="c-pointer small font-weight-bold"
                       *ngIf="token !== 'WETH' && token !== 'ETH'">
                       (Balance: {{userTokenBalance | number }} {{ token }})
                     </div>
@@ -126,7 +123,33 @@
     </ng-container>
   </ng-container>
   <ng-template #loadingTemplate>
-    <app-loading [isWholePage]="true"></app-loading>
+    <div class="row">
+      <div class="col-6 offset-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+              <div class="d-flex align-items-center mb-5">
+                <div class="w-50">
+                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                </div>
+                <div class="w-50">
+                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                </div>
+              </div>
+              <div class="mb-5 w-50">
+                <app-skeleton-loading [count]="1" type="transaction"></app-skeleton-loading>
+              </div>
+              <div class="mb-3 w-50">
+                <app-skeleton-loading [count]="2" type="vault"></app-skeleton-loading>
+              </div>
+              <div class="mb-3 w-50">
+                <app-skeleton-loading [count]="1" type="composition"></app-skeleton-loading>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-template>
 
   <ng-template #errorTemplate>

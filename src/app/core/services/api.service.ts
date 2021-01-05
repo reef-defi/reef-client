@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, of, Subscription} from 'rxjs';
 import {
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
-  IVault, QuotePayload,
+  IVault, QuotePayload, TokenBalance,
   Vault,
   VaultAPY
 } from '../models/types';
 import { subMonths } from 'date-fns';
-import { catchError, map, take } from 'rxjs/operators';
+import {catchError, map, shareReplay, take, tap} from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import BigNumber from "bignumber.js";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -31,9 +32,13 @@ export class ApiService {
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
   private url = environment.reefApiUrl;
+  private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
+  private covalentUrl = environment.covalentApiUrl;
+  private API_KEY = 'ckey_ae1ac511ecab4cf095e89c4fbff'; // 'ckey_02c001945c67428eaff497033d2';
+  private balancesByAddr = new Map<string, Observable<any>>();
 
 
   constructor(private readonly http: HttpClient) {
@@ -74,6 +79,12 @@ export class ApiService {
     };
     return this.http.post<any>(`${this.url}/basket_historic_roi`, body, httpOptions).pipe(
       catchError((err) => EMPTY)
+    );
+  }
+
+  getCMCReefPrice(): Observable<any> {
+    return this.http.get<any>(this.reefPriceUrl).pipe(
+      map(res => res.data.market_pairs[0].quote.USD.price)
     );
   }
 
@@ -162,5 +173,42 @@ export class ApiService {
     return this.http.get<{ [key: string]: { [key: string]: number } }>(`${this.chartsUrl}/BTC,ETH?quote=USD`).pipe(
       catchError(err => EMPTY)
     );
+  }
+
+  /**
+   * COVALENT
+   */
+
+  getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance[]> {
+    if (!address) {
+      console.warn('getTokenBalances NO PARAMS')
+      return null;
+    }
+    if (!fromCache || !this.balancesByAddr.has(address)) {
+      const balances$ = this.http.get<any>(`${this.covalentUrl}/1/address/${address}/balances_v2/?key=${this.API_KEY}`).pipe(
+        map(res => res.data.items.map(item =>
+          ({
+            ...item,
+            balance: item.balance / +`1e${item.contract_decimals}`
+          })
+        )),
+        catchError(err=>{
+          throw new Error(err)
+        }),
+        shareReplay(1)
+      );
+      this.balancesByAddr.set(address, balances$)
+    }
+    return this.balancesByAddr.get(address);
+  }
+
+  getTransactions(address: string) {
+    return this.http.get<any>(`${this.covalentUrl}/1/address/${address}/transactions_v2/?key=${this.API_KEY}`).pipe(
+      map(res => res.data.items.map((item => ({ ...item, value: item.value / 1e18 }))))
+    )
+  }
+
+  getReefPricing() {
+    return this.http.get<any>(`${this.covalentUrl}/pricing/historical/USD/REEF/?key=${this.API_KEY}`)
   }
 }

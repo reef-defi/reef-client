@@ -8,59 +8,53 @@
               <div class="card">
                 <div class="card-body">
                   <div class="d-flex align-items-center justify-content-center mb-3">
-                    <img
-                      width="75"
-                      height="75"
-                      src="../../../../../assets/images/reef/reef-token.png" alt="reef-token">
+                    [<ng-container *ngIf="token !== 'TOKEN'">{{ token }} – </ng-container>REEF]
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center mb-3">
                     <img
                       *ngIf="token !== 'TOKEN'"
-                      width="60"
-                      height="60"
+                      class="img-size-top-60"
                       src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
                       alt="alt-token">
+                    <img
+                      class="img-size-top-60"
+                      src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                   </div>
-                  <div
-                    class="d-flex flex-column align-items-center justify-content-center mb-4">
-                    <div class="h6">
-                      <img
-                        class="mb-1"
-                        width="50"
-                        height="50"
-                        src="../../../../../assets/images/reef/reef-v2.svg" alt="reef-token">
-                      <span *ngIf="token !== 'TOKEN'">& {{ token }}</span>
-                    </div>
-                    <div class="text-monospace text-muted small text-center mb-2">
-                      Stake your
-                      <strong class="font-weight-bold">UNI-V2 LP Tokens</strong>
-                      in the
-                      <strong class="font-weight-bold">REEF<span *ngIf="token !== 'TOKEN'">/{{ token }}</span></strong>
-                      pool to earn REEF!
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-center justify-content-center mb-4">
-                    <div class="small text-muted mb-1">
-                      Pool APY
-                    </div>
                     <div
-                      class="small">
+                      class="d-flex flex-column align-items-center justify-content-center mb-4">
+                      <div class="text-monospace text-muted small text-center mb-2">
+                        Stake your
+                        <strong class="font-weight-bold">UNI-V2 LP Tokens</strong>
+                        in the
+                        <strong class="font-weight-bold"><span *ngIf="token !== 'TOKEN'">{{ token }}/</span>REEF</strong>
+                        pool to earn REEF!
+                      </div>
+                    </div>
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column align-items-center justify-content-center mb-4">
+                      <div class="small text-muted mb-1">
+                        Pool APY
+                      </div>
+                      <div
+                        class="small">
                     <span class="font-weight-bold">
                       {{ apy | number }} %
                     </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-center justify-content-center mb-4">
-                    <div class="small text-muted mb-1">
-                      Staked LP Tokens
-                    </div>
-                    <div
-                      *ngIf="stakedAmount$ | async as staked"
-                      class="small">
+                    <div class="d-flex flex-column align-items-center justify-content-center mb-4">
+                      <div class="small text-muted mb-1">
+                        Staked LP Tokens
+                      </div>
+                      <div
+                        *ngIf="stakedAmount$ | async as staked"
+                        class="small">
                     <span class="font-weight-bold">
                       {{ staked | number }} {{ token !== 'TOKEN' ? ' LP Tokens' : 'REEF' }}
                     </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-center justify-content-center mb-4">
+                    <div class="d-flex flex-column align-items-center justify-content-center mb-4">
                     <div class="small text-muted mb-1">
                       Pending REWARD
                     </div>
@@ -71,6 +65,7 @@
                       {{ pendingReef | number }} REEF
                     </span>
                     </div>
+                  </div>
                   </div>
                   <div
                     class="d-flex flex-column align-items-center mb-4">

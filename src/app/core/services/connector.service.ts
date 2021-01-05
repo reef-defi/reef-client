@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Web3 from 'web3';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
-import { getProviderName } from '../utils/provider-name';
-import { BehaviorSubject } from 'rxjs';
+import {getProviderName} from '../utils/provider-name';
+import {BehaviorSubject} from 'rxjs';
 import {IChainData, IContract, IProviderUserInfo, ITransaction, PendingTransaction} from '../models/types';
-import { getChainData } from '../utils/chains';
-import { NotificationService } from './notification.service';
-import { contractData } from '../../../assets/abi';
-import { addresses, addresses as addrs } from '../../../assets/addresses';
-import { MaxUint256 } from '../utils/pools-utils';
-const { REEF_TOKEN, REEF_BASKET, REEF_FARMING, REEF_STAKING } = addrs;
+import {getChainData} from '../utils/chains';
+import {NotificationService} from './notification.service';
+import {contractData} from '../../../assets/abi';
+import {addresses, addresses as addrs} from '../../../assets/addresses';
+import {MaxUint256} from '../utils/pools-utils';
+
+const {REEF_TOKEN, REEF_BASKET, REEF_FARMING, REEF_STAKING} = addrs;
 const Web3Modal = window.Web3Modal.default;
 
 @Injectable({
@@ -168,8 +169,8 @@ export class ConnectorService {
   }
 
   public setSelectedGas(type: string, price: number): void {
-    this.selectedGasPrice$.next({ type, price });
-    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+    this.selectedGasPrice$.next({type, price});
+    localStorage.setItem('reef_gas_price', JSON.stringify({type, price}));
   }
 
   public getGasPrice(): string {
@@ -187,6 +188,13 @@ export class ConnectorService {
 
   public deletePending() {
     this.pendingTransaction$.next(null);
+  }
+
+  public async getReefBalance(address: string): Promise<string> {
+    if (this.reefTokenContract$.value) {
+      const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
+      return await this.web3.utils.fromWei(balance);
+    }
   }
 
   private async connectToContract(): Promise<void> {
@@ -268,13 +276,6 @@ export class ConnectorService {
     return getChainData(chainId);
   }
 
-  private async getReefBalance(address: string): Promise<string> {
-    if (this.reefTokenContract$.value) {
-      const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
-      return await this.web3.utils.fromWei(balance);
-    }
-  }
-
   private getTxAction(address: string, value: string): string {
     switch (address) {
       case REEF_TOKEN:
@@ -291,7 +292,6 @@ export class ConnectorService {
 
   async approveToken(token: IContract | any, spenderAddr: string): Promise<any> {
     const allowance = await this.getAllowance(token, spenderAddr);
-    console.log(allowance, 'allowance');
     if (allowance && +allowance > 0) {
       return true;
     }
@@ -300,7 +300,17 @@ export class ConnectorService {
       MaxUint256.toString()
     ).send({
       from: this.providerUserInfo$.value.address, // hardcode
-    });
+      gasPrice: this.getGasPrice()
+    }).on('transactionHash', (hash) => {
+      this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+      this.setPendingTxs(hash);
+    })
+      .on('receipt', (receipt) => {
+        this.notificationService.showNotification(`Token approved`, 'Okay', 'success');
+      })
+      .on('error', (err) => {
+        this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+      })
   }
 
   private async getAllowance(token: any, spenderAddr: string): Promise<any> {

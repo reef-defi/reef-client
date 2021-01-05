@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-type LoaderType = 'composition' | 'vault' | 'transaction' | 'chart' | 'basket';
+type LoaderType = 'composition' | 'vault' | 'transaction' | 'chart' | 'basket' | 'circle';
 
 @Component({
   selector: 'app-skeleton-loading',
@@ -11,6 +11,7 @@ export class SkeletonLoadingComponent implements OnInit {
   @Input() type: LoaderType;
   @Input() count = 1;
   @Input() animation = 'progress';
+  @Input() appearance = '';
   public styles: { [key: string]: { [key: string]: string } } = {
     composition: {
       height: '30px',
@@ -31,6 +32,10 @@ export class SkeletonLoadingComponent implements OnInit {
     },
     basket: {
       height: '300px',
+    },
+    circle: {
+      height: '65px',
+      width: '65px',
     }
   };
 

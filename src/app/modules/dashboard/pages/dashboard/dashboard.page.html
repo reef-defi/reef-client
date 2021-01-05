@@ -1,7 +1,7 @@
 <div class="row">
   <app-page-title
     title="Dashboard"
-    subtitle="Modify the gas price, view your transactions, balances and more."></app-page-title>
+    subtitle="View your transactions, balances, and more."></app-page-title>
 </div>
 
 <div class="page__wrapper row justify-content-between">
@@ -9,138 +9,34 @@
     <div class="card h-100">
       <div class="card-body">
         <div class="h6 mb-4">
-          Account Info
+          Balances
+        </div>
+        <div class="mb-4">
+          <mat-divider></mat-divider>
         </div>
         <ng-container *ngIf="providerUserInfo$ | async as userInfo; else loadingTemplate">
-          <div class="row mb-3">
-            <div class="col-6">
-              <div class="text-monospace small text-muted font-weight-bold mb-2">Address</div>
-              <app-content-box
-                [isAddress]="true">
-                <app-address-shortener
-                  class="d-flex justify-content-center align-items-center"
-                  [address]="userInfo.address"
-                ></app-address-shortener>
-              </app-content-box>
-            </div>
-            <div class="col-6" *ngIf="gasPrices$ | async as gasPrices">
-              <div *ngIf="selectedGas$ | async as selectedGas">
-                <div class="text-monospace small text-muted font-weight-bold mb-2">Select Gas Price</div>
-                <div
-                  (click)="setGas('safeLow', gasPrices['safeLow'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'safeLow'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Slow: {{ gasPrices['safeLow'] }} Gwei
+          <ng-container *ngIf="tokens$ | async as tokens; else loadingTemplate">
+            <div
+              *ngFor="let token of tokens"
+              class="row d-flex align-items-center justify-content-between mb-2">
+              <div class="col d-flex align-items-center">
+                <img
+                  class="img-fluid mr-1"
+                  [src]="token.logo_url" height="20" width="20">
+                <div class="small font-weight-bolder">{{ token.contract_ticker_symbol }}</div>
+              </div>
+              <div class="col">
+                <div class="text-monospace small">
+                  {{ (token.balance || 0) | number }}
                 </div>
-                <div
-                  (click)="setGas('standard', gasPrices['standard'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'standard'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Standard: {{ gasPrices['standard'] }} Gwei
-                </div>
-                <div
-                  (click)="setGas('fast', gasPrices['fast'])"
-                  [class.gas-price__item--selected]="selectedGas.type === 'fast'"
-                  class="d-flex align-items-center small gas-price__item p-1">
-                  Fast: {{ gasPrices['fast'] }} Gwei
+              </div>
+              <div class="col">
+                <div class="text-monospace small">
+                  ${{(token.quote_rate * token.balance) | number}}
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col">
-              <div class="text-monospace small text-muted font-weight-bold mb-2">Balances</div>
-              <mat-divider></mat-divider>
-            </div>
-          </div>
-          <div class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <img
-                class="img-fluid mr-1"
-                src="../../../../../assets/images/reef/reef-token.png" height="15" width="15">
-              <div class="small font-weight-bolder">Reef</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (userInfo.reefBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                ${{((userInfo.reefBalance || 0) * 0.01) | number}}
-              </div>
-            </div>
-          </div>
-          <div class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc ETH mr-1"></span>
-              <div class="small font-weight-bolder">Ethereum</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (userInfo.balance || 0) | number }}
-              </div>
-            </div>
-            <div class="col" *ngIf="ethPrice$ | async as ethPrice">
-              <div class="text-monospace small">
-                ${{ (userInfo.balance * ethPrice.ethereum.usd) | number }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="usdTBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc USDT mr-1"></span>
-              <div class="small font-weight-bolder">USDT</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (usdTBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                ${{ (usdTBalance) | number }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="reefEthLpBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc ETH mr-1"></span>
-              <div class="small font-weight-bolder">REEF/ETH LP Token</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (reefEthLpBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-<!--                ${{ (usdTBalance) | number }}-->
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="reefUSDTLpBalance"
-            class="row d-flex align-items-center justify-content-between mb-2">
-            <div class="col d-flex align-items-center">
-              <span class="cc USDT mr-1"></span>
-              <div class="small font-weight-bolder">REEF/USDT LP Token</div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-                {{ (reefUSDTLpBalance || 0) | number }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="text-monospace small">
-<!--                ${{ (usdTBalance) | number }}-->
-              </div>
-            </div>
-          </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
@@ -159,7 +55,7 @@
             <div class="text-monospace small text-muted">Date</div>
           </div>
           <div class="col-3">
-            <div class="text-monospace small text-muted">Action</div>
+            <div class="text-monospace small text-muted">To Address</div>
           </div>
           <div class="col-3 col-auto">
             <div class="text-monospace small text-muted">Tokens</div>
@@ -170,7 +66,7 @@
             <mat-divider></mat-divider>
           </div>
         </div>
-        <div *ngIf="transactionsForAccount$ | async as transactions; else loadingTemplate">
+        <div *ngIf="transactions$ | async as transactions; else loadingTemplate">
           <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
             <div
               class="row d-flex justify-content-between mb-1 align-items-center"
@@ -178,24 +74,26 @@
               <div class="col-4">
                 <app-address-shortener
                   [standalone]="false"
-                  [address]="transaction.hash">
+                  [address]="transaction.tx_hash">
                 </app-address-shortener>
               </div>
               <div class="col-2">
                 <div class="small">
-                  {{ transaction.timestamp | date:'shortDate' }}
+                  {{ transaction.block_signed_at | date:'shortDate' }}
                 </div>
               </div>
               <div class="col-3">
-                <div class="small">
-                  {{ transaction.action }}
+                <div>
+                  <app-address-shortener
+                    [standalone]="false"
+                    [address]="transaction.to_address">
+                  </app-address-shortener>
                 </div>
               </div>
               <div class="col-3 col-auto d-flex justify-content-between">
                 <span class="small font-weight-bold">
-                  {{ transaction.value | number }}
+                  {{ transaction.value }}
                 </span>
-                <span class="cc ETH"></span>
               </div>
             </div>
           </div>
