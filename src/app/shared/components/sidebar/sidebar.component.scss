@@ -1,4 +1,4 @@
-
+@import '~src/assets/scss/styles';
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -8,6 +8,24 @@
   z-index: 999;
   width: 220px;
 }
+
+.topbar {
+  //display: none;
+  position: sticky;
+  top: 0;
+  padding: 8px 10px;
+  width: 100%;
+  color: map-get($theme-colors, dark);
+  background: map-get($theme-colors, light);
+  z-index: 999;
+}
+
+.icon-menu-close{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
 
 //.sidebar__label {
 //  @include media-breakpoint-down(md) {

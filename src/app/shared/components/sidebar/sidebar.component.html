@@ -1,5 +1,6 @@
-<div class="sidebar">
+<div class="sidebar" *ngIf="(!manualToggle&&innerWidth>minWidth) || (manualToggle && sidebarOpen)">
   <div class="my-4 ml-1">
+    <mat-icon *ngIf="innerWidth<minWidth" class="icon-menu-close c-pointer" (click)="sidebarOpen=!sidebarOpen;manualToggle=true">close</mat-icon>
     <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
       <img class="mr-2" style="width: 80px" src="../../../../assets/images/reef/reef-v2.svg">
     </a>
@@ -51,7 +52,8 @@
       [routerLink]="['/dashboard']"
       [routerLinkActiveOptions]="{exact: true}"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body my-4">
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body my-4"
+      (click)="sidebarOpen=!sidebarOpen;manualToggle=false">
       <app-svg-icon icon="dashboard"></app-svg-icon>
       Dashboard
     </a>
@@ -72,7 +74,8 @@
       id="buyReef"
       [routerLink]="['/reef/buy']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4"
+      (click)="sidebarOpen=!sidebarOpen;manualToggle=false">
       <app-svg-icon icon="reef"></app-svg-icon>
       Buy Reef
     </a>
@@ -80,7 +83,8 @@
       id="farmReef"
       [routerLink]="['/reef/farms']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4"
+      (click)="sidebarOpen=!sidebarOpen;manualToggle=false">
       <app-svg-icon icon="currency"></app-svg-icon>
       Farm Reef
     </a>
@@ -88,7 +92,8 @@
       id="reefLiquidity"
       [routerLink]="['/reef/pools']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-5">
+      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-5"
+      (click)="sidebarOpen=!sidebarOpen;manualToggle=false">
       <app-svg-icon icon="flag"></app-svg-icon>
       Get LP Tokens
     </a>
@@ -123,4 +128,12 @@
       <app-loading diameter="25"></app-loading>
     </div>
   </div>
+</div>
+<div class="topbar"  *ngIf="(!manualToggle&&innerWidth<=minWidth) || (manualToggle&&!sidebarOpen)">
+  <div class="d-flex justify-content-start align-items-center  c-pointer" (click)="sidebarOpen=!sidebarOpen;manualToggle=true">
+    <mat-icon>menu</mat-icon>
+    <img src="../../../../assets/images/reef/reef-v2.svg" width="50" height="25" alt="Reef Logo">
+  </div>
+
+
 </div>
