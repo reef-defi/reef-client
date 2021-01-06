@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, EMPTY, Observable, of, Subscription} from 'rxjs';
 import {
   IBasketHistoricRoi,
@@ -11,9 +11,9 @@ import {
   Vault,
   VaultAPY
 } from '../models/types';
-import { subMonths } from 'date-fns';
+import {subMonths} from 'date-fns';
 import {catchError, map, shareReplay, take, tap} from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import BigNumber from "bignumber.js";
 
 const httpOptions = {
@@ -36,7 +36,7 @@ export class ApiService {
   private binanceApiUrl = environment.reefBinanceApiUrl;
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
-  private covalentUrl = environment.covalentApiUrl;
+  private reefNodeApi = environment.reefNodeApiUrl;
   private API_KEY = 'ckey_ae1ac511ecab4cf095e89c4fbff'; // 'ckey_02c001945c67428eaff497033d2';
   private balancesByAddr = new Map<string, Observable<any>>();
 
@@ -185,14 +185,8 @@ export class ApiService {
       return null;
     }
     if (!fromCache || !this.balancesByAddr.has(address)) {
-      const balances$ = this.http.get<any>(`${this.covalentUrl}/1/address/${address}/balances_v2/?key=${this.API_KEY}`).pipe(
-        map(res => res.data.items.map(item =>
-          ({
-            ...item,
-            balance: item.balance / +`1e${item.contract_decimals}`
-          })
-        )),
-        catchError(err=>{
+      const balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
+        catchError(err => {
           throw new Error(err)
         }),
         shareReplay(1)
@@ -203,12 +197,10 @@ export class ApiService {
   }
 
   getTransactions(address: string) {
-    return this.http.get<any>(`${this.covalentUrl}/1/address/${address}/transactions_v2/?key=${this.API_KEY}`).pipe(
-      map(res => res.data.items.map((item => ({ ...item, value: item.value / 1e18 }))))
-    )
+    return this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/transactions`)
   }
 
-  getReefPricing() {
-    return this.http.get<any>(`${this.covalentUrl}/pricing/historical/USD/REEF/?key=${this.API_KEY}`)
+  getReefPricing(from: string, to: string) {
+    return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`)
   }
 }
