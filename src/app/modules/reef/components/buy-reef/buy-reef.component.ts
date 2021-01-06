@@ -43,11 +43,11 @@ export class BuyReefComponent implements OnInit {
     await this.updateTokenBalance(this.selectedToken);
   }
 
-  private async updateTokenBalance(tokenSymbol: string) {
+  private async updateTokenBalance(tokenSymbol: string, fromCache:boolean=true) {
     const info = await this.connectorService.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).toPromise();
-    this.balances = await this.getTokenBalances(info.address, TokenSymbol[this.selectedToken]).toPromise();
+    this.balances = await this.getTokenBalances(info.address, TokenSymbol[this.selectedToken], fromCache).toPromise();
     this.changeDetectorRef.markForCheck()
   }
 
@@ -64,8 +64,7 @@ export class BuyReefComponent implements OnInit {
     this.amountChange.emit(amount);
   }
 
-  getTokenBalances(addr: string, tokenSymbol: TokenSymbol): Observable<TokenBalance[]> {
-    const fromCache = !!this.balances;
+  getTokenBalances(addr: string, tokenSymbol: TokenSymbol, fromCache:boolean=true): Observable<TokenBalance[]> {
     return this.apiService.getTokenBalances(addr, fromCache).pipe(
       map((balances: TokenBalance[]) => {
         const tokenBalances = balances.filter(b => {

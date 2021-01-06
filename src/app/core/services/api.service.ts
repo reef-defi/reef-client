@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {BehaviorSubject, EMPTY, Observable, of, Subscription} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
 import {
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
-  IVault, QuotePayload, TokenBalance,
+  QuotePayload,
+  TokenBalance,
   Vault,
   VaultAPY
 } from '../models/types';
-import { subMonths } from 'date-fns';
-import {catchError, map, shareReplay, take, tap} from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import BigNumber from "bignumber.js";
+import {subMonths} from 'date-fns';
+import {catchError, map, shareReplay, take} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -181,7 +181,7 @@ export class ApiService {
 
   getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance[]> {
     if (!address) {
-      console.warn('getTokenBalances NO PARAMS')
+      console.warn('getTokenBalances NO PARAMS');
       return null;
     }
     if (!fromCache || !this.balancesByAddr.has(address)) {
@@ -192,7 +192,7 @@ export class ApiService {
             balance: item.balance / +`1e${item.contract_decimals}`
           })
         )),
-        catchError(err=>{
+        catchError(err => {
           throw new Error(err)
         }),
         shareReplay(1)
@@ -204,7 +204,7 @@ export class ApiService {
 
   getTransactions(address: string) {
     return this.http.get<any>(`${this.covalentUrl}/1/address/${address}/transactions_v2/?key=${this.API_KEY}`).pipe(
-      map(res => res.data.items.map((item => ({ ...item, value: item.value / 1e18 }))))
+      map(res => res.data.items.map((item => ({...item, value: item.value / 1e18}))))
     )
   }
 
