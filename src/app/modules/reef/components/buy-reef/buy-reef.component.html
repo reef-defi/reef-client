@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col">
       <div id="buyReef"
-        class="card">
+           class="card">
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-4">
             <img
@@ -51,12 +51,10 @@
                     </mat-option>
                   </mat-select>
                 </div>
-              </mat-option>
-            </mat-select>
-          </div>
-        </div>
-        <ng-container *ngIf="balances && balances.length">
-          <div class="small-text text-muted ">
+              </div>
+            </div>
+            <ng-container *ngIf="balances && balances.length">
+              <div class="small-text text-muted ">
             <span *ngFor="let tokenBalance of balances;let last = last">
               <ng-container *ngIf="tokenBalance.balance as balance; else noBalance">
                 <span class="badge badge-pill badge-primary mr-1 c-pointer"
@@ -75,72 +73,72 @@
               </ng-container>
               <ng-template #noBalance>
                 <small>Please add {{tokenBalance.contract_ticker_symbol}} to your balance then
-                  <a href="#" (click)="$event.preventDefault();updateTokenBalance(selectedToken,false)">refresh balance</a>.
+                  <a href="#"
+                     (click)="$event.preventDefault();updateTokenBalance(selectedToken,false)">refresh balance</a>.
                 </small>
               </ng-template>
             </span>
-                </div>
-              </ng-container>
-              <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-1">
-                <div
-                  *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
-                  class="small text-danger">
-                  Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
-                </div>
+              </div>
+            </ng-container>
+            <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-1">
+              <div
+                *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
+                class="small text-danger">
+                Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
               </div>
             </div>
-            <div class="mb-3">
-              <div class="h6 mb-3">Prices</div>
-              <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
-                   class="d-flex justify-content-between">
-                <div class="card w-50 mr-2">
-                  <div class="card-body bg-purple">
-                    <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
-                    <div class="text-monospace text-white">
-                      {{ tokenPrices.REEF_PER_TOKEN | number }}
-                    </div>
-                  </div>
-                </div>
-                <div class="card w-50">
-                  <div class="card-body bg-purple">
-                    <div class="small text-monospace text-white">Price</div>
-                    <div class="text-monospace text-white">
-                      {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
-                      USD
-                    </div>
+          </div>
+          <div class="mb-3">
+            <div class="h6 mb-3">Prices</div>
+            <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
+                 class="d-flex justify-content-between">
+              <div class="card w-50 mr-2">
+                <div class="card-body bg-purple">
+                  <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
+                  <div class="text-monospace text-white">
+                    {{ tokenPrices.REEF_PER_TOKEN | number }}
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN"
-              class="mb-4 d-flex align-items-center">
-              <div class="small mr-1">You receive a minimum of:</div>
-              <div class="text-monospace font-weight-bold d-flex align-items-center">
-                <div>
-                  ~{{ tokenPrices.amountOutMin | number }}
-                </div>
-                <div class="ml-1">
-                  <img
-                    height="20"
-                    width="20"
-                    src="../../../../../assets/images/reef/reef-token.svg" alt="">
+              <div class="card w-50">
+                <div class="card-body bg-purple">
+                  <div class="small text-monospace text-white">Price</div>
+                  <div class="text-monospace text-white">
+                    {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
+                    USD
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="d-flex justify-content-center">
-              <button
-                *ngIf="!loading"
-                [disabled]="tokenAmount == 0 || (tokenPrices &&
+          </div>
+          <div
+            *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN"
+            class="mb-4 d-flex align-items-center">
+            <div class="small mr-1">You receive a minimum of:</div>
+            <div class="text-monospace font-weight-bold d-flex align-items-center">
+              <div>
+                ~{{ tokenPrices.amountOutMin | number }}
+              </div>
+              <div class="ml-1">
+                <img
+                  height="20"
+                  width="20"
+                  src="../../../../../assets/images/reef/reef-token.svg" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button
+              *ngIf="!loading"
+              [disabled]="tokenAmount == 0 || (tokenPrices &&
         tokenPrices.REEF_PER_TOKEN &&
         +tokenPrices.REEF_PER_TOKEN * tokenAmount > +tokenPrices.totalReefReserve)"
-                mat-ripple
-                (click)="onBuy(tokenAmount)"
-                class="btn btn-primary">
-                Buy REEF
-              </button>
-              <app-loading *ngIf="loading" [diameter]="25"></app-loading>
-            </div>
+              mat-ripple
+              (click)="onBuy(tokenAmount)"
+              class="btn btn-primary">
+              Buy REEF
+            </button>
+            <app-loading *ngIf="loading" [diameter]="25"></app-loading>
           </div>
         </div>
       </div>
