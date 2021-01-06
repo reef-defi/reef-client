@@ -57,10 +57,10 @@ export class DashboardPage implements OnInit {
   }
 
   private getTokenBalances(address: string) {
-    return this.apiService.getTokenBalances(address);
+    return this.apiService.getTokenBalances(address, true);
   }
 
   private getPricing() {
-    this.apiService.getReefPricing().subscribe(console.log)
+    this.apiService.getReefPricing('2020-12-30', '2021-01-06').subscribe(console.log)
   }
 }

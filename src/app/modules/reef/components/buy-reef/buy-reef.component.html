@@ -51,18 +51,33 @@
                     </mat-option>
                   </mat-select>
                 </div>
-              </div>
-              <ng-container *ngIf="balances && balances.length">
-                <div class="small-text text-muted ">
-                  Set amount to:
-                  <span *ngFor="let balance of balances;let last = last">
-              <a href="#"
-                 (click)="$event.preventDefault();tokenAmount=balance.balance;onAmountChange(balance.balance)">{{balance.balance}} {{balance.contract_ticker_symbol}}
-              </a>
-              <span *ngIf="!last">, </span>
-            </span>
-                  <span (click)="onTokenChange(selectedToken)">
-              <mat-icon color="accent">account_circle</mat-icon>
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <ng-container *ngIf="balances && balances.length">
+          <div class="small-text text-muted ">
+            <span *ngFor="let tokenBalance of balances;let last = last">
+              <ng-container *ngIf="tokenBalance.balance as balance; else noBalance">
+                <span class="badge badge-pill badge-primary mr-1 c-pointer"
+                      (click)="tokenAmount=balance*0.25;onAmountChange(balance*0.25)">25%</span>
+                <span class="badge badge-pill badge-primary mr-1 c-pointer"
+                      (click)="tokenAmount=balance*0.5;onAmountChange(balance*0.5)">50%</span>
+                <span class="badge badge-pill badge-primary mr-1 c-pointer"
+                      (click)="tokenAmount=balance*0.75;onAmountChange(balance*0.75)">75%</span>
+                <span class="badge badge-pill badge-primary mr-1 c-pointer"
+                      (click)="tokenAmount=balance;onAmountChange(balance)">100%</span>
+                <small>of </small>
+                <a href="#"
+                   (click)="$event.preventDefault();tokenAmount=balance;onAmountChange(balance)">{{balance}} {{tokenBalance.contract_ticker_symbol}}
+                </a>
+                <span *ngIf="!last">, </span>
+              </ng-container>
+              <ng-template #noBalance>
+                <small>Please add {{tokenBalance.contract_ticker_symbol}} to your balance then
+                  <a href="#" (click)="$event.preventDefault();updateTokenBalance(selectedToken,false)">refresh balance</a>.
+                </small>
+              </ng-template>
             </span>
                 </div>
               </ng-container>
