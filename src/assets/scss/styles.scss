@@ -179,7 +179,6 @@ tr.mat-row, tr.mat-footer-row {
   align-items: self-start;
   align-content: baseline;
   //height: 100%;
-
 }
 .nav-open {
   height: 100% !important;
@@ -212,4 +211,10 @@ body {
 }
 .small-text{
   font-size: 0.8em;
+}
+[class*="col-"] , [class*="col"] {
+  margin-bottom: 25px;
+}
+.text-height-1{
+  line-height: 1em;
 }

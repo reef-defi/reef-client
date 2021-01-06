@@ -6,9 +6,9 @@
 }
 
 .main__active {
-  padding-left: $sidebar-width + 30px;
+  padding-left: $sidebar-width + 15px;
   margin-bottom: -40px;
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(sm) {
     padding-left: $mobile-sidebar-width + 15px;
   }
 }

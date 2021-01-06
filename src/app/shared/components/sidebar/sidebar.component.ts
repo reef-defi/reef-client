@@ -16,6 +16,7 @@ export class SidebarComponent {
   @Input() currentAddress: string | undefined;
   @Output() signOut = new EventEmitter();
   readonly pendingTx$ = this.connectorService.pendingTransaction$;
+  mobileNavShown: boolean;
 
   constructor(private dialog: MatDialog, private readonly uniswapService: UniswapService,
               private readonly connectorService: ConnectorService) {}
