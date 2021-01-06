@@ -61,6 +61,6 @@ export class DashboardPage implements OnInit {
   }
 
   private getPricing() {
-    this.apiService.getReefPricing().subscribe(console.log)
+    this.apiService.getReefPricing('2020-12-30', '2021-01-06').subscribe(console.log)
   }
 }
