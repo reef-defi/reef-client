@@ -1,7 +1,9 @@
 <div class="row">
-  <app-page-title
-    title="Pools"
-    subtitle="We currently support WETH & USDT Pools"></app-page-title>
+  <div class="col">
+    <app-page-title
+      title="Pools"
+      subtitle="We currently support WETH & USDT Pools"></app-page-title>
+  </div>
 </div>
 
 <div class="page__wrapper justify-content-around">
@@ -28,11 +30,11 @@
               LP Tokens
             </div>
           </div>
-          <div class="d-flex align-items-center justify-content-center">
-            <button [routerLink]="['/reef/pool', 'WETH']" class="btn btn-primary">
-              Provide Liquidity into WETH/REEF
-            </button>
-          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
+          <button [routerLink]="['/reef/pool', 'WETH']" class="btn btn-primary">
+            Provide Liquidity into WETH/REEF
+          </button>
         </div>
       </div>
     </div>
@@ -58,11 +60,11 @@
               LP Tokens
             </div>
           </div>
-          <div class="d-flex align-items-center justify-content-center">
-            <button [routerLink]="['/reef/pool', 'USDT']" class="btn btn-primary">
-              Provide Liquidity into USDT/REEF
-            </button>
-          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
+          <button [routerLink]="['/reef/pool', 'USDT']" class="btn btn-primary">
+            Provide Liquidity into USDT/REEF
+          </button>
         </div>
       </div>
     </div>

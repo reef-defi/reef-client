@@ -1,4 +1,4 @@
-<div class="sidebar">
+<div class="sidebar d-none d-md-flex bg-white px-4 py-4 flex-column vh-100 sticky-top w-2xs">
   <div class="my-4 ml-1">
     <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
       <img class="mr-2" style="width: 80px" src="../../../../assets/images/reef/reef-v2.svg">
@@ -46,72 +46,7 @@
         <div>Sign out</div>
       </div>
     </mat-menu>
-    <a
-      id="dashboardBtn"
-      [routerLink]="['/dashboard']"
-      [routerLinkActiveOptions]="{exact: true}"
-      routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body my-4">
-      <app-svg-icon icon="dashboard"></app-svg-icon>
-      Dashboard
-    </a>
-    <!--    <div-->
-    <!--      id="buy-crypto"-->
-    <!--      [routerLink]="['/binance']"-->
-    <!--      [routerLinkActiveOptions]="{exact: true}"-->
-    <!--      routerLinkActive="active"-->
-    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-    <!--      <img-->
-    <!--        height="45"-->
-    <!--        width="35"-->
-    <!--        class="img-fluid mr-2 pl-3"-->
-    <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
-    <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
-    <!--    </div>-->
-    <a
-      id="buyReef"
-      [routerLink]="['/reef/buy']"
-      routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
-      <app-svg-icon icon="reef"></app-svg-icon>
-      Buy Reef
-    </a>
-    <a
-      id="farmReef"
-      [routerLink]="['/reef/farms']"
-      routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-4">
-      <app-svg-icon icon="currency"></app-svg-icon>
-      Farm Reef
-    </a>
-    <a
-      id="reefLiquidity"
-      [routerLink]="['/reef/pools']"
-      routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 pl-4 text-body mb-5">
-      <app-svg-icon icon="flag"></app-svg-icon>
-      Get LP Tokens
-    </a>
-    <!--    <div-->
-    <!--      id="myBaskets"-->
-    <!--      [routerLink]="['/baskets']"-->
-    <!--      [routerLinkActiveOptions]="{exact: true}"-->
-    <!--      routerLinkActive="active"-->
-    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-    <!--      <div-->
-    <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
-    <!--      <div class="sidebar__label">MY BASKETS</div>-->
-    <!--    </div>-->
-    <!--    <div-->
-    <!--      id="createBasket"-->
-    <!--      [routerLink]="['/baskets/basket-types']"-->
-    <!--      [routerLinkActiveOptions]="{exact: true}"-->
-    <!--      routerLinkActive="active"-->
-    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-    <!--      <div-->
-    <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
-    <!--      <div class="sidebar__label">CREATE BASKET</div>-->
-    <!--    </div>-->
+    <ng-container *ngTemplateOutlet="menuItems"></ng-container>
   </div>
   <div class="mb-2 d-flex flex-column align-items-center justify-content-center" *ngIf="pendingTx$ | async as pendingTx">
     <div class="small text-monospace text-center text-break mb-2 px-2">You have a transaction pending. Check it out on
@@ -124,3 +59,113 @@
     </div>
   </div>
 </div>
+
+<!--MOBILE MENU-->
+<div class="w-100 mb-3 mb-md-0">
+  <div class="d-md-none navbar-mobile-float navbar navbar-expand-md navbar-light bg-white py-3 px-4"
+       [class.nav-open]="mobileNavShown">
+    <div class="d-flex align-items-center">
+      <a class="link-unstyled d-inline-flex align-items-center">
+        <img class="mr-2" style="width:74px; margin-bottom: 5px"
+             src="../../../../assets/images/reef/reef-v2.svg">
+      </a>
+      <h5 class="text-body font-weight-bold text-monospace mb-0 ml-2">
+        <div class="h6 mb-1"></div>
+      </h5>
+    </div>
+    <button class="navbar-toggler border-0 px-0" (click)="mobileNavShown = !mobileNavShown">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse mt-3" [class.show]="mobileNavShown" id="menu">
+      <div class="mb-2 d-flex flex-column">
+        <ng-container *ngTemplateOutlet="menuItems"></ng-container>
+      </div>
+      <div
+        (click)="onSignOut()" class="d-flex mt-3">
+        <div class="la la-lg la-sign-out-alt mr-1 font-danger"></div>
+        <div class="text-height-1">Sign out</div>
+      </div>
+      <!--<a
+        [routerLink]="['/dashboard']"
+        [routerLinkActiveOptions]="{exact: true}"
+        routerLinkActive="active"
+        class="d-flex align-items-center h6 text-decoration-none w-100  text-body my-3">
+        <app-svg-icon icon="dashboard"></app-svg-icon>
+        Sign out
+      </a>-->
+    </div>
+  </div>
+
+</div>
+<ng-template #menuItems>
+  <a
+    id="dashboardBtn"
+    [routerLink]="['/dashboard']"
+    [routerLinkActiveOptions]="{exact: true}"
+    routerLinkActive="active"
+    class="d-flex align-items-center h6 text-decoration-none w-100  text-body my-3"
+    (click)="mobileNavShown=false">
+    <app-svg-icon icon="dashboard"></app-svg-icon>
+    Dashboard
+  </a>
+  <!--    <div-->
+  <!--      id="buy-crypto"-->
+  <!--      [routerLink]="['/binance']"-->
+  <!--      [routerLinkActiveOptions]="{exact: true}"-->
+  <!--      routerLinkActive="active"-->
+  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+  <!--      <img-->
+  <!--        height="45"-->
+  <!--        width="35"-->
+  <!--        class="img-fluid mr-2 pl-3"-->
+  <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
+  <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
+  <!--    </div>-->
+  <a
+    id="buyReef"
+    [routerLink]="['/reef/buy']"
+    routerLinkActive="active"
+    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
+    (click)="mobileNavShown=false">
+    <app-svg-icon icon="reef"></app-svg-icon>
+    Buy Reef
+  </a>
+  <a
+    id="reefLiquidity"
+    [routerLink]="['/reef/pools']"
+    routerLinkActive="active"
+    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
+    (click)="mobileNavShown=false">
+    <app-svg-icon icon="flag"></app-svg-icon>
+    Get LP Tokens
+  </a>
+  <a
+    id="farmReef"
+    [routerLink]="['/reef/farms']"
+    routerLinkActive="active"
+    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
+    (click)="mobileNavShown=false">
+    <app-svg-icon icon="currency"></app-svg-icon>
+    Farm Reef
+  </a>
+  <!--    <div-->
+  <!--      id="myBaskets"-->
+  <!--      [routerLink]="['/baskets']"-->
+  <!--      [routerLinkActiveOptions]="{exact: true}"-->
+  <!--      routerLinkActive="active"-->
+  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+  <!--      <div-->
+  <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
+  <!--      <div class="sidebar__label">MY BASKETS</div>-->
+  <!--    </div>-->
+  <!--    <div-->
+  <!--      id="createBasket"-->
+  <!--      [routerLink]="['/baskets/basket-types']"-->
+  <!--      [routerLinkActiveOptions]="{exact: true}"-->
+  <!--      routerLinkActive="active"-->
+  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+  <!--      <div-->
+  <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
+  <!--      <div class="sidebar__label">CREATE BASKET</div>-->
+  <!--    </div>-->
+</ng-template>
