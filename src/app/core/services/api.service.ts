@@ -7,7 +7,8 @@ import {
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
-  IVault, QuotePayload, TokenBalance,
+  QuotePayload,
+  TokenBalance,
   Vault,
   VaultAPY
 } from '../models/types';
@@ -181,7 +182,7 @@ export class ApiService {
 
   getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance[]> {
     if (!address) {
-      console.warn('getTokenBalances NO PARAMS')
+      console.warn('getTokenBalances NO PARAMS');
       return null;
     }
     if (!fromCache || !this.balancesByAddr.has(address)) {
@@ -197,10 +198,10 @@ export class ApiService {
   }
 
   getTransactions(address: string) {
-    return this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/transactions`)
+    return this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/transactions`);
   }
 
   getReefPricing(from: string, to: string) {
-    return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`)
+    return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
   }
 }
