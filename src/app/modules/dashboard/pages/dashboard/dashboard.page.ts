@@ -18,14 +18,12 @@ export class DashboardPage implements OnInit {
   readonly provider$ = this.connectorService.currentProvider$;
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly ethPrice$ = this.poolService.getEthPrice();
-  readonly slippagePercent$ = this.uniswapService.slippagePercent$;
   readonly transactionsForAccount$: Observable<ITransaction[]> =
     this.connectorService.transactionsForAccount$;
   readonly gasPrices$ = this.apiService.gasPrices$;
   readonly selectedGas$ = this.connectorService.selectedGasPrice$;
   public transactions$;
   public tokens$;
-
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,

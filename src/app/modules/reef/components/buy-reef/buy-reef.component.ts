@@ -47,7 +47,10 @@ export class BuyReefComponent implements OnInit {
     const info = await this.connectorService.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).toPromise();
-    this.balances = await this.getTokenBalances(info.address, TokenSymbol[this.selectedToken], fromCache).toPromise();
+    this.balances = await this.getTokenBalances(info.address, TokenSymbol[this.selectedToken], fromCache).pipe(first()).toPromise();
+    if(this.balances.length && this.balances[0].balance){
+      this.tokenAmount= this.balances[0].balance;
+    }
     this.changeDetectorRef.markForCheck()
   }
 

@@ -2,30 +2,40 @@ import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Pair, Percent, Price, Route, Token, TokenAmount, Trade, TradeType, WETH} from '@uniswap/sdk';
 import {addresses, reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
-import {IContract, IReefPricePerToken} from '../models/types';
+import {IContract, IReefPricePerToken, TokenSymbol} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
-import {BehaviorSubject} from 'rxjs';
+import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
 import {getKey} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from "@angular/material/dialog";
 import {TransactionConfirmationComponent} from "../../shared/components/transaction-confirmation/transaction-confirmation.component";
+import {first, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniswapService {
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 10000;
+
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
-  readonly slippagePercent$ = new BehaviorSubject<string | null>(this.getSlippageIfSet());
   readonly web3 = this.connectorService.web3;
   readonly pendingTx$ = this.connectorService.pendingTransaction$;
+  slippagePercent$: Observable<Percent>;
+  private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
+  private slippageValue$ = new Subject<string>();
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly notificationService: NotificationService,
               private readonly router: Router,
               public dialog: MatDialog) {
+    this.slippagePercent$ = this.slippageValue$.pipe(
+      startWith(this.getSlippageIfSet()),
+      map(sVal => this.getSlippagePercent(+sVal)),
+      shareReplay(1)
+    )
   }
 
   public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
@@ -37,7 +47,7 @@ export class UniswapService {
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
       const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
-      const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
+      const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
       const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
       const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
       const path = [tokenB.address, REEF.address];
@@ -129,32 +139,27 @@ export class UniswapService {
     return pair;
   }
 
-  public async getReefPricePer(tokenSymbol: string, amount?: number): Promise<IReefPricePerToken> {
-    if (addresses[tokenSymbol]) {
-      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
-      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
-      const pair = await Fetcher.fetchPairData(REEF, tokenB);
-      const route = new Route([pair], tokenB);
-      const totalReef = await pair.reserveOf(REEF).toExact();
-      if (amount) {
-        const weiAmount = this.connectorService.toWei(amount);
-        const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
-        const slippageTolerance = new Percent(`${(+this.slippagePercent$.value * 10)}`, '1000');
-        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
-        return {
-          REEF_PER_TOKEN: route.midPrice.toSignificant(),
-          TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
-          totalReefReserve: totalReef,
-          amountOutMin: +amountOutMin,
-        };
+  public getLiveReefPrice$(tokenSymbol: TokenSymbol): Observable<IReefPricePerToken> {
+    if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
+      if (addresses[tokenSymbol]) {
+        const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
+          switchMap(([_, slippageP]: [any, Percent]) => this.getReefPricePer(tokenSymbol, 1, slippageP)),
+          shareReplay(1)
+        );
+        this.reefPricesLive.set(tokenSymbol, updatedTokenPrice);
       }
-      return {
-        REEF_PER_TOKEN: route.midPrice.toSignificant(),
-        TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
-        totalReefReserve: totalReef,
-      };
     }
+    return this.reefPricesLive.get(tokenSymbol);
+  }
+
+  public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
+    return this.getLiveReefPrice$(tokenSymbol).pipe(
+      map((ppt_perOneToken: IReefPricePerToken) => {
+        const ppt = Object.assign({}, ppt_perOneToken);
+        ppt.amountOutMin = ppt_perOneToken.amountOutMin * amount;
+        return ppt;
+      })
+    );
   }
 
   public async addLiquidity(
@@ -204,8 +209,9 @@ export class UniswapService {
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     const tokenAmount = this.connectorService.toWei(amount);
     const weiEthAmount = this.connectorService.toWei(ethAmount);
-    const tokenSlippage = this.getSlippage(tokenAmount);
-    const ethSlippage = this.getSlippage(weiEthAmount);
+    const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
+    const tokenSlippage = this.getSlippageForAmount(tokenAmount, slippagePer);
+    const ethSlippage = this.getSlippageForAmount(weiEthAmount, slippagePer);
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods.addLiquidityETH(
@@ -318,12 +324,47 @@ export class UniswapService {
   }
 
   public setSlippage(percent: string): void {
-    this.slippagePercent$.next(percent);
+    this.slippageValue$.next(percent);
     localStorage.setItem('reef_slippage', `${percent}`);
   }
 
-  private getSlippage(amount: string | number): string {
-    return new BigNumber(amount).multipliedBy(+this.slippagePercent$.value / 100).toString();
+  private async getReefPricePer(tokenSymbol: string, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
+    if (addresses[tokenSymbol]) {
+      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
+      // TODO to observable so previous request could be canceled
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
+      const pair = await Fetcher.fetchPairData(REEF, tokenB);
+      const route = new Route([pair], tokenB);
+      const totalReef = await pair.reserveOf(REEF).toExact();
+      if (amount) {
+        const weiAmount = this.connectorService.toWei(amount);
+        const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+        if (!slippageTolerance) {
+          slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
+        }
+        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+        return {
+          REEF_PER_TOKEN: route.midPrice.toSignificant(),
+          TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+          totalReefReserve: totalReef,
+          amountOutMin: +amountOutMin,
+        };
+      }
+      return {
+        REEF_PER_TOKEN: route.midPrice.toSignificant(),
+        TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
+        totalReefReserve: totalReef,
+      };
+    }
+  }
+
+  private getSlippageForAmount(amount: string | number, slippagePercent: Percent) {
+    !!! test to make sure this works the same as original - is this the same as amountOutMin?
+    // original -- new BigNumber(amount).multipliedBy(+this.slippagePercent$.value / 100).toString();
+    const slpg = new BigNumber(amount).multipliedBy(+slippagePercent.toFixed() / 100).toString();
+    console.log('getSlippageForAmount=', slippagePercent.toFixed(), amount, slpg)
+    return slpg;
   }
 
   private goToReef(): void {
@@ -334,4 +375,8 @@ export class UniswapService {
     return localStorage.getItem('reef_slippage') || '0.5';
   }
 
+
+  private getSlippagePercent(slippageValue: number) {
+    return new Percent(`${(slippageValue * 10)}`, '1000');
+  }
 }
