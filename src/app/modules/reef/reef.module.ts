@@ -11,12 +11,13 @@ import { FarmPage } from './pages/farm/farm.page';
 import { ReefMenuPage } from './pages/reef-menu/reef-menu.page';
 import { FarmsPage } from './pages/farms/farms.page';
 import { PoolsPage } from './pages/pools/pools.page';
+import { ReefHistoricPriceComponent } from './components/reef-historic-price/reef-historic-price.component';
 
 const components = [BuyReefComponent, StakeReefComponent];
 const pages = [ReefPage, FarmsPage, PoolPage, FarmsPage, FarmPage, ReefMenuPage, PoolsPage];
 
 @NgModule({
-  declarations: [...pages, ...components,],
+  declarations: [...pages, ...components, ReefHistoricPriceComponent,],
   imports: [
     CommonModule,
     ReefRoutingModule,

@@ -1,15 +1,32 @@
 <div class="row">
-  <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
-    <app-buy-reef
-      [tokenAmount]="tokenAmount"
-      [tokenPrices]="tokenPrices"
-      [selectedToken]="selectedToken"
-      [supportedTokens]="supportedTokens"
-      [ethPrice]="ethPrice"
-      [loading]="buyLoading"
-      (tokenChange)="onTokenChange($event)"
-      (amountChange)="onAmountChange($event)"
-      (buy)="buyReef($event)"
-    ></app-buy-reef>
+  <div class="col">
+    <app-page-title
+      title="REEF token"
+      subtitle="Get tokens for the platform"
+    ></app-page-title>
+  </div>
+</div>
+
+<div class="page__wrapper">
+  <div class="row justify-content-center">
+    <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+      <app-buy-reef
+        [tokenAmount]="tokenAmount"
+        [tokenPrices]="tokenPrices"
+        [selectedToken]="selectedToken"
+        [supportedTokens]="supportedTokens"
+        [ethPrice]="ethPrice"
+        [loading]="buyLoading"
+        (tokenChange)="onTokenChange($event)"
+        (amountChange)="onAmountChange($event)"
+        (buy)="buyReef($event)"
+      ></app-buy-reef>
+    </div>
+    <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+      <app-reef-historic-price
+        [chartData]="reefPriceChartData"
+        (dateSpanChange)="onDateChange($event)"
+      ></app-reef-historic-price>
+    </div>
   </div>
 </div>

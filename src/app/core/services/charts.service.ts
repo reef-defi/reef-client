@@ -8,7 +8,7 @@ export class ChartsService {
   constructor() {
   }
 
-  composeHighChart(data: any): any {
+  composeHighChart(data: any, isReef = false): any {
     return {
       chart: {
         zoomType: 'x'
@@ -23,7 +23,7 @@ export class ChartsService {
       },
       yAxis: {
         title: {
-          text: 'ROI'
+          text: isReef ? 'Price in USD' : 'ROI'
         }
       },
       legend: {
@@ -58,7 +58,7 @@ export class ChartsService {
 
       series: [{
         type: 'area',
-        name: 'ROI',
+        name: isReef ? 'Price in USD' : 'ROI',
         data,
       }]
     };
