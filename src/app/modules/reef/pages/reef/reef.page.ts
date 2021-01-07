@@ -4,6 +4,9 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { PoolService } from '../../../../core/services/pool.service';
 import { IReefPricePerToken } from '../../../../core/models/types';
+import {ChartsService} from "../../../../core/services/charts.service";
+import {ApiService} from "../../../../core/services/api.service";
+import {format, subMonths} from 'date-fns';
 
 @Component({
   selector: 'app-reef',
@@ -19,16 +22,20 @@ export class ReefPage implements OnInit {
   supportedTokens = [{symbol: 'WETH', src: 'eth.png'}, {symbol: 'USDT', src: 'usdt.png'}];
   ethPrice = 0;
   buyLoading = false;
+  reefPriceChartData = null;
 
   constructor(private contractService: ContractService,
               private readonly connectorService: ConnectorService,
               private readonly uniswapService: UniswapService,
-              private apiService: PoolService) {
+              private readonly poolService: PoolService,
+              private readonly chartService: ChartsService,
+              private readonly apiService: ApiService) {
   }
 
   ngOnInit(): void {
     this.getReefPricePer('WETH', this.tokenAmount);
-    this.apiService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
+    this.poolService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
+    this.getReefHistoricalPrice();
   }
 
   async onTokenChange(tokenSymbol: string): Promise<any> {
@@ -49,9 +56,28 @@ export class ReefPage implements OnInit {
     this.buyLoading = false;
   }
 
+  public onDateChange(val: number) {
+    const endDate = format(new Date(), 'yyyy-MM-dd');
+    const startDate = format(subMonths(new Date(), val), 'yyyy-MM-dd');
+    this.getReefHistoricalPrice(endDate, startDate);
+  }
+
   private async getReefPricePer(tokenSymbol: string, amount: number): Promise<any> {
     this.selectedToken = tokenSymbol;
     this.tokenAmount = amount;
     this.tokenPrices = await this.uniswapService.getReefPricePer(tokenSymbol, amount);
   }
+
+  private getReefHistoricalPrice(to?: string, from?: string) {
+    if (!from) {
+      from = '2020-12-29' // Date Of Reef TGE
+    }
+    if (!to) {
+      to = format(new Date(), 'yyyy-MM-dd');
+    }
+    this.apiService.getReefPricing(from, to).subscribe(({ data }) => {
+      this.reefPriceChartData = this.chartService.composeHighChart(data.prices.map(obj => [new Date(obj.date).getTime(), obj.price]), true);
+    })
+  }
+
 }
