@@ -55,7 +55,7 @@
                       <div
                         (click)="calcReefAmount(+userInfo.balance, price.REEF_PER_TOKEN)"
                         class="c-pointer small font-weight-bold">
-                        (Balance: {{userInfo.balance | number}} ETH)
+                        (Balance: {{userInfo.balance | number}} WETH)
                       </div>
                     </div>
                     <div
@@ -73,7 +73,7 @@
                   <div *ngIf="token === 'WETH' || token === 'ETH'">
                     <div class="small mt-1" *ngIf="tokenAmount > userInfo.balance">
                     <span class="text-danger">
-                      Insufficient ETH Coins
+                      Insufficient WETH Coins
                     </span>
                     </div>
                   </div>
