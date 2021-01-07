@@ -119,17 +119,25 @@ export class FarmPage implements OnInit {
 
   public async calcApy(pId: number): Promise<number> {
     const {lpToken} = await this.farmingContract$.value.methods.poolInfo(pId).call();
-    console.log(lpToken, 'hmm')
+    console.log(lpToken, 'hmm');
     const tokenContract = new this.web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
     const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
-    console.log(totalStaked)
+    console.log(totalStaked);
     if (totalStaked == 0) {
       return this.apy = 0;
     }
     const reward = this.connectorSerivce.fromWei(await this.farmingContract$.value.methods.reefPerBlock().call());
-    console.log(reward, totalStaked)
-    console.log('calcd', 1 + Number(reward) * 2409000 / totalStaked)
+    console.log(reward, totalStaked);
+    console.log('calcd', 1 + Number(reward) * 2409000 / totalStaked);
     // TODO: How to calculate APY if totalStaked is 0?
     return this.apy = 1 + Number(reward) * 2409000 / totalStaked;
+  }
+
+  public async refreshBalance(contract: IContract, address: string) {
+    try {
+      return await this.getBalance(contract, address);
+    } catch (e) {
+      console.log('refreshBalance ERROR ', e);
+    }
   }
 }

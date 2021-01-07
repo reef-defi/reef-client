@@ -42,6 +42,7 @@ import { MatListModule } from '@angular/material/list';
 import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
 import { TransactionConfirmationComponent } from './components/transaction-confirmation/transaction-confirmation.component';
+import { SetInputRelativeAmountComponent } from './components/set-input-relative-amount/set-input-relative-amount.component';
 
 
 const components = [
@@ -63,14 +64,14 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent],
+  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent, SetInputRelativeAmountComponent],
 })
 export class SharedModule {
 }

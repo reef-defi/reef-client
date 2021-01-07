@@ -1,0 +1,20 @@
+<ng-container *ngIf="!!+value; else noBalance">
+  <span class="badge badge-pill badge-primary mr-1 c-pointer"
+         (click)="valueChange.emit(value*0.25)">25%</span>
+  <span class="badge badge-pill badge-primary mr-1 c-pointer"
+        (click)="valueChange.emit(value*0.50)">50%</span>
+  <span class="badge badge-pill badge-primary mr-1 c-pointer"
+        (click)="valueChange.emit(value*0.75)">75%</span>
+  <span class="badge badge-pill badge-primary mr-1 c-pointer"
+        (click)="valueChange.emit(value)">100%</span>
+  <small>of </small>
+  <a href="#"
+     (click)="$event.preventDefault();valueChange.emit(value)">{{value}} {{tokenSymbol}}
+  </a>
+</ng-container>
+<ng-template #noBalance>
+  <small>Please add {{tokenSymbol}} then
+    <a href="#"
+       (click)="$event.preventDefault();refreshBalance.emit()">refresh balance</a>.
+  </small>
+</ng-template>
