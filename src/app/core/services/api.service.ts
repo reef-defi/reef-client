@@ -16,6 +16,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, filter, map, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {lpTokens} from "../../../assets/addresses";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -181,7 +182,7 @@ export class ApiService {
    * COVALENT
    */
 
-  getTokenBalances$(address: string): Observable<TokenBalance[]> {
+  getTokenBalances$(address: string): Observable<TokenBalance> {
     if (!address) {
       console.warn('getTokenBalances NO PARAMS');
       return null;
@@ -192,6 +193,11 @@ export class ApiService {
         filter(addr => addr === address),
         switchMap(addr => this.http.get<any>(`${this.reefNodeApi}/covalent/${addr}/balances`)),
         tap((v:any[])=>v.forEach(itm=>itm.address=address)),
+        map(tokens => tokens.map(this.removeTokenPlaceholders.bind(this))),
+        map(tokens => ({
+          tokens,
+          totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
+        })),
         catchError(err => {
           throw new Error(err)
         }),
@@ -232,5 +238,13 @@ export class ApiService {
 
   private isEthOrWeth(tSymbol: TokenSymbol) {
     return tSymbol === TokenSymbol.ETH || tSymbol === TokenSymbol.WETH;
+  }
+
+  private removeTokenPlaceholders(token: any) {
+    if (token.contract_ticker_symbol === 'UNI-V2') {
+      token.contract_ticker_symbol = lpTokens[token.contract_address] || 'Uniswap LP Token';
+      token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png'
+    }
+    return token;
   }
 }

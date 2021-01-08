@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {BehaviorSubject, combineLatest, EMPTY, from, Observable, of} from 'rxjs';
 import {
@@ -10,6 +11,8 @@ import {
   TokenBalance,
   TokenSymbol
 } from '../../../../core/models/types';
+import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs';
+import {IContract, IReefPricePerToken, TokenSymbol} from '../../../../core/models/types';
 import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
 import {addresses} from '../../../../../assets/addresses';
@@ -30,7 +33,6 @@ export class PoolPage implements OnInit {
   readonly error$ = new BehaviorSubject<boolean>(false);
   public lpTokenContract$ = new BehaviorSubject<IContract | null>(null);
   public pricePerTokens$: Observable<IReefPricePerToken | null> = of(null);
-  public userTokenBalance = '';
   public reefAmount = 0;
   public tokenAmount = 0;
   public loading = false;
@@ -114,6 +116,20 @@ export class PoolPage implements OnInit {
   private getPrice(): Observable<IReefPricePerToken> {
     return this.token$.pipe(
       first(val => !!val),
+      tap((token: string) => this.initContracts(token)),
+      switchMap(token => this.uniswapService.getLiveReefPrice$(TokenSymbol[token])),
+      tap((prices: IReefPricePerToken) => {
+        this.reefAmount = 1;
+        this.tokenAmount = +prices.TOKEN_PER_REEF;
+      }),
+      catchError((e) => {
+        console.log(e, 'wtf?')
+        this.error$.next(true);
+        return EMPTY;
+      }),
+    );
+    /*return this.token$.pipe(
+      first(val => !!val),
       mergeMap((token) => {
         this.initContracts(token);
         return from(this.uniswapService.getReefPricePer(token));
@@ -127,7 +143,7 @@ export class PoolPage implements OnInit {
         this.error$.next(true);
         return EMPTY;
       }),
-    );
+    );*/
   }
 
   private async initContracts(token: string): Promise<void> {

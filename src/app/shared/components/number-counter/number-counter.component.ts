@@ -22,7 +22,7 @@ export class NumberCounterComponent implements OnDestroy {
   @Input() countInterval = 100;
   public currentNumber = 0;
   private mCounterSub$ = new Subject();
-  private mOnDestroy$ = new Subject();
+  private mOnDestroy$ = new Subject<void>();
 
   constructor() {
     this.mCounterSub$

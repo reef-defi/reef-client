@@ -10,7 +10,7 @@
               src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
           </div>
           <div class="col-10 offset-1 my-auto">
-            <div class="mb-4">
+            <div class="mb-1">
               <div class="h6 mb-4 text-center">Buy REEF token</div>
               <div class="small text-muted mb-1">Enter your amount</div>
               <div class="d-flex align-items-center">
@@ -61,7 +61,7 @@
                 </div>
               </ng-container>
             </ng-container>
-            <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-1">
+            <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-5">
               <div
                 *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
                 class="small text-danger">

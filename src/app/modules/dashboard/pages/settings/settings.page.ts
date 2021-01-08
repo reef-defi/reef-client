@@ -11,18 +11,13 @@ import {UniswapService} from "../../../../core/services/uniswap.service";
 export class SettingsPage {
   readonly selectedGas$ = this.connectorService.selectedGasPrice$;
   readonly gasPrices$ = this.apiService.getGasPrices();
-  readonly slippagePercent$ = this.uniswapService.slippagePercent$;
 
-  constructor(private readonly connectorService: ConnectorService,
-              private readonly apiService: ApiService,
-              private readonly uniswapService: UniswapService) {
+  constructor(readonly uniswapService: UniswapService,
+              private readonly connectorService: ConnectorService,
+              private readonly apiService: ApiService) {
   }
 
   public setGas(type: string, price: number): void {
     this.connectorService.setSelectedGas(type, price);
-  }
-
-  public setSlippage(percent: string): void {
-    this.slippagePercent$.next(percent);
   }
 }
