@@ -60,6 +60,7 @@ export class ConnectorService {
   };
   public web3Modal = null;
   public web3 = null;
+  // public web3WS = null;
 
   constructor(private readonly notificationService: NotificationService) {
     this.web3Modal = new Web3Modal({
@@ -79,6 +80,7 @@ export class ConnectorService {
     await this.getUserProviderInfo();
     await this.connectToContract();
     this.subToProviderEvents();
+
   }
 
   public async onDisconnect(): Promise<any> {
@@ -229,6 +231,7 @@ export class ConnectorService {
 
   private initWeb3(provider: any): any {
     this.web3 = new Web3(provider);
+    // this.web3WS = new Web3('wss://mainnet.infura.io/ws/v3/eadc555e1ec7423f94e94d8a06a2f310');
     this.currentProvider$.next(provider);
     this.web3.eth.extend({
       methods: [
@@ -258,7 +261,7 @@ export class ConnectorService {
     this.currentProvider$.value.on('chainChanged', (chainId: number) => {
       window.location.reload();
     });
-    // const subscription = this.web3.eth.subscribe('pendingTransactions').on('data', (tx) => { console.log(tx, 'from sub')})
+    // const subscription = this.web3WS.eth.subscribe('pendingTransactions').on('data', (tx) => { console.log(tx, 'from sub')})
   }
 
   private async getUserBalance(address: string): Promise<string> {
