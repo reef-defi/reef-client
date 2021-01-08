@@ -100,7 +100,7 @@
                   <div
                     *ngIf="!loading"
                     class="row">
-                    <div class="col text-center">
+                    <div class="col text-center grid-col-m-bottom">
                     <button
                       [disabled]="!reefAmount ||
                             reefAmount > tokenBalance || reefAmount <= 0"
@@ -108,14 +108,14 @@
                       Deposit Tokens
                     </button>
                     </div>
-                    <div *ngIf="stakedAmount$ | async as staked" class="text-center col">
+                    <div *ngIf="stakedAmount$ | async as staked" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="staked <= 0"
                         (click)="withdraw(address, reefAmount)" class="btn btn-primary">
                         Withdraw Funds
                       </button>
                     </div>
-                    <div *ngIf="reefReward$ | async as reward" class="text-center col">
+                    <div *ngIf="reefReward$ | async as reward" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="reward <= 0"
                         (click)="withdraw(address, 0)" class="btn btn-primary">
