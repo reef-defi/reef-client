@@ -1,18 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {BehaviorSubject, combineLatest, EMPTY, from, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, of} from 'rxjs';
 import {
   IContract,
   IProviderUserInfo,
-  IReefPricePerToken,
+  IReefPricePerToken, Token,
   TokenBalance,
   TokenSymbol
 } from '../../../../core/models/types';
-import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs';
-import {IContract, IReefPricePerToken, TokenSymbol} from '../../../../core/models/types';
 import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
 import {addresses} from '../../../../../assets/addresses';
@@ -37,8 +34,8 @@ export class PoolPage implements OnInit {
   public tokenAmount = 0;
   public loading = false;
   TokenSymbol = TokenSymbol;
-  tokenBalanceReef$: Observable<TokenBalance>;
-  tokenBalanceReefOposite$: Observable<TokenBalance>;
+  tokenBalanceReef$: Observable<Token>;
+  tokenBalanceReefOposite$: Observable<Token>;
 
   constructor(private readonly route: ActivatedRoute,
               private readonly uniswapService: UniswapService,
@@ -50,7 +47,7 @@ export class PoolPage implements OnInit {
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
       switchMap((uInfo: IProviderUserInfo) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol.REEF, true)),
-      map(b=>b[0])
+      map(b=>b[0]),
     );
   }
 

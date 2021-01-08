@@ -8,7 +8,7 @@ import {
   IGenerateBasketResponse,
   IPoolsMetadata,
   QuotePayload,
-  TokenBalance,
+  Token,
   TokenSymbol,
   Vault,
   VaultAPY
@@ -182,7 +182,7 @@ export class ApiService {
    * COVALENT
    */
 
-  getTokenBalances$(address: string): Observable<TokenBalance> {
+  getTokenBalances$(address: string): Observable<Token[]> {
     if (!address) {
       console.warn('getTokenBalances NO PARAMS');
       return null;
@@ -192,12 +192,8 @@ export class ApiService {
         startWith(address),
         filter(addr => addr === address),
         switchMap(addr => this.http.get<any>(`${this.reefNodeApi}/covalent/${addr}/balances`)),
-        tap((v:any[])=>v.forEach(itm=>itm.address=address)),
+        tap((v: any[]) => v.forEach(itm => itm.address = address)),
         map(tokens => tokens.map(this.removeTokenPlaceholders.bind(this))),
-        map(tokens => ({
-          tokens,
-          totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
-        })),
         catchError(err => {
           throw new Error(err)
         }),
@@ -208,10 +204,10 @@ export class ApiService {
     return this.balancesByAddr.get(address);
   }
 
-  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol, ignoreCompatibleTokens?: boolean): Observable<TokenBalance[]> {
+  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol, ignoreCompatibleTokens?: boolean): Observable<Token[]> {
     return this.getTokenBalances$(addr).pipe(
-      map((balances: TokenBalance[]) => {
-        const tokenBalances = balances.filter(b => {
+      map((balances: Token[]) => {
+        const tokenBalances = balances.filter((b: Token) => {
           if (
             (!ignoreCompatibleTokens && this.isEthOrWeth(tokenSymbol) && this.isEthOrWeth(TokenSymbol[b.contract_ticker_symbol]))
             || TokenSymbol[b.contract_ticker_symbol] === tokenSymbol) {
@@ -223,7 +219,7 @@ export class ApiService {
           balance: 0,
           contract_ticker_symbol: tokenSymbol,
           address: addr
-        } as TokenBalance];
+        } as Token];
       })
     );
   }

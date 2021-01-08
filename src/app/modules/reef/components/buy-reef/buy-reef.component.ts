@@ -1,15 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {IProviderUserInfo, IReefPricePerToken, TokenBalance, TokenSymbol} from '../../../../core/models/types';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output
-} from '@angular/core';
-import {IReefPricePerToken, Token, TokenBalance, TokenSymbol} from '../../../../core/models/types';
+import {IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
 import {ApiService} from '../../../../core/services/api.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {filter, switchMap} from 'rxjs/operators';
@@ -54,11 +44,6 @@ export class BuyReefComponent {
 
   onBuy(tokenAmount: number): void {
     this.buy.emit(tokenAmount);
-  }
-
-  onTokenChange(tokenSymbol: string): void {
-    this.tokenChange.emit(tokenSymbol);
-    this.selTokenSub.next(TokenSymbol[tokenSymbol]);
   }
 
   onAmountChange(amount: number): void {

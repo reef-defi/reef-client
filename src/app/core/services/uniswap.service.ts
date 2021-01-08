@@ -17,7 +17,7 @@ import {first, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class UniswapService {
-  private static REFRESH_TOKEN_PRICE_RATE_MS = 10000;
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 10000///*60*2; //2 min
 
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
