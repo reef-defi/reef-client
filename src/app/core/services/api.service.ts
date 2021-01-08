@@ -188,6 +188,11 @@ export class ApiService {
     if (!fromCache || !this.balancesByAddr.has(address)) {
       const balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
         map(tokens => tokens.map(this.removeTokenPlaceholders)),
+        map(tokens => ({
+          tokens,
+          totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
+        })),
+        tap(tokens => console.log(tokens)),
         catchError(err => {
           throw new Error(err)
         }),
