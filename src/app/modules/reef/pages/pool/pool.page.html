@@ -3,7 +3,7 @@
     <ng-container *ngIf="pricePerTokens$ | async as price; else loadingTemplate">
       <ng-container *ngIf="providerUserInfo$ | async as userInfo">
         <div class="page__wrapper row">
-          <div class="col-6 offset-3">
+          <div class="col-8 offset-2">
             <div class="card">
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-center mb-3">
@@ -29,11 +29,6 @@
                   class="d-flex flex-column align-items-center mb-4">
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">REEF Amount</div>
-                    <div
-                      (click)="reefAmount = +userInfo.reefBalance; calcTokenAmount(reefAmount, price.TOKEN_PER_REEF)"
-                      class="small font-weight-bold c-pointer">
-                      (Balance: {{userInfo.reefBalance | number}} REEF)
-                    </div>
                   </div>
                   <input
                     [ngModel]="reefAmount"
@@ -41,28 +36,20 @@
                     class="form-control w-50 text-monospace small"
                     id="reefAmount"
                     placeholder="0.0" type="number"/>
-                  <div class="small mt-1" *ngIf="reefAmount > userInfo.reefBalance">
-                    <span class="text-danger">
-                      Insufficient Reef Tokens
-                    </span>
-                  </div>
+                  <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
+                    <app-set-input-relative-amount
+                      [value]="tokenBalanceReef.balance"
+                      (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF)"
+                      [tokenSymbol]="TokenSymbol.REEF"
+                      (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReef.address)"
+                      ></app-set-input-relative-amount>
+                  </ng-container>
                 </div>
+
                 <div
                   class="d-flex flex-column align-items-center mb-4">
                   <div class="d-flex justify-content-start align-items-center mb-2">
                     <div class="small align-self-start mr-1">{{ token }} Amount</div>
-                    <div *ngIf="token === 'WETH' || token === 'ETH'">
-                      <div
-                        (click)="calcReefAmount(+userInfo.balance, price.REEF_PER_TOKEN)"
-                        class="c-pointer small font-weight-bold">
-                        (Balance: {{userInfo.balance | number}} WETH)
-                      </div>
-                    </div>
-                    <div
-                      class="c-pointer small font-weight-bold"
-                      *ngIf="token !== 'WETH' && token !== 'ETH'">
-                      (Balance: {{userTokenBalance | number }} {{ token }})
-                    </div>
                   </div>
                   <input
                     [ngModel]="tokenAmount"
@@ -70,20 +57,14 @@
                     class="form-control w-50 text-monospace small"
                     id="tokenAmount"
                     placeholder="0.0" type="number"/>
-                  <div *ngIf="token === 'WETH' || token === 'ETH'">
-                    <div class="small mt-1" *ngIf="tokenAmount > userInfo.balance">
-                    <span class="text-danger">
-                      Insufficient WETH Coins
-                    </span>
-                    </div>
-                  </div>
-                  <div *ngIf="token !== 'WETH' && token !== 'ETH'">
-                    <div class="small mt-1" *ngIf="tokenAmount > userTokenBalance">
-                    <span class="text-danger">
-                      Buy some {{ token }} to execute this Trade
-                    </span>
-                    </div>
-                  </div>
+                  <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
+                    <app-set-input-relative-amount
+                      [value]="tokenBalanceReefOposite.balance"
+                      (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN)"
+                      [tokenSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
+                      (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReefOposite.address)"
+                    ></app-set-input-relative-amount>
+                  </ng-container>
                 </div>
                 <div
                   class="d-flex align-items-center justify-content-around mb-5">
@@ -124,7 +105,7 @@
   </ng-container>
   <ng-template #loadingTemplate>
     <div class="row">
-      <div class="col-6 offset-3">
+      <div class="col-8 offset-2">
         <div class="card">
           <div class="card-body">
             <div class="d-flex flex-column align-items-center justify-content-center mb-3">

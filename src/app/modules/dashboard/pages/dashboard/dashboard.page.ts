@@ -57,7 +57,7 @@ export class DashboardPage implements OnInit {
   }
 
   private getTokenBalances(address: string) {
-    return this.apiService.getTokenBalances(address, true);
+    return this.apiService.getTokenBalances$(address);
   }
 
   private getPricing() {
