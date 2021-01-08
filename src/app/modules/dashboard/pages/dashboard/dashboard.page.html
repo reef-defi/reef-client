@@ -11,7 +11,7 @@
     <div class="card h-100">
       <div class="card-body">
         <ng-container *ngIf="providerUserInfo$ | async as userInfo; else loadingTemplate">
-          <ng-container *ngIf="tokens$ | async as tokens; else loadingTemplate">
+          <ng-container *ngIf="tokens; else loadingTemplate">
             <div class="d-flex justify-content-between mb-3">
               <div class="h6">
                 Balances
@@ -114,4 +114,10 @@
       <span class="small mt-2">You have not made any transactions in the recent past.</span>
     </div>
   </ng-template>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 offset-xl-3 col-12">
+    <app-asset-distribution-chart [chartData]="pieChartData"></app-asset-distribution-chart>
+  </div>
 </div>

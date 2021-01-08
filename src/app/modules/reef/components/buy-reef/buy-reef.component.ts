@@ -7,7 +7,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {IReefPricePerToken, TokenBalance, TokenSymbol} from '../../../../core/models/types';
+import {IReefPricePerToken, Token, TokenBalance, TokenSymbol} from '../../../../core/models/types';
 import {ApiService} from '../../../../core/services/api.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {first, map} from 'rxjs/operators';
@@ -30,7 +30,7 @@ export class BuyReefComponent implements OnInit {
   @Output() tokenChange = new EventEmitter();
   @Output() amountChange = new EventEmitter();
 
-  balances: TokenBalance[];
+  balances: Token[];
 
   constructor(
     public connectorService: ConnectorService,
@@ -67,10 +67,10 @@ export class BuyReefComponent implements OnInit {
     this.amountChange.emit(amount);
   }
 
-  getTokenBalances(addr: string, tokenSymbol: TokenSymbol, fromCache:boolean=true): Observable<TokenBalance[]> {
+  getTokenBalances(addr: string, tokenSymbol: TokenSymbol, fromCache:boolean=true): Observable<Token[]> {
     return this.apiService.getTokenBalances(addr, fromCache).pipe(
-      map((balances: TokenBalance[]) => {
-        const tokenBalances = balances.filter(b => {
+      map(({ tokens }: TokenBalance) => {
+        const tokenBalances = tokens.filter(b => {
           if (
             (this.isEthOrWeth(tokenSymbol) && this.isEthOrWeth(TokenSymbol[b.contract_ticker_symbol]))
             || TokenSymbol[b.contract_ticker_symbol] === tokenSymbol) {
@@ -81,7 +81,7 @@ export class BuyReefComponent implements OnInit {
         return tokenBalances && tokenBalances.length ? tokenBalances : [{
           balance: 0,
           contract_ticker_symbol: tokenSymbol
-        } as TokenBalance];
+        } as Token];
       })
     );
   }

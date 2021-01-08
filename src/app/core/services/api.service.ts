@@ -180,7 +180,7 @@ export class ApiService {
    * COVALENT
    */
 
-  getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance[]> {
+  getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance> {
     if (!address) {
       console.warn('getTokenBalances NO PARAMS');
       return null;
@@ -192,7 +192,6 @@ export class ApiService {
           tokens,
           totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
         })),
-        tap(tokens => console.log(tokens)),
         catchError(err => {
           throw new Error(err)
         }),

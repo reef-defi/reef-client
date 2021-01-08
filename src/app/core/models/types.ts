@@ -285,6 +285,16 @@ export interface EthPrice {
 }
 
 export interface TokenBalance {
+  tokens: Token[];
+  totalBalance: number;
+}
+
+export interface Token {
+  contract_address?: string;
+  contract_decimals?: number;
+  contract_name?: string;
+  quote?: number;
+  quote_rate?: number;
   contract_ticker_symbol: string;
   balance: number;
 }
