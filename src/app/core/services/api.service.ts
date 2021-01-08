@@ -15,7 +15,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, map, shareReplay, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import BigNumber from "bignumber.js";
+import {lpTokens} from "../../../assets/addresses";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -187,6 +187,7 @@ export class ApiService {
     }
     if (!fromCache || !this.balancesByAddr.has(address)) {
       const balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
+        map(tokens => tokens.map(this.removeTokenPlaceholders)),
         catchError(err => {
           throw new Error(err)
         }),
@@ -203,5 +204,13 @@ export class ApiService {
 
   getReefPricing(from: string, to: string) {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
+  }
+
+  private removeTokenPlaceholders(token: any) {
+    if (token.contract_ticker_symbol === 'UNI-V2') {
+      token.contract_ticker_symbol = lpTokens[token.contract_address] || 'Uniswap LP Token';
+      token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png'
+    }
+    return token;
   }
 }

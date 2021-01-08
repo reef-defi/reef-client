@@ -19,3 +19,7 @@ export const reefPools = {
   REEF_USDT_POOL: 1,
 };
 
+export const lpTokens = {
+  '0xea02e0f8f470de1107cb336f827c4192117574bb': 'REEF-USDT LP Token',
+  '0x7937619a9bd1234a303e4fe752b8d4f37d40e20c': 'REEF-ETH LP Token',
+}

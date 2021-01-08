@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import { first } from 'rxjs/operators';
-import { IProviderUserInfo, ITransaction } from '../../../../core/models/types';
-import { Observable } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
+import {Component, OnInit} from '@angular/core';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {PoolService} from '../../../../core/services/pool.service';
+import {first} from 'rxjs/operators';
+import {IProviderUserInfo, ITransaction} from '../../../../core/models/types';
+import {Observable} from 'rxjs';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {ApiService} from '../../../../core/services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,7 +40,6 @@ export class DashboardPage implements OnInit {
       console.log(res, 'hmmmm')
       this.transactions$ = this.getTransactionsForAccount(res.address);
       this.tokens$ = this.getTokenBalances(res.address);
-      this.getPricing();
     });
   }
 
@@ -58,9 +57,5 @@ export class DashboardPage implements OnInit {
 
   private getTokenBalances(address: string) {
     return this.apiService.getTokenBalances(address, true);
-  }
-
-  private getPricing() {
-    this.apiService.getReefPricing('2020-12-30', '2021-01-06').subscribe(console.log)
   }
 }
