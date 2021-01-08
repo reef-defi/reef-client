@@ -360,11 +360,7 @@ export class UniswapService {
   }
 
   private getSlippageForAmount(amount: string | number, slippagePercent: Percent) {
-    !!! test to make sure this works the same as original - is this the same as amountOutMin?
-    // original -- new BigNumber(amount).multipliedBy(+this.slippagePercent$.value / 100).toString();
-    const slpg = new BigNumber(amount).multipliedBy(+slippagePercent.toFixed() / 100).toString();
-    console.log('getSlippageForAmount=', slippagePercent.toFixed(), amount, slpg)
-    return slpg;
+    return new BigNumber(amount).multipliedBy(+slippagePercent.toFixed() / 100).toString();
   }
 
   private goToReef(): void {
