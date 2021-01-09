@@ -11,13 +11,13 @@ import {getKey} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from "@angular/material/dialog";
 import {TransactionConfirmationComponent} from "../../shared/components/transaction-confirmation/transaction-confirmation.component";
-import {first, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
+import {first, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniswapService {
-  private static REFRESH_TOKEN_PRICE_RATE_MS = 10000///*60*2; //2 min
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; //2 min
 
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
@@ -109,6 +109,7 @@ export class UniswapService {
     }
   }
 
+  // TODO can we just use this.connectorService.createLpContract?
   public createLpContract(tokenSymbol: string): IContract {
     return this.connectorService.createLpContract(tokenSymbol);
   }
@@ -139,7 +140,7 @@ export class UniswapService {
     return pair;
   }
 
-  public getLiveReefPrice$(tokenSymbol: TokenSymbol): Observable<IReefPricePerToken> {
+  public getReefPriceInInterval$(tokenSymbol: TokenSymbol): Observable<IReefPricePerToken> {
     if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
       if (addresses[tokenSymbol]) {
         const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
@@ -153,7 +154,7 @@ export class UniswapService {
   }
 
   public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
-    return this.getLiveReefPrice$(tokenSymbol).pipe(
+    return this.getReefPriceInInterval$(tokenSymbol).pipe(
       map((ppt_perOneToken: IReefPricePerToken) => {
         const ppt = Object.assign({}, ppt_perOneToken);
         ppt.amountOutMin = ppt_perOneToken.amountOutMin * amount;
