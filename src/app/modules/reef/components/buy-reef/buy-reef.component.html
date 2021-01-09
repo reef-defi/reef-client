@@ -82,13 +82,13 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="card w-50">
-                <div class="card-body bg-purple">
-                  <div class="small text-monospace text-white">Price</div>
-                  <div class="text-monospace text-white">
-                    {{ (selectedToken === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) |smallNumber }}
-                    USD
+                <div class="card w-50">
+                  <div class="card-body bg-purple">
+                    <div class="small text-monospace text-white">Price</div>
+                    <div *ngIf="tokenPrices" class="text-monospace text-white">
+                      {{ (selectedToken === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) |smallNumber }}
+                      USD
+                    </div>
                   </div>
                 </div>
               </div>
