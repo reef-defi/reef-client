@@ -189,6 +189,14 @@ body {
 .new-split {
   background: rgba(192,192,192,0.5)
 }
+.img-size-top-20{
+  width: 20px;
+  height: 20px;
+}
+.img-size-top-25{
+  width: 25px;
+  height: 25px;
+}
 .img-size-top-50{
   width: 60px;
   height: 60px;
@@ -217,4 +225,7 @@ body {
 }
 .text-height-1{
   line-height: 1em;
+}
+.margin-em-05{
+  margin: 0.5em;
 }

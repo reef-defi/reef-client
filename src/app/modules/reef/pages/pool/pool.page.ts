@@ -2,12 +2,19 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs';
-import {IContract, IReefPricePerToken, TokenSymbol} from '../../../../core/models/types';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, of} from 'rxjs';
+import {
+  IContract,
+  IProviderUserInfo,
+  IReefPricePerToken, Token,
+  TokenBalance,
+  TokenSymbol
+} from '../../../../core/models/types';
 import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
 import {addresses} from '../../../../../assets/addresses';
 import {ConnectorService} from '../../../../core/services/connector.service';
+import {ApiService} from '../../../../core/services/api.service';
 
 @Component({
   selector: 'app-pool-page',
@@ -23,14 +30,25 @@ export class PoolPage implements OnInit {
   readonly error$ = new BehaviorSubject<boolean>(false);
   public lpTokenContract$ = new BehaviorSubject<IContract | null>(null);
   public pricePerTokens$: Observable<IReefPricePerToken | null> = of(null);
-  public userTokenBalance = '';
   public reefAmount = 0;
   public tokenAmount = 0;
   public loading = false;
+  TokenSymbol = TokenSymbol;
+  tokenBalanceReef$: Observable<Token>;
+  tokenBalanceReefOposite$: Observable<Token>;
 
   constructor(private readonly route: ActivatedRoute,
               private readonly uniswapService: UniswapService,
-              private readonly connectorService: ConnectorService) {
+              private readonly connectorService: ConnectorService,
+              private apiService: ApiService) {
+    this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
+      switchMap(([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol], true)),
+      map(b=>b[0])
+    );
+    this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
+      switchMap((uInfo: IProviderUserInfo) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol.REEF, true)),
+      map(b=>b[0]),
+    );
   }
 
   ngOnInit(): void {
@@ -118,7 +136,7 @@ export class PoolPage implements OnInit {
         this.tokenAmount = +prices.TOKEN_PER_REEF;
       }),
       catchError((e) => {
-        console.log(e, 'wtf?')
+        console.log(e, 'error=', e);
         this.error$.next(true);
         return EMPTY;
       }),
@@ -129,14 +147,5 @@ export class PoolPage implements OnInit {
     const contract = this.uniswapService.createLpContract(token);
     this.lpTokenContract$.next(contract);
     this.reefContract$.next(this.uniswapService.createLpContract('REEF_TOKEN'));
-    if (this.providerUserInfo$.value) {
-      this.userTokenBalance = await this.uniswapService.getBalanceOf(contract, this.providerUserInfo$.value.address);
-    } else {
-      this.providerUserInfo$.pipe(
-        first((val: any) => !!val)
-      ).subscribe(async (val: any) => {
-        this.userTokenBalance = await this.uniswapService.getBalanceOf(contract, val.address);
-      });
-    }
   }
 }
