@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, EMPTY, Observable, of, Subscription} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, Subject, Subscription} from 'rxjs';
 import {
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
   QuotePayload,
-  TokenBalance,
+  Token,
+  TokenSymbol,
   Vault,
   VaultAPY
 } from '../models/types';
 import {subMonths} from 'date-fns';
-import {catchError, map, shareReplay, take, tap} from 'rxjs/operators';
+import {catchError, filter, map, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {lpTokens} from "../../../assets/addresses";
 
@@ -32,6 +33,7 @@ export class ApiService {
   public tokens$ = new BehaviorSubject(null);
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
+  public refreshBalancesForAddress = new Subject<string>();
   private url = environment.reefApiUrl;
   private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
@@ -180,26 +182,46 @@ export class ApiService {
    * COVALENT
    */
 
-  getTokenBalances(address: string, fromCache?: boolean): Observable<TokenBalance> {
+  getTokenBalances$(address: string): Observable<Token[]> {
     if (!address) {
       console.warn('getTokenBalances NO PARAMS');
       return null;
     }
-    if (!fromCache || !this.balancesByAddr.has(address)) {
-      const balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
-        map(tokens => tokens.map(this.removeTokenPlaceholders)),
-        map(tokens => ({
-          tokens,
-          totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
-        })),
+    if (!this.balancesByAddr.has(address)) {
+      const addrBalances$ = this.refreshBalancesForAddress.asObservable().pipe(
+        startWith(address),
+        filter(addr => addr === address),
+        switchMap(addr => this.http.get<any>(`${this.reefNodeApi}/covalent/${addr}/balances`)),
+        tap((v: any[]) => v.forEach(itm => itm.address = address)),
+        map(tokens => tokens.map(this.removeTokenPlaceholders.bind(this))),
         catchError(err => {
           throw new Error(err)
         }),
         shareReplay(1)
       );
-      this.balancesByAddr.set(address, balances$)
+      this.balancesByAddr.set(address, addrBalances$)
     }
     return this.balancesByAddr.get(address);
+  }
+
+  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol, ignoreCompatibleTokens?: boolean): Observable<Token[]> {
+    return this.getTokenBalances$(addr).pipe(
+      map((balances: Token[]) => {
+        const tokenBalances = balances.filter((b: Token) => {
+          if (
+            (!ignoreCompatibleTokens && this.isEthOrWeth(tokenSymbol) && this.isEthOrWeth(TokenSymbol[b.contract_ticker_symbol]))
+            || TokenSymbol[b.contract_ticker_symbol] === tokenSymbol) {
+            return true;
+          }
+          return false;
+        });
+        return tokenBalances && tokenBalances.length ? tokenBalances : [{
+          balance: 0,
+          contract_ticker_symbol: tokenSymbol,
+          address: addr
+        } as Token];
+      })
+    );
   }
 
   getTransactions(address: string) {
@@ -208,6 +230,10 @@ export class ApiService {
 
   getReefPricing(from: string, to: string) {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
+  }
+
+  private isEthOrWeth(tSymbol: TokenSymbol) {
+    return tSymbol === TokenSymbol.ETH || tSymbol === TokenSymbol.WETH;
   }
 
   private removeTokenPlaceholders(token: any) {

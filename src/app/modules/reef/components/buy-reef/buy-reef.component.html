@@ -18,44 +18,48 @@
                   [(ngModel)]="tokenAmount"
                   (ngModelChange)="onAmountChange($event)"
                   class="w-75 form-control mr-2" type="number"/>
-                <div class="d-flex align-items-center">
-                  <img (click)="tokenSelect.open()"
-                       *ngIf="selectedToken === 'WETH'"
-                       class="c-pointer"
-                       alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
-                  <img (click)="tokenSelect.open()"
-                       *ngIf="selectedToken === 'USDT'"
-                       class="c-pointer"
-                       alt="token-logo" width="26" height="26" src="../../../../../assets/images/usdt.png"/>
-                  <div class="small mx-1 c-pointer" (click)="tokenSelect.open()">{{ selectedToken }}</div>
-                  <mat-select #tokenSelect
-                              [value]="selectedToken"
-                              (valueChange)="selectedToken = $event; onTokenChange(selectedToken)">
-                    <mat-option [value]="token.symbol" *ngFor="let token of supportedTokens">
-                      <div class="d-flex align-items-center">
-                        <img
-                          class="mr-1"
-                          width="18"
-                          height="18"
-                          src='../../../../../assets/images/{{token.src}}' alt="">
-                        {{ token.symbol }}
-                      </div>
-                    </mat-option>
-                  </mat-select>
-                </div>
+                <ng-container *ngIf="selTokenSub|async as selectedToken">
+                  <div class="d-flex align-items-center">
+                    <img (click)="tokenSelect.open()"
+                         *ngIf="selectedToken === TokenSymbol.WETH"
+                         class="c-pointer"
+                         alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
+                    <img (click)="tokenSelect.open()"
+                         *ngIf="selectedToken === TokenSymbol.USDT"
+                         class="c-pointer"
+                         alt="token-logo" width="26" height="26" src="../../../../../assets/images/usdt.png"/>
+                    <div class="small mx-1 c-pointer" (click)="tokenSelect.open()">{{ selectedToken }}</div>
+                    <mat-select #tokenSelect
+                                [value]="selectedToken"
+                                (valueChange)="selTokenSub.next($event)">
+                      <mat-option [value]="token.symbol" *ngFor="let token of supportedTokens">
+                        <div class="d-flex align-items-center">
+                          <img
+                            class="mr-1"
+                            width="18"
+                            height="18"
+                            src='../../../../../assets/images/{{token.src}}' alt="">
+                          {{ token.symbol }}
+                        </div>
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </ng-container>
               </div>
             </div>
-            <ng-container *ngIf="balances && balances.length">
-              <div class="small-text text-muted ">
+            <ng-container *ngIf="selectedTokenBalances$|async as balances">
+              <ng-container *ngIf="connectorService.providerUserInfo$|async as userInfo">
+                <div class="small-text text-muted ">
                 <span *ngFor="let tokenBalance of balances;let last = last">
                   <app-set-input-relative-amount
                     [value]="tokenBalance.balance"
                     [tokenSymbol]="tokenBalance.contract_ticker_symbol"
-                    (refreshBalance)="updateTokenBalance(selectedToken,false)"
+                    (refreshBalance)="this.apiService.refreshBalancesForAddress.next(userInfo.address)"
                     (valueChange)="tokenAmount=$event;onAmountChange($event)"
                   ></app-set-input-relative-amount>
                 </span>
-              </div>
+                </div>
+              </ng-container>
             </ng-container>
             <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-5">
               <div
@@ -66,27 +70,29 @@
             </div>
           </div>
           <div class="mb-3">
-            <div class="h6 mb-3">Prices</div>
-            <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
-                 class="d-flex justify-content-between">
-              <div class="card w-50 mr-2">
-                <div class="card-body bg-purple">
-                  <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
-                  <div class="text-monospace text-white">
-                    {{ tokenPrices.REEF_PER_TOKEN | number }}
+            <ng-container *ngIf="selTokenSub|async as selectedToken">
+              <div class="h6 mb-3">Prices</div>
+              <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
+                   class="d-flex justify-content-between">
+                <div class="card w-50 mr-2">
+                  <div class="card-body bg-purple">
+                    <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
+                    <div class="text-monospace text-white">
+                      {{ tokenPrices.REEF_PER_TOKEN | number }}
+                    </div>
+                  </div>
+                </div>
+                <div class="card w-50">
+                  <div class="card-body bg-purple">
+                    <div class="small text-monospace text-white">Price</div>
+                    <div class="text-monospace text-white">
+                      {{ (selectedToken === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
+                      USD
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="card w-50">
-                <div class="card-body bg-purple">
-                  <div class="small text-monospace text-white">Price</div>
-                  <div class="text-monospace text-white">
-                    {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
-                    USD
-                  </div>
-                </div>
-              </div>
-            </div>
+            </ng-container>
           </div>
           <div
             *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN"

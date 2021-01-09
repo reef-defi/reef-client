@@ -297,10 +297,12 @@ export interface Token {
   quote_rate?: number;
   contract_ticker_symbol: string;
   balance: number;
+  address: string;
 }
 
 export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
-  USDT = 'USDT'
+  USDT = 'USDT',
+  REEF = 'REEF'
 }

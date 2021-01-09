@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {PoolService} from '../../../../core/services/pool.service';
-import {first} from 'rxjs/operators';
-import {IProviderUserInfo, ITransaction} from '../../../../core/models/types';
+import {first, map} from 'rxjs/operators';
+import {IProviderUserInfo, ITransaction, TokenBalance} from '../../../../core/models/types';
 import {Observable} from 'rxjs';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {ApiService} from '../../../../core/services/api.service';
@@ -57,11 +57,21 @@ export class DashboardPage implements OnInit {
   }
 
   private getTokenBalances(address: string) {
-    this.apiService.getTokenBalances(address, true).subscribe(data => {
+    return this.apiService.getTokenBalances$(address).pipe(
+      map(tokens => ({
+        tokens,
+        totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0)
+      } as TokenBalance
+      ))
+    ).subscribe((data:TokenBalance) => {
       this.tokens = data;
       const total = data.totalBalance;
       const pairs = data.tokens.map(({ contract_ticker_symbol, quote }) => [contract_ticker_symbol, (quote / total) * 100]);
       this.pieChartData = this.chartsService.composePieChart(pairs);
     });
+  }
+
+  private getPricing() {
+    this.apiService.getReefPricing('2020-12-30', '2021-01-06').subscribe(console.log)
   }
 }
