@@ -43,6 +43,7 @@ import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
 import { TransactionConfirmationComponent } from './components/transaction-confirmation/transaction-confirmation.component';
 import { SetInputRelativeAmountComponent } from './components/set-input-relative-amount/set-input-relative-amount.component';
+import {SmallNumberPipe} from './pipes/small-number-display.pipe';
 
 
 const components = [
@@ -64,14 +65,14 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent, SmallNumberPipe],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent, SetInputRelativeAmountComponent],
+  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent, SetInputRelativeAmountComponent, SmallNumberPipe],
 })
 export class SharedModule {
 }

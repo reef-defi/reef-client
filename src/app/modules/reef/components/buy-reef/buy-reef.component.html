@@ -81,7 +81,7 @@
                 <div class="card-body bg-purple">
                   <div class="small text-monospace text-white">Price</div>
                   <div class="text-monospace text-white">
-                    {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) | number }}
+                    {{ (selectedToken === 'USDT' ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) |smallNumber }}
                     USD
                   </div>
                 </div>
