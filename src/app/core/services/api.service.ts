@@ -204,13 +204,11 @@ export class ApiService {
     return this.balancesByAddr.get(address);
   }
 
-  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol, ignoreCompatibleTokens?: boolean): Observable<Token[]> {
+  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token[]> {
     return this.getTokenBalances$(addr).pipe(
       map((balances: Token[]) => {
         const tokenBalances = balances.filter((b: Token) => {
-          if (
-            (!ignoreCompatibleTokens && this.isEthOrWeth(tokenSymbol) && this.isEthOrWeth(TokenSymbol[b.contract_ticker_symbol]))
-            || TokenSymbol[b.contract_ticker_symbol] === tokenSymbol) {
+          if (TokenSymbol[b.contract_ticker_symbol] === tokenSymbol) {
             return true;
           }
           return false;
@@ -231,10 +229,6 @@ export class ApiService {
 
   getReefPricing(from: string, to: string) {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
-  }
-
-  private isEthOrWeth(tSymbol: TokenSymbol) {
-    return tSymbol === TokenSymbol.ETH || tSymbol === TokenSymbol.WETH;
   }
 
   private removeTokenPlaceholders(token: any) {

@@ -17,10 +17,7 @@ import {first} from 'rxjs/operators';
 export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
-  // tokenAmount = 1;
-  // selectedToken = 'WETH';
-  // tokenPrices: IReefPricePerToken | undefined;
-  supportedTokens = [{tokenSymbol: TokenSymbol.WETH, src: 'eth.png'}, {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}];
+  supportedTokens = [{tokenSymbol: TokenSymbol.ETH, src: 'eth.png'}, {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}];
 
   buyLoading = false;
   reefPriceChartData = null;
@@ -34,22 +31,8 @@ export class ReefPage implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.getReefPricePer('WETH', this.tokenAmount);
-    // this.poolService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
     this.getReefHistoricalPrice();
   }
-
-  /*async onTokenChange(tokenSymbol: string): Promise<any> {
-    this.tokenPrices = undefined;
-    await this.getReefPricePer(tokenSymbol, this.tokenAmount);
-  }
-
-  async onAmountChange(amount: number): Promise<any> {
-    if (amount && amount > 0) {
-      this.tokenPrices = undefined;
-      await this.getReefPricePer(this.selectedToken, amount);
-    }
-  }*/
 
   async buyReef(tokenSymbol: string, tokenAmount: number): Promise<any> {
     this.buyLoading = true;
@@ -62,12 +45,6 @@ export class ReefPage implements OnInit {
     const startDate = format(subMonths(new Date(), val), 'yyyy-MM-dd');
     this.getReefHistoricalPrice(endDate, startDate);
   }
-
-  /*private async getReefPricePer(tokenSymbol: string, amount: number): Promise<any> {
-    this.selectedToken = tokenSymbol;
-    this.tokenAmount = amount;
-    this.tokenPrices = await this.uniswapService.getLiveReefPricePer$(TokenSymbol[tokenSymbol], amount).pipe(first()).toPromise();
-  }*/
 
   private getReefHistoricalPrice(to?: string, from?: string) {
     if (!from) {
