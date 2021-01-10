@@ -38,6 +38,12 @@ export class UniswapService {
     )
   }
 
+  public static tokenMinAmountCalc(ppt_perOneToken: IReefPricePerToken, amount: number) {
+    const ppt = Object.assign({}, ppt_perOneToken);
+    ppt.amountOutMin = !!ppt_perOneToken.amountOutMin?ppt_perOneToken.amountOutMin * amount:0;
+    return ppt;
+  }
+
   public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
     if (addresses[tokenSymbol]) {
       const weiAmount = this.connectorService.toWei(amount);
@@ -155,11 +161,7 @@ export class UniswapService {
 
   public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
     return this.getReefPriceInInterval$(tokenSymbol).pipe(
-      map((ppt_perOneToken: IReefPricePerToken) => {
-        const ppt = Object.assign({}, ppt_perOneToken);
-        ppt.amountOutMin = ppt_perOneToken.amountOutMin * amount;
-        return ppt;
-      })
+      map((ppt_perOneToken: IReefPricePerToken) => UniswapService.tokenMinAmountCalc(ppt_perOneToken, amount))
     );
   }
 
@@ -329,7 +331,7 @@ export class UniswapService {
     localStorage.setItem('reef_slippage', `${percent}`);
   }
 
-  private async getReefPricePer(tokenSymbol: string, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
+  private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
       const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
@@ -338,24 +340,29 @@ export class UniswapService {
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
       const route = new Route([pair], tokenB);
       const totalReef = await pair.reserveOf(REEF).toExact();
-      if (amount) {
-        const weiAmount = this.connectorService.toWei(amount);
+      if (amount>0) {
+        const weiAmount = this.connectorService.toWei(amount );
         const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
         if (!slippageTolerance) {
           slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
         }
         const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
-        return {
+        const price= {
           REEF_PER_TOKEN: route.midPrice.toSignificant(),
           TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
           totalReefReserve: totalReef,
+          amountRequested: amount,
           amountOutMin: +amountOutMin,
+          tokenSymbol: tokenSymbol
         };
+        console.log('GET_REEF_PPRICE for ',price.tokenSymbol,' amountOutMin=', price.amountOutMin, ' AMOUNT=',amount, ' checkSummed=',checkSummed, ' REEF_PER_TOKEN=',price.REEF_PER_TOKEN, ' TOKEN_PER_REEF=',price.TOKEN_PER_REEF)
+        return price;
       }
       return {
         REEF_PER_TOKEN: route.midPrice.toSignificant(),
         TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
         totalReefReserve: totalReef,
+        tokenSymbol: tokenSymbol
       };
     }
   }

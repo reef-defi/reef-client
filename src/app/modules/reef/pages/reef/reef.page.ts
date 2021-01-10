@@ -17,11 +17,11 @@ import {first} from 'rxjs/operators';
 export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
-  tokenAmount = 1;
-  selectedToken = 'WETH';
-  tokenPrices: IReefPricePerToken | undefined;
-  supportedTokens = [{symbol: 'WETH', src: 'eth.png'}, {symbol: 'USDT', src: 'usdt.png'}];
-  ethPrice = 0;
+  // tokenAmount = 1;
+  // selectedToken = 'WETH';
+  // tokenPrices: IReefPricePerToken | undefined;
+  supportedTokens = [{tokenSymbol: TokenSymbol.WETH, src: 'eth.png'}, {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}];
+
   buyLoading = false;
   reefPriceChartData = null;
 
@@ -34,12 +34,12 @@ export class ReefPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getReefPricePer('WETH', this.tokenAmount);
-    this.poolService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
+    // this.getReefPricePer('WETH', this.tokenAmount);
+    // this.poolService.getEthPrice().subscribe(data => this.ethPrice = data.ethereum.usd);
     this.getReefHistoricalPrice();
   }
 
-  async onTokenChange(tokenSymbol: string): Promise<any> {
+  /*async onTokenChange(tokenSymbol: string): Promise<any> {
     this.tokenPrices = undefined;
     await this.getReefPricePer(tokenSymbol, this.tokenAmount);
   }
@@ -49,11 +49,11 @@ export class ReefPage implements OnInit {
       this.tokenPrices = undefined;
       await this.getReefPricePer(this.selectedToken, amount);
     }
-  }
+  }*/
 
-  async buyReef(tokenAmount: number): Promise<any> {
+  async buyReef(tokenSymbol: string, tokenAmount: number): Promise<any> {
     this.buyLoading = true;
-    await this.uniswapService.buyReef(this.selectedToken, tokenAmount, 10);
+    await this.uniswapService.buyReef(tokenSymbol, tokenAmount, 10);
     this.buyLoading = false;
   }
 
@@ -63,11 +63,11 @@ export class ReefPage implements OnInit {
     this.getReefHistoricalPrice(endDate, startDate);
   }
 
-  private async getReefPricePer(tokenSymbol: string, amount: number): Promise<any> {
+  /*private async getReefPricePer(tokenSymbol: string, amount: number): Promise<any> {
     this.selectedToken = tokenSymbol;
     this.tokenAmount = amount;
     this.tokenPrices = await this.uniswapService.getLiveReefPricePer$(TokenSymbol[tokenSymbol], amount).pipe(first()).toPromise();
-  }
+  }*/
 
   private getReefHistoricalPrice(to?: string, from?: string) {
     if (!from) {

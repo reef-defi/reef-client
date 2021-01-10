@@ -55,9 +55,11 @@ export interface IVault {
 }
 
 export interface IReefPricePerToken {
+  tokenSymbol: TokenSymbol
   REEF_PER_TOKEN: string;
   TOKEN_PER_REEF: string;
   totalReefReserve: string;
+  amountRequested?: number;
   amountOutMin?: number;
 }
 

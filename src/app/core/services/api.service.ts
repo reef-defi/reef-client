@@ -220,7 +220,8 @@ export class ApiService {
           contract_ticker_symbol: tokenSymbol,
           address: addr
         } as Token];
-      })
+      }),
+      shareReplay(1)
     );
   }
 
