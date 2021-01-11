@@ -9,37 +9,35 @@ export const hintSteps = [
     backgroundColor: 'yellow',
   },
   {
-    'next #createBasket': `You can create baskets in the Create Basket page.
-                            A basket is a composition of different DeFi activities and tokens`,
+    'next #settings': `You can find your account settings here, including setting slippage and gas fees.`,
     nextButton: {className: 'regular', text: 'Next'},
     showNext: true,
     showSkip: false,
     showPrev: false,
   },
   {
-    'next #vaults': `Or create a Basket composed of Vaults`,
+    'next #dashboardBtn': `A list of all your Tokens, your total balance in USD, token allocations and more`,
     nextButton: {className: 'regular', text: 'Next'},
     showNext: true,
     showSkip: false,
     showPrev: false,
   },
   {
-    'next #myBaskets': `Once you create a basket, you will be able to view them in the My Baskets page`,
+    'next #buyReef': `Buy REEF wih ETH & USDT via our Uniswap Integration`,
     nextButton: {className: 'regular', text: 'Next'},
     showNext: true,
     showSkip: false,
     showPrev: false,
   },
   {
-    'next #reefMenu': `Buy, Stake & Farm Reef`,
+    'next #reefLiquidity': `Be a liquidity provider for REEF's USDT & ETH Pools`,
     nextButton: {className: 'regular', text: 'Next'},
     showNext: true,
     showSkip: false,
     showPrev: false,
   },
   {
-    'next #dashboardBtn': `All your account info will be here, such as address, tokens, and transactions.
-    That's it! Have fun using our app.`,
+    'next #farmReef': `Invest your LP Tokens into our Farms to earn even more REEF!`,
     nextButton: {className: 'regular', text: 'Next'},
     skipButton: {className: 'danger', text: 'Done'},
     showNext: false,

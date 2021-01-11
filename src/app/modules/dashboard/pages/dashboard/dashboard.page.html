@@ -7,7 +7,7 @@
 </div>
 
 <div class="page__wrapper row justify-content-between">
-  <div class="col">
+  <div class="col-xl-10 offset-xl-1 col-12">
     <div class="card h-100">
       <div class="card-body">
         <ng-container *ngIf="providerUserInfo$ | async as userInfo; else loadingTemplate">
@@ -46,7 +46,19 @@
       </div>
     </div>
   </div>
-  <div class="col">
+  <ng-template #loadingTemplate>
+    <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
+  </ng-template>
+  <ng-template #emptyTransactions>
+    <div class="d-flex justify-content-center align-items-center">
+      <span class="small mt-2">You have not made any transactions in the recent past.</span>
+    </div>
+  </ng-template>
+</div>
+
+<div
+  class="row justify-content-center">
+  <div class="col-xl-7 col-12">
     <div class="card h-100">
       <div class="card-body">
         <div class="h6 mb-4">
@@ -106,20 +118,11 @@
       </div>
     </div>
   </div>
-  <ng-template #loadingTemplate>
-    <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
-  </ng-template>
-  <ng-template #emptyTransactions>
-    <div class="d-flex justify-content-center align-items-center">
-      <span class="small mt-2">You have not made any transactions in the recent past.</span>
-    </div>
-  </ng-template>
-</div>
-
-<div
-  *ngIf="tokens && tokens.totalBalance > 0"
-  class="row">
-  <div class="col-xl-6 offset-xl-3 col-12">
-    <app-asset-distribution-chart [chartData]="pieChartData"></app-asset-distribution-chart>
+  <div
+    class="col-xl-3 col-12">
+    <app-asset-distribution-chart
+      *ngIf="tokens && tokens.totalBalance > 0"
+      [chartData]="pieChartData">
+    </app-asset-distribution-chart>
   </div>
 </div>

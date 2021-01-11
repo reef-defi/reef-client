@@ -5,6 +5,20 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 
+.mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+  background-color: #007bff !important;
+}
+
+.mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #007bff !important;
+  z-index: 3;
+}
+
+.mat-radio-button .mat-radio-outer-circle {
+  border-color: #007bff !important; // Override material
+  z-index: 3;
+}
+
 .c-pointer {
   cursor: pointer;
 }
