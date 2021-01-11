@@ -116,7 +116,9 @@
   </ng-template>
 </div>
 
-<div class="row">
+<div
+  *ngIf="tokens && tokens.totalBalance > 0"
+  class="row">
   <div class="col-xl-6 offset-xl-3 col-12">
     <app-asset-distribution-chart [chartData]="pieChartData"></app-asset-distribution-chart>
   </div>
