@@ -15,7 +15,7 @@ export class SmallNumberPipe implements PipeTransform {
       const separSplit = fullValStr.split(separator);
       const decimals = separSplit[1].split('');
       const indexAboveZero = decimals.findIndex(char => char !== '0');
-      if (indexAboveZero > 4) {
+      if (indexAboveZero > 2) {
         return '0' + separator + decimals.slice(0, indexAboveZero + 2).join('');
       }
     }

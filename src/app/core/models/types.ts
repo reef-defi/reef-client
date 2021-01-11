@@ -55,9 +55,11 @@ export interface IVault {
 }
 
 export interface IReefPricePerToken {
+  tokenSymbol: TokenSymbol
   REEF_PER_TOKEN: string;
   TOKEN_PER_REEF: string;
   totalReefReserve: string;
+  amountRequested?: number;
   amountOutMin?: number;
 }
 
@@ -306,3 +308,9 @@ export enum TokenSymbol {
   USDT = 'USDT',
   REEF = 'REEF'
 }
+
+export const TokenSymbolDecimalPlaces = {
+  [TokenSymbol.WETH]: 18,
+  [TokenSymbol.ETH]: 18,
+  [TokenSymbol.USDT]: 6,
+};

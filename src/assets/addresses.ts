@@ -10,6 +10,7 @@ export const addresses = {
   REEF_USDT_POOL: '0xea02e0f8f470de1107cb336f827c4192117574bb',
   USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
   WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  ETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', //same as weth
   TESTR: '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab',
 };
 

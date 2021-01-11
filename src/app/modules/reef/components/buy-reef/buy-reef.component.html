@@ -15,13 +15,13 @@
               <div class="small text-muted mb-1">Enter your amount</div>
               <div class="d-flex align-items-center">
                 <input
-                  [(ngModel)]="tokenAmount"
-                  (ngModelChange)="onAmountChange($event)"
+                  [ngModel]="tokenAmountSub|async"
+                  (ngModelChange)="tokenAmountSub.next($event)"
                   class="w-75 form-control mr-2" type="number"/>
                 <ng-container *ngIf="selTokenSub|async as selectedToken">
                   <div class="d-flex align-items-center">
                     <img (click)="tokenSelect.open()"
-                         *ngIf="selectedToken === TokenSymbol.WETH"
+                         *ngIf="selectedToken === TokenSymbol.ETH"
                          class="c-pointer"
                          alt="token-logo" width="26" height="26" src="../../../../../assets/images/eth.png"/>
                     <img (click)="tokenSelect.open()"
@@ -32,14 +32,14 @@
                     <mat-select #tokenSelect
                                 [value]="selectedToken"
                                 (valueChange)="selTokenSub.next($event)">
-                      <mat-option [value]="token.symbol" *ngFor="let token of supportedTokens">
+                      <mat-option [value]="token.tokenSymbol" *ngFor="let token of supportedTokensSub.value">
                         <div class="d-flex align-items-center">
                           <img
                             class="mr-1"
                             width="18"
                             height="18"
                             src='../../../../../assets/images/{{token.src}}' alt="">
-                          {{ token.symbol }}
+                          {{ token.tokenSymbol }}
                         </div>
                       </mat-option>
                     </mat-select>
@@ -48,6 +48,21 @@
               </div>
             </div>
             <ng-container *ngIf="selectedTokenBalances$|async as balances">
+              <ng-container *ngIf="selTokenSub|async as selectedSymbol">
+                <ng-container *ngIf="getTokenBalance(balances, selectedSymbol) as selectedSymbolBalance">
+                  <div
+                    *ngIf=" !hasBalanceForPayment(tokenAmountSub.value, selectedSymbol, balances)">
+                    <small class="red-text">
+                    <span *ngIf="tokenAmountSub.value>0; else noBalance">Please add {{selectedSymbol}} to your account.
+                      {{tokenAmountSub.value}} {{selectedSymbol}} is greater than your account
+                      balance.</span>
+                    <ng-template #noBalance>
+                      Not enought {{selectedSymbol}} on your account.
+                    </ng-template>
+                    </small>
+                  </div>
+                </ng-container>
+              </ng-container>
               <ng-container *ngIf="connectorService.providerUserInfo$|async as userInfo">
                 <div class="small-text text-muted ">
                 <span *ngFor="let tokenBalance of balances;let last = last">
@@ -55,74 +70,79 @@
                     [value]="tokenBalance.balance"
                     [tokenSymbol]="tokenBalance.contract_ticker_symbol"
                     (refreshBalance)="this.apiService.refreshBalancesForAddress.next(userInfo.address)"
-                    (valueChange)="tokenAmount=$event;onAmountChange($event)"
+                    (valueChange)="tokenAmountSub.next($event)"
                   ></app-set-input-relative-amount>
                 </span>
                 </div>
               </ng-container>
             </ng-container>
-            <div *ngIf="tokenPrices && tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-5">
-              <div
-                *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmount > tokenPrices.totalReefReserve"
-                class="small text-danger">
-                Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <ng-container *ngIf="selTokenSub|async as selectedToken">
-              <div class="h6 mb-3">Prices</div>
-              <div *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN; else loadingTemplate"
-                   class="d-flex justify-content-between">
-                <div class="card w-50 mr-2">
-                  <div class="card-body bg-purple">
-                    <div class="small text-monospace text-white">You get {{ selectedToken }}</div>
-                    <div class="text-monospace text-white">
-                      {{ tokenPrices.REEF_PER_TOKEN | number }}
-                    </div>
-                  </div>
-                </div>
-                <div class="card w-50">
-                  <div class="card-body bg-purple">
-                    <div class="small text-monospace text-white">Price</div>
-                    <div *ngIf="tokenPrices" class="text-monospace text-white">
-                      {{ (selectedToken === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) |smallNumber }}
-                      USD
-                    </div>
-                  </div>
+            <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
+              <div *ngIf=" tokenPrices.totalReefReserve && tokenPrices.REEF_PER_TOKEN" class="mt-5">
+                <div
+                  *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value > tokenPrices.totalReefReserve"
+                  class="small text-danger">
+                  Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
                 </div>
               </div>
             </ng-container>
           </div>
-          <div
-            *ngIf="tokenPrices && tokenPrices.REEF_PER_TOKEN"
-            class="mb-4 d-flex align-items-center">
-            <div class="small mr-1">You receive a minimum of:</div>
-            <div class="text-monospace font-weight-bold d-flex align-items-center">
-              <div>
-                ~{{ tokenPrices.amountOutMin | number }}
-              </div>
-              <div class="ml-1">
-                <img
-                  height="20"
-                  width="20"
-                  src="../../../../../assets/images/reef/reef-token.svg" alt="">
-              </div>
+          <div class="mb-3">
+            <ng-container *ngIf="selTokenSub|async as selectedSymbol">
+              <div class="h6 mb-3">Prices</div>
+              <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices; else loadingTemplate">
+                <div *ngIf=" tokenPrices.REEF_PER_TOKEN"
+                     class="d-flex justify-content-between">
+                  <div class="card w-50 mr-2">
+                    <div class="card-body bg-purple">
+                      <div class="small text-monospace text-white">You get minimum of</div>
+                      <div class="text-monospace text-white">
+                        <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
+                          <div>~{{tokenPrices.amountOutMin |number: '.0-0'}} REEF</div>
+                          <span class="x-small-text" title="This is the amount you get at current rate.
+                          If rate rises so you would get less than minimum amount transaction will be canceled.
+                          These values are subject to your internet connection and refresh rate.">
+                            (at current rate {{(tokenPrices.REEF_PER_TOKEN*tokenAmountSub.value)|number: '.0-0'}} REEF)
+                          </span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card w-50">
+                    <div class="card-body bg-purple">
+                      <div class="small text-monospace text-white">Price for 1 REEF</div>
+                      <ng-container *ngIf="ethPrice$|async as ethPrice">
+                        <ng-container *ngIf="(selectedSymbol === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) as reefUSDPrice">
+                        <div class="text-monospace text-white" title="{{reefUSDPrice}} USD">
+                          {{ reefUSDPrice |smallNumber }} USD
+                        </div>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+          <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
+            <div class="d-flex justify-content-center">
+              <ng-container *ngIf="selectedTokenBalances$|async as balances">
+                <ng-container *ngIf="selTokenSub|async as selectedSymbol">
+                  <button
+                    *ngIf="!loading"
+                    [disabled]="!tokenAmountSub.value
+                    || tokenAmountSub.value<=0
+                    || (tokenPrices && tokenPrices.REEF_PER_TOKEN && +tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value > +tokenPrices.totalReefReserve)
+                    || !hasBalanceForPayment(tokenAmountSub.value, selectedSymbol, balances)"
+                    mat-ripple
+                    (click)="this.buy.emit({tokenSymbol: selectedSymbol, tokenAmount: tokenAmountSub.value})"
+                    class="btn btn-primary">
+                    Buy now
+                  </button>
+                </ng-container>
+              </ng-container>
+              <app-loading *ngIf="loading" [diameter]="25"></app-loading>
             </div>
-          </div>
-          <div class="d-flex justify-content-center">
-            <button
-              *ngIf="!loading"
-              [disabled]="tokenAmount == 0 || (tokenPrices &&
-        tokenPrices.REEF_PER_TOKEN &&
-        +tokenPrices.REEF_PER_TOKEN * tokenAmount > +tokenPrices.totalReefReserve)"
-              mat-ripple
-              (click)="onBuy(tokenAmount)"
-              class="btn btn-primary">
-              Buy REEF
-            </button>
-            <app-loading *ngIf="loading" [diameter]="25"></app-loading>
-          </div>
+          </ng-container>
         </div>
       </div>
     </div>

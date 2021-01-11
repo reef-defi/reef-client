@@ -11,15 +11,9 @@
   <div class="row justify-content-center">
     <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
       <app-buy-reef
-        [tokenAmount]="tokenAmount"
-        [tokenPrices]="tokenPrices"
-        [selectedToken]="selectedToken"
         [supportedTokens]="supportedTokens"
-        [ethPrice]="ethPrice"
         [loading]="buyLoading"
-        (tokenChange)="onTokenChange($event)"
-        (amountChange)="onAmountChange($event)"
-        (buy)="buyReef($event)"
+        (buy)="buyReef($event.tokenSymbol, $event.tokenAmount)"
       ></app-buy-reef>
     </div>
     <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">

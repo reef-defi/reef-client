@@ -39,11 +39,11 @@ export class PoolPage {
               private readonly connectorService: ConnectorService,
               private apiService: ApiService) {
     this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
-      switchMap(([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol], true)),
+      switchMap(([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
       map(b => b[0])
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
-      switchMap((uInfo: IProviderUserInfo) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol.REEF, true)),
+      switchMap((uInfo: IProviderUserInfo) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol.REEF)),
       map(b => b[0]),
     );
 
