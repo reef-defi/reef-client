@@ -2,15 +2,23 @@
   <ng-container *ngIf="!(error$ | async); else errorTemplate">
     <ng-container *ngIf="pricePerTokens$ | async as price; else loadingTemplate">
       <ng-container *ngIf="providerUserInfo$ | async as userInfo">
+        <div class="row">
+          <div class="col">
+            <app-page-title
+              title="Pool"
+              subtitle="Get UNI-V2 LP Tokens by adding liquidity to the {{token}}/REEF pool"
+            ></app-page-title>
+          </div>
+        </div>
         <div class="page__wrapper row">
-          <div class="col-8 offset-2">
+          <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
             <div class="card">
               <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center mb-3">
+                <!--<div class="d-flex align-items-center justify-content-center mb-3">
                   [
                   <ng-container *ngIf="token !== 'TOKEN'">{{ token }} –</ng-container>
                   REEF]
-                </div>
+                </div>-->
                 <div class="d-flex align-items-center justify-content-center mb-4">
                   <img
                     class="img-size-top-65"
@@ -19,23 +27,24 @@
                     class="img-size-top-65"
                     src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                 </div>
-                <div class="h6 mb-3 text-center">Get LP token</div>
+                <div class="h6 mb-3 text-center">Get
+                  <ng-container *ngIf="token !== 'TOKEN'">{{ token }}–</ng-container>REEF LP token</div>
                 <div
                   class="d-flex flex-column align-items-center justify-content-center mb-3">
-                  <div class="text-monospace text-muted small text-center mb-2">
+                  <!--<div class="text-monospace text-muted small text-center mb-2">
                     Get UNI-V2 LP Tokens by adding liquidity to the
                     <strong class="font-weight-bold">{{token}}/REEF</strong>
                     pool
-                  </div>
+                  </div>-->
                 </div>
-                <div class="d-flex flex-column align-items-center mb-4">
+                <div class="d-flex flex-column align-items-center mb-4 text-muted">
                   <div>
                     <div class="small mb-1">REEF amount:</div>
                     <div class="d-flex align-items-center">
                       <input
                         [ngModel]="reefAmount"
                         (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF)"
-                        class="form-control text-monospace small"
+                        class="form-control text-monospace small accent-text"
                         id="reefAmount"
                         placeholder="0.0" type="number"/>
                       <img
@@ -43,7 +52,7 @@
                         src="../../../../../assets/images/reef/reef-token.svg" alt="">
                     </div>
                     <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
-                      <app-set-input-relative-amount class="text-muted"
+                      <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
                         (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF)"
                         [tokenSymbol]="TokenSymbol.REEF"
@@ -53,14 +62,14 @@
                   </div>
                 </div>
                 <div
-                  class="d-flex flex-column align-items-center mb-4">
+                  class="d-flex flex-column align-items-center mb-4 text-muted">
                   <div>
                     <div class="small mb-1">{{ token }} amount:</div>
                     <div class="d-flex align-items-center">
                       <input
                         [ngModel]="tokenAmount"
                         (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN)"
-                        class="form-control text-monospace small"
+                        class="form-control text-monospace small accent-text"
                         id="tokenAmount"
                         placeholder="0.0" type="number"/>
                       <img
@@ -69,7 +78,7 @@
                         alt="alt-token">
                     </div>
                     <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
-                      <app-set-input-relative-amount class="text-muted"
+                      <app-set-input-relative-amount
                                                      [value]="tokenBalanceReefOposite.balance"
                                                      (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN)"
                                                      [tokenSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
@@ -79,8 +88,8 @@
                   </div>
                 </div>
                 <div
-                  class="d-flex align-items-center justify-content-around mb-5">
-                  <div class="card">
+                  class="row align-items-center justify-content-center mb-5">
+                  <div class="card m-1">
                     <div class="card-body bg-purple">
                       <div class="small text-monospace text-center text-white">Reef per {{ token }}</div>
                       <div class="text-monospace text-center text-white">
@@ -88,7 +97,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="card">
+                  <div class="card m-1">
                     <div class="card-body bg-purple">
                       <div class="small text-monospace text-center text-white">{{ token }} per Reef</div>
                       <div class="text-monospace text-center text-white">

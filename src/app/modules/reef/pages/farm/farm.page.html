@@ -3,16 +3,24 @@
     <ng-container *ngIf="lpContract$ | async as contract">
       <ng-container *ngIf="tokenBalance$ | async as tokenBalance">
         <ng-container *ngIf="tokenSymbol$ | async as token">
+          <div class="row">
+            <div class="col">
+              <app-page-title
+                title="Farm"
+                [subtitle]="'Stake your UNI-V2 LP Tokens in the '+getSubtitleTokenPart(token)+' pool to earn REEF!'"
+              ></app-page-title>
+            </div>
+          </div>
           <div class="page__wrapper row">
-            <div class="col-12 col-md-8 offset-md-2">
-              <div class="card">
+            <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+              <div class="card max-w-500">
                 <div class="card-body">
-                  <div class="d-flex align-items-center justify-content-center mb-3">
+                  <!--<div class="d-flex align-items-center justify-content-center mb-3">
                     [
                     <ng-container *ngIf="token !== 'TOKEN'">{{ token }} –</ng-container>
                     REEF]
-                  </div>
-                  <div class="d-flex align-items-center justify-content-center mb-3">
+                  </div>-->
+                  <div class="d-flex align-items-center justify-content-center mb-4">
                     <img
                       *ngIf="token !== 'TOKEN'"
                       class="img-size-top-60"
@@ -22,7 +30,7 @@
                       class="img-size-top-60"
                       src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                   </div>
-                  <div
+                  <!--<div
                     class="d-flex flex-column align-items-center justify-content-center mb-4">
                     <div class="text-monospace text-muted small text-center mb-2">
                       Stake your
@@ -31,21 +39,24 @@
                       <strong class="font-weight-bold"><span *ngIf="token !== 'TOKEN'">{{ token }}/</span>REEF</strong>
                       pool to earn REEF!
                     </div>
-                  </div>
+                  </div>-->
                   <div class="row">
                     <div class="mb-4 col">
-                      <div class="small text-muted mb-1 text-center">
-                        Pool APY
-                      </div>
-                      <div
-                        class="small text-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                        <div class="small mb-1 text-center">
+                          Pool APY
+                        </div>
+                        <div
+                          class="small text-center">
                     <span class="font-weight-bold text-center">
                       {{ apy | number }} %
                     </span>
+                        </div>
                       </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="small text-muted mb-1 text-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                      <div class="small mb-1 text-center">
                         Staked LP Tokens
                       </div>
                       <div
@@ -55,9 +66,11 @@
                       {{ staked | number }} {{ token !== 'TOKEN' ? ' LP Tokens' : 'REEF' }}
                     </span>
                       </div>
+                      </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="small text-muted mb-1 text-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                      <div class="small mb-1 text-center ">
                         Pending REWARD
                       </div>
                       <div
@@ -67,18 +80,19 @@
                       {{ pendingReef | number }} REEF
                     </span>
                       </div>
+                      </div>
                     </div>
                   </div>
                   <div
-                    class="d-flex flex-column align-items-center mb-4">
+                    class="col-sm-12 col-md-8 offset-md-2 max-w-xs flex-column mb-4 text-muted">
                     <div class="d-flex justify-content-start align-items-center mb-2">
-                      <div class="small text-muted align-self-start mr-1">
+                      <div class="small  align-self-start mr-1">
                         {{ token !== 'TOKEN' ? 'LP Tokens' : 'REEF' }} amount
                       </div>
                     </div>
                     <input
                       [(ngModel)]="reefAmount"
-                      class="form-control small"
+                      class="form-control small accent-text"
                       id="reefAmount"
                       placeholder="0.0" type="number"/>
                     <ng-container *ngIf="+reefAmount <= tokenBalance; else noBalance">
@@ -105,21 +119,21 @@
                       [disabled]="!reefAmount ||
                             reefAmount > tokenBalance || reefAmount <= 0"
                       (click)="deposit(contract, address, reefAmount)" class="btn btn-primary">
-                      Deposit Tokens
+                      Deposit <br>Tokens
                     </button>
                     </div>
                     <div *ngIf="stakedAmount$ | async as staked" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="staked <= 0"
                         (click)="withdraw(address, reefAmount)" class="btn btn-primary">
-                        Withdraw Funds
+                        Withdraw <br>Funds
                       </button>
                     </div>
                     <div *ngIf="reefReward$ | async as reward" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="reward <= 0"
                         (click)="withdraw(address, 0)" class="btn btn-primary">
-                        Harvest Tokens
+                        Harvest <br>Tokens
                       </button>
                     </div>
                   </div>
