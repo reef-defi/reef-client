@@ -61,7 +61,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private afterRender(): void {
-    particlesJS('particles', ParticlesConfig, null);
+    // particlesJS('particles', ParticlesConfig, null);
     const hasViewed = JSON.parse(localStorage.getItem('reef_tutorial_viewed')) === true;
     this.isWalletConnected$.pipe(
       first((el) => !!el)

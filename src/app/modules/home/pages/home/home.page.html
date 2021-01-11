@@ -1,4 +1,3 @@
-<div id="particles"></div>
 <div
   *ngIf="{ walletConnected: isWalletConnected$ | async, contractConnected: contract$ | async } as obs"
   [class.connected__separator]="obs.walletConnected && obs.contractConnected"

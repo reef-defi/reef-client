@@ -9,6 +9,7 @@ import {UniswapService} from "../../../../core/services/uniswap.service";
   styleUrls: ['./settings.page.scss']
 })
 export class SettingsPage {
+  Object = Object;
   readonly selectedGas$ = this.connectorService.selectedGasPrice$;
   readonly gasPrices$ = this.apiService.getGasPrices();
 
