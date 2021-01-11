@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <div id="buyReef"
-           class="card">
+           class="card max-w-500 margin-auto">
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-4">
             <img
@@ -17,7 +17,7 @@
                 <input
                   [ngModel]="tokenAmountSub|async"
                   (ngModelChange)="tokenAmountSub.next($event)"
-                  class="w-75 form-control mr-2" type="number"/>
+                  class="w-75 form-control mr-2 accent-text" type="number"/>
                 <ng-container *ngIf="selTokenSub|async as selectedToken">
                   <div class="d-flex align-items-center">
                     <img (click)="tokenSelect.open()"
@@ -91,28 +91,28 @@
               <div class="h6 mb-3">Prices</div>
               <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices; else loadingTemplate">
                 <div *ngIf=" tokenPrices.REEF_PER_TOKEN"
-                     class="d-flex justify-content-between">
+                     class="d-flex justify-content-between text-white">
                   <div class="card w-50 mr-2">
                     <div class="card-body bg-purple">
-                      <div class="small text-monospace text-white">You get minimum of</div>
-                      <div class="text-monospace text-white">
+                      <div class="small text-monospace ">You get minimum of</div>
+                      <div class="text-monospace ">
                         <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
-                          <div>~{{tokenPrices.amountOutMin |number: '.0-0'}} REEF</div>
-                          <span class="x-small-text" title="This is the amount you get at current rate.
+                          <div>~{{tokenPrices.amountOutMin |number: '1.0-5'}} REEF</div>
+                          <!--<span class="x-small-text" title="This is the amount you get at current rate.
                           If rate rises so you would get less than minimum amount transaction will be canceled.
                           These values are subject to your internet connection and refresh rate.">
                             (at current rate {{(tokenPrices.REEF_PER_TOKEN*tokenAmountSub.value)|number: '.0-0'}} REEF)
-                          </span>
+                          </span>-->
                         </ng-container>
                       </div>
                     </div>
                   </div>
                   <div class="card w-50">
                     <div class="card-body bg-purple">
-                      <div class="small text-monospace text-white">Price for 1 REEF</div>
+                      <div class="small text-monospace ">Price for 1 REEF</div>
                       <ng-container *ngIf="ethPrice$|async as ethPrice">
                         <ng-container *ngIf="(selectedSymbol === TokenSymbol.USDT ? tokenPrices.TOKEN_PER_REEF : tokenPrices.TOKEN_PER_REEF * ethPrice) as reefUSDPrice">
-                        <div class="text-monospace text-white" title="{{reefUSDPrice}} USD">
+                        <div class="text-monospace " title="{{reefUSDPrice}} USD">
                           {{ reefUSDPrice |smallNumber }} USD
                         </div>
                         </ng-container>

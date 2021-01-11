@@ -140,4 +140,8 @@ export class FarmPage implements OnInit {
       console.log('refreshBalance ERROR ', e);
     }
   }
+
+  getSubtitleTokenPart(token: string) {
+    return (token!=='TOKEN')?(token+'-REEF'):'REEF'
+  }
 }

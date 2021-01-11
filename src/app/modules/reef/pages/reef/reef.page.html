@@ -11,6 +11,7 @@
   <div class="row justify-content-center">
     <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
       <app-buy-reef
+        class="height-100 card"
         [supportedTokens]="supportedTokens"
         [loading]="buyLoading"
         (buy)="buyReef($event.tokenSymbol, $event.tokenAmount)"
