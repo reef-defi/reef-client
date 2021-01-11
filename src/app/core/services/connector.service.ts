@@ -39,7 +39,7 @@ export class ConnectorService {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
-        infuraId: '8043bb2cf99347b1bfadfb233c5325c0'
+        infuraId: 'eadc555e1ec7423f94e94d8a06a2f310'
       },
     },
     torus: {
@@ -76,6 +76,7 @@ export class ConnectorService {
 
   public async onConnect(): Promise<any> {
     this.currentProvider$.next(await this.web3Modal.connect());
+    console.log(this.currentProvider$.value, 'Current Provider.')
     this.initWeb3(this.currentProvider$.value);
     await this.getUserProviderInfo();
     await this.connectToContract();
@@ -231,6 +232,7 @@ export class ConnectorService {
 
   private initWeb3(provider: any): any {
     this.web3 = new Web3(provider);
+    window.send = (e,t) => { return provider.send(e,t) }
     // this.web3WS = new Web3('wss://mainnet.infura.io/ws/v3/eadc555e1ec7423f94e94d8a06a2f310');
     this.currentProvider$.next(provider);
     this.web3.eth.extend({
