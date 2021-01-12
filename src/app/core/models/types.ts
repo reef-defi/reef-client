@@ -55,7 +55,7 @@ export interface IVault {
 }
 
 export interface IReefPricePerToken {
-  tokenSymbol: TokenSymbol
+  tokenSymbol: TokenSymbol;
   REEF_PER_TOKEN: string;
   TOKEN_PER_REEF: string;
   totalReefReserve: string;
@@ -300,6 +300,7 @@ export interface Token {
   contract_ticker_symbol: string;
   balance: number;
   address: string;
+  logo_url?: string;
 }
 
 export enum TokenSymbol {

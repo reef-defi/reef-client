@@ -10,8 +10,7 @@
   <div class="col-xl-10 offset-xl-1 col-12">
     <div class="card h-100">
       <div class="card-body">
-        <ng-container *ngIf="providerUserInfo$ | async as userInfo; else loadingTemplate">
-          <ng-container *ngIf="tokens; else loadingTemplate">
+          <ng-container *ngIf="tokens$|async as tokens; else loadingTemplate">
             <div class="d-flex justify-content-between mb-3">
               <div class="h6">
                 Balances
@@ -42,7 +41,6 @@
               </div>
             </div>
           </ng-container>
-        </ng-container>
       </div>
     </div>
   </div>
@@ -120,9 +118,11 @@
   </div>
   <div
     class="col-xl-3 col-12">
-    <app-asset-distribution-chart
-      *ngIf="tokens && tokens.totalBalance > 0"
-      [chartData]="pieChartData">
-    </app-asset-distribution-chart>
+    <ng-component *ngIf="tokens$|async as tokens">
+      <app-asset-distribution-chart
+        *ngIf="tokens  && tokens.totalBalance > 0"
+        [chartData]="pieChartData$|async">
+      </app-asset-distribution-chart>
+    </ng-component>
   </div>
 </div>
