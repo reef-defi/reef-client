@@ -44,6 +44,7 @@ import { PageTitleComponent } from './components/page-title/page-title.component
 import { TransactionConfirmationComponent } from './components/transaction-confirmation/transaction-confirmation.component';
 import { SetInputRelativeAmountComponent } from './components/set-input-relative-amount/set-input-relative-amount.component';
 import {SmallNumberPipe} from './pipes/small-number-display.pipe';
+import { ExceededBalanceMsgComponent } from './components/exceeded-balance-msg/exceeded-balance-msg.component';
 
 
 const components = [
@@ -65,14 +66,14 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent, SmallNumberPipe],
+  declarations: [...components, ...directives, ...pipes, SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent, SmallNumberPipe, ExceededBalanceMsgComponent],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
   }],
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent, SetInputRelativeAmountComponent, SmallNumberPipe],
+  exports: [...components, ...directives, ...pipes, ...modules, PageTitleComponent, SetInputRelativeAmountComponent, SmallNumberPipe, ExceededBalanceMsgComponent],
 })
 export class SharedModule {
 }

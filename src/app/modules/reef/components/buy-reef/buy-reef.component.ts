@@ -88,15 +88,4 @@ export class BuyReefComponent {
 
   }
 
-  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, balances: Token[]) {
-    const tokenBalance = this.getTokenBalance(balances, selectedToken);
-    if (tokenBalance && tokenBalance.balance > 0) {
-      return tokenBalance.balance >= paymentValue;
-    }
-    return false;
-  }
-
-  private getTokenBalance(balances: Token[], selectedToken: TokenSymbol) {
-    return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
-  }
 }
