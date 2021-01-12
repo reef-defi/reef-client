@@ -47,9 +47,11 @@
                         class="form-control text-monospace small accent-text"
                         id="reefAmount"
                         placeholder="0.0" type="number"/>
+                      <div class="fixed-w-20">
                       <img
                         class="img-size-top-20 margin-em-05"
                         src="../../../../../assets/images/reef/reef-token.svg" alt="">
+                      </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
                       <app-set-input-relative-amount
@@ -72,10 +74,12 @@
                         class="form-control text-monospace small accent-text"
                         id="tokenAmount"
                         placeholder="0.0" type="number"/>
-                      <img
+                      <div class="fixed-w-20">
+                        <img
                         [class.img-size-top-25]="token === 'WETH'" [class.img-size-top-20]="token === 'USDT'"
                         src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
                         alt="alt-token">
+                      </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
                       <app-set-input-relative-amount
