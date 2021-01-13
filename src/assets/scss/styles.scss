@@ -303,21 +303,29 @@ body {
   max-width: 500px;
 }
 
-.margin-auto{
+.max-w-350 {
+  max-width: 350px;
+}
+
+.margin-auto {
   margin: auto;
 }
-.text-muted{
-  a{
+
+.text-muted {
+  a {
     color: #0d4982;
     text-decoration: underline;
   }
 }
-.badge{
+
+.badge {
   font-size: 100%;
 }
-.height-100{
+
+.height-100 {
   height: 100%;
 }
-.p-05{
+
+.p-05 {
   padding: 0.5em;
 }
