@@ -289,6 +289,7 @@ export interface EthPrice {
 export interface TokenBalance {
   tokens: Token[];
   totalBalance: number;
+  address: string;
 }
 
 export interface Token {

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HistoricRoiChartOptions, PoolsChartOptions } from '../models/types';
+import {Injectable} from '@angular/core';
+import {HistoricRoiChartOptions, PoolsChartOptions} from '../models/types';
 import * as HighCharts from 'highcharts';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,15 +11,15 @@ export class ChartsService {
 
   private static get pieChartColors(): any {
     const colors = [];
-    const base = HighCharts.getOptions().colors[0];
-    for (let i = 0; i < 10; i ++) {
+    const base = '#6610f2';
+    for (let i = 0; i < 10; i++) {
       colors.push(HighCharts.color(base).brighten((i - 3) / 7).get());
     }
     return colors;
   }
 
   composePieChart(data): any {
-    return   {
+    return {
       chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,
@@ -26,7 +27,7 @@ export class ChartsService {
         type: 'pie'
       },
       title: {
-        text: 'Your Token Distributions in USD'
+        text: ''
       },
       tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -52,7 +53,7 @@ export class ChartsService {
         colorByPoint: true,
         data,
       }]
-    }
+    };
   }
 
   composeHighChart(data: any, isReef = false): any {

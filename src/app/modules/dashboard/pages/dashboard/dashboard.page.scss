@@ -3,10 +3,15 @@
     background-color: #6f42c1;
     color: white;
   }
+
   cursor: pointer;
 }
 
 .gas-price__item--selected {
   background-color: #6f42c1;
   color: white;
+}
+
+.min-height-100px {
+  min-height: 100px;
 }
