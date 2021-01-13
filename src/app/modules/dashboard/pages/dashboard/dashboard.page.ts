@@ -56,12 +56,19 @@ export class DashboardPage {
         if (!tokenBalance.tokens || !tokenBalance.tokens.length) {
           return null;
         }
+        let other = 0;
         const total = tokenBalance.totalBalance;
-        const pairs = tokenBalance.tokens.map(({
-                                                 contract_ticker_symbol,
-                                                 quote
-                                               }) => [contract_ticker_symbol, (quote / total) * 100]);
-        return this.chartsService.composePieChart(pairs);
+        const pairs = tokenBalance.tokens
+          .map(({ contract_ticker_symbol, quote }) => [contract_ticker_symbol, (quote / total) * 100])
+          .map(([name, percent]: [string, number]) => {
+            if (percent < 1) {
+              other += percent
+            }
+            return [name, percent];
+          })
+          .filter(([_, percent]) => percent >= 1);
+        const unified = [...pairs, ['Other', other]];
+        return this.chartsService.composePieChart(unified);
       }),
       shareReplay(1)
     );
