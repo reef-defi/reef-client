@@ -16,6 +16,9 @@
     <ng-container *ngIf="tokenSymbol === 'USDT'">
       {{ value | number:'1.1-2' }}
     </ng-container>
+    <ng-container *ngIf="tokenSymbol === 'REEF'">
+      {{ value | number:'1.0-0' }}
+    </ng-container>
     {{tokenSymbol}}
   </a>
 </ng-container>

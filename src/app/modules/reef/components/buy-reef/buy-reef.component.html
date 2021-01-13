@@ -53,7 +53,7 @@
                                           [tokenAmount]="tokenAmountSub.value"></app-exceeded-balance-msg>
               </ng-container>
               <ng-container *ngIf="connectorService.providerUserInfo$|async as userInfo">
-                <div class="small-text text-muted ">
+                <div class="text-muted ">
                 <span *ngFor="let tokenBalance of balances;let last = last">
                   <app-set-input-relative-amount
                     [value]="tokenBalance.balance"

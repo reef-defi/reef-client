@@ -11,9 +11,10 @@ export class ChartsService {
 
   private static get pieChartColors(): any {
     const colors = [];
-    const base = '#6610f2';
+    //const base = '#bc5cf2';
+    let arr = ['#F54231', '#3dfeba', '#b8e63b', '#4db2fa', '#195bcd', '#fae665', '#fe8477', '#f7747a', '#f9a25b', '#790fdd', '#0fafe5'];
     for (let i = 0; i < 10; i++) {
-      colors.push(HighCharts.color(base).brighten((i - 3) / 7).get());
+      colors.push(i%10 == 0 ? arr[i] : HighCharts.color(arr[i]).brighten((i - 3) / 7).get());
     }
     return colors;
   }
@@ -39,6 +40,7 @@ export class ChartsService {
       },
       plotOptions: {
         pie: {
+          innerSize: '70%',
           allowPointSelect: true,
           cursor: 'pointer',
           colors: ChartsService.pieChartColors,

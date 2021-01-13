@@ -5,65 +5,29 @@
       subtitle="We currently support WETH & USDT Pools"></app-page-title>
   </div>
 </div>
-
-<div class="page__wrapper justify-content-around">
+<div class="page__wrapper">
   <div class="row">
-    <div class="col grid-col-m-bottom">
-      <div class="card h-100">
-        <div class="card-body">
+    <div class="col-12 col-md-6 col-lg-4 h-100" *ngFor="let pool of pools">
+      <div class="card m-2">
+        <div class="card-body ">
           <div class="d-flex align-items-center justify-content-center mb-5">
             <img
+              *ngFor="let img of pool.imgs"
               class="img-size-top-65"
-              src="../../../../../assets/images/eth.png" alt="eth-token">
-            <img
-              class="img-size-top-65"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
+              [src]="'assets/images/' + img">
           </div>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center mb-5">
+          <div class="d-flex flex-column align-items-center justify-content-center">
             <div class="h6">
-              WETH & REEF
+              {{pool.name}}
             </div>
-            <div class="text-monospace text-muted small text-center mb-1">
-              Provide WETH and REEF into this pool to get
-              <strong class="font-weight-bold">WETH-REEF</strong>
-              LP Tokens
+            <div class="text-monospace text-muted small text-center" [innerHTML]="pool.description">
+
             </div>
           </div>
         </div>
         <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button [routerLink]="['/reef/pool', 'WETH']" class="btn btn-primary">
-            Provide Liquidity into WETH/REEF
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="col grid-col-m-bottom">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-center mb-5">
-            <img
-              class="img-size-top-65"
-              src="../../../../../assets/images/usdt.png" alt="usdt-token">
-            <img
-              class="img-size-top-65"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-          </div>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center mb-5">
-            <div class="h6">
-              USDT & REEF
-            </div>
-            <div class="text-monospace text-muted small text-center mb-1">
-              Invest USDT and REEF into this pool to get
-              <strong class="font-weight-bold">USDT-REEF</strong>
-              LP Tokens
-            </div>
-          </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button [routerLink]="['/reef/pool', 'USDT']" class="btn btn-primary">
-            Provide Liquidity into USDT/REEF
+          <button [routerLink]="['/reef/pool', pool.link]" class="btn btn-primary">
+            {{pool.btnLabel}}
           </button>
         </div>
       </div>

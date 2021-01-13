@@ -46,6 +46,8 @@ import {SetInputRelativeAmountComponent} from './components/set-input-relative-a
 import {SmallNumberPipe} from './pipes/small-number-display.pipe';
 import {ExceededBalanceMsgComponent} from './components/exceeded-balance-msg/exceeded-balance-msg.component';
 import {ProviderLoadingComponent} from './components/provider-loading/provider-loading.component';
+import {DecimalNumberPipe} from './pipes/decimal.pipe';
+import {CategorizePipe} from './pipes/categorize.pipe';
 
 
 const components = [
@@ -56,7 +58,7 @@ const components = [
   ExceededBalanceMsgComponent, ProviderLoadingComponent
 ];
 const directives = [];
-const pipes = [FilterPipe, SmallNumberPipe];
+const pipes = [FilterPipe, SmallNumberPipe, DecimalNumberPipe, CategorizePipe];
 const modules = [
   CommonModule,
   RouterModule,
