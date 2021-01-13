@@ -54,6 +54,9 @@
                       </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
+                      <app-exceeded-balance-msg [balances]="[tokenBalanceReef]"
+                                                [selectedSymbol]="TokenSymbol.REEF" [tokenAmount]="reefAmount"
+                      ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
                         (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF)"
@@ -82,6 +85,10 @@
                       </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
+
+                      <app-exceeded-balance-msg [balances]="[tokenBalanceReefOposite]"
+                                                [selectedSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]" [tokenAmount]="tokenAmount"
+                      ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                                                      [value]="tokenBalanceReefOposite.balance"
                                                      (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN)"
@@ -111,14 +118,20 @@
                   </div>
                 </div>
                 <div class="d-flex align-items-center justify-content-center">
+                  <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
+                  <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
                   <button
                     *ngIf="!loading"
-                    [disabled]="!reefAmount ||
-                  reefAmount > userInfo.reefBalance || reefAmount <= 0
-                   || (token === 'WETH' ? tokenAmount > userInfo.balance : tokenAmount > userTokenBalance)"
+                    [disabled]="!reefAmount || !tokenAmount
+                      || reefAmount > tokenBalanceReef
+                      || tokenAmount <= 0 || reefAmount <= 0
+                      || tokenAmount > tokenBalanceReefOposite.balance
+                      || reefAmount > tokenBalanceReef.balance"
                     (click)="addLiquidity(token)" class="btn btn-primary">
                     Add Liquidity
                   </button>
+                  </ng-container>
+                  </ng-container>
                   <app-loading *ngIf="loading" diameter="25"></app-loading>
                 </div>
               </div>

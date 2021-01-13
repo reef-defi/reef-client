@@ -49,19 +49,7 @@
             </div>
             <ng-container *ngIf="selectedTokenBalances$|async as balances">
               <ng-container *ngIf="selTokenSub|async as selectedSymbol">
-                <ng-container *ngIf="getTokenBalance(balances, selectedSymbol) as selectedSymbolBalance">
-                  <div
-                    *ngIf=" !hasBalanceForPayment(tokenAmountSub.value, selectedSymbol, balances)">
-                    <small class="red-text">
-                    <span *ngIf="tokenAmountSub.value>0; else noBalance">Please add {{selectedSymbol}} to your account.
-                      {{tokenAmountSub.value}} {{selectedSymbol}} is greater than your account
-                      balance.</span>
-                    <ng-template #noBalance>
-                      Not enought {{selectedSymbol}} on your account.
-                    </ng-template>
-                    </small>
-                  </div>
-                </ng-container>
+                <app-exceeded-balance-msg [balances]="balances" [selectedSymbol]="selectedSymbol" [tokenAmount]="tokenAmountSub.value"></app-exceeded-balance-msg>
               </ng-container>
               <ng-container *ngIf="connectorService.providerUserInfo$|async as userInfo">
                 <div class="small-text text-muted ">
