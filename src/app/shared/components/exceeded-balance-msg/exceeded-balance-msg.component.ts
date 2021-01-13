@@ -22,7 +22,7 @@ export class ExceededBalanceMsgComponent {
     return false;
   }
 
-  private getTokenBalance(balances: Token[], selectedToken: TokenSymbol) {
+  getTokenBalance(balances: Token[], selectedToken: TokenSymbol) {
     return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
   }
 }

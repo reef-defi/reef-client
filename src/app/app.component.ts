@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   readonly VERSION = '0.2.3';
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
+  readonly providerLoading$ = this.connectorService.providerLoading$;
   ethPrice$ = this.poolService.getEthPrice();
   public canEnter = false;
 

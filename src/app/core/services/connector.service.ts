@@ -35,6 +35,7 @@ export class ConnectorService {
     appName: 'reef.finance',
   });
   WalletLinkProvider = this.walletLink.makeWeb3Provider('https://ropsten.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310', 4);
+  providerLoading$ = new BehaviorSubject(false);
   providerOptions = {
     walletconnect: {
       package: WalletConnectProvider,
@@ -71,11 +72,16 @@ export class ConnectorService {
     if (this.web3Modal.cachedProvider) {
       this.onConnect();
     }
+    this.web3Modal.on('close', () => {
+      this.providerLoading$.next(false);
+    })
   }
 
 
   public async onConnect(): Promise<any> {
+    this.providerLoading$.next(true);
     this.currentProvider$.next(await this.web3Modal.connect());
+    this.providerLoading$.next(false);
     console.log(this.currentProvider$.value, 'Current Provider.')
     this.initWeb3(this.currentProvider$.value);
     await this.getUserProviderInfo();
