@@ -59,10 +59,10 @@ export class UniswapService {
       const path = [tokenB.address, REEF.address];
       const to = this.connectorService.providerUserInfo$.value.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       try {
-        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         let firstConfirm = true;
-        if (tokenSymbol === 'WETH') {
+        if (tokenSymbol === 'WETH' || tokenSymbol === 'ETH') {
           this.routerContract$.value.methods.swapExactETHForTokens(
             amountOutMin, path, to, deadline
           ).send({
@@ -110,6 +110,7 @@ export class UniswapService {
             })
         }
       } catch (e) {
+        dialogRef.close();
         this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
       }
     }
