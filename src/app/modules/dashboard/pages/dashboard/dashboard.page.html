@@ -10,7 +10,7 @@
   <div class="col-sm-12 col-md-4">
     <div class="card min-height-100px">
       <div class="card-body d-flex flex-column align-items-center justify-content-center bg-purple">
-        <div class="small text-monospace text-white">Total balance</div>
+        <div class="small text-monospace text-white">Total Balance</div>
         <ng-container *ngIf="tokenBalance$|async as tokenBalance">
           <div class="text-monospace text-white">
             ${{tokenBalance?.totalBalance| number:'1.1-3'}}
@@ -47,12 +47,16 @@
                   <mat-divider></mat-divider>
                 </div>
                 <div
-                  *ngFor="let token of tokenBalance.tokens"
+                  *ngFor="let token of tokenBalance.tokens; let i = index;"
                   class="row d-flex align-items-center justify-content-between mb-2">
-                  <div class="col d-flex align-items-center">
-                    <img alt="Token symbol {{ token.contract_ticker_symbol }}"
-                         class="img-fluid mr-1"
-                         [src]="token.logo_url" height="20" width="20">
+                  <div class="col col-xl-3 d-flex align-items-center text-monospace">
+                    <div class="d-flex align-items-center">
+                      <img id="img-{{i}}"
+                           alt="{{ token.contract_ticker_symbol }}"
+                           (error)="setDefaultImage(i)"
+                           class="img-fluid mr-1"
+                           [src]="token.logo_url" height="20" width="20">
+                    </div>
                     <a
                       href="https://etherscan.io/token/{{ token.contract_address }}"
                       target="_blank"

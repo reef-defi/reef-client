@@ -75,6 +75,11 @@ export class DashboardPage {
 
   }
 
+  public setDefaultImage(imgIdx: number) {
+    document.getElementById(`img-${imgIdx}`)
+      .setAttribute('src', 'assets/images/image-missing.png');
+  }
+
   private getTokenBalances(address: string): Observable<TokenBalance> {
     return this.apiService.getTokenBalances$(address).pipe(
       map(tokens => ({
