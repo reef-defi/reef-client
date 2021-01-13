@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {catchError, filter, map, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
@@ -39,7 +39,8 @@ export class PoolPage {
               private readonly connectorService: ConnectorService,
               private apiService: ApiService) {
     this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
-      switchMap(([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
+      switchMap(
+        ([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
       map(b => b[0]),
       shareReplay(1)
     );
@@ -64,11 +65,11 @@ export class PoolPage {
           this.reefAmount = 1;
           this.tokenAmount = +prices.TOKEN_PER_REEF;
         } else {
-          this.wasLastCalcForToken ? this.calcTokenAmount(this.reefAmount, prices.TOKEN_PER_REEF) : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN);
+          this.wasLastCalcForToken ? this.calcTokenAmount(this.reefAmount, prices.TOKEN_PER_REEF)
+            : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN);
         }
       }),
       catchError((e) => {
-        console.log(e, 'wtf?')
         this.error$.next(true);
         return EMPTY;
       }),
@@ -167,4 +168,9 @@ export class PoolPage {
     );*!/
   }*/
 
+  preventDecimal($event: any): void {
+    if ($event.key === '.' || $event.key === ',') {
+      $event.preventDefault();
+    }
+  }
 }

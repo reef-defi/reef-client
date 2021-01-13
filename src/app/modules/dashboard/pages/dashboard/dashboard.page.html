@@ -13,7 +13,7 @@
         <div class="small text-monospace text-white">Total Balance</div>
         <ng-container *ngIf="tokenBalance$|async as tokenBalance">
           <div class="text-monospace text-white">
-            ${{tokenBalance?.totalBalance| number:'1.1-3'}}
+            ${{tokenBalance?.totalBalance| number:'1.0-0'}}
           </div>
         </ng-container>
       </div>
@@ -65,13 +65,13 @@
                     </a>
                   </div>
                   <div class="col">
-                    <div class="text-monospace small">
-                      {{ (token.balance || 0) | number }}
+                    <div class="text-monospace small" [title]="token.balance||0">
+                      {{ (token.balance || 0) | smallNumber: 0:5 }}
                     </div>
                   </div>
                   <div class="col">
-                    <div class="text-monospace small">
-                      ${{(token.quote_rate * token.balance) | number}}
+                    <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
+                      ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
                     </div>
                   </div>
                 </div>

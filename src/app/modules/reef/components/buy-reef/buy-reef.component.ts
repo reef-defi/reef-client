@@ -2,10 +2,11 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
 import {ApiService} from '../../../../core/services/api.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
-import {filter, map, shareReplay, skipUntil, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from 'rxjs';
 import {PoolService} from '../../../../core/services/pool.service';
 import {UniswapService} from '../../../../core/services/uniswap.service';
+import BigNumber from 'bignumber.js';
 
 @Component({
   selector: 'app-buy-reef',
@@ -15,11 +16,12 @@ import {UniswapService} from '../../../../core/services/uniswap.service';
 })
 export class BuyReefComponent {
   private static ETH_PRICE_INTERVAL = 60000;
+
   @Input()
   set supportedTokens(val: { tokenSymbol: TokenSymbol, src: string }[]) {
     this.supportedTokensSub.next(val);
     this.selTokenSub.next(val[0].tokenSymbol);
-  };
+  }
 
   @Input() loading: boolean | undefined;
   @Output() buy = new EventEmitter<{ tokenSymbol: string, tokenAmount: number }>();
@@ -52,9 +54,9 @@ export class BuyReefComponent {
     );
 
     // set token amount value to token balance
-    this.selectedTokenBalances$.subscribe(( tokenBalances:Token[]) => {
+    this.selectedTokenBalances$.subscribe((tokenBalances: Token[]) => {
       const bal = tokenBalances[0];
-      this.tokenAmountSub.next(bal?bal.balance:0)
+      this.tokenAmountSub.next(bal ? this.toMaxDecimalPlaces(bal.balance, 4) : 0);
     });
 
     // we get all supported token prices in advance
@@ -64,7 +66,7 @@ export class BuyReefComponent {
         const supportedTokenSymbols = supportedTkns.map(st => st.tokenSymbol);
         // price for each token symbol
         const supportedPrices$ = combineLatest(supportedTokenSymbols.map(ts => uniswapService.getReefPriceInInterval$(ts)));
-        return supportedPrices$
+        return supportedPrices$;
       }),
       shareReplay(1)
     );
@@ -85,7 +87,26 @@ export class BuyReefComponent {
       }),
       shareReplay(1)
     );
-
   }
 
+  toMaxDecimalPlaces(value: number, maxDecimals: number): number {
+    const num = (new BigNumber(value)).toFixed();
+    const splitDecimals = num.split('.');
+    if (splitDecimals.length === 2 && !!splitDecimals[1].length) {
+      return parseFloat(splitDecimals[0] + '.' + splitDecimals[1].slice(0, maxDecimals));
+    }
+    return value;
+  }
+
+  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, balances: Token[]): boolean {
+    const tokenBalance = this.getTokenBalance(balances, selectedToken);
+    if (tokenBalance && tokenBalance.balance > 0) {
+      return tokenBalance.balance >= paymentValue;
+    }
+    return false;
+  }
+
+  private getTokenBalance(balances: Token[], selectedToken: TokenSymbol): Token {
+    return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
+  }
 }
