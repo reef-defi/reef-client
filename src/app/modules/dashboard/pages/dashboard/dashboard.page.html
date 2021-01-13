@@ -7,147 +7,175 @@
 </div>
 
 <div class="page__wrapper row justify-content-between">
-  <div class="col-sm-12 col-md-4">
-    <div class="card min-height-100px">
-      <div class="card-body d-flex flex-column align-items-center justify-content-center bg-purple">
-        <div class="small text-monospace text-white">Total Balance</div>
-        <ng-container *ngIf="tokenBalance$|async as tokenBalance">
-          <div class="text-monospace text-white">
-            ${{tokenBalance?.totalBalance| number:'1.0-0'}}
-          </div>
-        </ng-container>
-      </div>
-    </div>
-    <div class="card mt-3">
-      <ng-container *ngIf="pieChartData$|async as pieChartData">
-        <app-asset-distribution-chart
-          [chartData]="pieChartData">
-        </app-asset-distribution-chart>
-      </ng-container>
-    </div>
-  </div>
-  <div class="col-sm-12 col-md-8">
+  <div class="col-12 col-md-10 offset-md-1">
     <div class="row">
-      <div class="col-12">
-        <div class="card mb-3">
-          <div class="card-body">
-            <ng-container *ngIf="tokenBalance$ | async as tokenBalance; else loadingTemplate">
-              <ng-container *ngIf="tokenBalance; else loadingTemplate">
-                <div class="d-flex justify-content-between mb-3">
-                  <div class="h6">
-                    Balances
-                  </div>
-                  <div>
-                    <mat-icon class="c-pointer"
-                              (click)="apiService.refreshBalancesForAddress.next(tokenBalance.address)">refresh
-                    </mat-icon>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <mat-divider></mat-divider>
-                </div>
-                <div
-                  *ngFor="let token of tokenBalance.tokens; let i = index;"
-                  class="row d-flex align-items-center justify-content-between mb-2">
-                  <div class="col col-xl-3 d-flex align-items-center text-monospace">
-                    <div class="d-flex align-items-center">
-                      <img id="img-{{i}}"
-                           alt="{{ token.contract_ticker_symbol }}"
-                           (error)="setDefaultImage(i)"
-                           class="img-fluid mr-1"
-                           [src]="token.logo_url" height="20" width="20">
-                    </div>
-                    <a
-                      href="https://etherscan.io/token/{{ token.contract_address }}"
-                      target="_blank"
-                      class="small font-weight-bolder">
-                      {{ token.contract_ticker_symbol }}
-                    </a>
-                  </div>
-                  <div class="col">
-                    <div class="text-monospace small" [title]="token.balance||0">
-                      {{ (token.balance || 0) | smallNumber: 0:5 }}
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
-                      ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
-                    </div>
-                  </div>
-                </div>
+
+      <div class="col-12 col-xl-4">
+        <div class="card min-height-100px">
+          <div class="card-body p-lg-4">
+            <div class="small font-weight-bold text-monospace text-muted mb-3">
+              USD Valuation
+            </div>
+            <h3 class="text-center text-monospace text-muted">
+
+              <ng-container *ngIf="tokenBalance$|async as tokenBalance; else calc">
+                  ${{tokenBalance?.totalBalance| number:'1.0-0'}}
               </ng-container>
-            </ng-container>
+              <ng-template #calc>
+                Calculating..
+              </ng-template>
+            </h3>
           </div>
         </div>
-        <div class="card mb-3">
-          <div class="card-body">
-            <div class="h6 mb-4">
-              Transactions
+        <div class="card p-lg-4 mt-3">
+          <div class="small font-weight-bold text-monospace text-muted mb-3">
+            Allocations
+          </div>
+          <ng-container *ngIf="pieChartData$|async as pieChartData">
+            <app-asset-distribution-chart
+              [chartData]="pieChartData">
+            </app-asset-distribution-chart>
+          </ng-container>
+        </div>
+      </div>
+      <div class="col-12 col-xl-8">
+        <div class="row">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-body">
+                <ng-container *ngIf="tokenBalance$ | async as tokenBalance; else loadingTemplate">
+                  <ng-container *ngIf="tokenBalance; else loadingTemplate">
+
+
+                    <div *ngFor="let category of ['token', 'defi']" class="mb-4">
+                      <div class="h6" *ngIf="category == 'token'">Tokens</div>
+                      <div class="h6" *ngIf="category == 'defi'">DeFi</div>
+                      <mat-divider class="mb-2"></mat-divider>
+                      <div class="row mb-2">
+                        <div class="col col-xl-4 d-flex align-items-center">Asset</div>
+                        <div class="col">Amount</div>
+                        <div class="col">Price</div>
+                        <div class="col">Total</div>
+                      </div>
+                      <div
+                        *ngFor="let token of tokenBalance.tokens | categorize: category; let i = index;"
+                        class="row d-flex align-items-center justify-content-between mb-2">
+                        <div class="col col-xl-4 d-flex align-items-center text-monospace">
+                          <div class="d-flex align-items-center">
+                            <img id="img-{{i}}"
+                                 alt="{{ token.contract_ticker_symbol }}"
+                                 (error)="setDefaultImage(i)"
+                                 class="img-fluid mr-1"
+                                 [src]="token.logo_url" height="20" width="20">
+                          </div>
+                          <a
+                            href="https://etherscan.io/token/{{ token.contract_address }}"
+                            target="_blank"
+                            class="small font-weight-bolder">
+                            {{ token.contract_ticker_symbol }}
+                          </a>
+                        </div>
+                        <div class="col">
+                          <div class="text-monospace small" [title]="token.balance||0">
+                            {{ (token.balance || 0) | decimal: token.quote_rate }}
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="text-monospace small" [title]="token.balance||0">
+                            ${{ token.quote_rate | decimal: token.quote_rate }}
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
+                            ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
             </div>
-            <div class="row mb-2 d-flex justify-content-between">
-              <div class="col-4">
-                <div class="text-monospace small text-muted">Hash</div>
-              </div>
-              <div class="col-2">
-                <div class="text-monospace small text-muted">Date</div>
-              </div>
-              <div class="col-3">
-                <div class="text-monospace small text-muted">To Address</div>
-              </div>
-              <div class="col-3 col-auto">
-                <div class="text-monospace small text-muted">Tokens</div>
-              </div>
-            </div>
-            <div class="row mb-2">
+            <div class="row">
               <div class="col">
-                <mat-divider></mat-divider>
+                <button (click)="showTransactions = !showTransactions" class="btn btn-primary btn-sm mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}} Transactions</button>
               </div>
-            </div>
-            <div *ngIf="transactions$ | async as transactions; else loadingTemplate">
-              <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
-                <div
-                  class="row d-flex justify-content-between mb-1 align-items-center"
-                  *ngFor="let transaction of transactions">
-                  <div class="col-4">
-                    <app-address-shortener
-                      [standalone]="false"
-                      [address]="transaction.tx_hash">
-                    </app-address-shortener>
-                  </div>
-                  <div class="col-2">
-                    <div class="small">
-                      {{ transaction.block_signed_at | date:'shortDate' }}
+              <div class="col-12">
+                <div class="card mb-3" [hidden]="!showTransactions">
+                  <div class="card-body">
+                    <div class="h6 mb-4">
+                      Transactions
                     </div>
-                  </div>
-                  <div class="col-3">
-                    <div>
-                      <app-address-shortener
-                        [standalone]="false"
-                        [address]="transaction.to_address">
-                      </app-address-shortener>
+                    <div class="row mb-2 d-flex justify-content-between">
+                      <div class="col-4">
+                        <div class="text-monospace small text-muted">Hash</div>
+                      </div>
+                      <div class="col-2">
+                        <div class="text-monospace small text-muted">Date</div>
+                      </div>
+                      <div class="col-3">
+                        <div class="text-monospace small text-muted">To Address</div>
+                      </div>
+                      <div class="col-3 col-auto">
+                        <div class="text-monospace small text-muted">Tokens</div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-3 col-auto d-flex justify-content-between">
+                    <div class="row mb-2">
+                      <div class="col">
+                        <mat-divider></mat-divider>
+                      </div>
+                    </div>
+                    <div *ngIf="transactions$ | async as transactions; else loadingTemplate">
+                      <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
+                        <div
+                          class="row d-flex justify-content-between mb-1 align-items-center"
+                          *ngFor="let transaction of transactions">
+                          <div class="col-4">
+                            <app-address-shortener
+                              [standalone]="false"
+                              [address]="transaction.tx_hash">
+                            </app-address-shortener>
+                          </div>
+                          <div class="col-2">
+                            <div class="small">
+                              {{ transaction.block_signed_at | date:'shortDate' }}
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div>
+                              <app-address-shortener
+                                [standalone]="false"
+                                [address]="transaction.to_address">
+                              </app-address-shortener>
+                            </div>
+                          </div>
+                          <div class="col-3 col-auto d-flex justify-content-between">
                 <span class="small font-weight-bold">
                   {{ transaction.value }}
                 </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div class="card">
+              <ng-template #loadingTemplate>
+                <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
+              </ng-template>
+              <ng-template #emptyTransactions>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2">You have not made any transactions in the recent past.</span>
+                </div>
+              </ng-template>
+            </div>
           </div>
         </div>
-        <div class="card">
-          <ng-template #loadingTemplate>
-            <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
-          </ng-template>
-          <ng-template #emptyTransactions>
-            <div class="d-flex justify-content-center align-items-center">
-              <span class="small mt-2">You have not made any transactions in the recent past.</span>
-            </div>
-          </ng-template>
-        </div>
       </div>
+
     </div>
   </div>
 </div>

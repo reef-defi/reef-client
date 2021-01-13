@@ -20,6 +20,7 @@ export class DashboardPage {
   public tokenBalance$: Observable<TokenBalance>;
   public pieChartData;
   public pieChartData$: Observable<any>;
+  showTransactions: any;
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,
@@ -44,7 +45,9 @@ export class DashboardPage {
         }
         balance.tokens = balance.tokens.filter(token => !!token.balance)
           .sort((t1: Token, t2: Token) => {
-            return t2.balance - t1.balance;
+            let bal1 = t1.quote_rate * t1.balance
+            let bal2 = t2.quote_rate * t2.balance
+            return bal2 - bal1;
           });
         return balance;
       }),

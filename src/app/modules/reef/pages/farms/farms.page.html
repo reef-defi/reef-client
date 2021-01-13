@@ -7,93 +7,29 @@
   </div>
 </div>
 
-<div class="page__wrapper justify-content-around">
+<div class="page__wrapper">
   <div class="row">
-    <div class="col grid-col-m-bottom">
-      <div class="card h-100">
+    <div class="col-12 col-md-6 col-lg-4 h-100" *ngFor="let farm of farms">
+      <div class="card m-2">
         <div class="card-body ">
           <div class="d-flex align-items-center justify-content-center mb-5">
             <img
+              *ngFor="let img of farm.imgs"
               class="img-size-top-65"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
+              [src]="'assets/images/' + img">
           </div>
           <div class="d-flex flex-column align-items-center justify-content-center">
             <div class="h6">
-              REEF
+              {{farm.name}}
             </div>
-            <div class="text-monospace text-muted small text-center">
-              Stake your REEF Tokens into a
-              <strong class="font-weight-bold">Pure REEF</strong>
-              farm to earn
-              <strong class="font-weight-bold">REEF returns!</strong>
+            <div class="text-monospace text-muted small text-center" [innerHTML]="farm.description">
+
             </div>
           </div>
         </div>
         <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button [routerLink]="['/reef/farm', PURE_REEF_POOL]" class="btn btn-primary">
-            Farm REEF
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="col grid-col-m-bottom">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-center mb-5">
-            <img
-              class="img-size-top-70"
-              src="../../../../../assets/images/eth.png" alt="eth-token">
-            <img
-              class="img-size-top-65"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-          </div>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center mb-5">
-            <div class="h6">
-              WETH & REEF
-            </div>
-            <div class="text-monospace text-muted small text-center mb-1">
-              Stake your LP Tokens into
-              <strong class="font-weight-bold">WETH-REEF</strong>
-              pool to earn
-              <strong class="font-weight-bold">REEF tokens</strong>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button [routerLink]="['/reef/farm', REEF_WETH_POOL]" class="btn btn-primary">
-            Stake into WETH/REEF
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="col grid-col-m-bottom">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-center mb-5">
-            <img
-              class="img-size-top-60"
-              src="../../../../../assets/images/usdt.png" alt="usdt-token">
-            <img
-              class="mr-1 img-size-top-60"
-              src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
-          </div>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center mb-5">
-            <div class="h6">
-              USDT & REEF
-            </div>
-            <div class="text-monospace text-muted small text-center">
-              Stake your LP Tokens into
-              <strong class="font-weight-bold">USDT-REEF</strong>
-              pool to earn
-              <strong class="font-weight-bold">REEF tokens</strong>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button [routerLink]="['/reef/farm', REEF_USDT_POOL]" class="btn btn-primary">
-            Stake into USDT/REEF
+          <button [routerLink]="['/reef/farm', farm.link]" class="btn btn-primary">
+            {{farm.btnLabel}}
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 import {addresses} from '../../../../../assets/addresses';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
+import {roundDownTo} from '../../../../core/utils/math-utils';
 
 @Component({
   selector: 'app-pool-page',
@@ -62,8 +63,10 @@ export class PoolPage {
       switchMap(token => this.uniswapService.getReefPriceInInterval$(TokenSymbol[token])),
       tap((prices: IReefPricePerToken) => {
         if (this.wasLastCalcForToken === undefined) {
-          this.reefAmount = 1;
-          this.tokenAmount = +prices.TOKEN_PER_REEF;
+          this.tokenBalanceReef$.pipe(first()).subscribe(token => {
+            this.calcTokenAmount(token.balance, prices.TOKEN_PER_REEF)
+          });
+
         } else {
           this.wasLastCalcForToken ? this.calcTokenAmount(this.reefAmount, prices.TOKEN_PER_REEF)
             : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN);
@@ -81,8 +84,8 @@ export class PoolPage {
     if (val && val > 0) {
       const x = new BigNumber(val);
       const y = new BigNumber(tokenPerReef);
-      this.tokenAmount = x.multipliedBy(y).toNumber();
-      this.reefAmount = x.toNumber();
+      this.tokenAmount = roundDownTo(x.multipliedBy(y).toNumber(), 5);
+      this.reefAmount = roundDownTo(x.toNumber(), 0);
     } else {
       this.tokenAmount = undefined;
       this.reefAmount = undefined;
@@ -91,12 +94,13 @@ export class PoolPage {
 
 
   calcReefAmount(val: number, reefPerToken: string): void {
+
     this.wasLastCalcForToken = false;
     if (val && val > 0) {
       const x = new BigNumber(val);
       const y = new BigNumber(reefPerToken);
-      this.reefAmount = +x.multipliedBy(y).toNumber();
-      this.tokenAmount = +x.toNumber();
+      this.reefAmount = roundDownTo(+x.multipliedBy(y).toNumber(), 0);
+      this.tokenAmount = roundDownTo(+x.toNumber(), 5);
     } else {
       this.reefAmount = undefined;
       this.tokenAmount = undefined;
