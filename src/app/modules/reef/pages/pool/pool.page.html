@@ -12,7 +12,7 @@
         </div>
         <div class="page__wrapper row">
           <div class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4">
-            <div class="card">
+            <div class="card max-w-350 margin-auto">
               <div class="card-body">
                 <div class="text-center">
                   <img
@@ -69,8 +69,8 @@
                         id="tokenAmount"
                         placeholder="0.0" type="number"/>
                       <div class="w-5-pc">
-                        <img style="height: 25px"
-                             class="margin-em-05"
+                        <img class="img-size-top-20" [class.margin-em-05]="token !== 'ETH'"
+                             [class.margin-em-03]="token === 'ETH'"
                              [class.img-size-top-25]="token === 'ETH'" [class.img-size-top-20]="token === 'USDT'"
                              src="../../../../../assets/images/{{ token === 'ETH' ? 'eth.png' : 'usdt.png' }}"
                              alt="alt-token">
