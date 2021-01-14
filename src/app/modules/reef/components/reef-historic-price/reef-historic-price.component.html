@@ -5,7 +5,7 @@
       REEF Price
     </div>
     <div class="d-flex flex-column">
-      <div class="row">
+      <!--<div class="row">
         <div class="col-3 offset-9">
           <mat-select
             placeholder="Last 1 month"
@@ -17,7 +17,7 @@
             </mat-option>
           </mat-select>
         </div>
-      </div>
+      </div>-->
       <div *ngIf="options && options.chart; else loadingTemplate">
         <highcharts-chart
           [Highcharts]="HighCharts"
