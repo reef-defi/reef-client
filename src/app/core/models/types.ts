@@ -137,8 +137,10 @@ export interface ITransaction {
 
 export interface IProviderUserInfo {
   address: string;
+  // TODO we should use apiService to get balances
   balance: string;
   chainInfo: IChainData;
+  // TODO we should use apiService to get balances
   reefBalance: string;
 }
 

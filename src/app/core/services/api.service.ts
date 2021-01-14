@@ -16,7 +16,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, filter, map, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {lpTokens} from "../../../assets/addresses";
+import {lpTokens} from '../../../assets/addresses';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -34,13 +34,13 @@ export class ApiService {
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
   public refreshBalancesForAddress = new Subject<string>();
+  public updateTokenBalanceForAddress = new Subject<Token>();
   private url = environment.reefApiUrl;
   private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
   private reefNodeApi = environment.reefNodeApiUrl;
-  private API_KEY = 'ckey_ae1ac511ecab4cf095e89c4fbff'; // 'ckey_02c001945c67428eaff497033d2';
   private balancesByAddr = new Map<string, Observable<any>>();
 
 
@@ -188,23 +188,71 @@ export class ApiService {
       return null;
     }
     if (!this.balancesByAddr.has(address)) {
-      const addrBalances$ = this.refreshBalancesForAddress.asObservable().pipe(
+      const requestedAddressBalances$ = this.refreshBalancesForAddress.pipe(
         startWith(address),
         filter(addr => addr === address),
         switchMap(addr => this.http.get<any>(`${this.reefNodeApi}/covalent/${addr}/balances`)),
         tap((v: any[]) => v.forEach(itm => itm.address = address)),
         map(tokens => tokens.map(this.removeTokenPlaceholders.bind(this))),
         catchError(err => {
-          throw new Error(err)
+          throw new Error(err);
         }),
         shareReplay(1)
       );
-      this.balancesByAddr.set(address, addrBalances$)
+      const localUpdatedAddrBalance$: Observable<{ token: Token, isIncludedInBalances: boolean; }> = this.updateTokenBalanceForAddress.pipe(
+        map(t => ({token: t, isIncludedInBalances: false})),
+        startWith(null),
+        shareReplay(1)
+      );
+
+      const finalBalances$ = combineLatest([requestedAddressBalances$, localUpdatedAddrBalance$]).pipe(
+        map(([requestedBalances, localUpdate]: [Token[], { token: Token, isIncludedInBalances: boolean }]) => {
+          if (!!localUpdate && !localUpdate.isIncludedInBalances && this.balancesForAddress(requestedBalances, localUpdate.token.address)) {
+            const requestedTokenBalance = this.findTokenBalances(
+              requestedBalances, TokenSymbol[localUpdate.token.contract_ticker_symbol])[0];
+            if (!!requestedTokenBalance && requestedTokenBalance.address === localUpdate.token.address) {
+              requestedTokenBalance.balance = localUpdate.token.balance;
+              localUpdate.isIncludedInBalances = true;
+            }
+          }
+          return requestedBalances;
+        }),
+        shareReplay(1)
+      );
+      this.balancesByAddr.set(address, finalBalances$);
     }
     return this.balancesByAddr.get(address);
   }
 
+  private balancesForAddress(requested: Token[], address: string): boolean {
+    return requested.length && requested[0].address === address;
+  }
+
+// TODO return only one value
   getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token[]> {
+    return this.getTokenBalances$(addr).pipe(
+      map((balances: Token[]) => {
+        const tokenBalances = this.findTokenBalances(balances, tokenSymbol);
+        return tokenBalances && tokenBalances.length ? tokenBalances : [{
+          balance: 0,
+          contract_ticker_symbol: tokenSymbol,
+          address: addr
+        } as Token];
+      }),
+      shareReplay(1)
+    );
+  }
+
+  private findTokenBalances(balances: Token[], tokenSymbol: TokenSymbol): Token[] {
+    return balances.filter(tkn => {
+      if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  setTokenBalance$(addr: string, tokenSymbol: TokenSymbol, balance: number): Observable<Token[]> {
     return this.getTokenBalances$(addr).pipe(
       map((balances: Token[]) => {
         const tokenBalances = balances.filter((b: Token) => {
@@ -223,18 +271,18 @@ export class ApiService {
     );
   }
 
-  getTransactions(address: string) {
+  getTransactions(address: string): any {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/transactions`);
   }
 
-  getReefPricing(from: string, to: string) {
+  getReefPricing(from: string, to: string): any {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
   }
 
-  private removeTokenPlaceholders(token: any) {
+  private removeTokenPlaceholders(token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
       token.contract_ticker_symbol = lpTokens[token.contract_address] || 'Uniswap LP Token';
-      token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png'
+      token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png';
     }
     return token;
   }
