@@ -4,7 +4,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import {getProviderName} from '../utils/provider-name';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {IChainData, IContract, IProviderUserInfo, ITransaction} from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
@@ -60,7 +60,10 @@ export class ConnectorService {
     },
   };
   public web3Modal = null;
-  public web3 = null;
+  private web3 = null;
+  // TODO remove web3 private property and also use web3$ locally
+  public web3$ = new ReplaySubject<any>();
+
   // public web3WS = null;
 
   constructor(private readonly notificationService: NotificationService) {
@@ -82,8 +85,9 @@ export class ConnectorService {
     this.providerLoading$.next(true);
     this.currentProvider$.next(await this.web3Modal.connect());
     this.providerLoading$.next(false);
-    console.log(this.currentProvider$.value, 'Current Provider.')
-    this.initWeb3(this.currentProvider$.value);
+    console.log(this.currentProvider$.value, 'Current Provider.');
+    this.web3 = this.initWeb3(this.currentProvider$.value);
+    this.web3$.next(this.web3);
     await this.getUserProviderInfo();
     await this.connectToContract();
     this.subToProviderEvents();
@@ -238,21 +242,25 @@ export class ConnectorService {
   }
 
   private initWeb3(provider: any): any {
-    this.web3 = new Web3(provider);
-    window.send = (e,t) => { return provider.send(e,t) }
+    const w3 = new Web3(provider);
+    window.send = (e, t) => {
+      return provider.send(e, t);
+    };
     // this.web3WS = new Web3('wss://mainnet.infura.io/ws/v3/eadc555e1ec7423f94e94d8a06a2f310');
     this.currentProvider$.next(provider);
-    this.web3.eth.extend({
+    w3.eth.extend({
       methods: [
         {
           name: 'chainId',
           call: 'eth_chainId',
-          outputFormatter: this.web3.utils.hexToNumber
+          // @ts-ignore
+          outputFormatter: w3.utils.hexToNumber
         }
       ]
     });
-    this.currentProviderName$.next(getProviderName(this.web3));
+    this.currentProviderName$.next(getProviderName(w3));
     this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
+    return w3;
   }
 
   private subToProviderEvents(): void {

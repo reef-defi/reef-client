@@ -17,20 +17,26 @@ import {getKey} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {first, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
+import {first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
 import {ApiService} from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniswapService {
+  public static SUPPORTED_BUY_REEF_TOKENS = [
+    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
+    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}
+  ];
+
   private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
 
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
-  readonly web3 = this.connectorService.web3;
+
   readonly pendingTx$ = this.connectorService.pendingTransaction$;
   slippagePercent$: Observable<Percent>;
+  readonly initPrices$: Observable<any>;
   private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
 
@@ -44,6 +50,7 @@ export class UniswapService {
       map(sVal => this.getSlippagePercent(+sVal)),
       shareReplay(1)
     );
+    this.initPrices$ = this.getInitPriceForSupportedBuyTokens$();
   }
 
   public static tokenMinAmountCalc(ppt_perOneToken: IReefPricePerToken, amount: number): IReefPricePerToken {
@@ -55,7 +62,8 @@ export class UniswapService {
   public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
     if (addresses[tokenSymbol]) {
       const weiAmount = this.connectorService.toWei(amount);
-      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const web3 = await this.getWeb3();
+      const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
       const pair = await Fetcher.fetchPairData(REEF, tokenB);
@@ -350,7 +358,8 @@ export class UniswapService {
 
   private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
-      const checkSummed = this.web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const web3 = await this.getWeb3();
+      const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
       const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
       // TODO to observable so previous request could be canceled
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed);
@@ -384,6 +393,10 @@ export class UniswapService {
     }
   }
 
+  private async getWeb3() {
+    return await this.connectorService.web3$.pipe(first()).toPromise();
+  }
+
   private getSlippageForAmount(amount: string | number, slippagePercent: Percent) {
     return new BigNumber(amount).multipliedBy(+slippagePercent.toFixed() / 100).toString();
   }
@@ -400,4 +413,15 @@ export class UniswapService {
   private getSlippagePercent(slippageValue: number) {
     return new Percent(`${(slippageValue * 10)}`, '1000');
   }
+
+  private getInitPriceForSupportedBuyTokens$(): Observable<any> {
+    const supportedTokenSymbols = UniswapService.SUPPORTED_BUY_REEF_TOKENS.map(st => st.tokenSymbol);
+    // price for each token symbol
+    const tokenPrices$ = combineLatest(
+      supportedTokenSymbols.map(ts => this.getReefPriceInInterval$(ts))
+    );
+    return tokenPrices$.pipe(take(1), shareReplay(1));
+  }
+
+
 }
