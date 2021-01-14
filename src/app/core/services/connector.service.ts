@@ -5,7 +5,7 @@ import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import {getProviderName} from '../utils/provider-name';
 import {BehaviorSubject} from 'rxjs';
-import {IChainData, IContract, IProviderUserInfo, ITransaction, PendingTransaction} from '../models/types';
+import {IChainData, IContract, IProviderUserInfo, ITransaction} from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {contractData} from '../../../assets/abi';
@@ -199,6 +199,7 @@ export class ConnectorService {
     this.pendingTransaction$.next(null);
   }
 
+  // TODO could we replace use of this method with apiService.getTokenBalance$(addr: string, tokenSymbol: TokenSymbol)...take(1)
   public async getReefBalance(address: string): Promise<string> {
     if (this.reefTokenContract$.value) {
       const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();

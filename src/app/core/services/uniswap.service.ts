@@ -2,22 +2,29 @@ import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {addresses, reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
-import {IContract, IReefPricePerToken, TokenSymbol, TokenSymbolDecimalPlaces} from '../models/types';
+import {
+  IContract,
+  IReefPricePerToken,
+  Token as Token_app,
+  TokenSymbol,
+  TokenSymbolDecimalPlaces
+} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
 import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
 import {getKey} from '../utils/pools-utils';
 import {Router} from '@angular/router';
-import {MatDialog} from "@angular/material/dialog";
-import {TransactionConfirmationComponent} from "../../shared/components/transaction-confirmation/transaction-confirmation.component";
+import {MatDialog} from '@angular/material/dialog';
+import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
 import {first, map, shareReplay, startWith, switchMap} from 'rxjs/operators';
+import {ApiService} from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UniswapService {
-  private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; //2 min
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
 
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
@@ -30,15 +37,16 @@ export class UniswapService {
   constructor(private readonly connectorService: ConnectorService,
               private readonly notificationService: NotificationService,
               private readonly router: Router,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private apiService: ApiService) {
     this.slippagePercent$ = this.slippageValue$.pipe(
       startWith(this.getSlippageIfSet()),
       map(sVal => this.getSlippagePercent(+sVal)),
       shareReplay(1)
-    )
+    );
   }
 
-  public static tokenMinAmountCalc(ppt_perOneToken: IReefPricePerToken, amount: number) {
+  public static tokenMinAmountCalc(ppt_perOneToken: IReefPricePerToken, amount: number): IReefPricePerToken {
     const ppt = Object.assign({}, ppt_perOneToken);
     ppt.amountOutMin = !!ppt_perOneToken.amountOutMin ? ppt_perOneToken.amountOutMin * amount : 0;
     return ppt;
@@ -61,7 +69,7 @@ export class UniswapService {
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       try {
-        let firstConfirm = true;
+        const firstConfirm = true;
         if (tokenSymbol === 'WETH' || tokenSymbol === 'ETH') {
           this.routerContract$.value.methods.swapExactETHForTokens(
             amountOutMin, path, to, deadline
@@ -72,7 +80,7 @@ export class UniswapService {
           })
             .on('transactionHash', (hash) => {
               dialogRef.close();
-              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
               this.connectorService.setPendingTxs(hash);
             })
             .on('receipt', async (receipt) => {
@@ -82,12 +90,16 @@ export class UniswapService {
               this.connectorService.providerUserInfo$.next({
                 ...this.connectorService.providerUserInfo$.value,
                 reefBalance,
-              })
+              });
+              this.apiService.updateTokenBalanceForAddress.next({
+                address: to, balance: parseFloat(reefBalance),
+                contract_ticker_symbol: TokenSymbol.REEF
+              } as Token_app);
             })
             .on('error', (err) => {
               dialogRef.close();
               this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-            })
+            });
         } else {
           this.routerContract$.value.methods.swapExactTokensForTokens(
             +amount, amountOutMin, path, to, deadline
@@ -192,6 +204,7 @@ export class UniswapService {
         .on('receipt', (receipt) => {
           this.connectorService.deletePending();
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
+          this.apiService.refreshBalancesForAddress.next(to);
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -232,6 +245,7 @@ export class UniswapService {
         .on('receipt', (receipt) => {
           this.connectorService.deletePending();
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
+          this.apiService.refreshBalancesForAddress.next(to);
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -250,8 +264,9 @@ export class UniswapService {
       try {
         const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         const poolSymbol = getKey(addresses, poolAddress);
+        const fromAddress = this.connectorService.providerUserInfo$.value.address;
         this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
-          from: this.connectorService.providerUserInfo$.value.address,
+          from: fromAddress,
         })
           .on('transactionHash', (hash) => {
             dialogRef.close();
@@ -261,6 +276,7 @@ export class UniswapService {
           .on('receipt', (receipt) => {
             this.connectorService.deletePending();
             this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
+            this.apiService.refreshBalancesForAddress.next(fromAddress);
           })
           .on('error', (err) => {
             dialogRef.close();
@@ -277,8 +293,9 @@ export class UniswapService {
       const amount = new BigNumber(tokenAmount).toNumber();
       const poolSymbol = getKey(addresses, poolAddress);
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+      const fromAddress = this.connectorService.providerUserInfo$.value.address;
       this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
-        from: this.connectorService.providerUserInfo$.value.address,
+        from: fromAddress,
         gasPrice: this.connectorService.getGasPrice()
       })
         .on('transactionHash', (hash) => {
@@ -289,6 +306,7 @@ export class UniswapService {
         .on('receipt', (receipt) => {
           this.connectorService.deletePending();
           this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
+          this.apiService.refreshBalancesForAddress.next(fromAddress);
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -353,7 +371,7 @@ export class UniswapService {
           totalReefReserve: totalReef,
           amountRequested: amount,
           amountOutMin: +amountOutMin,
-          tokenSymbol: tokenSymbol
+          tokenSymbol
         };
         return price;
       }
@@ -361,7 +379,7 @@ export class UniswapService {
         REEF_PER_TOKEN: route.midPrice.toSignificant(),
         TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
         totalReefReserve: totalReef,
-        tokenSymbol: tokenSymbol
+        tokenSymbol
       };
     }
   }
