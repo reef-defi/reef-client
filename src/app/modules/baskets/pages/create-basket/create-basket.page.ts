@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { IBasketHistoricRoi, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, PoolsChartOptions } from '../../../../core/models/types';
-import { first, startWith, switchMap } from 'rxjs/operators';
-import { PoolService } from '../../../../core/services/pool.service';
-import { FormControl } from '@angular/forms';
-import { tap } from 'rxjs/internal/operators/tap';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { combineLatest } from 'rxjs';
-import { basketNameGenerator, convertToInt, getBasketPoolsAndCoins } from '../../../../core/utils/pools-utils';
-import { ContractService } from '../../../../core/services/contract.service';
-import { ConnectorService } from '../../../../core/services/connector.service';
+import {Component, OnInit} from '@angular/core';
+import {ApiService} from '../../../../core/services/api.service';
+import {
+  IBasketHistoricRoi,
+  IBasketPoolsAndCoinInfo,
+  IGenerateBasketResponse,
+  PoolsChartOptions
+} from '../../../../core/models/types';
+import {first, startWith, switchMap, take} from 'rxjs/operators';
+import {PoolService} from '../../../../core/services/pool.service';
+import {FormControl} from '@angular/forms';
+import {tap} from 'rxjs/internal/operators/tap';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {combineLatest} from 'rxjs';
+import {basketNameGenerator, convertToInt, getBasketPoolsAndCoins} from '../../../../core/utils/pools-utils';
+import {ContractService} from '../../../../core/services/contract.service';
+import {ConnectorService} from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-my-baskets',
@@ -90,7 +95,7 @@ export class CreateBasketPage implements OnInit {
   }
 
   getEthPrice(): void {
-    this.poolService.getEthPrice().subscribe(console.log);
+    this.poolService.ethPrice$.pipe(take(1)).subscribe(console.log);
   }
 
   getMinimalInvestment(): Promise<string> {

@@ -2,13 +2,19 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {balancerPoolQuery, uniswapPoolQuery} from '../models/pool-queries';
-import {combineLatest, interval, Observable, timer} from 'rxjs';
-import {shareReplay, switchMap, tap} from 'rxjs/operators';
+import {combineLatest, Observable, timer} from 'rxjs';
+import {shareReplay, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PoolService {
+  private static ETH_PRICE_REFRESH_INTERVAL = 60000;
+
+  ethPrice$: Observable<any> = timer(0, PoolService.ETH_PRICE_REFRESH_INTERVAL).pipe(
+    switchMap(() => this.http.get(environment.ethPriceUrl)),
+    shareReplay(1)
+  );
 
   constructor(private readonly http: HttpClient) {
   }
@@ -27,14 +33,4 @@ export class PoolService {
     return this.http.post(environment.balancerPoolUrl, {query});
   }
 
-  getEthPrice(refreshInterval?: number): Observable<any> {
-    let price$ = this.http.get(environment.ethPriceUrl);
-    if (refreshInterval) {
-      price$ = timer(0, refreshInterval).pipe(
-        switchMap(() => this.http.get(environment.ethPriceUrl)),
-        shareReplay(1)
-      )
-    }
-    return price$;
-  }
 }

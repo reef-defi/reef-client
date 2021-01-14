@@ -3,11 +3,9 @@ import {ContractService} from '../../../../core/services/contract.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {PoolService} from '../../../../core/services/pool.service';
-import {IReefPricePerToken, TokenSymbol} from '../../../../core/models/types';
 import {ChartsService} from "../../../../core/services/charts.service";
 import {ApiService} from "../../../../core/services/api.service";
 import {format, subMonths} from 'date-fns';
-import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-reef',
@@ -17,7 +15,7 @@ import {first} from 'rxjs/operators';
 export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
-  supportedTokens = [{tokenSymbol: TokenSymbol.ETH, src: 'eth.png'}, {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}];
+  supportedTokens = UniswapService.SUPPORTED_BUY_REEF_TOKENS;
 
   buyLoading = false;
   reefPriceChartData = null;

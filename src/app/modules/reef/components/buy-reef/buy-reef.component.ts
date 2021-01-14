@@ -41,7 +41,7 @@ export class BuyReefComponent {
     public uniswapService: UniswapService
   ) {
 
-    this.ethPrice$ = this.poolService.getEthPrice(BuyReefComponent.ETH_PRICE_INTERVAL).pipe(
+    this.ethPrice$ = this.poolService.ethPrice$.pipe(
       map(data => data.ethereum.usd),
     );
 

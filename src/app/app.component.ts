@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ConnectorService } from './core/services/connector.service';
-import { PoolService } from './core/services/pool.service';
-import { ApiService } from './core/services/api.service';
-import { ContractService } from './core/services/contract.service';
-import { Router } from '@angular/router';
-import { take } from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
+import {ConnectorService} from './core/services/connector.service';
+import {PoolService} from './core/services/pool.service';
+import {ApiService} from './core/services/api.service';
+import {ContractService} from './core/services/contract.service';
+import {Router} from '@angular/router';
+import {filter, take} from 'rxjs/operators';
+import {UniswapService} from './core/services/uniswap.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {combineLatest, Observable} from 'rxjs';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Component({
   selector: 'app-root',
@@ -16,15 +20,15 @@ export class AppComponent implements OnInit {
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly providerLoading$ = this.connectorService.providerLoading$;
-  ethPrice$ = this.poolService.getEthPrice();
   public canEnter = false;
 
   constructor(
+    public readonly poolService: PoolService,
     private readonly connectorService: ConnectorService,
-    private readonly poolService: PoolService,
     private readonly apiService: ApiService,
     private readonly contractService: ContractService,
-    private readonly router: Router) {
+    private readonly router: Router,
+    private readonly uniswapService: UniswapService) {
     if (localStorage.getItem('demo_pw') === 'open sesame') {
       this.canEnter = true;
     } else {
@@ -37,18 +41,39 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.apiService.getGasPrices().pipe(
+
+    this.prefetchData();
+  }
+
+  private prefetchData(): void {
+    const initGas$ = this.apiService.getGasPrices().pipe(
       take(1)
-    ).subscribe(data => {
-      this.apiService.gasPrices$.next(data);
-      const gasPrice = localStorage.getItem('reef_gas_price');
-      if (gasPrice) {
-        const gp = JSON.parse(gasPrice);
-        this.connectorService.setSelectedGas(gp.type, gp.price);
-      } else {
-        this.connectorService.setSelectedGas('standard', data.standard);
-      }
-    });
+    ).pipe(tap(data => {
+        this.apiService.gasPrices$.next(data);
+        const gasPrice = localStorage.getItem('reef_gas_price');
+        if (gasPrice) {
+          const gp = JSON.parse(gasPrice);
+          this.connectorService.setSelectedGas(gp.type, gp.price);
+        } else {
+          this.connectorService.setSelectedGas('standard', data.standard);
+        }
+      })
+    );
+    combineLatest([
+      this.initAddressBalances$(),
+      this.uniswapService.initPrices$,
+      this.poolService.ethPrice$,
+      initGas$
+    ]).pipe(
+      take(1)
+    ).subscribe();
+  }
+
+  private initAddressBalances$(): Observable<any> {
+    return this.connectorService.providerUserInfo$.pipe(
+      filter(v => !!v),
+      switchMap(uInfo => this.apiService.getTokenBalances$(uInfo.address))
+    );
   }
 
   async onSignOut(): Promise<void> {
