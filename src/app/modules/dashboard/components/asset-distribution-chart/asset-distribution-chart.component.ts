@@ -11,6 +11,7 @@ export class AssetDistributionChartComponent {
   public options: Highcharts.Options | any = {};
   public updateFlag: boolean;
   @Input() set chartData(val: number[][]) {
+    console.log(val, 'hmm')
     if (val) {
       this.options = val;
       this.updateFlag = true;
