@@ -1,6 +1,6 @@
 <ng-container
   *ngIf="{
-  ethPrice: ethPrice$ | async,
+  ethPrice: poolService.ethPrice$ | async,
   providerName: providerName$ | async,
   providerUserInfo: providerUserInfo$ | async,
   providerLoading: providerLoading$ | async

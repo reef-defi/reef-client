@@ -32,8 +32,8 @@
             Allocations
           </div>
           <ng-container *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate">
-            <app-asset-distribution-chart
-              [chartData]="pieChartData">
+            <app-asset-distribution-chart *ngIf="uniswapService.initPrices$|async"
+                                          [chartData]="pieChartData">
             </app-asset-distribution-chart>
           </ng-container>
         </div>

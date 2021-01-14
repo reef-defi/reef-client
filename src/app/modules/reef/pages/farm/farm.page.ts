@@ -22,7 +22,6 @@ export class FarmPage implements OnInit {
   public loading = false;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
-  readonly web3 = this.connectorSerivce.web3;
   readonly loading$ = new BehaviorSubject(false);
   readonly lpContract$ = new BehaviorSubject<IContract | null>(null);
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
@@ -123,7 +122,8 @@ export class FarmPage implements OnInit {
   public async calcApy(pId: number): Promise<number> {
     const {lpToken} = await this.farmingContract$.value.methods.poolInfo(pId).call();
     console.log(lpToken, 'hmm');
-    const tokenContract = new this.web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
+    const web3 = await this.connectorSerivce.web3$.pipe(first()).toPromise();
+    const tokenContract = new web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
     const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
     console.log(totalStaked);
     if (totalStaked === 0) {
