@@ -19,6 +19,7 @@
     </div>
     <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
       <app-reef-historic-price
+        class="height-100 card"
         [chartData]="reefPriceChartData"
         (dateSpanChange)="onDateChange($event)"
       ></app-reef-historic-price>
