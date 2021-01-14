@@ -19,7 +19,7 @@
             <h3 class="text-center text-monospace text-muted">
 
               <ng-container *ngIf="tokenBalance$|async as tokenBalance; else calc">
-                  ${{tokenBalance?.totalBalance| number:'1.0-0'}}
+                ${{tokenBalance?.totalBalance| number:'1.0-0'}}
               </ng-container>
               <ng-template #calc>
                 Calculating..
@@ -31,7 +31,7 @@
           <div class="small font-weight-bold text-monospace text-muted mb-3">
             Allocations
           </div>
-          <ng-container *ngIf="pieChartData$|async as pieChartData">
+          <ng-container *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate">
             <app-asset-distribution-chart
               [chartData]="pieChartData">
             </app-asset-distribution-chart>
@@ -45,52 +45,52 @@
               <div class="card-body">
                 <ng-container *ngIf="tokenBalance$ | async as tokenBalance; else loadingTemplate">
                   <ng-container *ngIf="tokenBalance; else loadingTemplate">
-
-
                     <div *ngFor="let category of ['token', 'defi']" class="mb-4">
                       <div class="h6" *ngIf="category == 'token'">Tokens</div>
                       <div class="h6" *ngIf="category == 'defi'">DeFi</div>
                       <mat-divider class="mb-2"></mat-divider>
                       <div class="row mb-2">
-                        <div class="col col-xl-4 d-flex align-items-center">Asset</div>
-                        <div class="col">Amount</div>
-                        <div class="col">Price</div>
-                        <div class="col">Total</div>
+                        <div class="col col-xl-4 d-flex align-items-center small text-monospace">Asset</div>
+                        <div class="col small text-monospace">Amount</div>
+                        <div class="col small text-monospace">Price</div>
+                        <div class="col small text-monospace">Total</div>
                       </div>
-                      <div
-                        *ngFor="let token of tokenBalance.tokens | categorize: category; let i = index;"
-                        class="row d-flex align-items-center justify-content-between mb-2">
-                        <div class="col col-xl-4 d-flex align-items-center text-monospace">
-                          <div class="d-flex align-items-center">
-                            <img id="img-{{i}}"
-                                 alt="{{ token.contract_ticker_symbol }}"
-                                 (error)="setDefaultImage(i)"
-                                 class="img-fluid mr-1"
-                                 [src]="token.logo_url" height="20" width="20">
+                      <ng-container *ngIf="tokenBalance.tokens && tokenBalance.tokens.length; else emptyTokensTemplate">
+                        <div
+                          *ngFor="let token of tokenBalance.tokens | categorize: category; let i = index;"
+                          class="row d-flex align-items-center justify-content-between mb-2">
+                          <div class="col col-xl-4 d-flex align-items-center text-monospace">
+                            <div class="d-flex align-items-center">
+                              <img id="img-{{i}}"
+                                   alt="{{ token.contract_ticker_symbol }}"
+                                   (error)="setDefaultImage(i)"
+                                   class="img-fluid mr-1"
+                                   [src]="token.logo_url" height="20" width="20">
+                            </div>
+                            <a
+                              href="https://etherscan.io/token/{{ token.contract_address }}"
+                              target="_blank"
+                              class="small font-weight-bolder">
+                              {{ token.contract_ticker_symbol }}
+                            </a>
                           </div>
-                          <a
-                            href="https://etherscan.io/token/{{ token.contract_address }}"
-                            target="_blank"
-                            class="small font-weight-bolder">
-                            {{ token.contract_ticker_symbol }}
-                          </a>
-                        </div>
-                        <div class="col">
-                          <div class="text-monospace small" [title]="token.balance||0">
-                            {{ (token.balance || 0) | decimal: token.quote_rate }}
+                          <div class="col">
+                            <div class="text-monospace small" [title]="token.balance||0">
+                              {{ (token.balance || 0) | decimal: token.quote_rate }}
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="text-monospace small" [title]="token.balance||0">
+                              ${{ token.quote_rate | decimal: token.quote_rate }}
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
+                              ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
+                            </div>
                           </div>
                         </div>
-                        <div class="col">
-                          <div class="text-monospace small" [title]="token.balance||0">
-                            ${{ token.quote_rate | decimal: token.quote_rate }}
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
-                            ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
-                          </div>
-                        </div>
-                      </div>
+                      </ng-container>
                     </div>
                   </ng-container>
                 </ng-container>
@@ -98,7 +98,10 @@
             </div>
             <div class="row">
               <div class="col">
-                <button (click)="showTransactions = !showTransactions" class="btn btn-primary btn-sm mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}} Transactions</button>
+                <button (click)="showTransactions = !showTransactions"
+                        class="btn btn-primary btn-sm mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}}
+                  Transactions
+                </button>
               </div>
               <div class="col-12">
                 <div class="card mb-3" [hidden]="!showTransactions">
@@ -169,6 +172,11 @@
               <ng-template #emptyTransactions>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2">You have not made any transactions in the recent past.</span>
+                </div>
+              </ng-template>
+              <ng-template #emptyTokensTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2">No tokens to display.</span>
                 </div>
               </ng-template>
             </div>

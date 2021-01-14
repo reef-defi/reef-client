@@ -1,4 +1,4 @@
-<div *ngIf="options && options.chart; else loadingTemplate">
+<div *ngIf="options && options.chart">
   <highcharts-chart
     [Highcharts]="HighCharts"
     [options]="options"
@@ -6,7 +6,3 @@
     style="width: 100%; height: 300px; display: block;"
   ></highcharts-chart>
 </div>
-
-<ng-template #loadingTemplate>
-  <app-skeleton-loading type="circle"></app-skeleton-loading>
-</ng-template>
