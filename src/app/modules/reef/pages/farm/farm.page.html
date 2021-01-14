@@ -24,7 +24,7 @@
                     <img
                       *ngIf="token !== 'TOKEN'"
                       class="img-size-top-60"
-                      src="../../../../../assets/images/{{ token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
+                      src="../../../../../assets/images/{{ token === 'ETH' || token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
                       alt="alt-token">
                     <img
                       class="img-size-top-60"

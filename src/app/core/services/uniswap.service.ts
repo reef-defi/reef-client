@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChainId, Fetcher, Pair, Percent, Price, Route, Token, TokenAmount, Trade, TradeType, WETH} from '@uniswap/sdk';
+import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {addresses, reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {IContract, IReefPricePerToken, TokenSymbol, TokenSymbolDecimalPlaces} from '../models/types';
@@ -126,7 +126,7 @@ export class UniswapService {
       .approveToken(token, this.routerContract$.value.options.address);
   }
 
-  public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
+  /*public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
     const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
     const tokenB = new Token(ChainId.MAINNET, addresses[tokenSymbol], 18);
     const pair = await Fetcher.fetchPairData(REEF, tokenB);
@@ -144,7 +144,7 @@ export class UniswapService {
     const price = new Price(tokenB, REEF, '100000000', '12300000000000');
     console.log(price.toSignificant(3), 'price');
     return pair;
-  }
+  }*/
 
   public getReefPriceInInterval$(tokenSymbol: TokenSymbol): Observable<IReefPricePerToken> {
     if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
@@ -159,11 +159,11 @@ export class UniswapService {
     return this.reefPricesLive.get(tokenSymbol);
   }
 
-  public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
+  /*public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
     return this.getReefPriceInInterval$(tokenSymbol).pipe(
       map((ppt_perOneToken: IReefPricePerToken) => UniswapService.tokenMinAmountCalc(ppt_perOneToken, amount))
     );
-  }
+  }*/
 
   public async addLiquidity(
     tokenA: string,
