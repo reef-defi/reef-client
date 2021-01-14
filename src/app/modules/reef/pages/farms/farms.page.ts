@@ -27,14 +27,14 @@ export class FarmsPage implements OnInit {
       ]
     },
     {
-      name: 'WETH & REEF',
+      name: 'ETH & REEF',
       description: `
       Stake your LP Tokens into
-      <strong class="font-weight-bold">WETH-REEF</strong>
+      <strong class="font-weight-bold">ETH-REEF</strong>
       pool to earn
       <strong class="font-weight-bold">REEF tokens</strong>`,
       link: this.REEF_WETH_POOL,
-      btnLabel: 'Stake into WETH/REEF',
+      btnLabel: 'Stake into ETH/REEF',
       imgs: [
         'eth.png',
         'reef/reef-token.svg'

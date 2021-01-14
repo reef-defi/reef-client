@@ -9,7 +9,7 @@ import {IContract, IProviderUserInfo} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {contractData} from '../../../../../assets/abi';
-import {combineLatest} from "rxjs/internal/observable/combineLatest";
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 
 @Component({
   selector: 'app-farm-page',
@@ -35,8 +35,11 @@ export class FarmPage implements OnInit {
     tap(() => this.loading$.next(true)),
     filter(this.uniswapService.isSupportedERC20),
     tap((address: string) => {
-      console.log(address, 'this is from obs')
-      this.tokenSymbol$.next(getKey(addresses, address).split('_')[1]);
+      let contractTokenSymbol = getKey(addresses, address).split('_')[1];
+      if (contractTokenSymbol === 'WETH') {
+        contractTokenSymbol = 'ETH';
+      }
+      this.tokenSymbol$.next(contractTokenSymbol);
       const validAddrs = Object.values(addresses);
       if (validAddrs.includes(address)) {
         const contract = this.createContract(address);
@@ -66,7 +69,7 @@ export class FarmPage implements OnInit {
     try {
       await this.uniswapService.deposit(contract, poolAddress, amount);
       await this.getBalances(this.lpContract$.value);
-      this.loading = false
+      this.loading = false;
     } catch (e) {
       this.loading = false;
     }
@@ -110,7 +113,7 @@ export class FarmPage implements OnInit {
     this.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).subscribe(async (info: IProviderUserInfo) => {
-      console.log(lpContract.options.address, 'this is from getBalances')
+      console.log(lpContract.options.address, 'this is from getBalances');
       await this.getBalance(lpContract, info.address);
       await this.getReefRewards(lpContract.options.address);
       await this.getStaked(lpContract.options.address);
@@ -123,7 +126,7 @@ export class FarmPage implements OnInit {
     const tokenContract = new this.web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
     const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
     console.log(totalStaked);
-    if (totalStaked == 0) {
+    if (totalStaked === 0) {
       return this.apy = 0;
     }
     const reward = this.connectorSerivce.fromWei(await this.farmingContract$.value.methods.reefPerBlock().call());
@@ -133,7 +136,7 @@ export class FarmPage implements OnInit {
     return this.apy = 1 + Number(reward) * 2409000 / totalStaked;
   }
 
-  public async refreshBalance(contract: IContract, address: string) {
+  public async refreshBalance(contract: IContract, address: string): Promise<any> {
     try {
       return await this.getBalance(contract, address);
     } catch (e) {
@@ -141,7 +144,7 @@ export class FarmPage implements OnInit {
     }
   }
 
-  getSubtitleTokenPart(token: string) {
-    return (token!=='TOKEN')?(token+'-REEF'):'REEF'
+  getSubtitleTokenPart(token: string): string {
+    return (token !== 'TOKEN') ? (token + '-REEF') : 'REEF';
   }
 }

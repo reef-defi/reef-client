@@ -1,24 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { UniswapService } from '../../../../core/services/uniswap.service';
+import {Component} from '@angular/core';
+import {UniswapService} from '../../../../core/services/uniswap.service';
 
 @Component({
   selector: 'app-stake-reef-page',
   templateUrl: './pools.page.html',
   styleUrls: ['./pools.page.scss']
 })
-export class PoolsPage  {
+export class PoolsPage {
 
   constructor(private readonly uniswapService: UniswapService) {
   }
   pools = [
     {
-      name: 'WETH & REEF',
+      name: 'ETH & REEF',
       description: `
-      Provide WETH and REEF into this pool to get
-      <strong class="font-weight-bold">WETH-REEF</strong>
+      Provide ETH and REEF into this pool to get
+      <strong class="font-weight-bold">ETH-REEF</strong>
       LP Tokens`,
-      link: 'WETH',
-      btnLabel: 'Provide Liquidity into WETH/REEF',
+      link: 'ETH',
+      btnLabel: 'Provide Liquidity into ETH/REEF',
       imgs: [
         'eth.png',
         'reef/reef-token.svg'
