@@ -14,14 +14,17 @@ export class DecimalNumberPipe implements PipeTransform {
     if (amount * price < 1) {
       return formatNumber(amount, this.locale, `1.0-5`);
     }
+    if (price < 1) {
+      return formatNumber(amount, this.locale, `1.0`);
+    }
     if (price < 10) {
-      return formatNumber(amount, this.locale, `1.0-1`);
+      return formatNumber(amount, this.locale, `1.0-2`);
     }
     if (price > 100 && price < 1000) {
       return formatNumber(amount, this.locale, `1.0-2`);
     }
     if (price > 1000 && price < 2000) {
-      return formatNumber(amount, this.locale, `1.0-0`);
+      return formatNumber(amount, this.locale, `1.0-3`);
     }
     return formatNumber(amount, this.locale, `1.0-5`);
   }

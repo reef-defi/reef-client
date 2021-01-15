@@ -6,10 +6,11 @@ import {DashboardPage} from './pages/dashboard/dashboard.page';
 import {SharedModule} from '../../shared/shared.module';
 import {SettingsPage} from './pages/settings/settings.page';
 import {AssetDistributionChartComponent} from './components/asset-distribution-chart/asset-distribution-chart.component';
+import { HoldingsTableComponent } from './components/holdings-table/holdings-table.component';
 
 
 @NgModule({
-  declarations: [DashboardPage, SettingsPage, AssetDistributionChartComponent],
+  declarations: [DashboardPage, SettingsPage, AssetDistributionChartComponent, HoldingsTableComponent],
   imports: [
     CommonModule,
     DashboardRoutingModule,

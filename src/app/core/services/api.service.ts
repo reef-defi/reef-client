@@ -278,6 +278,9 @@ export class ApiService {
   getReefPricing(from: string, to: string): any {
     return this.http.get<any>(`${this.reefNodeApi}/covalent/reef-pricing?from=${from}&to=${to}`);
   }
+  getPortfolio(address: string) {
+    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
+  }
 
   private removeTokenPlaceholders(token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {

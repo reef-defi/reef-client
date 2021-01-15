@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {PoolService} from '../../../../core/services/pool.service';
-import {filter, map, shareReplay} from 'rxjs/operators';
-import {Token, TokenBalance} from '../../../../core/models/types';
+import {filter, map, shareReplay, tap} from 'rxjs/operators';
+import {IBasketHistoricRoi, Token, TokenBalance} from '../../../../core/models/types';
 import {Observable} from 'rxjs';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {ApiService} from '../../../../core/services/api.service';
@@ -21,12 +21,15 @@ export class DashboardPage {
   public pieChartData;
   public pieChartData$: Observable<any>;
   showTransactions: any;
+  getPortfolio$: Observable<unknown>;
+  public roiData: number[][];
 
   constructor(private readonly connectorService: ConnectorService,
               private readonly poolService: PoolService,
               private readonly uniswapService: UniswapService,
               private readonly chartsService: ChartsService,
-              public readonly apiService: ApiService) {
+              public readonly apiService: ApiService,
+              private readonly charts: ChartsService) {
 
     const address$ = this.connectorService.providerUserInfo$.pipe(
       filter(v => !!v),
@@ -36,6 +39,13 @@ export class DashboardPage {
     this.transactions$ = address$.pipe(
       switchMap((address) => this.apiService.getTransactions(address)),
       shareReplay(1)
+    );
+    this.getPortfolio$ = address$.pipe(
+      switchMap((address) => this.apiService.getPortfolio(address)),
+      shareReplay(1),
+      tap((data) => {
+        this.getHistoricData(data.tokens);
+      })
     );
     this.tokenBalance$ = address$.pipe(
       switchMap(address => this.getTokenBalances(address)),
@@ -92,5 +102,19 @@ export class DashboardPage {
         } as TokenBalance
       ))
     );
+  }
+  getHistoricData(assets) {
+    let payload = {};
+    assets.forEach(asset => {
+      if (asset.contract_ticker_symbol !== 'DFIO' && asset.contract_ticker_symbol !== 'REEF')
+      payload[asset.contract_ticker_symbol] = 100 / assets.length;
+    });
+    console.log(payload);
+    return this.apiService.getHistoricRoi(payload, 1).subscribe((historicRoi: IBasketHistoricRoi) => {
+      this.roiData = this.charts.composeHighChart(this.extractRoi(historicRoi));
+    });
+  }
+  private extractRoi(obj: IBasketHistoricRoi): number[][] {
+    return Object.keys(obj).map((key) => [new Date(key).getTime(), +obj[key].weighted_roi.toFixed(2)]);
   }
 }
