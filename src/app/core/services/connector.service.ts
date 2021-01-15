@@ -5,7 +5,14 @@ import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import {getProviderName} from '../utils/provider-name';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
-import {IChainData, IContract, IProviderUserInfo, ITransaction} from '../models/types';
+import {
+  IChainData,
+  IContract,
+  IPendingTransactions,
+  IProviderUserInfo,
+  ITransaction,
+  PendingTransaction
+} from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {contractData} from '../../../assets/abi';
@@ -19,6 +26,7 @@ const Web3Modal = window.Web3Modal.default;
   providedIn: 'root'
 })
 export class ConnectorService {
+  static readonly PENDING_TX_KEY = 'pending_txs'
   basketContract$ = new BehaviorSubject<IContract>(null);
   stakingContract$ = new BehaviorSubject<IContract>(null);
   farmingContract$ = new BehaviorSubject<IContract>(null);
@@ -30,7 +38,9 @@ export class ConnectorService {
   providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   selectedGasPrice$ = new BehaviorSubject(null);
-  pendingTransaction$ = new BehaviorSubject(null);
+
+  pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({count: 0, transactions: []});
+
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
@@ -193,14 +203,39 @@ export class ConnectorService {
     return gwei;
   }
 
-  public setPendingTxs(hash: string) {
-    this.pendingTransaction$.next({
-      hash,
+  public addPendingTx(hash: string): void {
+    let count = (this.pendingTransactions$.value.count || 0) + 1;
+    const transactions = this.pendingTransactions$.value.transactions || [];
+    const pendingTransactions: IPendingTransactions = {
+      count,
+      transactions: [...transactions, {hash}],
+    }
+    this.pendingTransactions$.next(pendingTransactions)
+    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(pendingTransactions))
+  }
+
+  public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
+    for (const [i, tx] of txs.transactions.entries()) {
+      const {blockHash, blockNumber} = await this.web3.eth.getTransaction(tx.hash);
+      console.log(tx, blockHash, blockNumber)
+      if (blockHash && blockNumber) {
+        txs.transactions.splice(i, 1);
+        txs.count--;
+      }
+    }
+    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs))
+    this.pendingTransactions$.next({
+      count: txs.count,
+      transactions: txs.transactions
     });
   }
 
-  public deletePending() {
-    this.pendingTransaction$.next(null);
+  public removePendingTx(hash: string) {
+    let {transactions, count} = this.pendingTransactions$.value;
+    this.pendingTransactions$.next({
+      count: count--,
+      transactions: transactions.filter((tx: PendingTransaction) => tx.hash === hash)
+    });
   }
 
   // TODO could we replace use of this method with apiService.getTokenBalance$(addr: string, tokenSymbol: TokenSymbol)...take(1)
@@ -323,9 +358,10 @@ export class ConnectorService {
       gasPrice: this.getGasPrice()
     }).on('transactionHash', (hash) => {
       this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-      this.setPendingTxs(hash);
+      this.addPendingTx(hash);
     })
       .on('receipt', (receipt) => {
+        this.removePendingTx(receipt.transactionHash);
         this.notificationService.showNotification(`Token approved`, 'Okay', 'success');
       })
       .on('error', (err) => {
