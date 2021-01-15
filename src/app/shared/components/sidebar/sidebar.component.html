@@ -51,15 +51,15 @@
   </div>
   <div class="mb-2 d-flex flex-column align-items-center justify-content-center"
        *ngIf="pendingTxs$ | async as pendingTxs">
-    <div *ngIf="pendingTxs.count > 0" class="small text-monospace text-center text-break mb-2 px-2">
-      <ng-container *ngIf="pendingTxs.count === 1; else multiplePending">
+    <div *ngIf="pendingTxs.transactions.length > 0" class="small text-monospace text-center text-break mb-2 px-2">
+      <ng-container *ngIf="pendingTxs.transactions.length === 1; else multiplePending">
         You have one transaction pending. Check it out on
         <a
           target="_blank"
           href="https://etherscan.io/tx/{{ pendingTxs.transactions[0]?.hash }}" class="font-weight-bold">Etherscan</a>
       </ng-container>
       <ng-template #multiplePending>
-        You have <strong>{{ pendingTxs.count | number }}</strong> transactions pending.
+        You have <strong>{{ pendingTxs.transactions.length }}</strong> transactions pending.
         <a href="" (click)="$event.preventDefault(); openPendingTx(pendingTxs.transactions)">Click here to view them</a>
       </ng-template>
       <div class="mt-2">

@@ -39,7 +39,7 @@ export class ConnectorService {
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   selectedGasPrice$ = new BehaviorSubject(null);
 
-  pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({count: 0, transactions: []});
+  pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({transactions: []});
 
   walletLink = new WalletLink({
     appName: 'reef.finance',
@@ -204,10 +204,8 @@ export class ConnectorService {
   }
 
   public addPendingTx(hash: string): void {
-    let count = (this.pendingTransactions$.value.count || 0) + 1;
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
-      count,
       transactions: [...transactions, {hash}],
     }
     this.pendingTransactions$.next(pendingTransactions)
@@ -217,23 +215,19 @@ export class ConnectorService {
   public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
     for (const [i, tx] of txs.transactions.entries()) {
       const {blockHash, blockNumber} = await this.web3.eth.getTransaction(tx.hash);
-      console.log(tx, blockHash, blockNumber)
       if (blockHash && blockNumber) {
         txs.transactions.splice(i, 1);
-        txs.count--;
       }
     }
     localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs))
     this.pendingTransactions$.next({
-      count: txs.count,
       transactions: txs.transactions
     });
   }
 
   public removePendingTx(hash: string) {
-    let {transactions, count} = this.pendingTransactions$.value;
+    let {transactions} = this.pendingTransactions$.value;
     this.pendingTransactions$.next({
-      count: count--,
       transactions: transactions.filter((tx: PendingTransaction) => tx.hash === hash)
     });
   }

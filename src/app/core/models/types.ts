@@ -320,5 +320,4 @@ export const TokenSymbolDecimalPlaces = {
 
 export interface IPendingTransactions {
   transactions: PendingTransaction[];
-  count: number;
 }
