@@ -15,7 +15,6 @@ import {
 
 export interface PendingTransaction {
   hash: string;
-  pendingTxs: number;
 }
 
 export interface QuoteResponse {
@@ -318,3 +317,7 @@ export const TokenSymbolDecimalPlaces = {
   [TokenSymbol.ETH]: 18,
   [TokenSymbol.USDT]: 6,
 };
+
+export interface IPendingTransactions {
+  transactions: PendingTransaction[];
+}

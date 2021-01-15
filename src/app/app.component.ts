@@ -9,6 +9,7 @@ import {UniswapService} from './core/services/uniswap.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {combineLatest, Observable} from 'rxjs';
 import {tap} from 'rxjs/internal/operators/tap';
+import {IPendingTransactions} from "./core/models/types";
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import {tap} from 'rxjs/internal/operators/tap';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  readonly PENDING_TX_KEY = 'pending_txs'
   readonly VERSION = '0.2.3';
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
@@ -41,7 +43,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.prefetchData();
   }
 
@@ -66,7 +67,9 @@ export class AppComponent implements OnInit {
       initGas$
     ]).pipe(
       take(1)
-    ).subscribe();
+    ).subscribe(data => {
+      this.checkPendingTransactions()
+    });
   }
 
   private initAddressBalances$(): Observable<any> {
@@ -74,6 +77,16 @@ export class AppComponent implements OnInit {
       filter(v => !!v),
       switchMap(uInfo => this.apiService.getTokenBalances$(uInfo.address))
     );
+  }
+
+  private checkPendingTransactions() {
+    const pendingTxs: IPendingTransactions = JSON.parse(localStorage.getItem(ConnectorService.PENDING_TX_KEY));
+    if (pendingTxs.transactions.length > 0) {
+      this.connectorService.initPendingTxs(pendingTxs)
+      setInterval(() => {
+        this.connectorService.initPendingTxs(pendingTxs)
+      }, 5000)
+    }
   }
 
   async onSignOut(): Promise<void> {

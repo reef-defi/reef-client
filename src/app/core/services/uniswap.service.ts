@@ -34,7 +34,6 @@ export class UniswapService {
   readonly routerContract$ = this.connectorService.uniswapRouterContract$;
   readonly farmingContract$ = this.connectorService.farmingContract$;
 
-  readonly pendingTx$ = this.connectorService.pendingTransaction$;
   slippagePercent$: Observable<Percent>;
   readonly initPrices$: Observable<any>;
   private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
@@ -89,10 +88,10 @@ export class UniswapService {
             .on('transactionHash', (hash) => {
               dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
-              this.connectorService.setPendingTxs(hash);
+              this.connectorService.addPendingTx(hash);
             })
             .on('receipt', async (receipt) => {
-              this.connectorService.deletePending();
+              this.connectorService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
               const reefBalance = await this.connectorService.getReefBalance(to);
               this.connectorService.providerUserInfo$.next({
@@ -118,10 +117,10 @@ export class UniswapService {
             .on('transactionHash', (hash) => {
               dialogRef.close();
               this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-              this.connectorService.setPendingTxs(hash);
+              this.connectorService.addPendingTx(hash);
             })
             .on('receipt', (receipt) => {
-              this.connectorService.deletePending();
+              this.connectorService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
             })
             .on('error', (err) => {
@@ -207,10 +206,10 @@ export class UniswapService {
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-          this.connectorService.setPendingTxs(hash);
+          this.connectorService.addPendingTx(hash);
         })
         .on('receipt', (receipt) => {
-          this.connectorService.deletePending();
+          this.connectorService.removePendingTx(receipt.transactionHash);;
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
           this.apiService.refreshBalancesForAddress.next(to);
         })
@@ -248,10 +247,10 @@ export class UniswapService {
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-          this.connectorService.setPendingTxs(hash);
+          this.connectorService.addPendingTx(hash);
         })
         .on('receipt', (receipt) => {
-          this.connectorService.deletePending();
+          this.connectorService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
           this.apiService.refreshBalancesForAddress.next(to);
         })
@@ -279,10 +278,10 @@ export class UniswapService {
           .on('transactionHash', (hash) => {
             dialogRef.close();
             this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-            this.connectorService.setPendingTxs(hash);
+            this.connectorService.addPendingTx(hash);
           })
           .on('receipt', (receipt) => {
-            this.connectorService.deletePending();
+            this.connectorService.removePendingTx(receipt.transactionHash);
             this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
             this.apiService.refreshBalancesForAddress.next(fromAddress);
           })
@@ -309,10 +308,10 @@ export class UniswapService {
         .on('transactionHash', (hash) => {
           dialogRef.close();
           this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-          this.connectorService.setPendingTxs(hash);
+          this.connectorService.addPendingTx(hash);
         })
         .on('receipt', (receipt) => {
-          this.connectorService.deletePending();
+          this.connectorService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
           this.apiService.refreshBalancesForAddress.next(fromAddress);
         })
