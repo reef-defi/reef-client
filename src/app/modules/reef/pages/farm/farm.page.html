@@ -13,8 +13,8 @@
           </div>
           <div class="page__wrapper row">
             <div class="col-12">
-              <div class="card align-items-center">
-                <div class="card-body max-w-500">
+              <div class="card align-items-center max-w-550 margin-auto">
+                <div class="card-body">
                   <!--<div class="d-flex align-items-center justify-content-center mb-3">
                     [
                     <ng-container *ngIf="token !== 'TOKEN'">{{ token }} –</ng-container>
@@ -42,7 +42,7 @@
                   </div>-->
                   <div class="row">
                     <div class="mb-4 col">
-                      <div class="card bg-purple text-white p-05 height-100 text-monospace justify-content-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
                         <div class="small mb-1 text-center">
                           Pool APY
                         </div>
@@ -55,31 +55,31 @@
                       </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="card bg-purple text-white p-05 height-100 text-monospace justify-content-center">
-                      <div class="small mb-1 text-center">
-                        Staked LP Tokens
-                      </div>
-                      <div
-                        *ngIf="stakedAmount$ | async as staked"
-                        class="small text-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                        <div class="small mb-1 text-center">
+                          Staked LP Tokens
+                        </div>
+                        <div
+                          *ngIf="stakedAmount$ | async as staked"
+                          class="small text-center">
                     <span class="font-weight-bold">
                       {{ staked | number }} {{ token !== 'TOKEN' ? ' LP Tokens' : 'REEF' }}
                     </span>
-                      </div>
+                        </div>
                       </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="card bg-purple text-white p-05 height-100 text-monospace justify-content-center">
-                      <div class="small mb-1 text-center ">
-                        Pending REWARD
-                      </div>
-                      <div
-                        *ngIf="reefReward$ | async as pendingReef"
-                        class="small text-center">
+                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                        <div class="small mb-1 text-center ">
+                          Pending REWARD
+                        </div>
+                        <div
+                          *ngIf="reefReward$ | async as pendingReef"
+                          class="small text-center">
                     <span class="font-weight-bold">
                       {{ pendingReef | number:'1.0-0' }} REEF
                     </span>
-                      </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -118,22 +118,23 @@
                       <button
                         [disabled]="!reefAmount ||
                             reefAmount > tokenBalance || reefAmount <= 0"
-                        (click)="deposit(contract, address, reefAmount.toString(10))" class="btn btn-primary">
-                        Deposit <br>Tokens
+                        (click)="deposit(contract, address, reefAmount.toString(10))"
+                        class="btn btn-primary white-space-normal">
+                        Deposit Tokens
                       </button>
                     </div>
                     <div *ngIf="stakedAmount$ | async as staked" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="staked <= 0"
-                        (click)="withdraw(address, reefAmount)" class="btn btn-primary">
-                        Withdraw <br>Funds
+                        (click)="withdraw(address, reefAmount)" class="btn btn-primary white-space-normal">
+                        Withdraw Funds
                       </button>
                     </div>
                     <div *ngIf="reefReward$ | async as reward" class="text-center col grid-col-m-bottom">
                       <button
                         [disabled]="reward <= 0"
-                        (click)="withdraw(address, 0)" class="btn btn-primary">
-                        Harvest <br>Tokens
+                        (click)="withdraw(address, 0)" class="btn btn-primary white-space-normal">
+                        Harvest Tokens
                       </button>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 @import './base';
 @import "~bootstrap";
-
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
 html, body {
   height: 100%;
@@ -22,6 +22,13 @@ p {
   line-height: 24px;
 }
 
+.title-font {
+  font-family: 'Pacifico', cursive;
+}
+
+.font-size-4em {
+  font-size: 4em;
+}
 
 .reef-logo {
   background-image: url('https://reef.finance/img/logo/Reef.png');
@@ -287,6 +294,10 @@ body {
   margin: 0.5em;
 }
 
+.margin-em-03 {
+  margin: 0.3em;
+}
+
 .red-text {
   color: red;
 }
@@ -303,12 +314,16 @@ body {
   max-width: 500px;
 }
 
+.max-w-550 {
+  max-width: 550px;
+}
+
 .max-w-350 {
   max-width: 350px;
 }
 
 .margin-auto {
-  margin: auto;
+  margin: auto !important;
 }
 
 .text-muted {
@@ -322,9 +337,18 @@ body {
   height: 100%;
 }
 
+.width-100 {
+  width: 100%;
+}
+
 .p-05 {
   padding: 0.5em;
 }
+
 .w-5-pc {
   width: 5%;
+}
+
+.white-space-normal {
+  white-space: normal !important;
 }
