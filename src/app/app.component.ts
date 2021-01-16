@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
 
   private checkPendingTransactions() {
     const pendingTxs: IPendingTransactions = JSON.parse(localStorage.getItem(ConnectorService.PENDING_TX_KEY));
-    if (pendingTxs.transactions.length > 0) {
+    if (!!pendingTxs && pendingTxs.transactions.length > 0) {
       this.connectorService.initPendingTxs(pendingTxs)
       setInterval(() => {
         this.connectorService.initPendingTxs(pendingTxs)
