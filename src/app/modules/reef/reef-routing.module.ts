@@ -6,7 +6,7 @@ import {FarmPage} from './pages/farm/farm.page';
 import {FarmsPage} from './pages/farms/farms.page';
 import {PoolsPage} from './pages/pools/pools.page';
 import {ReefMenuPage} from './pages/reef-menu/reef-menu.page';
-import {CardPage} from './pages/card/card.page.component';
+import {CardPage} from './pages/card/card.page';
 
 const routes: Routes = [
   {

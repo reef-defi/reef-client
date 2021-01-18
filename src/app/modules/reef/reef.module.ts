@@ -12,7 +12,7 @@ import {ReefMenuPage} from './pages/reef-menu/reef-menu.page';
 import {FarmsPage} from './pages/farms/farms.page';
 import {PoolsPage} from './pages/pools/pools.page';
 import {ReefHistoricPriceComponent} from './components/reef-historic-price/reef-historic-price.component';
-import {CardPage} from './pages/card/card.page.component';
+import {CardPage} from './pages/card/card.page';
 
 const components = [BuyReefComponent, StakeReefComponent];
 const pages = [ReefPage, FarmsPage, PoolPage, FarmsPage, FarmPage, ReefMenuPage, PoolsPage];
