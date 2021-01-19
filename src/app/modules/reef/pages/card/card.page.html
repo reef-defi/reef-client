@@ -65,9 +65,9 @@
               <div>
                 <ng-template #displayInterested>
                   <div class="card">
-                    <div class="card-body" [formGroup]="login_form">
+                    <div class="card-body" [formGroup]="loginForm">
                       <ng-container *ngIf="!statusInfo.message; else displayResponseMessage;">
-                        <ng-container *ngIf="login_form.controls.email as emailCtrl">
+                        <ng-container *ngIf="loginForm.controls.email as emailCtrl">
                           <h6 class="card-title accent-text">Thank you, your interest helps Reef community!</h6>
                           <p class="card-text">Please enter your email:</p>
                           <input #emailInput placeholder="enter email here" type="email" name="email" email
