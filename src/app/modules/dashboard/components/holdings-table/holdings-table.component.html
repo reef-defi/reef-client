@@ -18,10 +18,11 @@
              [src]="token.logo_url" height="20" width="20">
       </div>
       <a style="width: 100%"
-        href="https://etherscan.io/token/{{ token.contract_address }}"
-        target="_blank"
-        class="small font-weight-bolder">
-        <span style="display: inline-block; width: 25%">{{ token.contract_ticker_symbol }}</span> <span>{{token.contract_name}}</span>
+         href="https://etherscan.io/token/{{ token.contract_address }}"
+         target="_blank"
+         class="small font-weight-bolder">
+        <span style="display: inline-block; width: 25%">{{ token.contract_ticker_symbol }}</span>
+        <span>{{token.contract_name}}</span>
       </a>
     </div>
     <div class="col text-right">
@@ -46,43 +47,196 @@
 <div class="mb-4">
   <div class="h6">Uniswap</div>
   <mat-divider class="mb-2"></mat-divider>
-  <div class="row mb-2">
-    <div class="col col-xl-4 d-flex align-items-center">Asset</div>
-    <div class="col text-right">Ratio</div>
-    <div class="col text-right">Amount</div>
-    <div class="col text-right">Total</div>
-  </div>
-  <div
-    *ngFor="let pool of portfolio.uniswapPositions; let i = index;"
-    class="row d-flex align-items-center justify-content-between mb-2">
-    <div class="col col-xl-4 d-flex align-items-center text-monospace">
-      <div class="d-flex align-items-center">
-        <img onerror="this.src='/assets/images/empty-token.png';"
-             class="img-fluid mr-1"
-             [src]="pool.token_0.logo_url" height="25" width="25">
-        <img onerror="this.src='/assets/images/empty-token.png';"
-             class="img-fluid mr-1" style="margin-left: -10px"
-             [src]="pool.token_1.logo_url" height="25" width="25">
-      </div>
-      <div style="line-height: normal"><a
-        href="https://etherscan.io/token/{{ pool.pool_token.contract_address }}"
-        target="_blank"
-        class="small font-weight-bolder">
-        {{ pool.token_0.contract_ticker_symbol }}/{{ pool.token_1.contract_ticker_symbol }}
-      </a> </div>
+  <ng-container *ngIf="portfolio && portfolio.uniswapPositions.length > 0; else emptyTokensTemplate">
+    <div class="row mb-2">
+      <div class="col col-xl-4 d-flex align-items-center">Asset</div>
+      <div class="col text-right">Ratio</div>
+      <div class="col text-right">Amount</div>
+      <div class="col text-right">Total</div>
+    </div>
+    <div
+      *ngFor="let pool of portfolio.uniswapPositions; let i = index;"
+      class="row d-flex align-items-center justify-content-between mb-2">
+      <div class="col col-xl-4 d-flex align-items-center text-monospace">
+        <div class="d-flex align-items-center">
+          <img onerror="this.src='/assets/images/empty-token.png';"
+               class="img-fluid mr-1"
+               [src]="pool.token_0.logo_url" height="25" width="25">
+          <img onerror="this.src='/assets/images/empty-token.png';"
+               class="img-fluid mr-1" style="margin-left: -10px"
+               [src]="pool.token_1.logo_url" height="25" width="25">
+        </div>
+        <div style="line-height: normal"><a
+          href="https://etherscan.io/token/{{ pool.pool_token.contract_address }}"
+          target="_blank"
+          class="small font-weight-bolder">
+          {{ pool.token_0.contract_ticker_symbol }}/{{ pool.token_1.contract_ticker_symbol }}
+        </a></div>
 
-    </div>
-    <div class="col text-right text-monospace small">{{ pool.token_0.balance | decimal: pool.token_0.quote }}/{{ pool.token_1.balance | decimal: pool.token_1.quote }}</div>
-    <div class="col text-right">
-      <div class="text-monospace small" [title]="pool.pool_token.balance||0">
-        {{ (pool.pool_token.balance) | number }}
       </div>
-    </div>
+      <div class="col text-right text-monospace small">
+        {{ pool.token_0.balance | decimal: pool.token_0.quote }}/{{ pool.token_1.balance | decimal: pool.token_1.quote }}
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="pool.pool_token.balance||0">
+          {{ (pool.pool_token.balance) | number }}
+        </div>
+      </div>
 
-    <div class="col text-right">
-      <div class="text-monospace small" [title]="(pool.quote_rate * pool.balance)">
-        ${{(pool.pool_token.quote) | number:'1.0-0'}}
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="(pool.quote_rate * pool.balance)">
+          ${{(pool.pool_token.quote) | number:'1.0-0'}}
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div>
+
+<div class="mb-4">
+  <div class="h6">Balancer</div>
+  <mat-divider class="mb-2"></mat-divider>
+  <ng-container *ngIf="portfolio && portfolio.balancerPositions.length > 0; else emptyTokensTemplate">
+    <div class="row mb-2">
+      <div class="col col-xl-4 d-flex align-items-center">Asset</div>
+      <div class="col text-right">Ratio</div>
+      <div class="col text-right">Amount</div>
+      <div class="col text-right">Total</div>
+    </div>
+    <div
+      *ngFor="let pool of portfolio.balancerPositions; let i = index;"
+      class="row d-flex align-items-center justify-content-between mb-2">
+      <div class="col col-xl-4 d-flex align-items-center text-monospace">
+        <div class="d-flex align-items-center">
+          <img onerror="this.src='/assets/images/empty-token.png';"
+               class="img-fluid mr-1"
+               [src]="pool.token_0.logo_url" height="25" width="25">
+          <img onerror="this.src='/assets/images/empty-token.png';"
+               class="img-fluid mr-1" style="margin-left: -10px"
+               [src]="pool.token_1.logo_url" height="25" width="25">
+        </div>
+        <div style="line-height: normal"><a
+          href="https://etherscan.io/token/{{ pool.pool_token.contract_address }}"
+          target="_blank"
+          class="small font-weight-bolder">
+          {{ pool.token_0.contract_ticker_symbol }}/{{ pool.token_1.contract_ticker_symbol }}
+        </a></div>
+
+      </div>
+      <div class="col text-right text-monospace small">{{ pool.token_0.balance | decimal: pool.token_0.quote }}
+        /{{ pool.token_1.balance | decimal: pool.token_1.quote }}</div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="pool.pool_token.balance||0">
+          {{ (pool.pool_token.balance) | number }}
+        </div>
+      </div>
+
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="(pool.quote_rate * pool.balance)">
+          ${{(pool.pool_token.quote) | number:'1.0-0'}}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<div class="mb-4">
+  <div class="h6">Compound</div>
+  <mat-divider class="mb-2"></mat-divider>
+  <ng-container *ngIf="portfolio && portfolio.compoundPositions.length > 0; else emptyTokensTemplate">
+    <div class="row mb-2">
+      <div class="col col-xl-4 d-flex align-items-center">Asset</div>
+      <div class="col text-right ">Amount</div>
+      <div class="col text-right">Price</div>
+      <div class="col text-right">Total</div>
+    </div>
+    <div
+      *ngFor="let token of portfolio.compoundPositions; let i = index"
+      class="row d-flex align-items-center justify-content-between mb-2">
+      <div class="col col-xl-4 d-flex align-items-center text-monospace">
+        <div class="d-flex align-items-center">
+          <img id="imgx-{{i}}"
+               alt="{{ token.contract_ticker_symbol }}"
+               class="img-fluid mr-1"
+               [src]="token.logo_url" height="20" width="20">
+        </div>
+        <a style="width: 100%"
+           href="https://etherscan.io/token/{{ token.contract_address }}"
+           target="_blank"
+           class="small font-weight-bolder">
+          <span style="display: inline-block; width: 25%">{{ token.contract_ticker_symbol }}</span>
+          <span>{{token.contract_name}}</span>
+        </a>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="token.balance||0">
+          {{ (token.balance || 0) | decimal: token.quote_rate }}
+        </div>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="token.balance||0">
+          ${{ token.quote_rate | decimal: token.quote_rate }}
+        </div>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="(token.quote_rate * token.balance)">
+          ${{(token.quote_rate * token.balance) | number:'1.0-0'}}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<div class="mb-4">
+  <div class="h6">Aave</div>
+  <mat-divider class="mb-2"></mat-divider>
+  <ng-container *ngIf="portfolio && portfolio.aavePositions.length > 0; else emptyTokensTemplate">
+    <div class="row mb-2">
+      <div class="col col-xl-4 d-flex align-items-center">Asset</div>
+      <div class="col text-right ">Amount</div>
+      <div class="col text-right">Price</div>
+      <div class="col text-right">Total</div>
+    </div>
+    <div
+      *ngFor="let token of portfolio.aavePositions; let i = index"
+      class="row d-flex align-items-center justify-content-between mb-2">
+      <div class="col col-xl-4 d-flex align-items-center text-monospace">
+        <div class="d-flex align-items-center">
+          <img id="imgx-{{i}}"
+               alt="{{ token.atoken_contract_ticker_symbol }}"
+               class="img-fluid mr-1"
+               [src]="token.logo_url" height="20" width="20">
+        </div>
+        <a style="width: 100%"
+           href="https://etherscan.io/token/{{ token.atoken_contract_address }}"
+           target="_blank"
+           class="small font-weight-bolder">
+          <span style="display: inline-block; width: 25%">{{ token.atoken_contract_ticker_symbol }}</span>
+          <span>{{token.atoken_contract_name}}</span>
+        </a>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="token.atoken_balance||0">
+          {{ (token.balance || 0) | decimal: token.quote_rate }}
+        </div>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="token.atoken_balance||0">
+          ${{ token.quote_rate | decimal: token.quote_rate }}
+        </div>
+      </div>
+      <div class="col text-right">
+        <div class="text-monospace small" [title]="(token.quote_rate * token.atoken_balance)">
+          ${{(token.quote_rate * token.atoken_balance) | number:'1.0-0'}}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+
+
+<ng-template #emptyTokensTemplate>
+  <div class="d-flex justify-content-center text-monospace small mt-4">
+    We couldn't find any positions for this exchange.
+  </div>
+</ng-template>
