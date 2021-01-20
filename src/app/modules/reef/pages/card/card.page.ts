@@ -40,7 +40,12 @@ export class CardPage implements OnDestroy {
     this.statusInfo = this.statusSub.pipe(
       switchMap((status: any) => status.email ? this.http.post(environment.reefNodeApiUrl + '/card-interest', {email: status.email}) : of(status)),
       startWith({notInterested: true, message: null}),
-      catchError(err => of({message: 'There was a problem sending data. Please try later.', error: true})),
+      catchError(err => {
+        if (err.error) {
+          return of({message: err.error.message, error: true});
+        }
+        return of({message: 'Error saving email. Please try later.'});
+      }),
       shareReplay(1)
     );
 
