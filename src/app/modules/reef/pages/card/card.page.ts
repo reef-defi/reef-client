@@ -8,6 +8,7 @@ import {startWith} from 'rxjs/internal/operators/startWith';
 import {catchError, shareReplay, takeUntil} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {GoogleAnalyticsService} from '../../../../shared/service/google-analytics.service';
+import {FbPixelService} from '../../../../shared/service/fb-pixel.service';
 
 interface StatusInfo {
   notInterested?: string;
@@ -30,7 +31,8 @@ export class CardPage implements OnDestroy {
   destroyed = new Subject<void>();
 
   constructor(private http: HttpClient, fb: FormBuilder,
-              private googleAnalyticsService: GoogleAnalyticsService) {
+              googleAnalyticsService: GoogleAnalyticsService,
+              fbPixelService: FbPixelService) {
     this.loginForm = fb.group({
       email: [null, Validators.compose([Validators.required, Validators.pattern(/^(\d{10}|\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3}))$/)])],
     });
@@ -52,11 +54,12 @@ export class CardPage implements OnDestroy {
       } else if (info.email) {
         // ga. emailSent
         googleAnalyticsService.eventEmitter('sign_up', 'engagement', 'cart_interest_sent');
+        fbPixelService.track(FbPixelService.LEAD_TYPE);
       }
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed.next(null);
   }
 
