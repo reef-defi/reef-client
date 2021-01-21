@@ -1,11 +1,11 @@
-FROM node:10 as builder
+FROM node:14 as builder
 
 ADD . /app
 WORKDIR /app
 RUN rm -rf node_modules
 
 RUN npm install --loglevel=error
-RUN npm install -g @angular/cli@7.3.0 --loglevel=error
+RUN npm install -g @angular/cli@10.1.7 --loglevel=error
 
 RUN npm run ng build --prod
 
