@@ -34,7 +34,7 @@ export class CardPage implements OnDestroy {
               googleAnalyticsService: GoogleAnalyticsService,
               fbPixelService: FbPixelService) {
     this.loginForm = fb.group({
-      email: [null, Validators.compose([Validators.required, Validators.pattern(/^(\d{10}|\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,25}))$/)])],
+      email: [null, Validators.compose([Validators.required, Validators.pattern(/^(\d{10}|\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,}))$/)])],
     });
 
     this.statusInfo = this.statusSub.pipe(
