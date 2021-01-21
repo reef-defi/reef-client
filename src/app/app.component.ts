@@ -3,13 +3,16 @@ import {ConnectorService} from './core/services/connector.service';
 import {PoolService} from './core/services/pool.service';
 import {ApiService} from './core/services/api.service';
 import {ContractService} from './core/services/contract.service';
-import {Router} from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 import {filter, take} from 'rxjs/operators';
 import {UniswapService} from './core/services/uniswap.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {combineLatest, Observable} from 'rxjs';
 import {tap} from 'rxjs/internal/operators/tap';
 import {IPendingTransactions} from "./core/models/types";
+import {GoogleAnalyticsService} from "./shared/service/google-analytics.service";
+// GoogleAnalytics - declare gtag as a function to access the JS code in TS
+declare let gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -30,7 +33,22 @@ export class AppComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly contractService: ContractService,
     private readonly router: Router,
-    private readonly uniswapService: UniswapService) {
+    private readonly uniswapService: UniswapService,
+    googleAnalyticsService: GoogleAnalyticsService) {
+
+    const isWalletConnected$ = this.connectorService.currentProviderName$;
+    isWalletConnected$.subscribe((v) => {
+      if (!!v) {
+        googleAnalyticsService.eventEmitter('login', null, null);
+      }
+    });
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        googleAnalyticsService.pageView(event.urlAfterRedirects);
+      }
+    });
+
     if (localStorage.getItem('demo_pw') === 'open sesame') {
       this.canEnter = true;
     } else {
