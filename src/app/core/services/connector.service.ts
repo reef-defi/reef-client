@@ -44,7 +44,7 @@ export class ConnectorService {
   walletLink = new WalletLink({
     appName: 'reef.finance',
   });
-  WalletLinkProvider = this.walletLink.makeWeb3Provider('https://ropsten.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310', 4);
+  WalletLinkProvider = this.walletLink.makeWeb3Provider('https://mainnet.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310', 1);
   providerLoading$ = new BehaviorSubject(false);
   providerOptions = {
     walletconnect: {

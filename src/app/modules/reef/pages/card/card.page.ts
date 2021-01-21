@@ -37,6 +37,7 @@ export class CardPage implements OnDestroy {
 
     this.statusInfo = this.statusSub.pipe(
       switchMap((status: any) => status.email ? this.http.post(environment.reefNodeApiUrl + '/card-interest', {email: status.email}) : of(status)),
+
       startWith({notInterested: true, message: null}),
       catchError(err => of({message: 'There was a problem sending data. Please try later.', error: true})),
       shareReplay(1)
@@ -53,7 +54,6 @@ export class CardPage implements OnDestroy {
         googleAnalyticsService.eventEmitter('sign_up', 'engagement', 'cart_interest_sent');
       }
     });
-    // page opened
   }
 
   ngOnDestroy() {
