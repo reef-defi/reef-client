@@ -12,23 +12,23 @@
 
       <div class="col-12 col-xl-4">
         <div class="card min-height-100px">
-          <div class="card-body p-lg-4">
-            <div class="small font-weight-bold text-monospace text-muted mb-3">
+          <div class="card-body p-4 accent-text ">
+            <div class="small font-weight-bold text-monospace mb-3 text-muted">
               USD Valuation
             </div>
-            <h3 class="text-center text-monospace text-muted">
+            <h3 class="text-center text-monospace">
 
               <ng-container *ngIf="tokenBalance$|async as tokenBalance; else calc">
                 ${{tokenBalance?.totalBalance| number:'1.0-0'}}
               </ng-container>
               <ng-template #calc>
-                Calculating..
+                Calculating...
               </ng-template>
             </h3>
           </div>
         </div>
-        <div class="card p-lg-4 mt-3">
-          <div class="small font-weight-bold text-monospace text-muted mb-3">
+        <div class="card p-4 mt-3 ">
+          <div class="small font-weight-bold text-monospace text-muted">
             Allocations
           </div>
           <ng-container *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate">

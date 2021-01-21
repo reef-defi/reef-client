@@ -11,8 +11,7 @@ export class ChartsService {
 
   private static get pieChartColors(): any {
     const colors = [];
-    const arr = ['#6610f2', '#39393a', '#e6e6e6', '#78ffd6', '#06d6a0', '#f42272', '#b892ff', '#d81e5b', '#533a7b', '#98c1d9']
-    ;
+    const arr = ['#6610f2', '#78ffd6', '#39393a', '#e6e6e6', '#06d6a0', '#f42272', '#b892ff', '#d81e5b', '#533a7b', '#98c1d9'];
     for (let i = 0; i < 10; i++) {
       colors.push(i % 10 == 0 ? arr[i] : HighCharts.color(arr[i]).brighten((i - 3) / 7).get());
     }
@@ -22,8 +21,9 @@ export class ChartsService {
   composePieChart(data): any {
     return {
       chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
+        plotBackgroundColor: '#ffffff',
+        borderColor: '#ffffff',
+        margin: 0,
         plotShadow: false,
         type: 'pie',
 
@@ -44,10 +44,19 @@ export class ChartsService {
           size: '100%',
           innerSize: '45%',
           allowPointSelect: true,
+          borderColor: '#cccccc',
+          borderWidth: 3,
           cursor: 'pointer',
           colors: ChartsService.pieChartColors,
           dataLabels: {
-            enabled: true,
+            style: {fontFamily: 'Roboto, "Helvetica Neue", sans-serif', fontSize: '8px'},
+            color: '#eeeeee',
+            borderWidth: 0,
+            connectorColor: '#a7a7a7',
+            border: 0,
+            connectorWidth: 2,
+            crop: false,
+            enabled: false,
             format: '<b>{point.name}</b>: {point.percentage:.1f} %'
           }
         }

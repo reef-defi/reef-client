@@ -352,3 +352,7 @@ body {
 .small-icon {
   font-size: 1.5em;
 }
+
+.highcharts-container svg:not(:root) {
+  overflow: visible !important;
+}
