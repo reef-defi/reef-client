@@ -25,7 +25,8 @@ export class ChartsService {
         plotBackgroundColor: null,
         plotBorderWidth: null,
         plotShadow: false,
-        type: 'pie'
+        type: 'pie',
+
       },
       title: {
         text: ''
@@ -40,7 +41,8 @@ export class ChartsService {
       },
       plotOptions: {
         pie: {
-          innerSize: '70%',
+          size: '100%',
+          innerSize: '45%',
           allowPointSelect: true,
           cursor: 'pointer',
           colors: ChartsService.pieChartColors,
