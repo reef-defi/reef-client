@@ -2,6 +2,8 @@
 
 .table-min-w-up-to-lg {
   min-width: 100%;
+  border-top: solid 1px #ccc;
+  margin-top: 0.5em;
 }
 
 .hide-lg {
@@ -11,7 +13,7 @@
 // used same as .table-responsive-lg
 @media (max-width: 991.98px) {
   .table-min-w-up-to-lg {
-    min-width: 630px;
+    min-width: 650px;
   }
   .hide-lg {
     display: block;
@@ -30,4 +32,14 @@
   margin-left: 0.2em;
   position: relative;
   bottom: 0.5em;
+}
+
+.asset-icon {
+  margin-right: 0.3em;
+}
+
+.asset-row {
+  border-bottom: #efefef 1px solid;
+  padding: 0.5em;
+  margin-bottom: 0.2em;
 }
