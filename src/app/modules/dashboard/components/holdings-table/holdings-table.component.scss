@@ -1,0 +1,33 @@
+@import '~src/assets/scss/styles';
+
+.table-min-w-up-to-lg {
+  min-width: 100%;
+}
+
+.hide-lg {
+  display: none;
+}
+
+// used same as .table-responsive-lg
+@media (max-width: 991.98px) {
+  .table-min-w-up-to-lg {
+    min-width: 630px;
+  }
+  .hide-lg {
+    display: block;
+  }
+}
+
+.x-wide-cell {
+  min-width: 210px;
+}
+
+.m-wide-cell {
+  min-width: 60px;
+}
+
+.align-to-icon {
+  margin-left: 0.2em;
+  position: relative;
+  bottom: 0.5em;
+}
