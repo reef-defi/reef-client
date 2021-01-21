@@ -1,13 +1,12 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { ContractService } from '../../../../core/services/contract.service';
-import { first, take } from 'rxjs/operators';
-import { hintSteps } from '../../../../shared/data/walkthrough_steps';
-import { MatDialog } from '@angular/material/dialog';
-import { DisclaimerModalComponent } from '../../components/disclaimer-modal/disclaimer-modal.component';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { Router } from '@angular/router';
-import ParticlesConfig from '../../../../../assets/particles-config';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {ContractService} from '../../../../core/services/contract.service';
+import {first, take} from 'rxjs/operators';
+import {hintSteps} from '../../../../shared/data/walkthrough_steps';
+import {MatDialog} from '@angular/material/dialog';
+import {DisclaimerModalComponent} from '../../components/disclaimer-modal/disclaimer-modal.component';
+import {NotificationService} from '../../../../core/services/notification.service';
+import {Router} from '@angular/router';
 
 declare const particlesJS: any;
 
@@ -67,13 +66,15 @@ export class HomePage implements OnInit, AfterViewInit {
       first((el) => !!el)
     ).subscribe((data) => {
       if (data && !hasViewed) {
-          setTimeout(() => {
-            const EnjoyHint = new (window as any).EnjoyHint({});
-            EnjoyHint.set(hintSteps);
-            EnjoyHint.run();
-          }, 1000);
-          localStorage.setItem('reef_tutorial_viewed', 'true');
-        }
+        setTimeout(() => {
+          const EnjoyHint = new (window as any).EnjoyHint({});
+          EnjoyHint.set(hintSteps);
+          EnjoyHint.run();
+        }, 1000);
+        localStorage.setItem('reef_tutorial_viewed', 'true');
+      } else if (data && !!hasViewed) {
+        this.router.navigate(['/dashboard']);
+      }
     });
   }
 }
