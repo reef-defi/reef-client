@@ -11,10 +11,10 @@ export class ChartsService {
 
   private static get pieChartColors(): any {
     const colors = [];
-    //const base = '#bc5cf2';
-    let arr = ['#F54231', '#3dfeba', '#b8e63b', '#4db2fa', '#195bcd', '#fae665', '#fe8477', '#f7747a', '#f9a25b', '#790fdd', '#0fafe5'];
+    const arr = ['#6610f2', '#39393a', '#e6e6e6', '#78ffd6', '#06d6a0', '#f42272', '#b892ff', '#d81e5b', '#533a7b', '#98c1d9']
+    ;
     for (let i = 0; i < 10; i++) {
-      colors.push(i%10 == 0 ? arr[i] : HighCharts.color(arr[i]).brighten((i - 3) / 7).get());
+      colors.push(i % 10 == 0 ? arr[i] : HighCharts.color(arr[i]).brighten((i - 3) / 7).get());
     }
     return colors;
   }
@@ -69,7 +69,8 @@ export class ChartsService {
         text: ''
       },
       subtitle: {
-        text: ''      },
+        text: ''
+      },
       xAxis: {
         type: 'datetime'
       },
