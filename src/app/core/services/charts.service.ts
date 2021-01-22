@@ -31,6 +31,9 @@ export class ChartsService {
       title: {
         text: ''
       },
+      credits: {
+        enabled: false,
+      },
       tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
       },
@@ -79,6 +82,9 @@ export class ChartsService {
       },
       subtitle: {
         text: ''
+      },
+      credits: {
+        enabled: false,
       },
       xAxis: {
         type: 'datetime'
