@@ -93,27 +93,14 @@ export class ChartsService {
       },
       plotOptions: {
         area: {
-          fillColor: {
-            linearGradient: {
-              x1: 0,
-              y1: 0,
-              x2: 0,
-              y2: 1
-            },
-            stops: [
-              [0, HighCharts.getOptions().colors[0]],
-              [1, HighCharts.color(HighCharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-            ]
-          },
+          fillOpacity: 0.3,
+          fillColor: '#e6e6e6',
+          color: '#6610f2',
+          opacity: 0.7,
           marker: {
             radius: 2
           },
-          lineWidth: 1,
-          states: {
-            hover: {
-              lineWidth: 1
-            }
-          },
+          lineWidth: 4,
           threshold: null
         }
       },
