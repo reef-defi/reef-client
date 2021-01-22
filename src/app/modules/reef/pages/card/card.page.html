@@ -79,7 +79,7 @@
                             <small *ngIf="emailCtrl.dirty && emailCtrl.hasError('pattern')" class="red-text">Please
                               enter valid email.</small>
                           </div>
-                          <button class="btn btn-primary mb-3 mt-3" [disabled]="!!emailCtrl.errors"
+                          <button class="btn btn-primary mb-3 mt-3 p-2" [disabled]="!!emailCtrl.errors"
                                   (click)="statusSub.next({email: emailInput.value})">Send email
                           </button>
                         </ng-container>
