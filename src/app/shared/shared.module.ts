@@ -58,7 +58,7 @@ const components = [
   SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent,
   ExceededBalanceMsgComponent, ProviderLoadingComponent
 ];
-const directives = [];
+const directives = [NumbersOnlyInputDirective];
 const pipes = [FilterPipe, SmallNumberPipe, DecimalNumberPipe, CategorizePipe];
 const modules = [
   CommonModule,
@@ -72,7 +72,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, NumbersOnlyInputDirective],
+  declarations: [...components, ...directives, ...pipes],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
     useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
@@ -80,7 +80,7 @@ const modules = [
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules, NumbersOnlyInputDirective],
+  exports: [...components, ...directives, ...pipes, ...modules],
 })
 export class SharedModule {
 }

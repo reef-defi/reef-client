@@ -59,6 +59,7 @@
                   </div>
                 </div>
                 <input
+                  appNumbersOnlyInput
                   [ngModel]="amount"
                   (ngModelChange)="amount = $event; getQuote()"
                   placeholder="0.00" class="form-control" type="number">
