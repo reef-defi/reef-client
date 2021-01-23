@@ -23,7 +23,6 @@ export class DecimalNumberPipe implements PipeTransform {
       return formatNumber(amount, this.locale, `1.0-2`);
     }
     if (price > 1000) {
-      console.log(price, 'hhhhhhhhhh')
       return formatNumber(amount, this.locale, `1.0-0`);
     }
     return formatNumber(amount, this.locale, `1.0-5`);
