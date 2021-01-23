@@ -42,10 +42,10 @@ export class DashboardPage {
     );
     this.getPortfolio$ = address$.pipe(
       switchMap((address) => this.apiService.getPortfolio(address)),
-      shareReplay(1),
       tap((data) => {
         this.getHistoricData(data.tokens);
-      })
+      }),
+      shareReplay(1),
     );
     this.tokenBalance$ = address$.pipe(
       switchMap(address => this.getTokenBalances(address)),
@@ -72,15 +72,18 @@ export class DashboardPage {
         let other = 0;
         const total = tokenBalance.totalBalance;
         const pairs = tokenBalance.tokens
-          .map(({ contract_ticker_symbol, quote }) => [contract_ticker_symbol, (quote / total) * 100])
+          .map(({contract_ticker_symbol, quote}) => [contract_ticker_symbol, (quote / total) * 100])
           .map(([name, percent]: [string, number]) => {
             if (percent < 1) {
-              other += percent
+              other += percent;
             }
             return [name, percent];
           })
           .filter(([_, percent]) => percent >= 1);
-        const unified = [...pairs, ['Other', other]];
+        let unified = pairs;
+        if (other > 0) {
+          unified = [...pairs, ['Other', other]];
+        }
         return this.chartsService.composePieChart(unified);
       }),
       shareReplay(1)
@@ -103,17 +106,19 @@ export class DashboardPage {
       ))
     );
   }
+
   getHistoricData(assets) {
     let payload = {};
     assets.forEach(asset => {
       if (asset.contract_ticker_symbol !== 'DFIO' && asset.contract_ticker_symbol !== 'REEF')
-      payload[asset.contract_ticker_symbol] = 100 / assets.length;
+        payload[asset.contract_ticker_symbol] = 100 / assets.length;
     });
     console.log(payload);
     return this.apiService.getHistoricRoi(payload, 1).subscribe((historicRoi: IBasketHistoricRoi) => {
       this.roiData = this.charts.composeHighChart(this.extractRoi(historicRoi));
     });
   }
+
   private extractRoi(obj: IBasketHistoricRoi): number[][] {
     return Object.keys(obj).map((key) => [new Date(key).getTime(), +obj[key].weighted_roi.toFixed(2)]);
   }

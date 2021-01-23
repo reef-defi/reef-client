@@ -59,7 +59,8 @@ export class ChartsService {
             border: 0,
             connectorWidth: 2,
             crop: false,
-            enabled: false,
+            enabled: true,
+            distance: '-30%',
             format: '<b>{point.name}</b>: {point.percentage:.1f} %'
           }
         }
