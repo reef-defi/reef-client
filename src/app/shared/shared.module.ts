@@ -48,6 +48,7 @@ import {ExceededBalanceMsgComponent} from './components/exceeded-balance-msg/exc
 import {ProviderLoadingComponent} from './components/provider-loading/provider-loading.component';
 import {DecimalNumberPipe} from './pipes/decimal.pipe';
 import {CategorizePipe} from './pipes/categorize.pipe';
+import {NumbersOnlyInputDirective} from './directives/numbers-only-input.directive';
 
 
 const components = [
@@ -57,7 +58,7 @@ const components = [
   SvgIconComponent, PageTitleComponent, TransactionConfirmationComponent, SetInputRelativeAmountComponent,
   ExceededBalanceMsgComponent, ProviderLoadingComponent
 ];
-const directives = [];
+const directives = [NumbersOnlyInputDirective];
 const pipes = [FilterPipe, SmallNumberPipe, DecimalNumberPipe, CategorizePipe];
 const modules = [
   CommonModule,
@@ -79,7 +80,7 @@ const modules = [
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules,],
+  exports: [...components, ...directives, ...pipes, ...modules],
 })
 export class SharedModule {
 }
