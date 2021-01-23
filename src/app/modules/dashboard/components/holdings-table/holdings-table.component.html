@@ -5,7 +5,7 @@
 </div>
 <div class="mb-4 table-responsive-lg">
   <div class="table-min-w-up-to-lg">
-    <div class="row mb-2 asset-row">
+    <div class="row asset-row">
       <div class="col col-xl-4 d-flex align-items-center x-wide-cell">Asset</div>
       <div class="col text-right m-wide-cell">Amount</div>
       <div class="col text-right m-wide-cell">Price</div>
@@ -13,7 +13,7 @@
     </div>
     <div
       *ngFor="let token of portfolio.tokens; let i = index"
-      class="row d-flex align-items-center justify-content-between mb-2 asset-row">
+      class="row d-flex align-items-center justify-content-between asset-row">
       <div class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell">
         <div class="d-flex align-items-center asset-icon">
           <img id="imgx-{{i}}"
@@ -56,7 +56,7 @@
   </div>
   <div class="mb-4 table-responsive-lg">
     <div class="table-min-w-up-to-lg">
-      <div class="row mb-2 asset-row">
+      <div class="row asset-row">
         <div class="col col-xl-4 d-flex align-items-center x-wide-cell">Asset</div>
         <div class="col text-right m-wide-cell">Ratio</div>
         <div class="col text-right m-wide-cell">Amount</div>
@@ -64,7 +64,7 @@
       </div>
       <div
         *ngFor="let pool of portfolio.uniswapPositions; let i = index;"
-        class="row d-flex align-items-center justify-content-between mb-2 asset-row">
+        class="row d-flex align-items-center justify-content-between asset-row">
         <div class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell">
           <div class="d-flex align-items-center asset-icon">
             <img onerror="this.src='/assets/images/empty-token.png';"
