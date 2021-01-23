@@ -32,8 +32,7 @@
             Allocations
           </div>
           <ng-container *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate">
-            <app-asset-distribution-chart *ngIf="uniswapService.initPrices$|async"
-                                          [chartData]="pieChartData">
+            <app-asset-distribution-chart [chartData]="pieChartData">
             </app-asset-distribution-chart>
           </ng-container>
         </div>
@@ -50,10 +49,10 @@
             </div>
             <div class="row">
               <div class="col">
-                <button (click)="showTransactions = !showTransactions"
-                        class="btn btn-primary btn-sm mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}}
+                <a href="#" (click)="$event.preventDefault(); showTransactions = !showTransactions"
+                   class=" mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}}
                   Transactions
-                </button>
+                </a>
               </div>
               <div class="col-12">
                 <div class="card mb-3" [hidden]="!showTransactions">
