@@ -48,6 +48,7 @@ import {ExceededBalanceMsgComponent} from './components/exceeded-balance-msg/exc
 import {ProviderLoadingComponent} from './components/provider-loading/provider-loading.component';
 import {DecimalNumberPipe} from './pipes/decimal.pipe';
 import {CategorizePipe} from './pipes/categorize.pipe';
+import {NumbersOnlyInputDirective} from './directives/numbers-only-input.directive';
 
 
 const components = [
@@ -71,7 +72,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes],
+  declarations: [...components, ...directives, ...pipes, NumbersOnlyInputDirective],
   providers: [{
     provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
     useValue: {duration: 4000, verticalPosition: 'top', horizontalPosition: 'right'},
@@ -79,7 +80,7 @@ const modules = [
   imports: [
     ...modules,
   ],
-  exports: [...components, ...directives, ...pipes, ...modules,],
+  exports: [...components, ...directives, ...pipes, ...modules, NumbersOnlyInputDirective],
 })
 export class SharedModule {
 }
