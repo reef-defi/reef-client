@@ -88,6 +88,9 @@ export class ConnectorService {
     this.web3Modal.on('close', () => {
       this.providerLoading$.next(false);
     })
+    this.web3Modal.on('error', () => {
+      this.providerLoading$.next(false);
+    })
   }
 
 

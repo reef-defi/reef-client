@@ -23,7 +23,7 @@ export class ChartsService {
       chart: {
         plotBackgroundColor: '#ffffff',
         borderColor: '#ffffff',
-        margin: 0,
+        marginBottom: 30,
         plotShadow: false,
         type: 'pie',
 
@@ -47,10 +47,10 @@ export class ChartsService {
           size: '100%',
           innerSize: '45%',
           allowPointSelect: true,
-          borderColor: '#cccccc',
-          borderWidth: 3,
+          borderWidth: 0,
           cursor: 'pointer',
           colors: ChartsService.pieChartColors,
+          showInLegend: true,
           dataLabels: {
             style: {fontFamily: 'Roboto, "Helvetica Neue", sans-serif', fontSize: '8px'},
             color: '#eeeeee',
@@ -59,10 +59,20 @@ export class ChartsService {
             border: 0,
             connectorWidth: 2,
             crop: false,
-            enabled: true,
+            enabled: false,
             distance: '-30%',
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
           }
+        }
+      },
+      legend: {
+        enabled: true,
+        floating: true,
+        verticalAlign: 'bottom',
+        y: 15,
+        itemStyle: {fontFamily: 'Roboto, "Helvetica Neue", sans-serif', fontSize: '10px'},
+        labelFormatter: function () {
+          return this.name + ': ' + this.percentage.toFixed(1) + '%';
         }
       },
       series: [{
