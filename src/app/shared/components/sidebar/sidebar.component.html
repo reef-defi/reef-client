@@ -5,48 +5,6 @@
     </a>
   </div>
   <div class="icon-container">
-    <div class="d-flex justify-content-center align-items-center">
-      <div
-        *ngIf="currentAddress"
-        id="settings"
-        [matMenuTriggerFor]="addressMenu"
-        class="d-flex align-items-center py-1 px-3 sidebar__address">
-        <mat-icon class="address__circle mr-1">
-          stop_circle
-        </mat-icon>
-        <app-address-shortener
-          [standalone]="true"
-          [showCopy]="false"
-          [address]="currentAddress">
-        </app-address-shortener>
-        <mat-icon>
-          keyboard_arrow_down
-        </mat-icon>
-      </div>
-    </div>
-    <mat-menu
-      class="address__menu"
-      xPosition="after"
-      #addressMenu="matMenu">
-      <div
-        [routerLink]="['/dashboard/settings']"
-        class="address__menu--item">
-        <div class="la la-lg la-gear mr-2"></div>
-        <div>Settings</div>
-      </div>
-      <div
-        [cdkCopyToClipboard]="currentAddress"
-        class="address__menu--item">
-        <div class="la la-lg la-copy mr-2 font-success"></div>
-        <div>Copy your address</div>
-      </div>
-      <div
-        (click)="onSignOut()"
-        class="address__menu--item">
-        <div class="la la-lg la-sign-out-alt mr-2 font-danger"></div>
-        <div>Sign out</div>
-      </div>
-    </mat-menu>
     <ng-container *ngTemplateOutlet="menuItems"></ng-container>
   </div>
   <div class="mb-2 d-flex flex-column align-items-center justify-content-center"
@@ -71,7 +29,7 @@
 
 <!--MOBILE MENU-->
 <div class="w-100 mb-3 mb-md-0">
-  <div class="d-md-none navbar-mobile-float navbar navbar-expand-md navbar-light bg-white py-3 px-4"
+  <div class="d-md-none navbar-mobile-float navbar navbar-expand-md navbar-light bg-white py-3 px-4 margin-auto"
        [class.nav-open]="mobileNavShown">
     <div class="d-flex align-items-center">
       <a class="link-unstyled d-inline-flex align-items-center">
@@ -86,7 +44,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse mt-3" [class.show]="mobileNavShown" id="menu">
-      <div class="mb-2 d-flex flex-column">
+      <div class="mb-2 d-flex flex-column align-items-start">
         <ng-container *ngTemplateOutlet="menuItems"></ng-container>
       </div>
       <div
@@ -107,85 +65,129 @@
 
 </div>
 <ng-template #menuItems>
-  <a
-    id="dashboardBtn"
-    [routerLink]="['/dashboard']"
-    [routerLinkActiveOptions]="{exact: true}"
-    routerLinkActive="active"
-    class="d-flex align-items-center h6 text-decoration-none w-100  text-body my-3"
-    (click)="mobileNavShown=false">
-    <app-svg-icon icon="dashboard"></app-svg-icon>
-    Dashboard
-  </a>
-  <!--    <div-->
-  <!--      id="buy-crypto"-->
-  <!--      [routerLink]="['/binance']"-->
-  <!--      [routerLinkActiveOptions]="{exact: true}"-->
-  <!--      routerLinkActive="active"-->
-  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-  <!--      <img-->
-  <!--        height="45"-->
-  <!--        width="35"-->
-  <!--        class="img-fluid mr-2 pl-3"-->
-  <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
-  <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
-  <!--    </div>-->
-  <a
-    id="buyReef"
-    [routerLink]="['/reef/buy']"
-    routerLinkActive="active"
-    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
-    (click)="mobileNavShown=false">
-    <app-svg-icon icon="reef"></app-svg-icon>
-    Buy Reef
-  </a>
-  <a
-    id="reefLiquidity"
-    [routerLink]="['/reef/pools']"
-    routerLinkActive="active"
-    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
-    (click)="mobileNavShown=false">
-    <app-svg-icon icon="flag"></app-svg-icon>
-    Get LP Tokens
-  </a>
-  <a
-    id="farmReef"
-    [routerLink]="['/reef/farms']"
-    routerLinkActive="active"
-    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
-    (click)="mobileNavShown=false">
-    <app-svg-icon icon="currency"></app-svg-icon>
-    Farm Reef
-  </a>
-  <a
-    id="reefCard"
-    [routerLink]="['/reef/card']"
-    routerLinkActive="active"
-    class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
-    (click)="mobileNavShown=false">
-    <app-svg-icon icon="credit-card"></app-svg-icon>
-    Reef Card
-  </a>
-  <!--    <div-->
-  <!--      id="myBaskets"-->
-  <!--      [routerLink]="['/baskets']"-->
-  <!--      [routerLinkActiveOptions]="{exact: true}"-->
-  <!--      routerLinkActive="active"-->
-  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-  <!--      <div-->
-  <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
-  <!--      <div class="sidebar__label">MY BASKETS</div>-->
-  <!--    </div>-->
-  <!--    <div-->
-  <!--      id="createBasket"-->
-  <!--      [routerLink]="['/baskets/basket-types']"-->
-  <!--      [routerLinkActiveOptions]="{exact: true}"-->
-  <!--      routerLinkActive="active"-->
-  <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-  <!--      <div-->
-  <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
-  <!--      <div class="sidebar__label">CREATE BASKET</div>-->
-  <!--    </div>-->
+  <div class="d-flex justify-content-center align-items-center">
+    <div
+      *ngIf="currentAddress"
+      id="settings"
+      [matMenuTriggerFor]="addressMenu"
+      class="d-flex align-items-center py-1 px-3 sidebar__address  ml-md-4">
+      <mat-icon class="address__circle mr-1">
+        stop_circle
+      </mat-icon>
+      <app-address-shortener
+        [standalone]="true"
+        [showCopy]="false"
+        [address]="currentAddress">
+      </app-address-shortener>
+      <mat-icon>
+        keyboard_arrow_down
+      </mat-icon>
+    </div>
+  </div>
+  <mat-menu
+    class="address__menu"
+    xPosition="after"
+    #addressMenu="matMenu">
+    <div
+      [routerLink]="['/dashboard/settings']"
+      class="address__menu--item">
+      <div class="la la-lg la-gear mr-2"></div>
+      <div>Settings</div>
+    </div>
+    <div
+      [cdkCopyToClipboard]="currentAddress"
+      class="address__menu--item">
+      <div class="la la-lg la-copy mr-2 font-success"></div>
+      <div>Copy your address</div>
+    </div>
+    <div
+      (click)="onSignOut()"
+      class="address__menu--item">
+      <div class="la la-lg la-sign-out-alt mr-2 font-danger"></div>
+      <div>Sign out</div>
+    </div>
+  </mat-menu>
+  <div class="d-flex flex-column align-items-start">
+    <a
+      id="dashboardBtn"
+      [routerLink]="['/dashboard']"
+      [routerLinkActiveOptions]="{exact: true}"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100  text-body my-3"
+      (click)="mobileNavShown=false">
+      <app-svg-icon icon="dashboard"></app-svg-icon>
+      Dashboard
+    </a>
+    <!--    <div-->
+    <!--      id="buy-crypto"-->
+    <!--      [routerLink]="['/binance']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <img-->
+    <!--        height="45"-->
+    <!--        width="35"-->
+    <!--        class="img-fluid mr-2 pl-3"-->
+    <!--        src="../../../../assets/images/binance_icon_logo.svg" alt="binance">-->
+    <!--      <div class="sidebar__label">BUY CRYPTO</div>-->
+    <!--    </div>-->
+    <a
+      id="buyReef"
+      [routerLink]="['/reef/buy']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
+      (click)="mobileNavShown=false">
+      <app-svg-icon icon="reef"></app-svg-icon>
+      Buy Reef
+    </a>
+    <a
+      id="reefLiquidity"
+      [routerLink]="['/reef/pools']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
+      (click)="mobileNavShown=false">
+      <app-svg-icon icon="flag"></app-svg-icon>
+      Get LP Tokens
+    </a>
+    <a
+      id="farmReef"
+      [routerLink]="['/reef/farms']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
+      (click)="mobileNavShown=false">
+      <app-svg-icon icon="currency"></app-svg-icon>
+      Farm Reef
+    </a>
+    <a
+      id="reefCard"
+      [routerLink]="['/reef/card']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
+      (click)="mobileNavShown=false">
+      <app-svg-icon icon="credit-card"></app-svg-icon>
+      Reef Card
+    </a>
+    <!--    <div-->
+    <!--      id="myBaskets"-->
+    <!--      [routerLink]="['/baskets']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <div-->
+    <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
+    <!--      <div class="sidebar__label">MY BASKETS</div>-->
+    <!--    </div>-->
+    <!--    <div-->
+    <!--      id="createBasket"-->
+    <!--      [routerLink]="['/baskets/basket-types']"-->
+    <!--      [routerLinkActiveOptions]="{exact: true}"-->
+    <!--      routerLinkActive="active"-->
+    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
+    <!--      <div-->
+    <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
+    <!--      <div class="sidebar__label">CREATE BASKET</div>-->
+    <!--    </div>-->
+  </div>
 </ng-template>
 
 <ng-template #pendingTxDialog let-data>

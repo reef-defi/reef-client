@@ -21,17 +21,19 @@
 .sidebar__address {
   background: map-get($theme-colors, light);
   font-weight: 500;
-  color: map-get($theme-colors, dark);;
+  color: map-get($theme-colors, dark);
   border: none;
   border-radius: 15px;
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   transition: 0.3s;
-  margin: 1rem 1rem 2rem 1rem;
+  margin: 1rem 1rem 2rem -22px;
+
   &:hover {
     cursor: pointer;
     background: darken(map-get($theme-colors, light), 10)
   }
+
   .address__circle {
     color: map-get($theme-colors, success);
     transform: scale(0.5);
