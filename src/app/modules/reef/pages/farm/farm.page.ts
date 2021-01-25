@@ -85,7 +85,6 @@ export class FarmPage implements OnInit {
     }
   }
 
-
   private async getReefRewards(poolAddress: string): Promise<void> {
     const rewards = await this.uniswapService.getReefRewards(poolAddress);
     this.reefReward$.next(rewards);
@@ -126,7 +125,7 @@ export class FarmPage implements OnInit {
     const tokenContract = new web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
     const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
     console.log(totalStaked);
-    if (totalStaked === 0) {
+    if (+totalStaked === 0) {
       return this.apy = 0;
     }
     const reward = this.connectorSerivce.fromWei(await this.farmingContract$.value.methods.reefPerBlock().call());

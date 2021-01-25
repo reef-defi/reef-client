@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {TokenSymbol} from "../../../core/models/types";
 
 @Component({
   selector: 'app-set-input-relative-amount',
@@ -17,4 +18,6 @@ export class SetInputRelativeAmountComponent {
 
   @Output()
   refreshBalance = new EventEmitter<number>();
+
+  TokenSymbol = TokenSymbol;
 }
