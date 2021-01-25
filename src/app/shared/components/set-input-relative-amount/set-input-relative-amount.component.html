@@ -8,19 +8,18 @@
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
         (click)="valueChange.emit(value)">100%</span>
   <small>of </small>
-  <a href="#"
-     (click)="$event.preventDefault();valueChange.emit(value)">
-    <ng-container *ngIf="tokenSymbol === 'ETH'">
-      {{value | number:'1.1-4'}}
-    </ng-container>
-    <ng-container *ngIf="tokenSymbol === 'USDT'">
+  <span [ngSwitch]="tokenSymbol">
+    <ng-container *ngSwitchCase="TokenSymbol.USDT">
       {{ value | number:'1.1-2' }}
     </ng-container>
-    <ng-container *ngIf="tokenSymbol === 'REEF'">
+    <ng-container *ngSwitchCase="TokenSymbol.REEF">
       {{ value | number:'1.0-0' }}
     </ng-container>
+    <ng-container *ngSwitchDefault>
+      {{value | number:'1.1-4'}}
+    </ng-container>
     {{tokenSymbol}}
-  </a>
+  </span>
 </ng-container>
 <ng-template #noBalance>
   <small>Please add {{tokenSymbol}} then
