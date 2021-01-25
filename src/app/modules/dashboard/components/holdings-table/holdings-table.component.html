@@ -17,6 +17,7 @@
       <div class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell">
         <div class="d-flex align-items-center asset-icon">
           <img id="imgx-{{i}}"
+               onerror="this.src='/assets/images/empty-token.png'"
                alt="{{ token.contract_ticker_symbol }}"
                class="img-fluid mr-1"
                [src]="token.logo_url" height="20" width="20">
@@ -26,7 +27,7 @@
           style="width: 100%"
           href="https://etherscan.io/token/{{ token.contract_address }}"
           target="_blank"
-          class="small font-weight-bolder">
+          class="small font-weight-bolder d-flex align-items-center">
           <span style="display: inline-block; width: 25%">{{ token.contract_ticker_symbol }}</span>
           <span>{{token.contract_name}}</span>
         </a>
@@ -87,18 +88,17 @@
           <div style="line-height: normal"><a
             href="https://etherscan.io/token/{{ pool.pool_token.contract_address }}"
             target="_blank"
-            class="small font-weight-bolder">
+            class="small font-weight-bolder d-flex align-items-center">
             {{ pool.token_0.contract_ticker_symbol }}/{{ pool.token_1.contract_ticker_symbol }}
           </a></div>
 
         </div>
         <div class="col text-right text-monospace small m-wide-cell">
-          {{ pool.token_0.balance | decimal: pool.token_0.quote }}
-          /{{ pool.token_1.balance | decimal: pool.token_1.quote }}
+          {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{ pool.token_1.balance | decimal: pool.token_1.balance }}
         </div>
         <div class="col text-right m-wide-cell">
           <div class="text-monospace small" [title]="pool.pool_token.balance||0">
-            {{ (pool.pool_token.balance) | number }}
+            {{ (pool.pool_token.balance) | decimal: pool.pool_token.balance }}
           </div>
         </div>
 
@@ -142,17 +142,18 @@
           <div style="line-height: normal"><a
             href="https://etherscan.io/token/{{ pool.pool_token.contract_address }}"
             target="_blank"
-            class="small font-weight-bolder">
+            class="small font-weight-bolder d-flex align-items-center">
             {{ pool.token_0.contract_ticker_symbol }}/{{ pool.token_1.contract_ticker_symbol }}
           </a></div>
 
         </div>
         <div
-          class="col text-right text-monospace small m-wide-cell">{{ pool.token_0.balance | decimal: pool.token_0.quote }}
-          /{{ pool.token_1.balance | decimal: pool.token_1.quote }}</div>
+          class="col text-right text-monospace small m-wide-cell">
+          {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{ pool.token_1.balance | decimal: pool.token_1.balance }}
+        </div>
         <div class="col text-right m-wide-cell">
           <div class="text-monospace small" [title]="pool.pool_token.balance||0">
-            {{ (pool.pool_token.balance) | number }}
+            {{ (pool.pool_token.balance) | decimal: pool.pool_token.balance }}
           </div>
         </div>
 
@@ -166,7 +167,7 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="!!portfolio?.compoundPositions?.length">
+<ng-container *ngIf="!!portfolio?.compoundPositions?.length && portfolio.compoundPositions[0].length">
   <div class="d-flex justify-content-between">
     <div class="h5">Compound</div>
     <div *ngIf="portfolio?.compoundPositions?.length"><span class="hide-lg text-muted small-text"><mat-icon
@@ -186,6 +187,7 @@
         <div class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell">
           <div class="d-flex align-items-center asset-icon">
             <img id="imgx-{{i}}"
+                 onerror="this.src='/assets/images/empty-token.png';"
                  alt="{{ token.contract_ticker_symbol }}"
                  class="img-fluid mr-1"
                  [src]="token.logo_url" height="20" width="20">
@@ -193,7 +195,7 @@
           <a style="width: 100%"
              href="https://etherscan.io/token/{{ token.contract_address }}"
              target="_blank"
-             class="small font-weight-bolder">
+             class="small font-weight-bolder d-flex align-items-center">
             <span style="display: inline-block; width: 25%">{{ token.contract_ticker_symbol }}</span>
             <span>{{token.contract_name}}</span>
           </a>
@@ -238,6 +240,7 @@
         <div class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell">
           <div class="d-flex align-items-center asset-icon">
             <img id="imgx-{{i}}"
+                 onerror="this.src='/assets/images/empty-token.png';"
                  alt="{{ token.atoken_contract_ticker_symbol }}"
                  class="img-fluid mr-1"
                  [src]="token.logo_url" height="20" width="20">
@@ -245,14 +248,14 @@
           <a style="width: 100%"
              href="https://etherscan.io/token/{{ token.atoken_contract_address }}"
              target="_blank"
-             class="small font-weight-bolder">
+             class="small font-weight-bolder d-flex align-items-center">
             <span style="display: inline-block; width: 25%">{{ token.atoken_contract_ticker_symbol }}</span>
             <span>{{token.atoken_contract_name}}</span>
           </a>
         </div>
         <div class="col text-right m-wide-cell">
           <div class="text-monospace small" [title]="token.atoken_balance||0">
-            {{ (token.balance || 0) | decimal: token.quote_rate }}
+            {{ (token.atoken_balance || 0) | decimal: token.atoken_balance }}
           </div>
         </div>
         <div class="col text-right m-wide-cell">
