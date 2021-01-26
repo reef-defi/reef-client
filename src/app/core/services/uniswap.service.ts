@@ -3,11 +3,11 @@ import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} 
 import {addresses, reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
-    IContract,
-    IReefPricePerToken,
-    Token as Token_app,
-    TokenSymbol,
-    TokenSymbolDecimalPlaces
+  IContract,
+  IReefPricePerToken,
+  Token as Token_app,
+  TokenSymbol,
+  TokenSymbolDecimalPlaces
 } from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
@@ -30,28 +30,28 @@ export class UniswapService {
     {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}
   ];
 
-    private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
 
-    readonly routerContract$ = this.connectorService.uniswapRouterContract$;
-    readonly farmingContract$ = this.connectorService.farmingContract$;
+  readonly routerContract$ = this.connectorService.uniswapRouterContract$;
+  readonly farmingContract$ = this.connectorService.farmingContract$;
 
-    slippagePercent$: Observable<Percent>;
-    readonly initPrices$: Observable<any>;
-    private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
-    private slippageValue$ = new Subject<string>();
-    private ethersProvider = getDefaultProvider(null, {
-        alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E'
-    });
+  slippagePercent$: Observable<Percent>;
+  readonly initPrices$: Observable<any>;
+  private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
+  private slippageValue$ = new Subject<string>();
+  private ethersProvider = getDefaultProvider(null, {
+    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E'
+  });
 
-    constructor(private readonly connectorService: ConnectorService,
-                private readonly notificationService: NotificationService,
-                private readonly router: Router,
-                public dialog: MatDialog,
-                private apiService: ApiService) {
-        this.slippagePercent$ = this.slippageValue$.pipe(
-            startWith(this.getSlippageIfSet()),
-            map(sVal => this.getSlippagePercent(+sVal)),
-            shareReplay(1)
+  constructor(private readonly connectorService: ConnectorService,
+              private readonly notificationService: NotificationService,
+              private readonly router: Router,
+              public dialog: MatDialog,
+              private apiService: ApiService) {
+    this.slippagePercent$ = this.slippageValue$.pipe(
+      startWith(this.getSlippageIfSet()),
+      map(sVal => this.getSlippagePercent(+sVal)),
+      shareReplay(1)
     );
     this.initPrices$ = this.getInitPriceForSupportedBuyTokens$();
   }
@@ -64,22 +64,27 @@ export class UniswapService {
 
   public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
     if (addresses[tokenSymbol]) {
-        const weiAmount = this.connectorService.toWei(amount);
-        const web3 = await this.getWeb3();
-        const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-        const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
-        const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
-        const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
-        const route = new Route([pair], tokenB);
-        const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
-        const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
-        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
-        const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
-        const path = [tokenB.address, REEF.address];
-        const to = this.connectorService.providerUserInfo$.value.address;
-        const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
-        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-        try {
+      let weiAmount;
+      const web3 = await this.getWeb3();
+      const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const REEF = new Token(ChainId.MAINNET, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
+      const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
+      const route = new Route([pair], tokenB);
+      if (tokenSymbol === 'ETH' || tokenSymbol === 'WETH') {
+        weiAmount = this.connectorService.toWei(amount);
+      } else {
+        weiAmount = amount * +`1e${tokenB.decimals}`;
+      }
+      const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+      const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
+      const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+      const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
+      const path = [tokenB.address, REEF.address];
+      const to = this.connectorService.providerUserInfo$.value.address;
+      const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+      try {
         const firstConfirm = true;
         if (tokenSymbol === 'WETH' || tokenSymbol === 'ETH') {
           this.routerContract$.value.methods.swapExactETHForTokens(
@@ -112,25 +117,29 @@ export class UniswapService {
               this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
             });
         } else {
-          this.routerContract$.value.methods.swapExactTokensForTokens(
-            +amount, amountOutMin, path, to, deadline
-          ).send({
-            from: to,
-            gasPrice: this.connectorService.getGasPrice()
-          })
-            .on('transactionHash', (hash) => {
-              dialogRef.close();
-              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-              this.connectorService.addPendingTx(hash);
+          const contract = this.connectorService.createLpContract(tokenSymbol);
+          const hasAllowance = await this.approveToken(contract)
+          if (hasAllowance) {
+            this.routerContract$.value.methods.swapExactTokensForTokens(
+              amount, amountOutMin, path, to, deadline
+            ).send({
+              from: to,
+              gasPrice: this.connectorService.getGasPrice()
             })
-            .on('receipt', (receipt) => {
-              this.connectorService.removePendingTx(receipt.transactionHash);
-              this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
-            })
-            .on('error', (err) => {
-              dialogRef.close();
-              this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-            })
+              .on('transactionHash', (hash) => {
+                dialogRef.close();
+                this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+                this.connectorService.addPendingTx(hash);
+              })
+              .on('receipt', (receipt) => {
+                this.connectorService.removePendingTx(receipt.transactionHash);
+                this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
+              })
+              .on('error', (err) => {
+                dialogRef.close();
+                this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+              })
+          }
         }
       } catch (e) {
         dialogRef.close();
@@ -213,7 +222,8 @@ export class UniswapService {
           this.connectorService.addPendingTx(hash);
         })
         .on('receipt', (receipt) => {
-          this.connectorService.removePendingTx(receipt.transactionHash);;
+          this.connectorService.removePendingTx(receipt.transactionHash);
+          ;
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
           this.apiService.refreshBalancesForAddress.next(to);
         })
@@ -361,22 +371,22 @@ export class UniswapService {
 
   private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
     if (addresses[tokenSymbol]) {
-        const web3 = await this.getWeb3();
-        const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-        const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
-        // TODO to observable so previous request could be canceled
-        const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
-        const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
-        const route = new Route([pair], tokenB);
-        const totalReef = await pair.reserveOf(REEF).toExact();
-        if (amount > 0) {
-            const exponent = TokenSymbolDecimalPlaces[tokenSymbol];
-            const tokenAmt = (amount * Math.pow(10, exponent)).toString(10);
-            const trade = new Trade(route, new TokenAmount(tokenB, tokenAmt), TradeType.EXACT_INPUT);
-            if (!slippageTolerance) {
-                slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
-            }
-            const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+      const web3 = await this.getWeb3();
+      const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
+      // TODO to observable so previous request could be canceled
+      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
+      const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
+      const route = new Route([pair], tokenB);
+      const totalReef = await pair.reserveOf(REEF).toExact();
+      if (amount > 0) {
+        const exponent = TokenSymbolDecimalPlaces[tokenSymbol];
+        const tokenAmt = (amount * Math.pow(10, exponent)).toString(10);
+        const trade = new Trade(route, new TokenAmount(tokenB, tokenAmt), TradeType.EXACT_INPUT);
+        if (!slippageTolerance) {
+          slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
+        }
+        const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
         const price = {
           REEF_PER_TOKEN: route.midPrice.toSignificant(),
           TOKEN_PER_REEF: route.midPrice.invert().toSignificant(),
