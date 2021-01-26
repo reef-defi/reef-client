@@ -70,12 +70,12 @@ export class UniswapService {
       const REEF = new Token(ChainId.MAINNET, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
       const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
-      const route = new Route([pair], tokenB);
       if (tokenSymbol === 'ETH' || tokenSymbol === 'WETH') {
         weiAmount = this.connectorService.toWei(amount);
       } else {
         weiAmount = amount * +`1e${tokenB.decimals}`;
       }
+      const route = new Route([pair], tokenB);
       const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
       const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
       const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
@@ -120,6 +120,7 @@ export class UniswapService {
           const contract = this.connectorService.createLpContract(tokenSymbol);
           const hasAllowance = await this.approveToken(contract)
           if (hasAllowance) {
+            amount = amount * +`1e${tokenB.decimals}`;
             this.routerContract$.value.methods.swapExactTokensForTokens(
               amount, amountOutMin, path, to, deadline
             ).send({
@@ -133,7 +134,7 @@ export class UniswapService {
               })
               .on('receipt', (receipt) => {
                 this.connectorService.removePendingTx(receipt.transactionHash);
-                this.notificationService.showNotification(`You've successfully bought ${amount} REEF!`, 'Okay', 'success');
+                this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
               })
               .on('error', (err) => {
                 dialogRef.close();
