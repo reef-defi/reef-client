@@ -40,7 +40,8 @@ export class UniswapService {
   private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
   private ethersProvider = getDefaultProvider(null, {
-    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E'
+    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
+    infura: 'c80b6f5e0b554a59b295f7588eb958b7'
   });
 
   constructor(private readonly connectorService: ConnectorService,
