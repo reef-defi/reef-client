@@ -40,15 +40,16 @@
                     </div>
                     <input
                       appNumbersOnlyInput
+                      appNumbersOnlyInputNoDecimal="true"
                       [(ngModel)]="reefAmount"
                       class="form-control small accent-text"
                       id="reefAmount"
-                      placeholder="0.0" type="number"/>
+                      placeholder="0" type="number"/>
                     <ng-container *ngIf="+reefAmount <= tokenBalance; else noBalance">
                       <app-set-input-relative-amount
                         [value]="tokenBalance"
                         [tokenSymbol]="token !== 'TOKEN' ? 'LP Tokens' : 'REEF'"
-                        (valueChange)="reefAmount=$event"
+                        (valueChange)="reefAmount=toValidReefAmount($event)"
                         (refreshBalance)="refreshBalance(contract,address)"
                       ></app-set-input-relative-amount>
                     </ng-container>
@@ -77,6 +78,7 @@
                             <button
                               [disabled]="!reefAmount ||
                             reefAmount > tokenBalance || reefAmount <= 0"
+                              (click)="deposit(contract, address, reefAmount.toString(10))"
                               (click)="deposit(contract, address, reefAmount.toString(10))"
                               class="btn btn-primary white-space-normal width-100 small-line-h">
                               Deposit <span class="x-small-text">Tokens</span>
