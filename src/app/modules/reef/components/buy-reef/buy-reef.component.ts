@@ -24,7 +24,7 @@ export class BuyReefComponent {
   }
 
   @Input() loading: boolean | undefined;
-  @Output() buy = new EventEmitter<{ tokenSymbol: string, tokenAmount: number }>();
+  @Output() buy = new EventEmitter<{ tokenSymbol: TokenSymbol, tokenAmount: number }>();
 
   TokenSymbol = TokenSymbol;
   selectedTokenBalances$: Observable<Token[]>;
