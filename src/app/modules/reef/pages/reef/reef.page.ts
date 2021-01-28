@@ -6,6 +6,7 @@ import {PoolService} from '../../../../core/services/pool.service';
 import {ChartsService} from "../../../../core/services/charts.service";
 import {ApiService} from "../../../../core/services/api.service";
 import {format, subMonths} from 'date-fns';
+import {TokenSymbol} from "../../../../core/models/types";
 
 @Component({
   selector: 'app-reef',
@@ -19,6 +20,7 @@ export class ReefPage implements OnInit {
 
   buyLoading = false;
   reefPriceChartData = null;
+  readonly TokenSymbol = TokenSymbol;
 
   constructor(private contractService: ContractService,
               private readonly connectorService: ConnectorService,
@@ -32,7 +34,7 @@ export class ReefPage implements OnInit {
     this.getReefHistoricalPrice();
   }
 
-  async buyReef(tokenSymbol: string, tokenAmount: number): Promise<any> {
+  async buyReef(tokenSymbol: TokenSymbol, tokenAmount: number): Promise<any> {
     this.buyLoading = true;
     await this.uniswapService.buyReef(tokenSymbol, tokenAmount, 10);
     this.buyLoading = false;

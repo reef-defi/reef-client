@@ -40,7 +40,8 @@ export class UniswapService {
   private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
   private ethersProvider = getDefaultProvider(null, {
-    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E'
+    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
+    infura: 'c80b6f5e0b554a59b295f7588eb958b7'
   });
 
   constructor(private readonly connectorService: ConnectorService,
@@ -62,7 +63,7 @@ export class UniswapService {
     return ppt;
   }
 
-  public async buyReef(tokenSymbol: string, amount: number, minutesDeadline: number): Promise<void> {
+  public async buyReef(tokenSymbol: TokenSymbol, amount: number, minutesDeadline: number): Promise<void> {
     if (addresses[tokenSymbol]) {
       let weiAmount;
       const web3 = await this.getWeb3();
@@ -70,7 +71,7 @@ export class UniswapService {
       const REEF = new Token(ChainId.MAINNET, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
       const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
       const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
-      if (tokenSymbol === 'ETH' || tokenSymbol === 'WETH') {
+      if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
         weiAmount = this.connectorService.toWei(amount);
       } else {
         weiAmount = amount * +`1e${tokenB.decimals}`;
@@ -86,19 +87,19 @@ export class UniswapService {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       try {
         const firstConfirm = true;
-        if (tokenSymbol === 'WETH' || tokenSymbol === 'ETH') {
+        if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
           this.routerContract$.value.methods.swapExactETHForTokens(
-            amountOutMin, path, to, deadline
+              amountOutMin, path, to, deadline
           ).send({
             from: to,
             value: weiAmount,
             gasPrice: this.connectorService.getGasPrice()
           })
-            .on('transactionHash', (hash) => {
-              dialogRef.close();
-              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
-              this.connectorService.addPendingTx(hash);
-            })
+              .on('transactionHash', (hash) => {
+                dialogRef.close();
+                this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+                this.connectorService.addPendingTx(hash);
+              })
             .on('receipt', async (receipt) => {
               this.connectorService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
@@ -151,7 +152,7 @@ export class UniswapService {
   }
 
   // TODO can we just use this.connectorService.createLpContract?
-  public createLpContract(tokenSymbol: string): IContract {
+  public createLpContract(tokenSymbol: TokenSymbol): IContract {
     return this.connectorService.createLpContract(tokenSymbol);
   }
 
