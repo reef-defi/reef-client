@@ -1,13 +1,16 @@
-import {Directive, HostListener} from '@angular/core';
+import {Directive, HostListener, Input} from '@angular/core';
 
 @Directive({
   selector: '[appNumbersOnlyInput]'
 })
 export class NumbersOnlyInputDirective {
+  @Input()
+  appNumbersOnlyInputNoDecimal: any;
 
   @HostListener('keydown', ['$event']) onKeyDown(event): any {
     let e = <KeyboardEvent>event;
-    if (['Delete', 'Backspace', 'Tab', 'Escape', 'Enter', 'NumLock', 'ArrowLeft', 'ArrowRight', 'End', 'Home', '.'].indexOf(e.key) !== -1 ||
+    const allowedDecimalSign = !!this.appNumbersOnlyInputNoDecimal ? '' : '.';
+    if (['Delete', 'Backspace', 'Tab', 'Escape', 'Enter', 'NumLock', 'ArrowLeft', 'ArrowRight', 'End', 'Home', allowedDecimalSign].indexOf(e.key) !== -1 ||
       // Allow: Ctrl+A
       (e.key === 'a' && (e.ctrlKey || e.metaKey)) ||
       // Allow: Ctrl+C

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {filter, finalize, first, map} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
@@ -10,6 +10,7 @@ import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {contractData} from '../../../../../assets/abi';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {formatNumber} from "@angular/common";
 
 @Component({
   selector: 'app-farm-page',
@@ -50,7 +51,9 @@ export class FarmPage implements OnInit {
 
   constructor(private readonly route: ActivatedRoute,
               private readonly uniswapService: UniswapService,
-              private readonly connectorSerivce: ConnectorService) {
+              private readonly connectorSerivce: ConnectorService,
+              @Inject(LOCALE_ID) private locale: string
+  ) {
   }
 
   ngOnInit(): void {
@@ -145,5 +148,9 @@ export class FarmPage implements OnInit {
 
   getSubtitleTokenPart(token: string): string {
     return (token !== 'TOKEN') ? (token + '-REEF') : 'REEF';
+  }
+
+  toValidReefAmount(value: number) {
+    return formatNumber(value, this.locale, `1.0-0`);
   }
 }
