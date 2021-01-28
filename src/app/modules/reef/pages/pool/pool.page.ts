@@ -55,7 +55,7 @@ export class PoolPage {
       map(token => this.uniswapService.createLpContract(token)),
       shareReplay(1)
     );
-    this.reefContract$ = of(this.uniswapService.createLpContract(TokenSymbol.REEF)).pipe(
+    this.reefContract$ = of(this.uniswapService.createLpContract(TokenSymbol.REEF_TOKEN)).pipe(
       shareReplay(1)
     );
 

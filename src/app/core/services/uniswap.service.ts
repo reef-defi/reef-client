@@ -226,7 +226,6 @@ export class UniswapService {
         })
         .on('receipt', (receipt) => {
           this.connectorService.removePendingTx(receipt.transactionHash);
-          ;
           this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
           this.apiService.refreshBalancesForAddress.next(to);
         })

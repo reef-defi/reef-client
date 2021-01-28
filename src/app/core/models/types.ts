@@ -305,7 +305,8 @@ export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
   USDT = 'USDT',
-  REEF = 'REEF'
+  REEF = 'REEF',
+  REEF_TOKEN = 'REEF_TOKEN'
 }
 
 export const TokenSymbolDecimalPlaces = {
