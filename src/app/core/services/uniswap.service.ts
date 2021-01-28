@@ -102,15 +102,11 @@ export class UniswapService {
             .on('receipt', async (receipt) => {
               this.connectorService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
-              const reefBalance = await this.connectorService.getReefBalance(to);
-              this.connectorService.providerUserInfo$.next({
-                ...this.connectorService.providerUserInfo$.value,
-                reefBalance,
-              });
-              this.apiService.updateTokenBalanceForAddress.next({
-                address: to, balance: parseFloat(reefBalance),
-                contract_ticker_symbol: TokenSymbol.REEF
-              } as Token_app);
+              this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
+                .pipe(take(1))
+                .subscribe((balances: Token_app[]) => {
+                  this.apiService.updateTokenBalanceForAddress.next(balances[0])
+                })
             })
             .on('error', (err) => {
               dialogRef.close();
@@ -135,6 +131,11 @@ export class UniswapService {
               .on('receipt', (receipt) => {
                 this.connectorService.removePendingTx(receipt.transactionHash);
                 this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
+                this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
+                  .pipe(take(1))
+                  .subscribe((balances: Token_app[]) => {
+                    this.apiService.updateTokenBalanceForAddress.next(balances[0])
+                  });
               })
               .on('error', (err) => {
                 dialogRef.close();

@@ -131,14 +131,10 @@ export class ConnectorService {
 
   public async getUserProviderInfo(): Promise<void> {
     const address = await this.getAddress();
-    const balance = await this.getUserBalance(address);
     const chainInfo = await this.getChainInfo();
-    const reefBalance = await this.getReefBalance(address);
     this.providerUserInfo$.next({
       address,
-      balance,
       chainInfo,
-      reefBalance,
     });
   }
 
@@ -228,6 +224,7 @@ export class ConnectorService {
     });
   }
 
+
   public removePendingTx(hash: string) {
     let {transactions} = this.pendingTransactions$.value;
     this.pendingTransactions$.next({
@@ -256,12 +253,6 @@ export class ConnectorService {
     this.reefTokenContract$.next(tokenC);
     this.uniswapRouterContract$.next(uniswapC);
     this.vaultsContract$.next(vaultsC);
-    const reefBalance = await this.getReefBalance(this.providerUserInfo$.value.address);
-    this.providerUserInfo$.next({
-      ...this.providerUserInfo$.value,
-      reefBalance
-    });
-    console.log(basketsC, 'BNasket...');
   }
 
   private async initWeb3Modal(): Promise<any> {
