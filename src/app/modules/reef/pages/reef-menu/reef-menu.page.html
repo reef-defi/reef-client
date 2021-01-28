@@ -21,10 +21,12 @@
             <div class="mb-3 h5">
               Buy REEF
             </div>
-            <p class="text-monospace text-center small">Your REEF Balance</p>
-            <div class="h6">
-              {{ (userInfo.reefBalance | number) || 0 }}
-            </div>
+            <ng-container *ngIf="reefBalance$ | async as reefBalance">
+              <p class="text-monospace text-center small">Your REEF Balance</p>
+              <div class="h6">
+                {{ (reefBalance[0].balance | number) || 0 }}
+              </div>
+            </ng-container>
           </div>
           <div class="d-flex align-items-center justify-content-center">
             <button [routerLink]="['/reef/buy']" class="btn btn-primary font-weight-bold w-50">Buy</button>

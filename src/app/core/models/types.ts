@@ -136,11 +136,7 @@ export interface ITransaction {
 
 export interface IProviderUserInfo {
   address: string;
-  // TODO we should use apiService to get balances
-  balance: string;
   chainInfo: IChainData;
-  // TODO we should use apiService to get balances
-  reefBalance: string;
 }
 
 export interface IChainData {
@@ -309,7 +305,8 @@ export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
   USDT = 'USDT',
-  REEF = 'REEF'
+  REEF = 'REEF',
+  REEF_TOKEN = 'REEF_TOKEN'
 }
 
 export const TokenSymbolDecimalPlaces = {
