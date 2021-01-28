@@ -5,7 +5,7 @@ import {UniswapService} from '../../../../core/services/uniswap.service';
 import {addresses, reefPools} from '../../../../../assets/addresses';
 import {tap} from 'rxjs/internal/operators/tap';
 import {BehaviorSubject} from 'rxjs';
-import {IContract, IProviderUserInfo} from '../../../../core/models/types';
+import {IContract, IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {contractData} from '../../../../../assets/abi';
@@ -36,8 +36,8 @@ export class FarmPage implements OnInit {
     filter(this.uniswapService.isSupportedERC20),
     tap((address: string) => {
       let contractTokenSymbol = getKey(addresses, address).split('_')[1];
-      if (contractTokenSymbol === 'WETH') {
-        contractTokenSymbol = 'ETH';
+      if (contractTokenSymbol === TokenSymbol.WETH) {
+        contractTokenSymbol = TokenSymbol.ETH;
       }
       this.tokenSymbol$.next(contractTokenSymbol);
       const validAddrs = Object.values(addresses);

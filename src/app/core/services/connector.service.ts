@@ -11,7 +11,8 @@ import {
   IPendingTransactions,
   IProviderUserInfo,
   ITransaction,
-  PendingTransaction
+  PendingTransaction,
+  TokenSymbol
 } from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
@@ -190,7 +191,7 @@ export class ConnectorService {
     };
   }
 
-  public createLpContract(tokenSymbol: string): IContract {
+  public createLpContract(tokenSymbol: TokenSymbol): IContract {
     return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
   }
 
