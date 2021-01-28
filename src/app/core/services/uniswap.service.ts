@@ -152,7 +152,7 @@ export class UniswapService {
   }
 
   // TODO can we just use this.connectorService.createLpContract?
-  public createLpContract(tokenSymbol: TokenSymbol): IContract {
+  public createLpContract(tokenSymbol: TokenSymbol | string): IContract {
     return this.connectorService.createLpContract(tokenSymbol);
   }
 

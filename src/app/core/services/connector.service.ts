@@ -187,7 +187,7 @@ export class ConnectorService {
     };
   }
 
-  public createLpContract(tokenSymbol: TokenSymbol): IContract {
+  public createLpContract(tokenSymbol: TokenSymbol | string): IContract {
     return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
   }
 
