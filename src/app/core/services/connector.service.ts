@@ -1,11 +1,13 @@
 import {Injectable} from '@angular/core';
 import Web3 from 'web3';
+import {Contract} from 'web3-eth-contract';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
 import {getProviderName} from '../utils/provider-name';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
+  AvailableSmartContractAddresses,
   IChainData,
   IContract,
   IPendingTransactions,
@@ -16,27 +18,27 @@ import {
 } from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
-import {contractData} from '../../../assets/abi';
-import {addresses, addresses as addrs} from '../../../assets/addresses';
+import {getContractData} from '../../../assets/abi';
 import {MaxUint256} from '../utils/pools-utils';
+import {getChainAddresses} from '../../../assets/addresses';
+import {take} from "rxjs/operators";
 
-const {REEF_TOKEN, REEF_BASKET, REEF_FARMING, REEF_STAKING} = addrs;
 const Web3Modal = window.Web3Modal.default;
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConnectorService {
-  static readonly PENDING_TX_KEY = 'pending_txs'
-  basketContract$ = new BehaviorSubject<IContract>(null);
-  stakingContract$ = new BehaviorSubject<IContract>(null);
-  farmingContract$ = new BehaviorSubject<IContract>(null);
-  reefTokenContract$ = new BehaviorSubject<IContract>(null);
-  uniswapRouterContract$ = new BehaviorSubject<IContract>(null);
-  vaultsContract$ = new BehaviorSubject<IContract>(null);
+  static readonly PENDING_TX_KEY = 'pending_txs';
+  basketContract$ = new BehaviorSubject<Contract>(null);
+  stakingContract$ = new BehaviorSubject<Contract>(null);
+  farmingContract$ = new BehaviorSubject<Contract>(null);
+  reefTokenContract$ = new BehaviorSubject<Contract>(null);
+  uniswapRouterContract$ = new BehaviorSubject<Contract>(null);
+  vaultsContract$ = new BehaviorSubject<Contract>(null);
   currentProvider$ = new BehaviorSubject(null);
   currentProviderName$ = new BehaviorSubject<string | null>(null);
-  providerUserInfo$ = new BehaviorSubject<IProviderUserInfo | null>(null);
+  providerUserInfo$ = new ReplaySubject<IProviderUserInfo | null>(1);
   transactionsForAccount$ = new BehaviorSubject<ITransaction[]>(null);
   selectedGasPrice$ = new BehaviorSubject(null);
 
@@ -78,6 +80,9 @@ export class ConnectorService {
   // public web3WS = null;
 
   constructor(private readonly notificationService: NotificationService) {
+    this.providerUserInfo$.subscribe((v) => {
+      console.log('providerUserInfo$ value change=', v);
+    });
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
       cacheProvider: true,
@@ -100,12 +105,14 @@ export class ConnectorService {
     this.currentProvider$.next(await this.web3Modal.connect());
     this.providerLoading$.next(false);
     console.log(this.currentProvider$.value, 'Current Provider.');
-    this.web3 = this.initWeb3(this.currentProvider$.value);
+    const web3 = this.initWeb3(this.currentProvider$.value);
+    // TODO remove private web3 - use web3$
+    this.web3 = web3;
     this.web3$.next(this.web3);
-    await this.getUserProviderInfo();
-    await this.connectToContract();
+    const info: IProviderUserInfo = await this.createUserProviderInfo(web3);
+    await this.connectToContract(info, web3);
     this.subToProviderEvents();
-
+    this.providerUserInfo$.next(info);
   }
 
   public async onDisconnect(): Promise<any> {
@@ -130,13 +137,19 @@ export class ConnectorService {
     return this.web3.utils.fromWei(`${amount}`, unit);
   }
 
-  public async getUserProviderInfo(): Promise<void> {
-    const address = await this.getAddress();
-    const chainInfo = await this.getChainInfo();
-    this.providerUserInfo$.next({
+  private async createUserProviderInfo(web3: Web3): Promise<IProviderUserInfo> {
+    const address = await this.getAddress(web3);
+    const chainInfo = await this.getChainInfo(web3);
+    const availableSmartContractAddresses = getChainAddresses(chainInfo.chain_id);
+    if (!availableSmartContractAddresses) {
+      throw new Error('Could not get contract addresses for chain_id=' + chainInfo.chain_id);
+    }
+    // this.providerUserInfo$.next();
+    return Promise.resolve({
       address,
       chainInfo,
-    });
+      availableSmartContractAddresses
+    } as IProviderUserInfo);
   }
 
   public async getTransactionsForAddress(address: string, startBlock?: number, endBlock?: number): Promise<void> {
@@ -150,21 +163,22 @@ export class ConnectorService {
     if (!startBlock) {
       startBlock = endBlock - 10;
     }
+    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
     const transactions: ITransaction[] = [];
     for (let i = startBlock; i <= endBlock; i++) {
       const block = await this.web3.eth.getBlock(i, true);
       if (block && block.transactions) {
         const txs = block.transactions.filter((tx) =>
           tx.to && (
-            tx.to === REEF_BASKET ||
-            tx.to === REEF_TOKEN ||
-            tx.to === REEF_STAKING ||
-            tx.to === REEF_FARMING
+            tx.to === info.availableSmartContractAddresses.REEF_BASKET ||
+            tx.to === info.availableSmartContractAddresses.REEF_TOKEN ||
+            tx.to === info.availableSmartContractAddresses.REEF_STAKING ||
+            tx.to === info.availableSmartContractAddresses.REEF_FARMING
           ) && tx.from === address
         ).map((tx) => ({
           ...tx,
           value: this.fromWei(tx.value),
-          action: this.getTxAction(tx.to, tx.value),
+          action: this.getTxAction(tx.to, tx.value, info),
           timestamp: new Date(block.timestamp),
         }));
         if (txs && txs.length > 0) {
@@ -176,6 +190,7 @@ export class ConnectorService {
   }
 
   public async getTxByHash(hash: string): Promise<ITransaction | null> {
+    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
     const tx = await this.web3.eth.getTransaction(hash);
     if (!tx) {
       return;
@@ -183,11 +198,15 @@ export class ConnectorService {
     return {
       ...tx,
       value: this.fromWei(tx.value),
-      action: this.getTxAction(tx.to, tx.value),
+      action: this.getTxAction(tx.to, tx.value, info),
     };
   }
 
-  public createLpContract(tokenSymbol: TokenSymbol | string): IContract {
+  public createLpContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): IContract {
+    if (!addresses[tokenSymbol]) {
+      throw new Error('No address for tokenSymbol=' + tokenSymbol);
+    }
+    const contractData = getContractData(addresses);
     return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
   }
 
@@ -203,6 +222,7 @@ export class ConnectorService {
     return gwei;
   }
 
+  // TODO create/move to pendingTransactions.service.ts
   public addPendingTx(hash: string): void {
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
@@ -241,19 +261,22 @@ export class ConnectorService {
     }
   }
 
-  private async connectToContract(): Promise<void> {
-    const basketsC = new this.web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
-    const farmingC = new this.web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
-    const stakingC = new this.web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
-    const tokenC = new this.web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
-    const uniswapC = new this.web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
-    const vaultsC = new this.web3.eth.Contract((contractData.reefVaults.abi as any), contractData.reefVaults.addr);
+  private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
+    const addresses = info.availableSmartContractAddresses;
+    const contractData = getContractData(addresses);
+    const basketsC = new web3.eth.Contract((contractData.reefBasket.abi as any), contractData.reefBasket.addr);
+    const farmingC = new web3.eth.Contract((contractData.reefFarming.abi as any), contractData.reefFarming.addr);
+    const stakingC = new web3.eth.Contract((contractData.reefStaking.abi as any), contractData.reefStaking.addr);
+    const tokenC = new web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
+    const uniswapC = new web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
+    const vaultsC = new web3.eth.Contract((contractData.reefVaults.abi as any), contractData.reefVaults.addr);
     this.basketContract$.next(basketsC);
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
     this.reefTokenContract$.next(tokenC);
     this.uniswapRouterContract$.next(uniswapC);
     this.vaultsContract$.next(vaultsC);
+    return Promise.resolve();
   }
 
   private async initWeb3Modal(): Promise<any> {
@@ -310,26 +333,26 @@ export class ConnectorService {
     return await this.web3.utils.fromWei(balance);
   }
 
-  private async getAddress(): Promise<string> {
-    const allAccs = await this.web3.eth.getAccounts();
+  private async getAddress(web3: Web3): Promise<string> {
+    const allAccs = await web3.eth.getAccounts();
     return allAccs[0];
   }
 
-  private async getChainInfo(): Promise<IChainData> {
-    const chainId = await this.web3.eth.getChainId();
+  private async getChainInfo(web3: Web3): Promise<IChainData> {
+    const chainId = await web3.eth.getChainId();
     return getChainData(chainId);
   }
 
-  private getTxAction(address: string, value: string): string {
+  private async getTxAction(address: string, value: string, providerInfo: IProviderUserInfo): Promise<string> {
     switch (address) {
-      case REEF_TOKEN:
-        return 'Transaction';
-      case REEF_BASKET:
-        return +value > 0 ? 'Investment' : 'Liquidation';
-      case REEF_FARMING:
-        return 'Farming';
-      case REEF_STAKING:
-        return 'Staking';
+      case providerInfo.availableSmartContractAddresses.REEF_TOKEN:
+        return Promise.resolve('Transaction');
+      case providerInfo.availableSmartContractAddresses.REEF_BASKET:
+        return Promise.resolve(+value > 0 ? 'Investment' : 'Liquidation');
+      case providerInfo.availableSmartContractAddresses.REEF_FARMING:
+        return Promise.resolve('Farming');
+      case providerInfo.availableSmartContractAddresses.REEF_STAKING:
+        return Promise.resolve('Staking');
     }
   }
 
@@ -339,11 +362,12 @@ export class ConnectorService {
     if (allowance && +allowance > 0) {
       return true;
     }
+    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
     return await token.methods.approve(
       spenderAddr,
       MaxUint256.toString()
     ).send({
-      from: this.providerUserInfo$.value.address, // hardcode
+      from: info.address, // hardcode
       gasPrice: this.getGasPrice()
     }).on('transactionHash', (hash) => {
       this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
@@ -359,7 +383,8 @@ export class ConnectorService {
   }
 
   private async getAllowance(token: any, spenderAddr: string): Promise<any> {
-    return token.methods.allowance(this.providerUserInfo$.value.address, spenderAddr).call();
+    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
+    return token.methods.allowance(info.address, spenderAddr).call();
   }
 }
 

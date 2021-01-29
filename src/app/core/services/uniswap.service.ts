@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {addresses, reefPools} from '../../../assets/addresses';
+import {reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
+  AvailableSmartContractAddresses,
   IContract,
+  IProviderUserInfo,
   IReefPricePerToken,
   Token as Token_app,
   TokenSymbol,
@@ -17,7 +19,7 @@ import {getKey} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
+import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
 import {ApiService} from './api.service';
 import {getDefaultProvider} from "@ethersproject/providers";
 
@@ -64,6 +66,8 @@ export class UniswapService {
   }
 
   public async buyReef(tokenSymbol: TokenSymbol, amount: number, minutesDeadline: number): Promise<void> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
     if (addresses[tokenSymbol]) {
       let weiAmount;
       const web3 = await this.getWeb3();
@@ -82,7 +86,7 @@ export class UniswapService {
       const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
       const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
       const path = [tokenB.address, REEF.address];
-      const to = this.connectorService.providerUserInfo$.value.address;
+      const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       try {
@@ -104,61 +108,63 @@ export class UniswapService {
               this.connectorService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
               this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
-                .pipe(take(1))
-                .subscribe((balances: Token_app[]) => {
-                  this.apiService.updateTokenBalanceForAddress.next(balances[0])
-                })
+                  .pipe(take(1))
+                  .subscribe((balances: Token_app[]) => {
+                    this.apiService.updateTokenBalanceForAddress.next(balances[0]);
+                  });
             })
             .on('error', (err) => {
               dialogRef.close();
               this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
             });
         } else {
-          const contract = this.connectorService.createLpContract(tokenSymbol);
-          const hasAllowance = await this.approveToken(contract)
+          const contract = this.connectorService.createLpContract(tokenSymbol, addresses);
+          const hasAllowance = await this.approveToken(contract);
           if (hasAllowance) {
             amount = amount * +`1e${tokenB.decimals}`;
             this.routerContract$.value.methods.swapExactTokensForTokens(
-              amount, amountOutMin, path, to, deadline
+                amount, amountOutMin, path, to, deadline
             ).send({
               from: to,
               gasPrice: this.connectorService.getGasPrice()
             })
-              .on('transactionHash', (hash) => {
-                dialogRef.close();
-                this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-                this.connectorService.addPendingTx(hash);
-              })
-              .on('receipt', (receipt) => {
-                this.connectorService.removePendingTx(receipt.transactionHash);
-                this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
-                this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
-                  .pipe(take(1))
-                  .subscribe((balances: Token_app[]) => {
-                    this.apiService.updateTokenBalanceForAddress.next(balances[0])
-                  });
-              })
-              .on('error', (err) => {
-                dialogRef.close();
-                this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-              })
+                .on('transactionHash', (hash) => {
+                  dialogRef.close();
+                  this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+                  this.connectorService.addPendingTx(hash);
+                })
+                .on('receipt', (receipt) => {
+                  this.connectorService.removePendingTx(receipt.transactionHash);
+                  this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
+                  this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
+                      .pipe(take(1))
+                      .subscribe((balances: Token_app[]) => {
+                        this.apiService.updateTokenBalanceForAddress.next(balances[0]);
+                      });
+                })
+                .on('error', (err) => {
+                  dialogRef.close();
+                  this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+                });
           }
         }
       } catch (e) {
         dialogRef.close();
         this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
       }
+    } else {
+      throw new Error('Can not find contract address for ' + tokenSymbol);
     }
   }
 
   // TODO can we just use this.connectorService.createLpContract?
-  public createLpContract(tokenSymbol: TokenSymbol | string): IContract {
-    return this.connectorService.createLpContract(tokenSymbol);
+  public createLpContract(tokenSymbol: TokenSymbol | string, addresses: AvailableSmartContractAddresses): IContract {
+    return this.connectorService.createLpContract(tokenSymbol as TokenSymbol, addresses);
   }
 
   public async approveToken(token: IContract): Promise<any> {
     return await this.connectorService
-      .approveToken(token, this.routerContract$.value.options.address);
+        .approveToken(token, this.routerContract$.value.options.address);
   }
 
   /*public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
@@ -183,13 +189,15 @@ export class UniswapService {
 
   public getReefPriceInInterval$(tokenSymbol: TokenSymbol): Observable<IReefPricePerToken> {
     if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
-      if (addresses[tokenSymbol]) {
         const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
-          switchMap(([_, slippageP]: [any, Percent]) => this.getReefPricePer(tokenSymbol, 1, slippageP)),
-          shareReplay(1)
+            switchMap(([_, slippageP]: [any, Percent]) => this.connectorService.providerUserInfo$.pipe(
+                filter(info => info.availableSmartContractAddresses[tokenSymbol]),
+                switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
+                )
+            ),
+            shareReplay(1)
         );
         this.reefPricesLive.set(tokenSymbol, updatedTokenPrice);
-      }
     }
     return this.reefPricesLive.get(tokenSymbol);
   }
@@ -207,14 +215,15 @@ export class UniswapService {
     amountB: number,
     minutesDeadline: number,
   ): Promise<any> {
-    const to = this.connectorService.providerUserInfo$.value.address;
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const to = info.address;
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     const weiA = this.connectorService.toWei(amountA);
     const weiB = this.connectorService.toWei(amountB);
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods.addLiquidity(
-        tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
+          tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
       ).send({
         from: to,
         gasPrice: this.connectorService.getGasPrice()
@@ -244,7 +253,8 @@ export class UniswapService {
     ethAmount: number,
     minutesDeadline: number
   ): Promise<any> {
-    const to = this.connectorService.providerUserInfo$.value.address;
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const to = info.address;
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     const tokenAmount = this.connectorService.toWei(amount);
     const weiEthAmount = this.connectorService.toWei(ethAmount);
@@ -254,7 +264,7 @@ export class UniswapService {
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods.addLiquidityETH(
-        token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
+          token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
       ).send({
         from: to,
         value: `${weiEthAmount}`,
@@ -280,27 +290,30 @@ export class UniswapService {
   }
 
   public async deposit(tokenContract: IContract, poolAddress: string, tokenAmount: string): Promise<any> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
     const allowance = await this.connectorService
-      .approveToken(tokenContract, this.farmingContract$.value.options.address);
+        .approveToken(tokenContract, this.farmingContract$.value.options.address);
     if (allowance) {
       const amount = new BigNumber(tokenAmount).toNumber();
       try {
         const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         const poolSymbol = getKey(addresses, poolAddress);
-        const fromAddress = this.connectorService.providerUserInfo$.value.address;
+        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+        const fromAddress = info.address;
         this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
           from: fromAddress,
         })
-          .on('transactionHash', (hash) => {
-            dialogRef.close();
-            this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-            this.connectorService.addPendingTx(hash);
-          })
-          .on('receipt', (receipt) => {
-            this.connectorService.removePendingTx(receipt.transactionHash);
-            this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
-            this.apiService.refreshBalancesForAddress.next(fromAddress);
-          })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+              this.connectorService.addPendingTx(hash);
+            })
+            .on('receipt', (receipt) => {
+              this.connectorService.removePendingTx(receipt.transactionHash);
+              this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
+              this.apiService.refreshBalancesForAddress.next(fromAddress);
+            })
           .on('error', (err) => {
             dialogRef.close();
             this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
@@ -313,39 +326,44 @@ export class UniswapService {
 
   public async withdraw(poolAddress: string, tokenAmount: string | number): Promise<any> {
     try {
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+      const addresses = info.availableSmartContractAddresses;
       const amount = new BigNumber(tokenAmount).toNumber();
       const poolSymbol = getKey(addresses, poolAddress);
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-      const fromAddress = this.connectorService.providerUserInfo$.value.address;
+      const fromAddress = info.address;
       this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
         from: fromAddress,
         gasPrice: this.connectorService.getGasPrice()
       })
-        .on('transactionHash', (hash) => {
-          dialogRef.close();
-          this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-          this.connectorService.addPendingTx(hash);
-        })
-        .on('receipt', (receipt) => {
-          this.connectorService.removePendingTx(receipt.transactionHash);
-          this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
-          this.apiService.refreshBalancesForAddress.next(fromAddress);
-        })
-        .on('error', (err) => {
-          dialogRef.close();
-          this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-        })
+          .on('transactionHash', (hash) => {
+            dialogRef.close();
+            this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+            this.connectorService.addPendingTx(hash);
+          })
+          .on('receipt', (receipt) => {
+            this.connectorService.removePendingTx(receipt.transactionHash);
+            this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
+            this.apiService.refreshBalancesForAddress.next(fromAddress);
+          })
+          .on('error', (err) => {
+            dialogRef.close();
+            this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+          });
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }
 
   public async getReefRewards(poolAddress: string): Promise<number> {
-    const address = this.connectorService.providerUserInfo$.value.address;
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
+    const address = info.address;
     poolAddress = poolAddress.toLocaleLowerCase();
-    console.log(poolAddress, 'hmmm...')
+    console.log(poolAddress, 'hmmm...');
     const poolSymbol = getKey(addresses, poolAddress);
-    console.log(poolSymbol, 'hello')
+    console.log(poolSymbol, 'hello');
+    // @ts-ignore
     const amount = await this.farmingContract$.value.methods.pendingRewards(reefPools[poolSymbol], address).call<number>();
     return this.connectorService.fromWei(amount);
   }
@@ -356,13 +374,17 @@ export class UniswapService {
   }
 
   public async getStaked(poolAddress: string): Promise<any> {
-    const address = this.connectorService.providerUserInfo$.value.address;
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
+
+    const address = info.address;
     poolAddress = poolAddress.toLocaleLowerCase();
     const poolSymbol = getKey(addresses, poolAddress);
+    // @ts-ignore
     return await this.farmingContract$.value.methods.userInfo(reefPools[poolSymbol], address).call<number>();
   }
 
-  public isSupportedERC20(address: string): boolean {
+  public async isSupportedERC20(address: string, addresses: AvailableSmartContractAddresses): Promise<boolean> {
     return !!getKey(addresses, address);
   }
 
@@ -372,6 +394,9 @@ export class UniswapService {
   }
 
   private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
+
     if (addresses[tokenSymbol]) {
       const web3 = await this.getWeb3();
       const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);

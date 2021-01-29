@@ -65,7 +65,7 @@ export interface IReefPricePerToken {
 export interface IContract {
   defaultAccount: string;
   defaultBlock: number | string;
-  defaultHardFork: string;
+  defaultHardFork?: string;
   defaultChain: string;
   defaultCommon: {
     customChain: any;
@@ -137,6 +137,7 @@ export interface ITransaction {
 export interface IProviderUserInfo {
   address: string;
   chainInfo: IChainData;
+  availableSmartContractAddresses: AvailableSmartContractAddresses;
 }
 
 export interface IChainData {
@@ -144,10 +145,38 @@ export interface IChainData {
   short_name: string;
   chain: string;
   network: string;
-  chain_id: number;
+  chain_id: ChainId;
   network_id: number;
   rpc_url: string;
   native_currency: IAssetData;
+}
+
+export enum ChainId {
+  MAINNET = 1,
+  ROPSTEN = 3
+}
+
+export interface AvailableSmartContractAddresses {
+  REEF_BASKET: string;
+  REEF_VAULT_BASKET: string;
+  REEF_FARMING: string;
+  REEF_STAKING: string;
+  UNISWAP_ROUTER_V2: string;
+  PURE_REEF_POOL: string;
+  REEF_WETH_POOL: string;
+  REEF_USDT_POOL: string;
+  USDT: string;
+  WETH: string;
+  ETH: string;
+  REEF_TOKEN: string;
+  TESTR: string;
+  /*tokens: {
+    USDT: string;
+    WETH: string;
+    ETH: string;
+    REEF: string;
+    TESTR: string;
+  };  */
 }
 
 export interface IAssetData {

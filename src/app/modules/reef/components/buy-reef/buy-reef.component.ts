@@ -40,7 +40,6 @@ export class BuyReefComponent {
     public poolService: PoolService,
     public uniswapService: UniswapService
   ) {
-
     this.ethPrice$ = this.poolService.ethPrice$.pipe(
       map(data => data.ethereum.usd),
     );
@@ -50,7 +49,7 @@ export class BuyReefComponent {
       this.connectorService.providerUserInfo$.pipe(filter(v => !!v))
     ]).pipe(
       switchMap(([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, tokenSymbol)),
-      shareReplay(1)
+      shareReplay(1),
     );
 
     // set token amount value to token balance

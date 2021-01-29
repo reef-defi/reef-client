@@ -1,12 +1,11 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {catchError, filter, map, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {catchError, filter, map, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, of} from 'rxjs';
 import {IContract, IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
 import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
-import {addresses} from '../../../../../assets/addresses';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
@@ -17,7 +16,7 @@ import {roundDownTo} from '../../../../core/utils/math-utils';
   styleUrls: ['./pool.page.scss']
 })
 export class PoolPage {
-  readonly token$ = this.route.params.pipe(
+  readonly token$: Observable<string> = this.route.params.pipe(
     map((params) => params.token),
     filter(v => !!v),
     shareReplay(1)
@@ -51,11 +50,12 @@ export class PoolPage {
       shareReplay(1)
     );
 
-    this.lpTokenContract$ = this.token$.pipe(
-      map(token => this.uniswapService.createLpContract(token)),
+    this.lpTokenContract$ = combineLatest([this.token$, connectorService.providerUserInfo$]).pipe(
+      map(([token, info]: [string, IProviderUserInfo]) => this.uniswapService.createLpContract(token, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
-    this.reefContract$ = of(this.uniswapService.createLpContract(TokenSymbol.REEF_TOKEN)).pipe(
+    this.reefContract$ = this.providerUserInfo$.pipe(
+      map(info => this.uniswapService.createLpContract(TokenSymbol.REEF_TOKEN, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
 
@@ -64,7 +64,7 @@ export class PoolPage {
       tap((prices: IReefPricePerToken) => {
         if (this.wasLastCalcForToken === undefined) {
           this.tokenBalanceReef$.pipe(first()).subscribe(token => {
-            this.calcTokenAmount(token.balance, prices.TOKEN_PER_REEF)
+            this.calcTokenAmount(token.balance, prices.TOKEN_PER_REEF);
           });
 
         } else {
@@ -72,7 +72,7 @@ export class PoolPage {
             : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN);
         }
       }),
-      catchError((e) => {
+      catchError(() => {
         this.error$.next(true);
         return EMPTY;
       }),
@@ -109,6 +109,9 @@ export class PoolPage {
 
   async addLiquidity(tokenB: string): Promise<void> {
     this.loading = true;
+
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    const addresses = info.availableSmartContractAddresses;
     try {
       const lpTokenContract = await this.lpTokenContract$.pipe(first()).toPromise();
       const reefContract = await this.reefContract$.pipe(first()).toPromise();
