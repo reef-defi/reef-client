@@ -7,8 +7,8 @@
         (click)="valueChange.emit(value*0.75)">75%</span>
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
         (click)="valueChange.emit(value)">100%</span>
-  <small>of </small>
-  <span [ngSwitch]="tokenSymbol">
+  <small>of
+    <span [ngSwitch]="tokenSymbol">
     <ng-container *ngSwitchCase="TokenSymbol.USDT">
       {{ value | number:'1.1-2' }}
     </ng-container>
@@ -18,8 +18,9 @@
     <ng-container *ngSwitchDefault>
       {{value | number:'1.1-4'}}
     </ng-container>
-    {{tokenSymbol}}
+      {{tokenSymbol}}
   </span>
+  </small>
 </ng-container>
 <ng-template #noBalance>
   <small>Please add {{tokenSymbol}} then

@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ConnectorService } from './connector.service';
-import { BehaviorSubject } from 'rxjs';
-import { NotificationService } from './notification.service';
-import { IBasket, IBasketPoolsAndCoinInfo } from '../models/types';
-import { getBasketPoolNames, MaxUint256 } from '../utils/pools-utils';
-import { ApiService } from './api.service';
+import {Injectable} from '@angular/core';
+import {ConnectorService} from './connector.service';
+import {BehaviorSubject} from 'rxjs';
+import {NotificationService} from './notification.service';
+import {IBasket, IBasketPoolsAndCoinInfo, IProviderUserInfo} from '../models/types';
+import {getBasketPoolNames} from '../utils/pools-utils';
+import {ApiService} from './api.service';
+import {take} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class ContractService {
   }
 
   async getAllBaskets(): Promise<any> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     this.loading$.next(true);
     try {
       const basketCount = await this.getAvailableBasketsCount();
@@ -42,7 +44,7 @@ export class ContractService {
         isVault: false,
       })));
       baskets = getBasketPoolNames(baskets, this.apiService.pools$.value, this.apiService.tokens$.value)
-        .filter(basket => +basket.investedETH > 0 && basket.referrer === this.connectorService.providerUserInfo$.value.address);
+        .filter(basket => +basket.investedETH > 0 && basket.referrer === info.address);
       this.baskets$.next(baskets);
       this.basketsError$.next(false);
       this.loading$.next(false);
@@ -66,13 +68,15 @@ export class ContractService {
   }
 
   async getUserInvestedBasketAmount(idx: number): Promise<any> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const invested: number = await this.basketContract$.value.methods
-      .investedAmountInBasket(this.connectorService.providerUserInfo$.value.address, idx).call();
+      .investedAmountInBasket(info.address, idx).call();
     return await this.connectorService.fromWei(invested);
   }
 
   async createBasket(name: string, basketPoolTokenInfo: IBasketPoolsAndCoinInfo, amountToInvest: number): Promise<any> {
     try {
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const wei = this.connectorService.toWei(amountToInvest);
       const {uniswapPools, tokenPools, balancerPools, balancerWeights, tokenWeights, uniSwapWeights, mooniswapPools, mooniswapWeights}
         = basketPoolTokenInfo;
@@ -81,7 +85,7 @@ export class ContractService {
         .createBasket(
           name, uniswapPools, uniSwapWeights, tokenPools, tokenWeights, balancerPools, balancerWeights, mooniswapPools, mooniswapWeights)
         .send({
-          from: this.connectorService.providerUserInfo$.value.address,
+          from: info.address,
           value: `${wei}`,
           gas: 6721975,
         });
@@ -93,9 +97,10 @@ export class ContractService {
     }
   }
 
-  getBalanceOf(basketIdx): Promise<any> {
+  async getBalanceOf(basketIdx): Promise<any> {
     // TODO: get balances of all polls...
-    console.log(this.connectorService.providerUserInfo$.value.address, 'ADDR???');
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    console.log(info.address, 'ADDR???');
     return this.basketContract$.value.methods.getAvailableBasketUniswapPools(basketIdx).call();
   }
 
@@ -117,6 +122,7 @@ export class ContractService {
 
   async disinvestInBasket(basketIdxs: number, basketIdxPercentage: number, yieldRatio: number, shouldRestake: boolean): Promise<any> {
     try {
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       console.log(basketIdxs, basketIdxPercentage, yieldRatio, 'Disinvest Params');
       const res = await this.basketContract$.value.methods.disinvest(
         basketIdxs,
@@ -125,7 +131,7 @@ export class ContractService {
         shouldRestake,
       )
         .send({
-          from: this.connectorService.providerUserInfo$.value.address,
+          from: info.address,
           gas: 6721975,
         });
       this.transactionInterval = setInterval(async () => await this.checkIfTransactionSuccess(
@@ -139,10 +145,11 @@ export class ContractService {
 
   async stakeReef(amount: number): Promise<any> {
     try {
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const value = this.connectorService.toWei(amount);
       const res = await this.stakingContract$.value.methods.stake(value)
         .send({
-          from: this.connectorService.providerUserInfo$.value.address,
+          from: info.address,
           gas: 6721975
         });
       this.transactionInterval = setInterval(async () =>
@@ -157,8 +164,12 @@ export class ContractService {
     return this.connectorService.fromWei(investment as string);
   }
 
-  private updateUserDetails() {
-    this.connectorService.getUserProviderInfo();
+  private async updateUserDetails(): Promise<void> {
+    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+    //TODO refresh balance
+    console.log('TODO check if CALL BALANCE REFRESH is successful for ', info.address);
+    this.apiService.refreshBalancesForAddress.next(info.address);
+    // this is old way of refreshing balance - this.connectorService.getUserProviderInfo();
   }
 
   private async checkIfTransactionSuccess(tx: any, fns?: string[]): Promise<any> {

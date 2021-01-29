@@ -1,4 +1,4 @@
-import { IChainData } from '../models/types';
+import {ChainId, IChainData} from '../models/types';
 
 export const getChainData = (chainId: number): IChainData => {
   const chainData = supportedChains.find((chain: IChainData) => chain.chain_id === chainId);
@@ -11,7 +11,7 @@ export const supportedChains: IChainData[] = [
     short_name: 'eth',
     chain: 'ETH',
     network: 'mainnet',
-    chain_id: 1,
+    chain_id: ChainId.MAINNET,
     network_id: 1,
     rpc_url: 'https://mainnet.infura.io/v3/%API_KEY%',
     native_currency: {
@@ -27,7 +27,7 @@ export const supportedChains: IChainData[] = [
     short_name: 'rop',
     chain: 'ETH',
     network: 'ropsten',
-    chain_id: 3,
+    chain_id: ChainId.ROPSTEN,
     network_id: 3,
     rpc_url: 'https://ropsten.infura.io/v3/%API_KEY%',
     native_currency: {

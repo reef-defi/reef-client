@@ -1,16 +1,16 @@
 import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {filter, finalize, first, map} from 'rxjs/operators';
+import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {addresses, reefPools} from '../../../../../assets/addresses';
-import {tap} from 'rxjs/internal/operators/tap';
+import {reefPools} from '../../../../../assets/addresses';
 import {BehaviorSubject} from 'rxjs';
 import {IContract, IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
-import {contractData} from '../../../../../assets/abi';
+import {getContractData} from '../../../../../assets/abi';
+import {formatNumber} from '@angular/common';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {formatNumber} from "@angular/common";
+import {startWith} from "rxjs/internal/operators/startWith";
 
 @Component({
   selector: 'app-farm-page',
@@ -23,46 +23,59 @@ export class FarmPage implements OnInit {
   public loading = false;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
-  readonly loading$ = new BehaviorSubject(false);
   readonly lpContract$ = new BehaviorSubject<IContract | null>(null);
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
   readonly reefReward$ = new BehaviorSubject<number | null>(null);
-  readonly tokenSymbol$ = new BehaviorSubject<string | null>(null);
   readonly stakedAmount$ = new BehaviorSubject<string | null>(null);
-  readonly address$ = this.route.params.pipe(
-    first(addr => !!addr),
-    map((params) => params.address),
-    tap(() => this.loading$.next(true)),
-    filter(this.uniswapService.isSupportedERC20),
-    tap((address: string) => {
-      let contractTokenSymbol = getKey(addresses, address).split('_')[1];
+  readonly address$ = combineLatest([this.route.params, this.connectorSerivce.providerUserInfo$]).pipe(
+    map(([params, info]: [any, IProviderUserInfo]) => {
+      const address = params.address;
+      if (!address) {
+        throw new Error('Address not provided');
+      }
+      if (!!getKey(info.availableSmartContractAddresses, address)) {
+        const validAddrs = Object.values(info.availableSmartContractAddresses);
+        if (validAddrs.includes(address)) {
+          const contract = this.createContract(address, info);
+          this.getBalances(contract);
+        } else {
+          throw new Error('Contract not found =' + address);
+        }
+        return address;
+      }
+      return null;
+    }),
+    shareReplay(1)
+  );
+  readonly tokenSymbol$ = combineLatest([this.address$, this.connectorSerivce.providerUserInfo$]).pipe(
+    map(([address, info]: [string, IProviderUserInfo]) => {
+      let contractTokenSymbol = getKey(info.availableSmartContractAddresses, address).split('_')[1];
       if (contractTokenSymbol === TokenSymbol.WETH) {
         contractTokenSymbol = TokenSymbol.ETH;
       }
-      this.tokenSymbol$.next(contractTokenSymbol);
-      const validAddrs = Object.values(addresses);
-      if (validAddrs.includes(address)) {
-        const contract = this.createContract(address);
-        this.getBalances(contract);
-      }
-    }),
-    finalize(() => this.loading$.next(false))
+      return contractTokenSymbol;
+    })
+  );
+  readonly loading$ = combineLatest([this.tokenBalance$, this.reefReward$, this.stakedAmount$]).pipe(
+    mapTo(false),
+    startWith(true),
+    shareReplay(1)
   );
 
   constructor(private readonly route: ActivatedRoute,
               private readonly uniswapService: UniswapService,
-              private readonly connectorSerivce: ConnectorService,
+              public readonly connectorSerivce: ConnectorService,
               @Inject(LOCALE_ID) private locale: string
   ) {
   }
 
   ngOnInit(): void {
-    combineLatest(this.route.params, this.farmingContract$).pipe(
-      first(([_, cont]) => !!cont)
-    ).subscribe(([{address}, contract]) => {
-      const key = getKey(addresses, address);
+    combineLatest([this.route.params, this.farmingContract$, this.connectorSerivce.providerUserInfo$]).pipe(
+      first(([_, cont, info]) => !!cont)
+    ).subscribe(([{address}, contract, info]) => {
+      const key = getKey(info.availableSmartContractAddresses, address);
       const pId = reefPools[key];
-      this.calcApy(pId);
+      this.calcApy(pId, info);
     });
   }
 
@@ -103,28 +116,29 @@ export class FarmPage implements OnInit {
     this.tokenBalance$.next(balance);
   }
 
-  private createContract(lpTokenAddr: string): IContract {
-    const tokenSymbol = getKey(addresses, lpTokenAddr);
-    const contract = this.uniswapService.createLpContract(tokenSymbol);
+  private createContract(lpTokenAddr: string, info: IProviderUserInfo): IContract {
+    const tokenSymbol = getKey(info.availableSmartContractAddresses, lpTokenAddr);
+    const contract = this.uniswapService.createLpContract(tokenSymbol, info.availableSmartContractAddresses);
     this.lpContract$.next(contract);
     return contract;
   }
 
   private async getBalances(lpContract: IContract): Promise<void> {
     this.providerUserInfo$.pipe(
-      first(ev => !!ev)
+      take(1)
     ).subscribe(async (info: IProviderUserInfo) => {
-      console.log(lpContract.options.address, 'this is from getBalances');
+      console.log(lpContract.options.address, 'this is from getBalances', lpContract.options);
       await this.getBalance(lpContract, info.address);
       await this.getReefRewards(lpContract.options.address);
       await this.getStaked(lpContract.options.address);
     });
   }
 
-  public async calcApy(pId: number): Promise<number> {
+  public async calcApy(pId: number, info: IProviderUserInfo): Promise<number> {
     const {lpToken} = await this.farmingContract$.value.methods.poolInfo(pId).call();
     console.log(lpToken, 'hmm');
     const web3 = await this.connectorSerivce.web3$.pipe(first()).toPromise();
+    const contractData = getContractData(info.availableSmartContractAddresses);
     const tokenContract = new web3.eth.Contract((contractData.lpToken.abi as any), lpToken);
     const totalStaked = await tokenContract.methods.balanceOf(this.farmingContract$.value.options.address).call();
     console.log(totalStaked);
@@ -150,7 +164,7 @@ export class FarmPage implements OnInit {
     return (token !== 'TOKEN') ? (token + '-REEF') : 'REEF';
   }
 
-  toValidReefAmount(value: number) {
+  toValidReefAmount(value: number): string {
     return formatNumber(value, this.locale, `1.0-0`);
   }
 }
