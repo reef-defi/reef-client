@@ -4,13 +4,14 @@ import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {reefPools} from '../../../../../assets/addresses';
 import {BehaviorSubject} from 'rxjs';
-import {IContract, IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
+import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {getContractData} from '../../../../../assets/abi';
 import {formatNumber} from '@angular/common';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {startWith} from "rxjs/internal/operators/startWith";
+import {Contract} from "web3-eth-contract";
 
 @Component({
   selector: 'app-farm-page',
@@ -23,7 +24,7 @@ export class FarmPage implements OnInit {
   public loading = false;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
-  readonly lpContract$ = new BehaviorSubject<IContract | null>(null);
+  readonly lpContract$ = new BehaviorSubject<Contract | null>(null);
   readonly tokenBalance$ = new BehaviorSubject<string | null>(null);
   readonly reefReward$ = new BehaviorSubject<number | null>(null);
   readonly stakedAmount$ = new BehaviorSubject<string | null>(null);
@@ -79,7 +80,7 @@ export class FarmPage implements OnInit {
     });
   }
 
-  public async deposit(contract: IContract, poolAddress: string, amount: string): Promise<void> {
+  public async deposit(contract: Contract, poolAddress: string, amount: string): Promise<void> {
     this.loading = true;
     try {
       await this.uniswapService.deposit(contract, poolAddress, amount);
@@ -111,19 +112,19 @@ export class FarmPage implements OnInit {
     this.stakedAmount$.next(info.amount);
   }
 
-  private async getBalance(lpContract: IContract, address: string): Promise<void> {
+  private async getBalance(lpContract: Contract, address: string): Promise<void> {
     const balance = await this.uniswapService.getBalanceOf(lpContract, address);
     this.tokenBalance$.next(balance);
   }
 
-  private createContract(lpTokenAddr: string, info: IProviderUserInfo): IContract {
+  private createContract(lpTokenAddr: string, info: IProviderUserInfo): Contract {
     const tokenSymbol = getKey(info.availableSmartContractAddresses, lpTokenAddr);
-    const contract = this.uniswapService.createLpContract(tokenSymbol, info.availableSmartContractAddresses);
+    const contract = this.connectorSerivce.createErc20TokenContract(tokenSymbol as TokenSymbol, info.availableSmartContractAddresses);
     this.lpContract$.next(contract);
     return contract;
   }
 
-  private async getBalances(lpContract: IContract): Promise<void> {
+  private async getBalances(lpContract: Contract): Promise<void> {
     this.providerUserInfo$.pipe(
       take(1)
     ).subscribe(async (info: IProviderUserInfo) => {
@@ -152,7 +153,7 @@ export class FarmPage implements OnInit {
     return this.apy = 1 + Number(reward) * 2409000 / totalStaked;
   }
 
-  public async refreshBalance(contract: IContract, address: string): Promise<any> {
+  public async refreshBalance(contract: Contract, address: string): Promise<any> {
     try {
       return await this.getBalance(contract, address);
     } catch (e) {

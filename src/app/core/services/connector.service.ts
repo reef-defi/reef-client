@@ -202,7 +202,7 @@ export class ConnectorService {
     };
   }
 
-  public createLpContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): IContract {
+  public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): Contract {
     if (!addresses[tokenSymbol]) {
       throw new Error('No address for tokenSymbol=' + tokenSymbol);
     }
@@ -253,14 +253,6 @@ export class ConnectorService {
     });
   }
 
-  // TODO could we replace use of this method with apiService.getTokenBalance$(addr: string, tokenSymbol: TokenSymbol)...take(1)
-  public async getReefBalance(address: string): Promise<string> {
-    if (this.reefTokenContract$.value) {
-      const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
-      return await this.web3.utils.fromWei(balance);
-    }
-  }
-
   private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
     const addresses = info.availableSmartContractAddresses;
     const contractData = getContractData(addresses);
@@ -270,6 +262,7 @@ export class ConnectorService {
     const tokenC = new web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
     const uniswapC = new web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
     const vaultsC = new web3.eth.Contract((contractData.reefVaults.abi as any), contractData.reefVaults.addr);
+    // TODO why is this as a subject - could be cached locally and have a method getContract(contractIdent)
     this.basketContract$.next(basketsC);
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
@@ -279,14 +272,14 @@ export class ConnectorService {
     return Promise.resolve();
   }
 
-  private async initWeb3Modal(): Promise<any> {
+  /*private async initWeb3Modal(): Promise<any> {
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
       cacheProvider: true,
       disableInjectedProvider: false
     });
     await this.onConnect();
-  }
+  }*/
 
   private initWeb3(provider: any): any {
     const w3 = new Web3(provider);

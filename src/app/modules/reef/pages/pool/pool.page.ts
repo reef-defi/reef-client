@@ -3,12 +3,13 @@ import {ActivatedRoute} from '@angular/router';
 import {catchError, filter, map, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, of} from 'rxjs';
-import {IContract, IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
+import {IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
 import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
+import {Contract} from 'web3-eth-contract';
 
 @Component({
   selector: 'app-pool-page',
@@ -23,8 +24,8 @@ export class PoolPage {
   );
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly error$ = new BehaviorSubject<boolean>(false);
-  public reefContract$: Observable<IContract | null>;
-  public lpTokenContract$: Observable<IContract | null>;
+  public reefContract$: Observable<Contract | null>;
+  public lpTokenContract$: Observable<Contract | null>;
   public pricePerTokens$: Observable<IReefPricePerToken | null> = of(null);
   public reefAmount = 0;
   public tokenAmount = 0;
@@ -51,11 +52,12 @@ export class PoolPage {
     );
 
     this.lpTokenContract$ = combineLatest([this.token$, connectorService.providerUserInfo$]).pipe(
-      map(([token, info]: [string, IProviderUserInfo]) => this.uniswapService.createLpContract(token, info.availableSmartContractAddresses)),
+      map(([token, info]: [string, IProviderUserInfo]) => this.connectorService
+        .createErc20TokenContract(token as TokenSymbol, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
     this.reefContract$ = this.providerUserInfo$.pipe(
-      map(info => this.uniswapService.createLpContract(TokenSymbol.REEF_TOKEN, info.availableSmartContractAddresses)),
+      map(info => this.connectorService.createErc20TokenContract(TokenSymbol.REEF_TOKEN, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
 
