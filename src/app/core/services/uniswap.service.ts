@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
+import {Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
@@ -72,8 +72,8 @@ export class UniswapService {
       let weiAmount;
       const web3 = await this.getWeb3();
       const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-      const REEF = new Token(ChainId.MAINNET, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
-      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
+      const REEF = new Token(info.chainInfo.chain_id, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
+      const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id, checkSummed, this.ethersProvider);
       const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
       if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
         weiAmount = this.connectorService.toWei(amount);
@@ -400,9 +400,9 @@ export class UniswapService {
     if (addresses[tokenSymbol]) {
       const web3 = await this.getWeb3();
       const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
+      const REEF = new Token(info.chainInfo.chain_id, addresses.REEF_TOKEN, 18);
       // TODO to observable so previous request could be canceled
-      const tokenB = await Fetcher.fetchTokenData(ChainId.MAINNET, checkSummed, this.ethersProvider);
+      const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id, checkSummed, this.ethersProvider);
       const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
       const route = new Route([pair], tokenB);
       const totalReef = await pair.reserveOf(REEF).toExact();

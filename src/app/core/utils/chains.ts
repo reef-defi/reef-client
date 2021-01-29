@@ -2,7 +2,10 @@ import {ChainId, IChainData} from '../models/types';
 
 export const getChainData = (chainId: number): IChainData => {
   const chainData = supportedChains.find((chain: IChainData) => chain.chain_id === chainId);
-  return { ...chainData };
+  if (!chainData) {
+    throw new Error('Chain id not supported' + chainId);
+  }
+  return {...chainData};
 };
 
 export const supportedChains: IChainData[] = [
@@ -177,6 +180,22 @@ export const supportedChains: IChainData[] = [
     native_currency: {
       symbol: 'CLO',
       name: 'CLO',
+      decimals: '18',
+      contractAddress: '',
+      balance: ''
+    }
+  },
+  {
+    name: 'Localhost mainnet clone',
+    short_name: 'loc',
+    chain: 'localhost',
+    network: 'localhost',
+    chain_id: 1337,
+    network_id: 1,
+    rpc_url: '',
+    native_currency: {
+      symbol: 'ETH',
+      name: 'ETH',
       decimals: '18',
       contractAddress: '',
       balance: ''
