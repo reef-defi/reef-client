@@ -115,7 +115,7 @@
                     || (tokenPrices && tokenPrices.REEF_PER_TOKEN && +tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value > +tokenPrices.totalReefReserve)
                     || !hasBalanceForPayment(tokenAmountSub.value, balance)"
                   mat-ripple
-                  (click)="this.buy.emit({tokenSymbol: TokenSymbol[balance.contract_ticker_symbol], tokenAmount: tokenAmountSub.value})"
+                  (click)="this.buy.emit({tokenSymbol: TokenSymbol[balance.contract_ticker_symbol], tokenAmount: tokenAmountSub.value});tokenAmountSub.next(0)"
                   class="btn btn-primary p-2">
                   Buy now
                   </button>

@@ -6,7 +6,6 @@ import {
     AvailableSmartContractAddresses,
     IProviderUserInfo,
     IReefPricePerToken,
-    Token as Token_app,
     TokenSymbol,
     TokenSymbolDecimalPlaces
 } from '../models/types';
@@ -114,13 +113,7 @@ export class UniswapService {
                             this.connectorService.removePendingTx(receipt.transactionHash);
                             this.notificationService.showNotification(
                                 `You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
-                            this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
-                                .pipe(take(1))
-                                .subscribe((balance: Token_app) => {
-                                    console.log('RRRRRR', balance);
-                                    // TODO add both tokenSymbols
-                                    this.apiService.updateTokenBalanceForAddress.next([balance]);
-                                });
+                            this.apiService.updateTokensInBalances.next([tokenSymbol, TokenSymbol.REEF]);
                         })
                         .on('error', (err) => {
                             dialogRef.close();
@@ -145,12 +138,7 @@ export class UniswapService {
                             .on('receipt', (receipt) => {
                                 this.connectorService.removePendingTx(receipt.transactionHash);
                                 this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
-                                this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
-                                    .pipe(take(1))
-                                    .subscribe((balance: Token_app) => {
-                                        // TODO add both tokenSymbols
-                                        this.apiService.updateTokenBalanceForAddress.next([balance]);
-                                    });
+                                this.apiService.updateTokensInBalances.next([tokenSymbol, TokenSymbol.REEF]);
                             })
                             .on('error', (err) => {
                                 dialogRef.close();
@@ -196,7 +184,7 @@ export class UniswapService {
         if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
             const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
                 switchMap(([_, slippageP]: [any, Percent]) => this.connectorService.providerUserInfo$.pipe(
-                    filter(info => info.availableSmartContractAddresses[tokenSymbol]),
+                    filter(info => !!info.availableSmartContractAddresses[tokenSymbol]),
                     switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
                     )
                 ),
