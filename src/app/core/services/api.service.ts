@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, EMPTY, from, Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, Subject, Subscription} from 'rxjs';
 import {
+  ChainId,
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
+  IProviderUserInfo,
   QuotePayload,
   Token,
   TokenSymbol,
@@ -17,9 +19,8 @@ import {subMonths} from 'date-fns';
 import {catchError, filter, map, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {lpTokens} from '../../../assets/addresses';
-import {Contract} from 'web3-eth-contract';
 import {ConnectorService} from './connector.service';
-import {of} from 'rxjs/internal/observable/of';
+import Web3 from "web3";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -35,6 +36,13 @@ export class ApiService {
     {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
     {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'}
   ];
+
+  public static REEF_PROTOCOL_TOKENS = [
+    ...ApiService.SUPPORTED_BUY_REEF_TOKENS,
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'}
+  ];
+
+  private static COVALENT_SUPPORTED_NETWORK_IDS = [ChainId.MAINNET, ChainId.MATIC];
 
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
@@ -196,12 +204,12 @@ export class ApiService {
       return null;
     }
     if (!this.balancesByAddr.has(address)) {
-      const requestedAddressBalances$ = this.refreshBalancesForAddress.pipe(
+      const refreshForAddr$ = this.refreshBalancesForAddress.pipe(
         startWith(address),
-        filter(addr => addr === address),
-        switchMap(addr => this.http.get<any>(`${this.reefNodeApi}/covalent/${addr}/balances`)),
-        tap((v: any[]) => v.forEach(itm => itm.address = address)),
-        map(tokens => tokens.map(this.removeTokenPlaceholders.bind(this))),
+        filter(addr => addr === address)
+      );
+      const requestedAddressBalances$ = combineLatest([refreshForAddr$, this.connectorService.providerUserInfo$]).pipe(
+        switchMap(([addr, info]: [string, IProviderUserInfo]) => this.getAddressTokenBalances$(addr, info.chainInfo.chain_id)),
         catchError(err => {
           throw new Error(err);
         }),
@@ -225,12 +233,27 @@ export class ApiService {
           }
           return requestedBalances;
         }),
-        switchMap(tokens => this.addCovalentMissingTokens(address, tokens)),
         shareReplay(1)
       );
       this.balancesByAddr.set(address, finalBalances$);
     }
     return this.balancesByAddr.get(address);
+  }
+
+  private getAddressTokenBalances$(address: string, chainId: ChainId): Observable<Token[]> {
+    let balances$: Observable<Token[]>;
+    if (ApiService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1) {
+      balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
+        tap((v: any[]) => v.forEach(itm => itm.address = address)),
+      );
+    } else {
+      balances$ = this.getReefProtocolBalancesFromChain$(address);
+    }
+
+    return balances$.pipe(
+      map(tokens => tokens.map(this.removeTokenPlaceholders)),
+      tap(v => console.log('BBBb', v))
+    );
   }
 
   private balancesForAddress(requested: Token[], address: string): boolean {
@@ -300,26 +323,26 @@ export class ApiService {
     return token;
   }
 
-  private async getErc20BalanceOnChain(address: string, contract: Contract): Promise<string> {
-    if (!contract) {
-      throw new Error('No ERC20 contract' + contract);
-    }
-    const web3 = await this.connectorService.web3$.pipe(take(1)).toPromise();
-    const balance = await contract.methods.balanceOf(address).call();
-    return await web3.utils.fromWei(balance);
+  private getErc20BalanceOnChain$(address: string, tokenSymbol: TokenSymbol): Observable<string> {
+    return combineLatest([this.connectorService.providerUserInfo$, this.connectorService.web3$]).pipe(
+      take(1),
+      switchMap(([info, web3]: [IProviderUserInfo, Web3]) => {
+        const contract = this.connectorService.createErc20TokenContract(
+          tokenSymbol, info.availableSmartContractAddresses);
+        if (!contract) {
+          console.log('No ERC20 contract' + contract);
+        }
+
+        return contract.methods.balanceOf(address).call()
+          .then(balance => web3.utils.fromWei(balance)) as Promise<string>;
+      })
+    );
   }
 
-  private addCovalentMissingTokens(address: string, tokens: Token[]): Observable<Token[]> {
-    const missingBalanceTokens = ApiService.SUPPORTED_BUY_REEF_TOKENS
-    // .filter(supported => !tokens.some(tkn => supported.tokenSymbol === tkn.contract_ticker_symbol));
-    missingBalanceTokens.push(
-      {tokenSymbol: TokenSymbol.REEF_TOKEN, src: 'reef.png'})
-    console.log('Missing tokens=', missingBalanceTokens)
-    if (!missingBalanceTokens.length) {
-      return of(tokens);
-    }
+  private getReefProtocolBalancesFromChain$(address: string): Observable<Token[]> {
+    const missingBalanceTokens = ApiService.REEF_PROTOCOL_TOKENS;
 
-    const missingBalances$ = this.connectorService.providerUserInfo$.pipe(
+    const tokenBalances$ = this.connectorService.providerUserInfo$.pipe(
       switchMap(info => {
         return combineLatest(missingBalanceTokens.map((supportedConfig) => {
           let balance$: Observable<any>;
@@ -330,13 +353,10 @@ export class ApiService {
               switchMap((web3) => web3.eth.getBalance(address).then(b => web3.utils.fromWei(b))),
             );
           } else {
-            const contract = this.connectorService.createErc20TokenContract(
-              supportedConfig.tokenSymbol, info.availableSmartContractAddresses);
-            balance$ = from(this.getErc20BalanceOnChain(address, contract));
+            balance$ = this.getErc20BalanceOnChain$(address, supportedConfig.tokenSymbol);
           }
 
           return balance$.pipe(
-            tap(v => console.log('VVVVV', v, supportedConfig.tokenSymbol)),
             map(balance => ({
                 contract_ticker_symbol: supportedConfig.tokenSymbol,
                 balance: +balance,
@@ -347,8 +367,6 @@ export class ApiService {
         }));
       })
     );
-    return missingBalances$.pipe(
-      map((mBalances: Token[]) => tokens.concat(mBalances))
-    );
+    return tokenBalances$;
   }
 }

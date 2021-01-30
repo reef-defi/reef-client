@@ -153,7 +153,11 @@ export interface IChainData {
 
 export enum ChainId {
   MAINNET = 1,
-  ROPSTEN = 3
+  ROPSTEN = 3,
+  MATIC = 137,
+  RINKEBY = 4,
+  GÖRLI = 5,
+  KOVAN = 42
 }
 
 export interface AvailableSmartContractAddresses {
@@ -165,18 +169,12 @@ export interface AvailableSmartContractAddresses {
   PURE_REEF_POOL: string;
   REEF_WETH_POOL: string;
   REEF_USDT_POOL: string;
+  // REEF token address
+  REEF: string;
   USDT: string;
   WETH: string;
   ETH: string;
-  REEF_TOKEN: string;
   TESTR: string;
-  /*tokens: {
-    USDT: string;
-    WETH: string;
-    ETH: string;
-    REEF: string;
-    TESTR: string;
-  };  */
 }
 
 export interface IAssetData {
@@ -346,4 +344,9 @@ export const TokenSymbolDecimalPlaces = {
 
 export interface IPendingTransactions {
   transactions: PendingTransaction[];
+}
+
+export function getEnumKeyByEnumValue(myEnum: any, enumValue: number | string): string {
+  const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
+  return keys.length > 0 ? keys[0] : '';
 }

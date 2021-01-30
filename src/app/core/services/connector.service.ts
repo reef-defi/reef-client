@@ -102,10 +102,12 @@ export class ConnectorService {
 
   public async onConnect(): Promise<any> {
     this.providerLoading$.next(true);
-    this.currentProvider$.next(await this.web3Modal.connect());
+    const provider = await this.web3Modal.connect();
+    const web3 = this.initWeb3(provider);
+    this.currentProvider$.next(provider);
+    this.currentProviderName$.next(getProviderName(web3));
+    this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
     this.providerLoading$.next(false);
-    console.log(this.currentProvider$.value, 'Current Provider.');
-    const web3 = this.initWeb3(this.currentProvider$.value);
     // TODO remove private web3 - use web3$
     this.web3 = web3;
     this.web3$.next(this.web3);
@@ -144,7 +146,6 @@ export class ConnectorService {
     if (!availableSmartContractAddresses) {
       throw new Error('Could not get contract addresses for chain_id=' + chainInfo.chain_id);
     }
-    // this.providerUserInfo$.next();
     return Promise.resolve({
       address,
       chainInfo,
@@ -171,7 +172,7 @@ export class ConnectorService {
         const txs = block.transactions.filter((tx) =>
           tx.to && (
             tx.to === info.availableSmartContractAddresses.REEF_BASKET ||
-            tx.to === info.availableSmartContractAddresses.REEF_TOKEN ||
+            tx.to === info.availableSmartContractAddresses.REEF ||
             tx.to === info.availableSmartContractAddresses.REEF_STAKING ||
             tx.to === info.availableSmartContractAddresses.REEF_FARMING
           ) && tx.from === address
@@ -287,7 +288,6 @@ export class ConnectorService {
       return provider.send(e, t);
     };
     // this.web3WS = new Web3('wss://mainnet.infura.io/ws/v3/eadc555e1ec7423f94e94d8a06a2f310');
-    this.currentProvider$.next(provider);
     w3.eth.extend({
       methods: [
         {
@@ -298,8 +298,6 @@ export class ConnectorService {
         }
       ]
     });
-    this.currentProviderName$.next(getProviderName(w3));
-    this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
     return w3;
   }
 
@@ -338,7 +336,7 @@ export class ConnectorService {
 
   private async getTxAction(address: string, value: string, providerInfo: IProviderUserInfo): Promise<string> {
     switch (address) {
-      case providerInfo.availableSmartContractAddresses.REEF_TOKEN:
+      case providerInfo.availableSmartContractAddresses.REEF:
         return Promise.resolve('Transaction');
       case providerInfo.availableSmartContractAddresses.REEF_BASKET:
         return Promise.resolve(+value > 0 ? 'Investment' : 'Liquidation');

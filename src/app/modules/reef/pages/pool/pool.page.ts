@@ -57,7 +57,7 @@ export class PoolPage {
       shareReplay(1)
     );
     this.reefContract$ = this.providerUserInfo$.pipe(
-      map(info => this.connectorService.createErc20TokenContract(TokenSymbol.REEF_TOKEN, info.availableSmartContractAddresses)),
+      map(info => this.connectorService.createErc20TokenContract(TokenSymbol.REEF, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
 
@@ -122,14 +122,14 @@ export class PoolPage {
       if (hasAllowance) {
         if (tokenB === 'WETH' || tokenB === 'ETH') {
           await this.uniswapService.addLiquidityETH(
-            addresses.REEF_TOKEN,
+            addresses.REEF,
             this.reefAmount,
             this.tokenAmount,
             10
           );
         } else {
           await this.uniswapService.addLiquidity(
-            addresses.REEF_TOKEN,
+            addresses.REEF,
             addresses[tokenB],
             this.reefAmount,
             this.tokenAmount,

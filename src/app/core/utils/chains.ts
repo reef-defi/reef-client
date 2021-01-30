@@ -189,7 +189,7 @@ export const supportedChains: IChainData[] = [
     name: 'Localhost mainnet clone',
     short_name: 'loc',
     chain: 'localhost',
-    network: 'localhost',
+    network: 'mainnet',
     chain_id: 1337,
     network_id: 1,
     rpc_url: '',

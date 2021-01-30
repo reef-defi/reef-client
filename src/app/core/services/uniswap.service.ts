@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
+import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {reefPools} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
 import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
 import {ApiService} from './api.service';
-import {getDefaultProvider} from '@ethersproject/providers';
+import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
 import {Contract} from 'web3-eth-contract';
 
 @Injectable({
@@ -37,16 +37,23 @@ export class UniswapService {
     readonly initPrices$: Observable<any>;
     private reefPricesLive = new Map<TokenSymbol, Observable<IReefPricePerToken>>();
     private slippageValue$ = new Subject<string>();
-    private ethersProvider = getDefaultProvider(null, {
-        alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
-        infura: 'c80b6f5e0b554a59b295f7588eb958b7'
-    });
+    private ethersProvider$: Observable<BaseProvider>;
 
     constructor(private readonly connectorService: ConnectorService,
                 private readonly notificationService: NotificationService,
                 private readonly router: Router,
                 public dialog: MatDialog,
                 private apiService: ApiService) {
+        this.ethersProvider$ = connectorService.providerUserInfo$.pipe(
+            map(info => getDefaultProvider(
+                info.chainInfo.network,
+                {
+                    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
+                    infura: 'c80b6f5e0b554a59b295f7588eb958b7'
+                }
+            )),
+            shareReplay(1)
+        );
         this.slippagePercent$ = this.slippageValue$.pipe(
             startWith(this.getSlippageIfSet()),
             map(sVal => this.getSlippagePercent(+sVal)),
@@ -68,9 +75,10 @@ export class UniswapService {
             let weiAmount;
             const web3 = await this.getWeb3();
             const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-            const REEF = new Token(info.chainInfo.chain_id, web3.utils.toChecksumAddress(addresses.REEF_TOKEN), 18);
-            const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id, checkSummed, this.ethersProvider);
-            const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
+            const REEF = new Token(info.chainInfo.chain_id as ChainId, web3.utils.toChecksumAddress(addresses.REEF), 18);
+            const provider = await this.ethersProvider$.pipe(first()).toPromise();
+            const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
+            const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
             if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
                 weiAmount = this.connectorService.toWei(amount);
             } else {
@@ -392,10 +400,11 @@ export class UniswapService {
         if (addresses[tokenSymbol]) {
             const web3 = await this.getWeb3();
             const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
-            const REEF = new Token(info.chainInfo.chain_id, addresses.REEF_TOKEN, 18);
+            const REEF = new Token(info.chainInfo.chain_id as ChainId, addresses.REEF, 18);
             // TODO to observable so previous request could be canceled
-            const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id, checkSummed, this.ethersProvider);
-            const pair = await Fetcher.fetchPairData(REEF, tokenB, this.ethersProvider);
+            const provider = await this.ethersProvider$.pipe(first()).toPromise();
+            const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
+            const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
             const route = new Route([pair], tokenB);
             const totalReef = await pair.reserveOf(REEF).toExact();
             if (amount > 0) {
