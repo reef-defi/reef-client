@@ -249,9 +249,11 @@ export class ConnectorService {
 
   public removePendingTx(hash: string) {
     let {transactions} = this.pendingTransactions$.value;
-    this.pendingTransactions$.next({
-      transactions: transactions.filter((tx: PendingTransaction) => tx.hash === hash)
-    });
+    const txs = {
+      transactions: transactions.filter(tx => tx.hash !== hash)
+    }
+    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs))
+    this.pendingTransactions$.next(txs);
   }
 
   private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
