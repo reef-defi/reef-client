@@ -42,12 +42,10 @@ export class PoolPage {
     this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
       switchMap(
         ([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
-      map(b => b[0]),
       shareReplay(1)
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
       switchMap((uInfo: IProviderUserInfo) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol.REEF)),
-      map(b => b[0]),
       shareReplay(1)
     );
 

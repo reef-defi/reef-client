@@ -12,7 +12,7 @@ import {Observable} from "rxjs";
 })
 export class ReefMenuPage implements OnInit {
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
-  reefBalance$: Observable<Token[] | undefined>;
+  reefBalance$: Observable<Token | undefined>;
   constructor(private readonly connectorService: ConnectorService,
               private readonly apiService: ApiService) { }
 
@@ -20,7 +20,7 @@ export class ReefMenuPage implements OnInit {
     this.connectorService.providerUserInfo$.pipe(
       first(ev => !!ev)
     ).subscribe(({ address }) => {
-      this.reefBalance$ = this.apiService.getTokenBalance$(address, TokenSymbol.REEF)
+      this.reefBalance$ = this.apiService.getTokenBalance$(address, TokenSymbol.REEF);
     })
   }
 }

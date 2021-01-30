@@ -24,7 +24,7 @@
             <ng-container *ngIf="reefBalance$ | async as reefBalance">
               <p class="text-monospace text-center small">Your REEF Balance</p>
               <div class="h6">
-                {{ (reefBalance[0].balance | number) || 0 }}
+                {{ (reefBalance.balance | number) || 0 }}
               </div>
             </ng-container>
           </div>

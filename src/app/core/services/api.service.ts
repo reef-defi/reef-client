@@ -20,7 +20,7 @@ import {catchError, filter, map, shareReplay, startWith, switchMap, take, tap} f
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {lpTokens} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
-import Web3 from "web3";
+import Web3 from 'web3';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -50,7 +50,7 @@ export class ApiService {
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
   public refreshBalancesForAddress = new Subject<string>();
-  public updateTokenBalanceForAddress = new Subject<Token>();
+  public updateTokenBalanceForAddress = new Subject<Token[]>();
   private url = environment.reefApiUrl;
   private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
@@ -215,21 +215,24 @@ export class ApiService {
         }),
         shareReplay(1)
       );
-      const localUpdatedAddrBalance$: Observable<{ token: Token, isIncludedInBalances: boolean; }> = this.updateTokenBalanceForAddress.pipe(
-        map(t => ({token: t, isIncludedInBalances: false})),
-        startWith(null),
-        shareReplay(1)
-      );
+      const localUpdatedAddrBalance$: Observable<{ tokens: Token[], isIncludedInBalances: boolean; }> =
+        this.updateTokenBalanceForAddress.pipe(
+          map(t => ({tokens: t, isIncludedInBalances: false})),
+          startWith(null),
+          shareReplay(1)
+        );
 
       const finalBalances$ = combineLatest([requestedAddressBalances$, localUpdatedAddrBalance$]).pipe(
-        map(([requestedBalances, localUpdate]: [Token[], { token: Token, isIncludedInBalances: boolean }]) => {
-          if (!!localUpdate && !localUpdate.isIncludedInBalances && this.balancesForAddress(requestedBalances, localUpdate.token.address)) {
-            const requestedTokenBalance = this.findTokenBalances(
-              requestedBalances, TokenSymbol[localUpdate.token.contract_ticker_symbol])[0];
-            if (!!requestedTokenBalance && requestedTokenBalance.address === localUpdate.token.address) {
-              requestedTokenBalance.balance = localUpdate.token.balance;
-              localUpdate.isIncludedInBalances = true;
-            }
+        map(([requestedBalances, localUpdate]: [Token[], { tokens: Token[], isIncludedInBalances: boolean }]) => {
+          if (!!localUpdate && !!localUpdate.tokens.length && !localUpdate.isIncludedInBalances) {
+            localUpdate.isIncludedInBalances = true;
+            localUpdate.tokens.forEach((tkn: Token) => {
+              const requestedTokenBalance = this.findTokenBalance(
+                requestedBalances, TokenSymbol[tkn.contract_ticker_symbol]);
+              if (!!requestedTokenBalance && requestedTokenBalance.address === tkn.address) {
+                requestedTokenBalance.balance = tkn.balance;
+              }
+            });
           }
           return requestedBalances;
         }),
@@ -260,23 +263,22 @@ export class ApiService {
     return requested.length && requested[0].address === address;
   }
 
-// TODO return only one value
-  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token[]> {
+  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token> {
     return this.getTokenBalances$(addr).pipe(
       map((balances: Token[]) => {
-        const tokenBalances = this.findTokenBalances(balances, tokenSymbol);
-        return tokenBalances && tokenBalances.length ? tokenBalances : [{
+        const tokenBalance = this.findTokenBalance(balances, tokenSymbol);
+        return tokenBalance ? tokenBalance : {
           balance: 0,
           contract_ticker_symbol: tokenSymbol,
           address: addr
-        } as Token];
+        } as Token;
       }),
       shareReplay(1)
     );
   }
 
-  private findTokenBalances(balances: Token[], tokenSymbol: TokenSymbol): Token[] {
-    return balances.filter(tkn => {
+  private findTokenBalance(balances: Token[], tokenSymbol: TokenSymbol): Token {
+    return balances.find(tkn => {
       if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
         return true;
       }

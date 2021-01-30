@@ -47,9 +47,8 @@
                     </div>
                     <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
                       <app-exceeded-balance-msg
-                        *ngIf="tokenBalanceReef>0"
-                        [balances]="[tokenBalanceReef]"
-                        [selectedSymbol]="TokenSymbol.REEF" [tokenAmount]="reefAmount"
+                        *ngIf="tokenBalanceReef.balance>0"
+                        [tokenBalance]="tokenBalanceReef" [tokenAmount]="reefAmount"
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
@@ -81,11 +80,9 @@
                       </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
-
                       <app-exceeded-balance-msg
-                        *ngIf="tokenBalanceReefOposite>0"
-                        [balances]="[tokenBalanceReefOposite]"
-                        [selectedSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
+                        *ngIf="tokenBalanceReefOposite.balance>0"
+                        [tokenBalance]="tokenBalanceReefOposite"
                         [tokenAmount]="tokenAmount"
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
