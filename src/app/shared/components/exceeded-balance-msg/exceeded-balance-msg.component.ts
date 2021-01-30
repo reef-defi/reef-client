@@ -12,17 +12,12 @@ export class ExceededBalanceMsgComponent {
   @Input()
   selectedSymbol: TokenSymbol;
   @Input()
-  balances: Token[];
+  tokenBalance: Token;
 
-  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, balances: Token[]) {
-    const tokenBalance = this.getTokenBalance(balances, selectedToken);
-    if (tokenBalance && tokenBalance.balance > 0) {
-      return tokenBalance.balance >= paymentValue;
+  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, token: Token): boolean {
+    if (token.balance > 0) {
+      return token.balance >= paymentValue;
     }
     return false;
-  }
-
-  getTokenBalance(balances: Token[], selectedToken: TokenSymbol) {
-    return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
   }
 }

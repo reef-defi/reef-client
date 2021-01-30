@@ -27,7 +27,7 @@ export class BuyReefComponent {
   @Output() buy = new EventEmitter<{ tokenSymbol: TokenSymbol, tokenAmount: number }>();
 
   TokenSymbol = TokenSymbol;
-  selectedTokenBalances$: Observable<Token[]>;
+  selectedTokenBalance$: Observable<Token>;
   selectedTokenPrice$: Observable<IReefPricePerToken>;
   supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol, src: string }[]>([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
@@ -44,7 +44,7 @@ export class BuyReefComponent {
       map(data => data.ethereum.usd),
     );
 
-    this.selectedTokenBalances$ = combineLatest([
+    this.selectedTokenBalance$ = combineLatest([
       this.selTokenSub,
       this.connectorService.providerUserInfo$.pipe(filter(v => !!v))
     ]).pipe(
@@ -53,8 +53,8 @@ export class BuyReefComponent {
     );
 
     // set token amount value to token balance
-    this.selectedTokenBalances$.subscribe((tokenBalances: Token[]) => {
-      const bal = tokenBalances[0];
+    this.selectedTokenBalance$.subscribe((tokenBalance: Token) => {
+      const bal = tokenBalance;
       this.tokenAmountSub.next(bal ? this.toMaxDecimalPlaces(bal.balance, 4) : 0);
     });
 
@@ -97,15 +97,10 @@ export class BuyReefComponent {
     return value;
   }
 
-  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, balances: Token[]): boolean {
-    const tokenBalance = this.getTokenBalance(balances, selectedToken);
+  hasBalanceForPayment(paymentValue: number, tokenBalance: Token): boolean {
     if (tokenBalance && tokenBalance.balance > 0) {
       return tokenBalance.balance >= paymentValue;
     }
     return false;
-  }
-
-  private getTokenBalance(balances: Token[], selectedToken: TokenSymbol): Token {
-    return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
   }
 }

@@ -22,6 +22,7 @@ import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/
 import {ApiService} from './api.service';
 import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
 import {Contract} from 'web3-eth-contract';
+import Web3 from 'web3';
 
 @Injectable({
     providedIn: 'root'
@@ -95,6 +96,7 @@ export class UniswapService {
             const dialogRef = this.dialog.open(TransactionConfirmationComponent);
             try {
                 const firstConfirm = true;
+                // TODO should WETH be left to else statement?
                 if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
                     this.routerContract$.value.methods.swapExactETHForTokens(
                         amountOutMin, path, to, deadline
@@ -110,11 +112,14 @@ export class UniswapService {
                         })
                         .on('receipt', async (receipt) => {
                             this.connectorService.removePendingTx(receipt.transactionHash);
-                            this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
+                            this.notificationService.showNotification(
+                                `You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
                             this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
                                 .pipe(take(1))
-                                .subscribe((balances: Token_app[]) => {
-                                    this.apiService.updateTokenBalanceForAddress.next(balances[0]);
+                                .subscribe((balance: Token_app) => {
+                                    console.log('RRRRRR', balance);
+                                    // TODO add both tokenSymbols
+                                    this.apiService.updateTokenBalanceForAddress.next([balance]);
                                 });
                         })
                         .on('error', (err) => {
@@ -142,8 +147,9 @@ export class UniswapService {
                                 this.notificationService.showNotification(`You've successfully bought ${amountOutMin} REEF!`, 'Okay', 'success');
                                 this.apiService.getTokenBalance$(to, TokenSymbol.REEF)
                                     .pipe(take(1))
-                                    .subscribe((balances: Token_app[]) => {
-                                        this.apiService.updateTokenBalanceForAddress.next(balances[0]);
+                                    .subscribe((balance: Token_app) => {
+                                        // TODO add both tokenSymbols
+                                        this.apiService.updateTokenBalanceForAddress.next([balance]);
                                     });
                             })
                             .on('error', (err) => {
@@ -229,7 +235,7 @@ export class UniswapService {
             })
                 .on('transactionHash', (hash) => {
                     dialogRef.close();
-                    this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+                    this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
                     this.connectorService.addPendingTx(hash);
                 })
                 .on('receipt', (receipt) => {
@@ -240,7 +246,7 @@ export class UniswapService {
                 .on('error', (err) => {
                     dialogRef.close();
                     this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-                })
+                });
         } catch (e) {
             this.notificationService.showNotification(e.message, 'Close', 'error');
         }
@@ -271,7 +277,7 @@ export class UniswapService {
             })
                 .on('transactionHash', (hash) => {
                     dialogRef.close();
-                    this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+                    this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
                     this.connectorService.addPendingTx(hash);
                 })
                 .on('receipt', (receipt) => {
@@ -282,7 +288,7 @@ export class UniswapService {
                 .on('error', (err) => {
                     dialogRef.close();
                     this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-                })
+                });
         } catch (e) {
             this.notificationService.showNotification(e.message, 'Close', 'error');
         }
@@ -298,14 +304,13 @@ export class UniswapService {
             try {
                 const dialogRef = this.dialog.open(TransactionConfirmationComponent);
                 const poolSymbol = getKey(addresses, poolAddress);
-                const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
                 const fromAddress = info.address;
                 this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
                     from: fromAddress,
                 })
                     .on('transactionHash', (hash) => {
                         dialogRef.close();
-                        this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
+                        this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
                         this.connectorService.addPendingTx(hash);
                     })
                     .on('receipt', (receipt) => {
@@ -316,7 +321,7 @@ export class UniswapService {
                     .on('error', (err) => {
                         dialogRef.close();
                         this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-                    })
+                    });
             } catch (e) {
                 this.notificationService.showNotification(e.message, 'Close', 'error');
             }
@@ -434,11 +439,11 @@ export class UniswapService {
         }
     }
 
-    private async getWeb3() {
+    private async getWeb3(): Promise<Web3> {
         return await this.connectorService.web3$.pipe(first()).toPromise();
     }
 
-    private getSlippageForAmount(amount: string | number, slippagePercent: Percent) {
+    private getSlippageForAmount(amount: string | number, slippagePercent: Percent): string {
         return new BigNumber(amount).multipliedBy(+slippagePercent.toFixed() / 100).toString();
     }
 
@@ -451,7 +456,7 @@ export class UniswapService {
     }
 
 
-    private getSlippagePercent(slippageValue: number) {
+    private getSlippagePercent(slippageValue: number): Percent {
         return new Percent(`${(slippageValue * 10)}`, '1000');
     }
 
