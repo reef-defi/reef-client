@@ -243,12 +243,12 @@ export class ApiService {
                   }
                   return tb;
                 });
-              }),
-              tap(v => console.log('VVV', v))
+              })
             );
           }
           return of(cachedBalances);
         }),
+        tap(v => console.log('balances=', v)),
         shareReplay(1)
       );
       this.balancesByAddr.set(address, finalBalances$);
@@ -333,9 +333,12 @@ export class ApiService {
         }
         return contract.methods.balanceOf(address).call()
           .then(balance => {
-            console.log('BBBB=', balance);
             return web3.utils.fromWei(balance)
           }) as Promise<string>;
+      }),
+      catchError(e => (v) => {
+        console.warn('ERROR GETTING BALANCE', e);
+        return of('0');
       })
     );
   }

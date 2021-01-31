@@ -45,6 +45,7 @@
                       class="form-control small accent-text"
                       id="reefAmount"
                       placeholder="0" type="number"/>
+                    t={{token}}
                     <ng-container *ngIf="+reefAmount <= tokenBalance; else noBalance">
                       <app-set-input-relative-amount
                         [value]="tokenBalance"
