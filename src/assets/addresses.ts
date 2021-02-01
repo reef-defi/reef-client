@@ -33,12 +33,18 @@ export const getChainAddresses = (chainInfo: IChainData): AvailableSmartContract
   return addresses;
 };
 
-export const reefPools = {
-  // PURE_REEF_POOL: 0,
+const reefPools = {
   REEF: 0,
   REEF_WETH_POOL: 0,
   REEF_USDT_POOL: 1,
 };
+export const toReefPoolId = (tokenSymbol: TokenSymbol) => {
+  const poolId = reefPools[tokenSymbol];
+  if (!poolId) {
+    console.warn('ERROR pool id not found for ', tokenSymbol);
+  }
+  return poolId;
+}
 
 export const toTokenContractAddress = (
   availableSmartContractAddresses: AvailableSmartContractAddresses, tokenSymbol: TokenSymbol): string => {

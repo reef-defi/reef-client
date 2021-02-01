@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {reefPools, toTokenContractAddress, toTokenSymbol} from '../../../assets/addresses';
+import {toReefPoolId, toTokenContractAddress, toTokenSymbol} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
     AvailableSmartContractAddresses,
@@ -294,9 +294,10 @@ export class UniswapService {
             const amount = new BigNumber(tokenAmount).toNumber();
             try {
                 const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-                const poolSymbol = getKey(addresses, poolAddress);
                 const fromAddress = info.address;
-                this.farmingContract$.value.methods.deposit(reefPools[poolSymbol], amount).send({
+                const poolSymbol = toTokenSymbol(info, poolAddress);
+                const reefPoolId = toReefPoolId(poolSymbol);
+                this.farmingContract$.value.methods.deposit(reefPoolId, amount).send({
                     from: fromAddress,
                 })
                     .on('transactionHash', (hash) => {
@@ -324,10 +325,11 @@ export class UniswapService {
             const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
             const addresses = info.availableSmartContractAddresses;
             const amount = new BigNumber(tokenAmount).toNumber();
-            const poolSymbol = getKey(addresses, poolAddress);
+            const poolSymbol = toTokenSymbol(info, poolAddress);
+            const reefPoolId = toReefPoolId(poolSymbol);
             const dialogRef = this.dialog.open(TransactionConfirmationComponent);
             const fromAddress = info.address;
-            this.farmingContract$.value.methods.withdraw(reefPools[poolSymbol], amount).send({
+            this.farmingContract$.value.methods.withdraw(reefPoolId, amount).send({
                 from: fromAddress,
                 gasPrice: this.connectorService.getGasPrice()
             })
@@ -357,9 +359,10 @@ export class UniswapService {
         poolAddress = poolAddress.toLocaleLowerCase();
         console.log(poolAddress, 'hmmm...');
         const poolSymbol = toTokenSymbol(info, poolAddress);
+        const reefPoolId = toReefPoolId(poolSymbol);
         console.log(poolSymbol, 'hello');
         // @ts-ignore
-        const amount = await this.farmingContract$.value.methods.pendingRewards(reefPools[poolSymbol], address).call<number>();
+        const amount = await this.farmingContract$.value.methods.pendingRewards(reefPoolId, address).call<number>();
         return this.connectorService.fromWei(amount);
     }
 
@@ -375,9 +378,10 @@ export class UniswapService {
 
         const address = info.address;
         poolAddress = poolAddress.toLocaleLowerCase();
-        const poolSymbol = getKey(addresses, poolAddress);
+        const poolSymbol = toTokenSymbol(info, poolAddress);
+        const reefPoolId = toReefPoolId(poolSymbol);
         // @ts-ignore
-        return await this.farmingContract$.value.methods.userInfo(reefPools[poolSymbol], address).call<number>();
+        return await this.farmingContract$.value.methods.userInfo(reefPoolId, address).call<number>();
     }
 
     public async isSupportedERC20(address: string, addresses: AvailableSmartContractAddresses): Promise<boolean> {
