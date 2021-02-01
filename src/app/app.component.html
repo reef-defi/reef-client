@@ -23,10 +23,12 @@
     </div>
   </div>
   <ng-template #noPermissions>
-    <app-empty-state
-      title="Wrong Password"
-      subtitle="Contact the Reef Team if you want access to the closed beta.">
-    </app-empty-state>
+    <div class="mb-5 d-flex flex-column align-items-center justify-content-center">
+        <label class="small text-monospace mt-2" for="code">Enter access code</label>
+        <input class="form-control w-50 mt-2" #code id="code" type="text">
+      <button
+        (click)="checkIfAuth(code.value)" class="btn btn-primary mt-2">Enter</button>
+    </div>
   </ng-template>
   <ng-template #providerLoadingTemplate>
     <app-provider-loading></app-provider-loading>

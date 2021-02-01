@@ -313,6 +313,10 @@ export class ApiService {
     return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
   }
 
+  checkIfAuth(code: string) {
+    return this.http.post<{ [key: string]: boolean}>(`${this.reefNodeApi}/in`, { code });
+  }
+
   private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
       const addressLabel = getAddressLabel(info, token.contract_address);
