@@ -11,8 +11,6 @@ const addresses: AvailableSmartContractAddresses = {
   // reef token
   REEF: '0xfe3e6a25e6b192a42a44ecddcd13796471735acf',
   USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  // ETH: '0x0000000000000000000000000000000000000000', //same as weth
-  // ETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   WETH: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   TESTR: '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab'
 };
@@ -38,7 +36,7 @@ const reefPools = {
   REEF_WETH_POOL: 0,
   REEF_USDT_POOL: 1,
 };
-export const toReefPoolId = (tokenSymbol: TokenSymbol) => {
+export const getTokenSymbolReefPoolId = (tokenSymbol: TokenSymbol) => {
   const poolId = reefPools[tokenSymbol];
   if (!poolId) {
     console.warn('ERROR pool id not found for ', tokenSymbol);
@@ -46,7 +44,26 @@ export const toReefPoolId = (tokenSymbol: TokenSymbol) => {
   return poolId;
 }
 
-export const toTokenContractAddress = (
+export const getReefPoolByPairSymbol = (
+  reefPoolOpositeTokenSymbol: TokenSymbol, availableSmartContractAddresses: AvailableSmartContractAddresses): TokenSymbol => {
+  if (reefPoolOpositeTokenSymbol === TokenSymbol.ETH) {
+    reefPoolOpositeTokenSymbol = TokenSymbol.WETH;
+  }
+  const poolTokenSymbolStr = `${TokenSymbol.REEF}_${reefPoolOpositeTokenSymbol}_POOL`;
+
+  if (!availableSmartContractAddresses[poolTokenSymbolStr]) {
+    console.warn('ERROR pool tokenSymbol does not exist in addresses = ', poolTokenSymbolStr);
+    return null;
+  }
+  const tokenSymbolIdent = TokenSymbol[poolTokenSymbolStr];
+  if (!tokenSymbolIdent) {
+    console.warn('ERROR pool tokenSymbol does not exist in TokenSymbol enum = ', poolTokenSymbolStr);
+    return null;
+  }
+  return tokenSymbolIdent;
+};
+
+export const getTokenSymbolContractAddress = (
   availableSmartContractAddresses: AvailableSmartContractAddresses, tokenSymbol: TokenSymbol): string => {
   if (tokenSymbol === TokenSymbol.ETH) {
     tokenSymbol = TokenSymbol.WETH;
@@ -59,15 +76,15 @@ export const toTokenContractAddress = (
 };
 
 export const getAddressLabel = (info: IProviderUserInfo, contractAddress: string): string => {
-  const tokenSymbol = toTokenSymbol(info, contractAddress);
-  return toTokenLabel(tokenSymbol);
+  const tokenSymbol = getAddressTokenSymbol(info, contractAddress);
+  return getTokenSymbolLabel(tokenSymbol);
 };
 
-export const toTokenLabel = (tokenSymbol: TokenSymbol): string => {
+export const getTokenSymbolLabel = (tokenSymbol: TokenSymbol): string => {
   return tokenSymbol ? labels[tokenSymbol] || tokenSymbol.toString() : '';
 };
 
-export const toTokenSymbol = (info: IProviderUserInfo, tokenContractAddress): TokenSymbol => {
+export const getAddressTokenSymbol = (info: IProviderUserInfo, tokenContractAddress): TokenSymbol => {
   const tokenSymbolStr = Object.keys(info.availableSmartContractAddresses)
     .find(ts => tokenContractAddress.toLowerCase() === info.availableSmartContractAddresses[ts].toLowerCase());
   if (!TokenSymbol[tokenSymbolStr]) {

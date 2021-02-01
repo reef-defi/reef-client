@@ -10,7 +10,7 @@ import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
 import {Contract} from 'web3-eth-contract';
-import {toTokenContractAddress} from "../../../../../assets/addresses";
+import {getTokenSymbolContractAddress} from "../../../../../assets/addresses";
 
 @Component({
   selector: 'app-pool-page',
@@ -119,7 +119,6 @@ export class PoolPage {
       const hasAllowance = await this.uniswapService.approveTokenToRouter(lpTokenContract);
       const hasAllowance2 = await this.uniswapService.approveTokenToRouter(reefContract);
       if (hasAllowance) {
-        // TODO weth has a contract so addLiquidity could be better?
         if (tokenSymbolB === TokenSymbol.ETH) {
           await this.uniswapService.addLiquidityETH(
             addresses.REEF,
@@ -130,12 +129,13 @@ export class PoolPage {
         } else {
           await this.uniswapService.addLiquidity(
             addresses.REEF,
-            toTokenContractAddress(info.availableSmartContractAddresses, tokenSymbolB),
+            getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbolB),
             this.reefAmount,
             this.tokenAmount,
             10
           );
         }
+
         this.loading = false;
       }
       this.loading = false;

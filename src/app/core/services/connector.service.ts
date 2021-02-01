@@ -17,7 +17,7 @@ import {
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
-import {getChainAddresses, toTokenContractAddress} from '../../../assets/addresses';
+import {getChainAddresses, getTokenSymbolContractAddress} from '../../../assets/addresses';
 import {take} from "rxjs/operators";
 
 const Web3Modal = window.Web3Modal.default;
@@ -201,7 +201,7 @@ export class ConnectorService {
   }
 
   public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): Contract {
-    const tokenContract = toTokenContractAddress(addresses, tokenSymbol)
+    const tokenContract = getTokenSymbolContractAddress(addresses, tokenSymbol)
     if (!tokenContract) {
       throw new Error('No address for tokenSymbol=' + tokenSymbol);
     }
