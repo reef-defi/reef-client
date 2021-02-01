@@ -7,18 +7,12 @@ import {
     getTokenSymbolReefPoolId
 } from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
-import {
-    AvailableSmartContractAddresses,
-    IProviderUserInfo,
-    IReefPricePerToken,
-    TokenSymbol,
-    TokenSymbolDecimalPlaces
-} from '../models/types';
+import {IProviderUserInfo, IReefPricePerToken, TokenSymbol, TokenSymbolDecimalPlaces} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
 import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import {getKey, MaxUint256} from '../utils/pools-utils';
+import {MaxUint256} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
@@ -320,6 +314,7 @@ export class UniswapService {
                     .on('receipt', (receipt) => {
                         this.connectorService.removePendingTx(receipt.transactionHash);
                         this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
+                        // TODO refresh only tokens that changed balance
                         this.apiService.refreshBalancesForAddress.next(fromAddress);
                     })
                     .on('error', (err) => {
@@ -353,6 +348,7 @@ export class UniswapService {
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
                     this.notificationService.showNotification(`You've withdrawn ${tokenAmount}`, 'Okay', 'success');
+                    // TODO refresh only tokens that changed balance
                     this.apiService.refreshBalancesForAddress.next(fromAddress);
                 })
                 .on('error', (err) => {
@@ -369,15 +365,14 @@ export class UniswapService {
         const addresses = info.availableSmartContractAddresses;
         const address = info.address;
         poolAddress = poolAddress.toLocaleLowerCase();
-        console.log(poolAddress, 'hmmm...');
         const poolSymbol = getAddressTokenSymbol(info, poolAddress);
         const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
-        console.log(poolSymbol, 'hello');
         // @ts-ignore
         const amount = await this.farmingContract$.value.methods.pendingRewards(reefPoolId, address).call<number>();
         return this.connectorService.fromWei(amount);
     }
 
+    // TODO use method in api service
     public async getBalanceOf(tokenContract: Contract, ownerAddress: string): Promise<string> {
         // @ts-ignore
         const balance = await tokenContract.methods.balanceOf(ownerAddress).call<number>();
@@ -394,10 +389,6 @@ export class UniswapService {
         const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
         // @ts-ignore
         return await this.farmingContract$.value.methods.userInfo(reefPoolId, address).call<number>();
-    }
-
-    public async isSupportedERC20(address: string, addresses: AvailableSmartContractAddresses): Promise<boolean> {
-        return !!getKey(addresses, address);
     }
 
     public setSlippage(percent: string): void {

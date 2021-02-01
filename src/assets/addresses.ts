@@ -38,7 +38,7 @@ const reefPools = {
 };
 export const getTokenSymbolReefPoolId = (tokenSymbol: TokenSymbol) => {
   const poolId = reefPools[tokenSymbol];
-  if (!poolId) {
+  if (poolId == null) {
     console.warn('ERROR pool id not found for ', tokenSymbol);
   }
   return poolId;
@@ -70,7 +70,7 @@ export const getTokenSymbolContractAddress = (
   }
   const address = availableSmartContractAddresses[tokenSymbol];
   if (!address) {
-    console.log('ERROR getting contract for ', tokenSymbol);
+    console.warn('ERROR getting contract for ', tokenSymbol);
   }
   return address;
 };
@@ -88,7 +88,7 @@ export const getAddressTokenSymbol = (info: IProviderUserInfo, tokenContractAddr
   const tokenSymbolStr = Object.keys(info.availableSmartContractAddresses)
     .find(ts => tokenContractAddress.toLowerCase() === info.availableSmartContractAddresses[ts].toLowerCase());
   if (!TokenSymbol[tokenSymbolStr]) {
-    console.log('ERROR resolving address to token symbol =', tokenContractAddress);
+    console.warn('ERROR resolving address to token symbol =', tokenContractAddress);
   }
   return TokenSymbol[tokenSymbolStr];
 };

@@ -198,8 +198,3 @@ export const makeBasket = (basket: IGenerateBasketResponse): IGenerateBasketResp
 };
 
 export const MaxUint256: BigNumber = BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-
-export const getKey = (obj: any, val: string): string =>  {
-  // this is case sensitive
-    return Object.keys(obj)[Object.values(obj).indexOf(val)];
-};
