@@ -283,6 +283,10 @@ export class ApiService {
     return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
   }
 
+  checkIfAuth(code: string) {
+    return this.http.post<{ [key: string]: boolean}>(`${this.reefNodeApi}/in`, { code });
+  }
+
   private removeTokenPlaceholders(token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
       token.contract_ticker_symbol = lpTokens[token.contract_address] || 'Uniswap LP Token';
