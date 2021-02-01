@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {reefPools} from '../../../assets/addresses';
+import {reefPools, toTokenContractAddress, toTokenSymbol} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import {
     AvailableSmartContractAddresses,
@@ -71,10 +71,11 @@ export class UniswapService {
     public async buyReef(tokenSymbol: TokenSymbol, amount: number, minutesDeadline: number): Promise<void> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
         const addresses = info.availableSmartContractAddresses;
-        if (addresses[tokenSymbol]) {
+        const tokenContractAddress = toTokenContractAddress(addresses, tokenSymbol);
+        if (tokenContractAddress) {
             let weiAmount;
             const web3 = await this.getWeb3();
-            const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+            const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
             const REEF = new Token(info.chainInfo.chain_id as ChainId, web3.utils.toChecksumAddress(addresses.REEF), 18);
             const provider = await this.ethersProvider$.pipe(first()).toPromise();
             const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
@@ -95,8 +96,7 @@ export class UniswapService {
             const dialogRef = this.dialog.open(TransactionConfirmationComponent);
             try {
                 const firstConfirm = true;
-                // TODO should WETH be left to else statement?
-                if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
+                if (tokenSymbol === TokenSymbol.ETH) {
                     this.routerContract$.value.methods.swapExactETHForTokens(
                         amountOutMin, path, to, deadline
                     ).send({
@@ -184,7 +184,7 @@ export class UniswapService {
         if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
             const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
                 switchMap(([_, slippageP]: [any, Percent]) => this.connectorService.providerUserInfo$.pipe(
-                    filter(info => !!info.availableSmartContractAddresses[tokenSymbol]),
+                    filter(info => !!toTokenContractAddress(info.availableSmartContractAddresses, tokenSymbol)),
                     switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
                     )
                 ),
@@ -209,8 +209,8 @@ export class UniswapService {
         minutesDeadline: number,
     ): Promise<any> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const tokenSymbolA = this.connectorService.toTokenSymbol(info, tokenAddressA);
-        const tokenSymbolB = this.connectorService.toTokenSymbol(info, tokenAddressB);
+        const tokenSymbolA = toTokenSymbol(info, tokenAddressA);
+        const tokenSymbolB = toTokenSymbol(info, tokenAddressB);
         const to = info.address;
         const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
         const weiA = this.connectorService.toWei(amountA);
@@ -356,7 +356,7 @@ export class UniswapService {
         const address = info.address;
         poolAddress = poolAddress.toLocaleLowerCase();
         console.log(poolAddress, 'hmmm...');
-        const poolSymbol = getKey(addresses, poolAddress);
+        const poolSymbol = toTokenSymbol(info, poolAddress);
         console.log(poolSymbol, 'hello');
         // @ts-ignore
         const amount = await this.farmingContract$.value.methods.pendingRewards(reefPools[poolSymbol], address).call<number>();
@@ -422,10 +422,11 @@ export class UniswapService {
     private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
         const addresses = info.availableSmartContractAddresses;
-
-        if (addresses[tokenSymbol]) {
+        const tokenContractAddress = toTokenContractAddress(info.availableSmartContractAddresses, tokenSymbol);
+        if (tokenContractAddress) {
+            console.log('PPP=', tokenContractAddress)
             const web3 = await this.getWeb3();
-            const checkSummed = web3.utils.toChecksumAddress(addresses[tokenSymbol]);
+            const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
             const REEF = new Token(info.chainInfo.chain_id as ChainId, addresses.REEF, 18);
             // TODO to observable so previous request could be canceled
             const provider = await this.ethersProvider$.pipe(first()).toPromise();
@@ -458,6 +459,7 @@ export class UniswapService {
                 tokenSymbol
             };
         }
+        return Promise.resolve(null)
     }
 
     private async getWeb3(): Promise<Web3> {

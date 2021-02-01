@@ -2,7 +2,7 @@ import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {reefPools} from '../../../../../assets/addresses';
+import {reefPools, toTokenSymbol} from '../../../../../assets/addresses';
 import {BehaviorSubject} from 'rxjs';
 import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
@@ -51,9 +51,9 @@ export class FarmPage implements OnInit {
   );
   readonly tokenSymbol$ = combineLatest([this.address$, this.connectorSerivce.providerUserInfo$]).pipe(
     map(([address, info]: [string, IProviderUserInfo]) => {
-      let contractTokenSymbol = this.connectorSerivce.toTokenSymbol(info, address);
+      let contractTokenSymbol = toTokenSymbol(info, address);
       // let contractTokenSymbol = getKey(info.availableSmartContractAddresses, address).split('_')[1];
-      console.log('VVV=', contractTokenSymbol, this.connectorSerivce.toTokenSymbol(info, address))
+      console.log('VVV=', contractTokenSymbol, toTokenSymbol(info, address))
       if (contractTokenSymbol === TokenSymbol.WETH) {
         contractTokenSymbol = TokenSymbol.ETH;
       }

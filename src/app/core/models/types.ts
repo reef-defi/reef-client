@@ -173,7 +173,7 @@ export interface AvailableSmartContractAddresses {
   REEF: string;
   USDT: string;
   WETH: string;
-  ETH: string;
+  // ETH: string;
   TESTR: string;
 }
 
@@ -334,7 +334,8 @@ export enum TokenSymbol {
   USDT = 'USDT',
   REEF = 'REEF',
   REEF_WETH_POOL = 'REEF_WETH_POOL',
-  REEF_USDT_POOL = 'REEF_USDT_POOL'
+  REEF_USDT_POOL = 'REEF_USDT_POOL',
+  TESTR = 'TESTR'
 }
 
 export const TokenSymbolDecimalPlaces = {

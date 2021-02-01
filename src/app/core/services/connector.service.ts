@@ -17,7 +17,7 @@ import {
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
-import {getChainAddresses} from '../../../assets/addresses';
+import {getChainAddresses, toTokenContractAddress} from '../../../assets/addresses';
 import {take} from "rxjs/operators";
 
 const Web3Modal = window.Web3Modal.default;
@@ -139,7 +139,7 @@ export class ConnectorService {
   private async createUserProviderInfo(web3: Web3): Promise<IProviderUserInfo> {
     const address = await this.getAddress(web3);
     const chainInfo = await this.getChainInfo(web3);
-    const availableSmartContractAddresses = getChainAddresses(chainInfo.chain_id);
+    const availableSmartContractAddresses = getChainAddresses(chainInfo);
     if (!availableSmartContractAddresses) {
       throw new Error('Could not get contract addresses for chain_id=' + chainInfo.chain_id);
     }
@@ -201,11 +201,12 @@ export class ConnectorService {
   }
 
   public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): Contract {
-    if (!addresses[tokenSymbol]) {
+    const tokenContract = toTokenContractAddress(addresses, tokenSymbol)
+    if (!tokenContract) {
       throw new Error('No address for tokenSymbol=' + tokenSymbol);
     }
     const contractData = getContractData(addresses);
-    return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
+    return new this.web3.eth.Contract(contractData.lpToken.abi, tokenContract);
   }
 
   public setSelectedGas(type: string, price: number): void {
@@ -253,11 +254,14 @@ export class ConnectorService {
     this.pendingTransactions$.next(txs);
   }
 
-  public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {
+  /*public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {
     const tokenSymbolStr = Object.keys(info.availableSmartContractAddresses)
       .find(ts => tokenContractAddress.toLowerCase() === info.availableSmartContractAddresses[ts].toLowerCase());
+    if(!TokenSymbol[tokenSymbolStr]){
+      console.log('ERROR resolving address to token symbol =', tokenContractAddress)
+    }
     return TokenSymbol[tokenSymbolStr];
-  }
+  }*/
 
   private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
     const addresses = info.availableSmartContractAddresses;

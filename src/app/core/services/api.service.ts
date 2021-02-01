@@ -18,7 +18,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {lpTokens} from '../../../assets/addresses';
+import {getAddressLabel} from '../../../assets/addresses';
 import {ConnectorService} from './connector.service';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
@@ -213,7 +213,7 @@ export class ApiService {
         filter(addr => addr === address)
       );
       const requestedAddressBalances$ = combineLatest([refreshForAddr$, this.connectorService.providerUserInfo$]).pipe(
-        switchMap(([addr, info]: [string, IProviderUserInfo]) => this.getAddressTokenBalances$(addr, info.chainInfo.chain_id)),
+        switchMap(([addr, info]: [string, IProviderUserInfo]) => this.getAddressTokenBalances$(addr, info)),
         catchError(err => {
           throw new Error(err);
         }),
@@ -239,7 +239,7 @@ export class ApiService {
               }),
               map((updatedTokenResult: { tokenSymbol: TokenSymbol, balance: string }[]) => {
                 return cachedBalances.map((tb: Token) => {
-                  const updated = updatedTokenResult.find(upd => upd.tokenSymbol === tb.contract_ticker_symbol)
+                  const updated = updatedTokenResult.find(upd => upd.tokenSymbol === tb.contract_ticker_symbol);
                   if (updated) {
                     tb.balance = (new BigNumber(updated.balance, 10)).toNumber();
                   }
@@ -258,19 +258,19 @@ export class ApiService {
     return this.balancesByAddr.get(address);
   }
 
-  private getAddressTokenBalances$(address: string, chainId: ChainId): Observable<Token[]> {
+  private getAddressTokenBalances$(address: string, info: IProviderUserInfo): Observable<Token[]> {
+    const chainId: ChainId = info.chainInfo.chain_id;
     let balances$: Observable<Token[]>;
     if (ApiService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1) {
       balances$ = this.http.get<any>(`${this.reefNodeApi}/covalent/${address}/balances`).pipe(
         tap((v: any[]) => v.forEach(itm => itm.address = address)),
       );
     } else {
-      balances$ = this.getReefProtocolBalancesFromChain$(address);
+      balances$ = this.getReefProtocolBalancesFromChain$(info, address);
     }
 
     return balances$.pipe(
-      map(tokens => tokens.map(this.removeTokenPlaceholders)),
-      tap(v => console.log('BBBb', v))
+      map(tokens => tokens.map(token => this.removeTokenPlaceholders(info, token))),
     );
   }
 
@@ -313,9 +313,10 @@ export class ApiService {
     return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
   }
 
-  private removeTokenPlaceholders(token: any): Token {
+  private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
-      token.contract_ticker_symbol = lpTokens[token.contract_address] || 'Uniswap LP Token';
+      const addressLabel = getAddressLabel(info, token.contract_address);
+      token.contract_ticker_symbol = addressLabel || 'Uniswap LP Token';
       token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png';
     }
     return token;
@@ -335,7 +336,7 @@ export class ApiService {
         }
         return contract.methods.balanceOf(address).call()
           .then(balance => {
-            return web3.utils.fromWei(balance)
+            return web3.utils.fromWei(balance);
           }) as Promise<string>;
       }),
       catchError(e => {
@@ -345,27 +346,22 @@ export class ApiService {
     );
   }
 
-  private getReefProtocolBalancesFromChain$(address: string): Observable<Token[]> {
+  private getReefProtocolBalancesFromChain$(info: IProviderUserInfo, address: string): Observable<Token[]> {
     const missingBalanceTokens = ApiService.REEF_PROTOCOL_TOKENS;
 
-    const tokenBalances$ = this.connectorService.providerUserInfo$.pipe(
-      switchMap(info => {
-        return combineLatest(missingBalanceTokens.map((supportedConfig) => {
-          let balance$: Observable<any>;
-          const tokenAddress = info.availableSmartContractAddresses[supportedConfig.tokenSymbol];
-          balance$ = this.getBalanceOnChain$(address, supportedConfig.tokenSymbol);
+    return combineLatest(missingBalanceTokens.map((supportedConfig) => {
+      let balance$: Observable<any>;
+      const tokenAddress = info.availableSmartContractAddresses[supportedConfig.tokenSymbol];
+      balance$ = this.getBalanceOnChain$(address, supportedConfig.tokenSymbol);
 
-          return balance$.pipe(
-            map(balance => ({
-                contract_ticker_symbol: supportedConfig.tokenSymbol,
-                balance: +balance,
-                address: address,
-                contract_address: tokenAddress
-              } as Token)
-            ));
-        }));
-      })
-    );
-    return tokenBalances$;
+      return balance$.pipe(
+        map(balance => ({
+            contract_ticker_symbol: supportedConfig.tokenSymbol,
+            balance: +balance,
+            address: address,
+            contract_address: tokenAddress
+          } as Token)
+        ));
+    }));
   }
 }

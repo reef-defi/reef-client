@@ -10,6 +10,7 @@ import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
 import {Contract} from 'web3-eth-contract';
+import {toTokenContractAddress} from "../../../../../assets/addresses";
 
 @Component({
   selector: 'app-pool-page',
@@ -17,8 +18,8 @@ import {Contract} from 'web3-eth-contract';
   styleUrls: ['./pool.page.scss']
 })
 export class PoolPage {
-  readonly token$: Observable<string> = this.route.params.pipe(
-    map((params) => params.token),
+  readonly token$: Observable<TokenSymbol> = this.route.params.pipe(
+    map((params) => TokenSymbol[params.token]),
     filter(v => !!v),
     shareReplay(1)
   );
@@ -41,7 +42,7 @@ export class PoolPage {
               private apiService: ApiService) {
     this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
       switchMap(
-        ([tokenSymbol, uInfo]: [string, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
+        ([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
       shareReplay(1)
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
@@ -50,7 +51,7 @@ export class PoolPage {
     );
 
     this.lpTokenContract$ = combineLatest([this.token$, connectorService.providerUserInfo$]).pipe(
-      map(([token, info]: [string, IProviderUserInfo]) => this.connectorService
+      map(([token, info]: [TokenSymbol, IProviderUserInfo]) => this.connectorService
         .createErc20TokenContract(token as TokenSymbol, info.availableSmartContractAddresses)),
       shareReplay(1)
     );
@@ -60,7 +61,7 @@ export class PoolPage {
     );
 
     this.pricePerTokens$ = this.token$.pipe(
-      switchMap(token => this.uniswapService.getReefPriceInInterval$(TokenSymbol[token])),
+      switchMap(token => this.uniswapService.getReefPriceInInterval$(token)),
       tap((prices: IReefPricePerToken) => {
         if (this.wasLastCalcForToken === undefined) {
           this.tokenBalanceReef$.pipe(first()).subscribe(token => {
@@ -107,7 +108,7 @@ export class PoolPage {
     }
   }
 
-  async addLiquidity(tokenSymbolB: string): Promise<void> {
+  async addLiquidity(tokenSymbolB: TokenSymbol): Promise<void> {
     this.loading = true;
 
     const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
@@ -119,7 +120,7 @@ export class PoolPage {
       const hasAllowance2 = await this.uniswapService.approveTokenToRouter(reefContract);
       if (hasAllowance) {
         // TODO weth has a contract so addLiquidity could be better?
-        if (tokenSymbolB === 'ETH') {
+        if (tokenSymbolB === TokenSymbol.ETH) {
           await this.uniswapService.addLiquidityETH(
             addresses.REEF,
             this.reefAmount,
@@ -129,7 +130,7 @@ export class PoolPage {
         } else {
           await this.uniswapService.addLiquidity(
             addresses.REEF,
-            addresses[tokenSymbolB],
+            toTokenContractAddress(info.availableSmartContractAddresses, tokenSymbolB),
             this.reefAmount,
             this.tokenAmount,
             10
