@@ -41,7 +41,9 @@ export class ApiService {
 
   public static REEF_PROTOCOL_TOKENS = [
     ...ApiService.SUPPORTED_BUY_REEF_TOKENS,
-    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'}
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
+    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
+    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
   ];
 
   private static COVALENT_SUPPORTED_NETWORK_IDS = [ChainId.MAINNET, ChainId.MATIC];
@@ -336,7 +338,7 @@ export class ApiService {
             return web3.utils.fromWei(balance)
           }) as Promise<string>;
       }),
-      catchError(e => (v) => {
+      catchError(e => {
         console.warn('ERROR GETTING BALANCE', e);
         return of('0');
       })

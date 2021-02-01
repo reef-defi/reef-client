@@ -107,7 +107,7 @@ export class PoolPage {
     }
   }
 
-  async addLiquidity(tokenB: string): Promise<void> {
+  async addLiquidity(tokenSymbolB: string): Promise<void> {
     this.loading = true;
 
     const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
@@ -115,10 +115,11 @@ export class PoolPage {
     try {
       const lpTokenContract = await this.lpTokenContract$.pipe(first()).toPromise();
       const reefContract = await this.reefContract$.pipe(first()).toPromise();
-      const hasAllowance = await this.uniswapService.approveToken(lpTokenContract);
-      const hasAllowance2 = await this.uniswapService.approveToken(reefContract);
+      const hasAllowance = await this.uniswapService.approveTokenToRouter(lpTokenContract);
+      const hasAllowance2 = await this.uniswapService.approveTokenToRouter(reefContract);
       if (hasAllowance) {
-        if (tokenB === 'WETH' || tokenB === 'ETH') {
+        // TODO weth has a contract so addLiquidity could be better?
+        if (tokenSymbolB === 'ETH') {
           await this.uniswapService.addLiquidityETH(
             addresses.REEF,
             this.reefAmount,
@@ -128,7 +129,7 @@ export class PoolPage {
         } else {
           await this.uniswapService.addLiquidity(
             addresses.REEF,
-            addresses[tokenB],
+            addresses[tokenSymbolB],
             this.reefAmount,
             this.tokenAmount,
             10

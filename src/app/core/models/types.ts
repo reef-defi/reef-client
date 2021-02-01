@@ -166,7 +166,7 @@ export interface AvailableSmartContractAddresses {
   REEF_FARMING: string;
   REEF_STAKING: string;
   UNISWAP_ROUTER_V2: string;
-  PURE_REEF_POOL: string;
+  // PURE_REEF_POOL: string;
   REEF_WETH_POOL: string;
   REEF_USDT_POOL: string;
   // REEF token address
@@ -332,7 +332,9 @@ export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
   USDT = 'USDT',
-  REEF = 'REEF'
+  REEF = 'REEF',
+  REEF_WETH_POOL = 'REEF_WETH_POOL',
+  REEF_USDT_POOL = 'REEF_USDT_POOL'
 }
 
 export const TokenSymbolDecimalPlaces = {

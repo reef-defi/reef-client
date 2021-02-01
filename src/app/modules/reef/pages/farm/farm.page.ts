@@ -8,7 +8,6 @@ import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {getKey} from '../../../../core/utils/pools-utils';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {getContractData} from '../../../../../assets/abi';
-import {formatNumber} from '@angular/common';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {startWith} from "rxjs/internal/operators/startWith";
 import {Contract} from "web3-eth-contract";
@@ -22,6 +21,8 @@ export class FarmPage implements OnInit {
   public reefAmount = 0;
   public apy = 0;
   public loading = false;
+  public TokenSymbol = TokenSymbol;
+  public Math = Math;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
   readonly lpContract$ = new BehaviorSubject<Contract | null>(null);
@@ -50,7 +51,9 @@ export class FarmPage implements OnInit {
   );
   readonly tokenSymbol$ = combineLatest([this.address$, this.connectorSerivce.providerUserInfo$]).pipe(
     map(([address, info]: [string, IProviderUserInfo]) => {
-      let contractTokenSymbol = getKey(info.availableSmartContractAddresses, address).split('_')[1];
+      let contractTokenSymbol = this.connectorSerivce.toTokenSymbol(info, address);
+      // let contractTokenSymbol = getKey(info.availableSmartContractAddresses, address).split('_')[1];
+      console.log('VVV=', contractTokenSymbol, this.connectorSerivce.toTokenSymbol(info, address))
       if (contractTokenSymbol === TokenSymbol.WETH) {
         contractTokenSymbol = TokenSymbol.ETH;
       }
@@ -120,6 +123,7 @@ export class FarmPage implements OnInit {
   private createContract(lpTokenAddr: string, info: IProviderUserInfo): Contract {
     const tokenSymbol = getKey(info.availableSmartContractAddresses, lpTokenAddr);
     const contract = this.connectorSerivce.createErc20TokenContract(tokenSymbol as TokenSymbol, info.availableSmartContractAddresses);
+    console.log('value=', tokenSymbol, contract)
     this.lpContract$.next(contract);
     return contract;
   }
@@ -165,7 +169,7 @@ export class FarmPage implements OnInit {
     return (token !== 'TOKEN') ? (token + '-REEF') : 'REEF';
   }
 
-  toValidReefAmount(value: number): string {
-    return formatNumber(value, this.locale, `1.0-0`);
+  isEnoughTokenBalance(number: any, number2: any) {
+    return parseFloat(number) <= parseFloat(number2);
   }
 }

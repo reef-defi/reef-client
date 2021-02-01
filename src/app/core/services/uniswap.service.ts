@@ -13,7 +13,7 @@ import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
 import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import {getKey} from '../utils/pools-utils';
+import {getKey, MaxUint256} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
@@ -121,7 +121,7 @@ export class UniswapService {
                         });
                 } else {
                     const contract = this.connectorService.createErc20TokenContract(tokenSymbol, addresses);
-                    const hasAllowance = await this.approveToken(contract);
+                    const hasAllowance = await this.approveTokenToRouter(contract);
                     if (hasAllowance) {
                         amount = amount * +`1e${tokenB.decimals}`;
                         this.routerContract$.value.methods.swapExactTokensForTokens(
@@ -155,9 +155,9 @@ export class UniswapService {
         }
     }
 
-    public async approveToken(token: Contract): Promise<any> {
-        return await this.connectorService
-            .approveToken(token, this.routerContract$.value.options.address);
+    private async getAllowance(token: any, spenderAddr: string): Promise<any> {
+        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+        return token.methods.allowance(info.address, spenderAddr).call();
     }
 
     /*public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
@@ -202,13 +202,15 @@ export class UniswapService {
     }*/
 
     public async addLiquidity(
-        tokenA: string,
-        tokenB: string,
+        tokenAddressA: string,
+        tokenAddressB: string,
         amountA: number,
         amountB: number,
         minutesDeadline: number,
     ): Promise<any> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+        const tokenSymbolA = this.connectorService.toTokenSymbol(info, tokenAddressA);
+        const tokenSymbolB = this.connectorService.toTokenSymbol(info, tokenAddressB);
         const to = info.address;
         const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
         const weiA = this.connectorService.toWei(amountA);
@@ -216,7 +218,7 @@ export class UniswapService {
         try {
             const dialogRef = this.dialog.open(TransactionConfirmationComponent);
             this.routerContract$.value.methods.addLiquidity(
-                tokenA, tokenB, weiA, weiB, weiA, weiB, to, deadline
+                tokenAddressA, tokenAddressB, weiA, weiB, weiA, weiB, to, deadline
             ).send({
                 from: to,
                 gasPrice: this.connectorService.getGasPrice()
@@ -229,7 +231,7 @@ export class UniswapService {
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
                     this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
-                    this.apiService.refreshBalancesForAddress.next(to);
+                    this.apiService.updateTokensInBalances.next([TokenSymbol[tokenSymbolA], TokenSymbol[tokenSymbolB]]);
                 })
                 .on('error', (err) => {
                     dialogRef.close();
@@ -241,12 +243,14 @@ export class UniswapService {
     }
 
     public async addLiquidityETH(
-        token: string,
+        tokenAddress: string,
         amount: number,
         ethAmount: number,
         minutesDeadline: number
     ): Promise<any> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+        const tokenSymbol = Object.keys(info.availableSmartContractAddresses)
+            .find(ts => tokenAddress === info.availableSmartContractAddresses[ts]);
         const to = info.address;
         const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
         const tokenAmount = this.connectorService.toWei(amount);
@@ -257,7 +261,7 @@ export class UniswapService {
         try {
             const dialogRef = this.dialog.open(TransactionConfirmationComponent);
             this.routerContract$.value.methods.addLiquidityETH(
-                token, tokenAmount, tokenSlippage, ethSlippage, to, deadline
+                tokenAddress, tokenAmount, tokenSlippage, ethSlippage, to, deadline
             ).send({
                 from: to,
                 value: `${weiEthAmount}`,
@@ -271,7 +275,7 @@ export class UniswapService {
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
                     this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
-                    this.apiService.refreshBalancesForAddress.next(to);
+                    this.apiService.updateTokensInBalances.next([TokenSymbol[tokenSymbol], TokenSymbol.ETH]);
                 })
                 .on('error', (err) => {
                     dialogRef.close();
@@ -285,8 +289,7 @@ export class UniswapService {
     public async deposit(tokenContract: Contract, poolAddress: string, tokenAmount: string): Promise<any> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
         const addresses = info.availableSmartContractAddresses;
-        const allowance = await this.connectorService
-            .approveToken(tokenContract, this.farmingContract$.value.options.address);
+        const allowance = await this.approveToken(tokenContract, this.farmingContract$.value.options.address);
         if (allowance) {
             const amount = new BigNumber(tokenAmount).toNumber();
             try {
@@ -384,6 +387,36 @@ export class UniswapService {
     public setSlippage(percent: string): void {
         this.slippageValue$.next(percent);
         localStorage.setItem('reef_slippage', `${percent}`);
+    }
+
+    public async approveTokenToRouter(token: Contract): Promise<any> {
+        return await this.approveToken(token, this.routerContract$.value.options.address);
+    }
+
+    private async approveToken(tokenContract: Contract | any, spenderAddr: string): Promise<any> {
+        const allowance = await this.getAllowance(tokenContract, spenderAddr);
+        if (allowance && +allowance > 0) {
+            return true;
+        }
+        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+        return await tokenContract.methods.approve(
+            spenderAddr,
+            MaxUint256.toString()
+        ).send({
+            from: info.address, // hardcode
+            gasPrice: this.connectorService.getGasPrice()
+        }).on('transactionHash', (hash) => {
+            this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+            this.connectorService.addPendingTx(hash);
+        })
+            .on('receipt', (receipt) => {
+                this.connectorService.removePendingTx(receipt.transactionHash);
+                this.notificationService.showNotification(`Token approved`, 'Okay', 'success');
+                this.apiService.updateTokensInBalances.next([TokenSymbol.ETH]);
+            })
+            .on('error', (err) => {
+                this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
+            });
     }
 
     private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {

@@ -9,17 +9,14 @@ import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
   AvailableSmartContractAddresses,
   IChainData,
-  IContract,
   IPendingTransactions,
   IProviderUserInfo,
   ITransaction,
-  PendingTransaction,
   TokenSymbol
 } from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
-import {MaxUint256} from '../utils/pools-utils';
 import {getChainAddresses} from '../../../assets/addresses';
 import {take} from "rxjs/operators";
 
@@ -256,6 +253,12 @@ export class ConnectorService {
     this.pendingTransactions$.next(txs);
   }
 
+  public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {
+    const tokenSymbolStr = Object.keys(info.availableSmartContractAddresses)
+      .find(ts => tokenContractAddress.toLowerCase() === info.availableSmartContractAddresses[ts].toLowerCase());
+    return TokenSymbol[tokenSymbolStr];
+  }
+
   private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
     const addresses = info.availableSmartContractAddresses;
     const contractData = getContractData(addresses);
@@ -349,36 +352,6 @@ export class ConnectorService {
     }
   }
 
-
-  async approveToken(token: IContract | any, spenderAddr: string): Promise<any> {
-    const allowance = await this.getAllowance(token, spenderAddr);
-    if (allowance && +allowance > 0) {
-      return true;
-    }
-    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
-    return await token.methods.approve(
-      spenderAddr,
-      MaxUint256.toString()
-    ).send({
-      from: info.address, // hardcode
-      gasPrice: this.getGasPrice()
-    }).on('transactionHash', (hash) => {
-      this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-      this.addPendingTx(hash);
-    })
-      .on('receipt', (receipt) => {
-        this.removePendingTx(receipt.transactionHash);
-        this.notificationService.showNotification(`Token approved`, 'Okay', 'success');
-      })
-      .on('error', (err) => {
-        this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-      })
-  }
-
-  private async getAllowance(token: any, spenderAddr: string): Promise<any> {
-    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
-    return token.methods.allowance(info.address, spenderAddr).call();
-  }
 }
 
 declare const window;
