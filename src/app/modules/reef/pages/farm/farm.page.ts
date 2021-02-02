@@ -2,7 +2,7 @@ import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {getAddressTokenSymbol, getTokenSymbolReefPoolId} from '../../../../../assets/addresses';
+import {AddressUtils} from '../../../../shared/service/address.utils';
 import {BehaviorSubject} from 'rxjs';
 import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {ConnectorService} from '../../../../core/services/connector.service';
@@ -35,7 +35,7 @@ export class FarmPage implements OnInit {
       if (!poolTokenAddress) {
         throw new Error('Address not provided');
       }
-      const addressTokenSymbol = getAddressTokenSymbol(info, poolTokenAddress);
+      const addressTokenSymbol = AddressUtils.getAddressTokenSymbol(info, poolTokenAddress);
       if (!!addressTokenSymbol) {
         const contract = this.createContract(poolTokenAddress, info);
         this.getBalances(contract);
@@ -47,7 +47,7 @@ export class FarmPage implements OnInit {
   );
   readonly tokenSymbol$ = combineLatest([this.address$, this.connectorSerivce.providerUserInfo$]).pipe(
     map(([address, info]: [string, IProviderUserInfo]) => {
-      let contractTokenSymbol = getAddressTokenSymbol(info, address);
+      let contractTokenSymbol = AddressUtils.getAddressTokenSymbol(info, address);
       if (contractTokenSymbol === TokenSymbol.WETH) {
         contractTokenSymbol = TokenSymbol.ETH;
       }
@@ -75,8 +75,8 @@ export class FarmPage implements OnInit {
     combineLatest([this.route.params, this.farmingContract$, this.connectorSerivce.providerUserInfo$]).pipe(
       first(([_, cont, info]) => !!cont)
     ).subscribe(([{address}, contract, info]) => {
-      const poolSymbol = getAddressTokenSymbol(info, address);
-      const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
+      const poolSymbol = AddressUtils.getAddressTokenSymbol(info, address);
+      const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
       this.calcApy(reefPoolId, info);
     });
   }
@@ -114,7 +114,7 @@ export class FarmPage implements OnInit {
   }
 
   private createContract(lpTokenAddr: string, info: IProviderUserInfo): Contract {
-    const tokenSymbol = getAddressTokenSymbol(info, lpTokenAddr);
+    const tokenSymbol = AddressUtils.getAddressTokenSymbol(info, lpTokenAddr);
     const contract = this.connectorSerivce.createErc20TokenContract(tokenSymbol as TokenSymbol, info.availableSmartContractAddresses);
     this.lpContract$.next(contract);
     return contract;

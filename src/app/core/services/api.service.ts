@@ -18,7 +18,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {getAddressLabel} from '../../../assets/addresses';
+import {AddressUtils} from '../../shared/service/address.utils';
 import {ConnectorService} from './connector.service';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
@@ -319,7 +319,7 @@ export class ApiService {
 
   private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
-      const addressLabel = getAddressLabel(info, token.contract_address);
+      const addressLabel = AddressUtils.getAddressLabel(info, token.contract_address);
       token.contract_ticker_symbol = addressLabel || 'Uniswap LP Token';
       token.logo_url = 'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png';
     }

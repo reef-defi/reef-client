@@ -3,10 +3,10 @@ import {ContractService} from '../../../../core/services/contract.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {PoolService} from '../../../../core/services/pool.service';
-import {ChartsService} from "../../../../core/services/charts.service";
-import {ApiService} from "../../../../core/services/api.service";
+import {ChartsService} from '../../../../core/services/charts.service';
+import {ApiService} from '../../../../core/services/api.service';
 import {format, subMonths} from 'date-fns';
-import {TokenSymbol} from "../../../../core/models/types";
+import {TokenSymbol} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-reef',
@@ -48,14 +48,14 @@ export class ReefPage implements OnInit {
 
   private getReefHistoricalPrice(to?: string, from?: string) {
     if (!from) {
-      from = '2020-12-29' // Date Of Reef TGE
+      from = '2020-12-29'; // Date Of Reef TGE
     }
     if (!to) {
       to = format(new Date(), 'yyyy-MM-dd');
     }
     this.apiService.getReefPricing(from, to).subscribe(({data}) => {
       this.reefPriceChartData = this.chartService.composeHighChart(data.prices.map(obj => [new Date(obj.date).getTime(), obj.price]), true);
-    })
+    });
   }
 
 }

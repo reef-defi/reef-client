@@ -7,18 +7,18 @@ import Torus from '@toruslabs/torus-embed';
 import {getProviderName} from '../utils/provider-name';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
-  AvailableSmartContractAddresses,
   IChainData,
   IPendingTransactions,
   IProviderUserInfo,
   ITransaction,
+  ProtocolAddresses,
   TokenSymbol
 } from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
-import {getChainAddresses, getTokenSymbolContractAddress} from '../../../assets/addresses';
-import {take} from "rxjs/operators";
+import {AddressUtils} from '../../shared/service/address.utils';
+import {take} from 'rxjs/operators';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -139,7 +139,7 @@ export class ConnectorService {
   private async createUserProviderInfo(web3: Web3): Promise<IProviderUserInfo> {
     const address = await this.getAddress(web3);
     const chainInfo = await this.getChainInfo(web3);
-    const availableSmartContractAddresses = getChainAddresses(chainInfo);
+    const availableSmartContractAddresses = AddressUtils.getChainAddresses(chainInfo);
     if (!availableSmartContractAddresses) {
       throw new Error('Could not get contract addresses for chain_id=' + chainInfo.chain_id);
     }
@@ -200,8 +200,8 @@ export class ConnectorService {
     };
   }
 
-  public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): Contract {
-    const tokenContract = getTokenSymbolContractAddress(addresses, tokenSymbol)
+  public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: ProtocolAddresses): Contract {
+    const tokenContract = AddressUtils.getTokenSymbolContractAddress(addresses, tokenSymbol);
     if (!tokenContract) {
       throw new Error('No address for tokenSymbol=' + tokenSymbol);
     }
