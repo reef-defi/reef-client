@@ -1,11 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {
-    getAddressTokenSymbol,
-    getReefPoolByPairSymbol,
-    getTokenSymbolContractAddress,
-    getTokenSymbolReefPoolId
-} from '../../../assets/addresses';
+import {AddressUtils} from '../../shared/service/address.utils';
 import {ConnectorService} from './connector.service';
 import {IProviderUserInfo, IReefPricePerToken, TokenSymbol, TokenSymbolDecimalPlaces} from '../models/types';
 import {NotificationService} from './notification.service';
@@ -69,8 +64,8 @@ export class UniswapService {
 
     public async buyReef(tokenSymbol: TokenSymbol, amount: number, minutesDeadline: number): Promise<void> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const addresses = info.availableSmartContractAddresses;
-        const tokenContractAddress = getTokenSymbolContractAddress(addresses, tokenSymbol);
+      const addresses = info.availableSmartContractAddresses;
+      const tokenContractAddress = AddressUtils.getTokenSymbolContractAddress(addresses, tokenSymbol);
         if (tokenContractAddress) {
             let weiAmount;
             const web3 = await this.getWeb3();
@@ -183,9 +178,9 @@ export class UniswapService {
         if (!this.reefPricesLive.has(TokenSymbol[tokenSymbol])) {
             const updatedTokenPrice = combineLatest([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), this.slippagePercent$]).pipe(
                 switchMap(([_, slippageP]: [any, Percent]) => this.connectorService.providerUserInfo$.pipe(
-                    filter(info => !!getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbol)),
-                    switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
-                    )
+                  filter(info => !!AddressUtils.getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbol)),
+                  switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
+                  )
                 ),
                 shareReplay(1)
             );
@@ -207,19 +202,19 @@ export class UniswapService {
         amountB: number,
         minutesDeadline: number,
     ): Promise<any> {
-        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const tokenSymbolA = getAddressTokenSymbol(info, tokenAddressA);
-        const tokenSymbolB = getAddressTokenSymbol(info, tokenAddressB);
-        const to = info.address;
-        const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
-        const weiA = this.connectorService.toWei(amountA);
-        const weiB = this.connectorService.toWei(amountB);
-        try {
-            const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-            this.routerContract$.value.methods.addLiquidity(
-                tokenAddressA, tokenAddressB, weiA, weiB, weiA, weiB, to, deadline
-            ).send({
-                from: to,
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+      const tokenSymbolA = AddressUtils.getAddressTokenSymbol(info, tokenAddressA);
+      const tokenSymbolB = AddressUtils.getAddressTokenSymbol(info, tokenAddressB);
+      const to = info.address;
+      const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      const weiA = this.connectorService.toWei(amountA);
+      const weiB = this.connectorService.toWei(amountB);
+      try {
+        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+        this.routerContract$.value.methods.addLiquidity(
+          tokenAddressA, tokenAddressB, weiA, weiB, weiA, weiB, to, deadline
+        ).send({
+          from: to,
                 gasPrice: this.connectorService.getGasPrice()
             })
                 .on('transactionHash', (hash) => {
@@ -230,7 +225,7 @@ export class UniswapService {
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
                     this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
-                    const poolSymbol = getReefPoolByPairSymbol(tokenSymbolB, info.availableSmartContractAddresses);
+                  const poolSymbol = AddressUtils.getReefPoolByPairSymbol(tokenSymbolB, info.availableSmartContractAddresses);
                     this.apiService.updateTokensInBalances.next([
                         tokenSymbolA,
                         tokenSymbolB,
@@ -251,9 +246,9 @@ export class UniswapService {
         ethAmount: number,
         minutesDeadline: number
     ): Promise<any> {
-        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const tokenSymbol = getAddressTokenSymbol(info, tokenAddress);
-        const to = info.address;
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+      const tokenSymbol = AddressUtils.getAddressTokenSymbol(info, tokenAddress);
+      const to = info.address;
         const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
         const tokenAmount = this.connectorService.toWei(amount);
         const weiEthAmount = this.connectorService.toWei(ethAmount);
@@ -277,7 +272,7 @@ export class UniswapService {
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
                     this.notificationService.showNotification(`You've successfully added liquidity to the pool`, 'Okay', 'success');
-                    const poolSymbol = getReefPoolByPairSymbol(TokenSymbol.ETH, info.availableSmartContractAddresses);
+                  const poolSymbol = AddressUtils.getReefPoolByPairSymbol(TokenSymbol.ETH, info.availableSmartContractAddresses);
                     this.apiService.updateTokensInBalances.next([
                         TokenSymbol[tokenSymbol],
                         TokenSymbol.ETH,
@@ -299,20 +294,20 @@ export class UniswapService {
         if (allowance) {
             const amount = new BigNumber(tokenAmount).toNumber();
             try {
-                const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-                const fromAddress = info.address;
-                const poolSymbol = getAddressTokenSymbol(info, poolAddress);
-                const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
-                this.farmingContract$.value.methods.deposit(reefPoolId, amount).send({
-                    from: fromAddress,
+              const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+              const fromAddress = info.address;
+              const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+              const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
+              this.farmingContract$.value.methods.deposit(reefPoolId, amount).send({
+                from: fromAddress,
+              })
+                .on('transactionHash', (hash) => {
+                  dialogRef.close();
+                  this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+                  this.connectorService.addPendingTx(hash);
                 })
-                    .on('transactionHash', (hash) => {
-                        dialogRef.close();
-                        this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
-                        this.connectorService.addPendingTx(hash);
-                    })
-                    .on('receipt', (receipt) => {
-                        this.connectorService.removePendingTx(receipt.transactionHash);
+                .on('receipt', (receipt) => {
+                  this.connectorService.removePendingTx(receipt.transactionHash);
                         this.notificationService.showNotification(`You've successfully deposited ${tokenAmount}`, 'Okay', 'success');
                         // TODO refresh only tokens that changed balance
                         this.apiService.refreshBalancesForAddress.next(fromAddress);
@@ -329,21 +324,21 @@ export class UniswapService {
 
     public async withdraw(poolAddress: string, tokenAmount: string | number): Promise<any> {
         try {
-            const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-            const addresses = info.availableSmartContractAddresses;
-            const amount = new BigNumber(tokenAmount).toNumber();
-            const poolSymbol = getAddressTokenSymbol(info, poolAddress);
-            const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
-            const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-            const fromAddress = info.address;
-            this.farmingContract$.value.methods.withdraw(reefPoolId, amount).send({
-                from: fromAddress,
-                gasPrice: this.connectorService.getGasPrice()
-            })
-                .on('transactionHash', (hash) => {
-                    dialogRef.close();
-                    this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
-                    this.connectorService.addPendingTx(hash);
+          const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+          const addresses = info.availableSmartContractAddresses;
+          const amount = new BigNumber(tokenAmount).toNumber();
+          const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+          const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
+          const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+          const fromAddress = info.address;
+          this.farmingContract$.value.methods.withdraw(reefPoolId, amount).send({
+            from: fromAddress,
+            gasPrice: this.connectorService.getGasPrice()
+          })
+            .on('transactionHash', (hash) => {
+              dialogRef.close();
+              this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
+              this.connectorService.addPendingTx(hash);
                 })
                 .on('receipt', (receipt) => {
                     this.connectorService.removePendingTx(receipt.transactionHash);
@@ -361,15 +356,15 @@ export class UniswapService {
     }
 
     public async getReefRewards(poolAddress: string): Promise<number> {
-        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const addresses = info.availableSmartContractAddresses;
-        const address = info.address;
-        poolAddress = poolAddress.toLocaleLowerCase();
-        const poolSymbol = getAddressTokenSymbol(info, poolAddress);
-        const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
-        // @ts-ignore
-        const amount = await this.farmingContract$.value.methods.pendingRewards(reefPoolId, address).call<number>();
-        return this.connectorService.fromWei(amount);
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+      const addresses = info.availableSmartContractAddresses;
+      const address = info.address;
+      poolAddress = poolAddress.toLocaleLowerCase();
+      const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+      const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
+      // @ts-ignore
+      const amount = await this.farmingContract$.value.methods.pendingRewards(reefPoolId, address).call<number>();
+      return this.connectorService.fromWei(amount);
     }
 
     // TODO use method in api service
@@ -380,15 +375,15 @@ export class UniswapService {
     }
 
     public async getStaked(poolAddress: string): Promise<any> {
-        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const addresses = info.availableSmartContractAddresses;
+      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
+      const addresses = info.availableSmartContractAddresses;
 
-        const address = info.address;
-        poolAddress = poolAddress.toLocaleLowerCase();
-        const poolSymbol = getAddressTokenSymbol(info, poolAddress);
-        const reefPoolId = getTokenSymbolReefPoolId(poolSymbol);
-        // @ts-ignore
-        return await this.farmingContract$.value.methods.userInfo(reefPoolId, address).call<number>();
+      const address = info.address;
+      poolAddress = poolAddress.toLocaleLowerCase();
+      const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+      const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
+      // @ts-ignore
+      return await this.farmingContract$.value.methods.userInfo(reefPoolId, address).call<number>();
     }
 
     public setSlippage(percent: string): void {
@@ -428,8 +423,8 @@ export class UniswapService {
 
     private async getReefPricePer(tokenSymbol: TokenSymbol, amount?: number, slippageTolerance?: Percent): Promise<IReefPricePerToken> {
         const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-        const addresses = info.availableSmartContractAddresses;
-        const tokenContractAddress = getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbol);
+      const addresses = info.availableSmartContractAddresses;
+      const tokenContractAddress = AddressUtils.getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbol);
         if (tokenContractAddress) {
             const web3 = await this.getWeb3();
             const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);

@@ -1,17 +1,17 @@
 import {abi as uRouterAbi} from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
 import {abi as erc20Abi} from '@uniswap/v2-core/build/IUniswapV2ERC20.json';
-import {AvailableSmartContractAddresses} from '../app/core/models/types';
+import {ProtocolAddresses} from '../app/core/models/types';
 
-export const getContractData = (addresses: AvailableSmartContractAddresses) => {
+export const getContractData = (addresses: ProtocolAddresses) => {
   const {REEF, REEF_BASKET, REEF_FARMING, REEF_STAKING, UNISWAP_ROUTER_V2, REEF_VAULT_BASKET} = addresses;
   return {
     reefToken: {
       addr: REEF,
-      "abi": [
+      'abi': [
         {
-          "inputs": [],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
+          'inputs': [],
+          'stateMutability': 'nonpayable',
+          'type': 'constructor'
         },
         {
           "anonymous": false,

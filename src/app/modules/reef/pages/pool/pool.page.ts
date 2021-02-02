@@ -10,7 +10,7 @@ import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
 import {Contract} from 'web3-eth-contract';
-import {getTokenSymbolContractAddress} from "../../../../../assets/addresses";
+import {AddressUtils} from '../../../../shared/service/address.utils';
 
 @Component({
   selector: 'app-pool-page',
@@ -129,7 +129,7 @@ export class PoolPage {
         } else {
           await this.uniswapService.addLiquidity(
             addresses.REEF,
-            getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbolB),
+            AddressUtils.getTokenSymbolContractAddress(info.availableSmartContractAddresses, tokenSymbolB),
             this.reefAmount,
             this.tokenAmount,
             10

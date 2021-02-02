@@ -53,6 +53,16 @@ export interface IVault {
   };
 }
 
+export enum TokenSymbol {
+  ETH = 'ETH',
+  WETH = 'WETH',
+  USDT = 'USDT',
+  REEF = 'REEF',
+  REEF_WETH_POOL = 'REEF_WETH_POOL',
+  REEF_USDT_POOL = 'REEF_USDT_POOL',
+  // TESTR = 'TESTR'
+}
+
 export interface IReefPricePerToken {
   tokenSymbol: TokenSymbol;
   REEF_PER_TOKEN: string;
@@ -62,6 +72,7 @@ export interface IReefPricePerToken {
   amountOutMin?: number;
 }
 
+/* using Contract directly
 export interface IContract {
   defaultAccount: string;
   defaultBlock: number | string;
@@ -85,7 +96,7 @@ export interface IContract {
   once: (event: string, options?: any, cb?: () => any) => undefined;
   events: any;
   getPastEvents: (event: string, options?: any, cb?: () => any) => Promise<any[]>;
-}
+}*/
 
 type ContractMethod = (...params: any) => {
   arguments: [];
@@ -137,7 +148,7 @@ export interface ITransaction {
 export interface IProviderUserInfo {
   address: string;
   chainInfo: IChainData;
-  availableSmartContractAddresses: AvailableSmartContractAddresses;
+  availableSmartContractAddresses: ProtocolAddresses;
 }
 
 export interface IChainData {
@@ -157,24 +168,23 @@ export enum ChainId {
   MATIC = 137,
   RINKEBY = 4,
   GÖRLI = 5,
-  KOVAN = 42
+  KOVAN = 42,
+  LOCAL_FORK = 1337
 }
 
-export interface AvailableSmartContractAddresses {
+export interface ProtocolAddresses {
   REEF_BASKET: string;
   REEF_VAULT_BASKET: string;
   REEF_FARMING: string;
   REEF_STAKING: string;
   UNISWAP_ROUTER_V2: string;
-  // PURE_REEF_POOL: string;
   REEF_WETH_POOL: string;
   REEF_USDT_POOL: string;
   // REEF token address
   REEF: string;
   USDT: string;
   WETH: string;
-  // ETH: string;
-  TESTR: string;
+  // TESTR: string;
 }
 
 export interface IAssetData {
@@ -328,7 +338,7 @@ export interface Token {
   logo_url?: string;
 }
 
-export enum TokenSymbol {
+/*export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
   USDT = 'USDT',
@@ -336,7 +346,7 @@ export enum TokenSymbol {
   REEF_WETH_POOL = 'REEF_WETH_POOL',
   REEF_USDT_POOL = 'REEF_USDT_POOL',
   TESTR = 'TESTR'
-}
+}*/
 
 export const TokenSymbolDecimalPlaces = {
   [TokenSymbol.WETH]: 18,
