@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {IProviderUserInfo, IReefPricePerToken, Token, TokenSymbol} from '../../../../core/models/types';
 import {ApiService} from '../../../../core/services/api.service';
 import {ConnectorService} from '../../../../core/services/connector.service';
-import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
+import {filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from 'rxjs';
 import {PoolService} from '../../../../core/services/pool.service';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import BigNumber from 'bignumber.js';
+import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
 
 @Component({
   selector: 'app-buy-reef',
@@ -14,7 +15,7 @@ import BigNumber from 'bignumber.js';
   styleUrls: ['./buy-reef.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuyReefComponent {
+export class BuyReefComponent extends NgDestroyableComponent {
   private static ETH_PRICE_INTERVAL = 60000;
 
   @Input()
@@ -27,7 +28,7 @@ export class BuyReefComponent {
   @Output() buy = new EventEmitter<{ tokenSymbol: TokenSymbol, tokenAmount: number }>();
 
   TokenSymbol = TokenSymbol;
-  selectedTokenBalances$: Observable<Token[]>;
+  selectedTokenBalance$: Observable<Token>;
   selectedTokenPrice$: Observable<IReefPricePerToken>;
   supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol, src: string }[]>([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
@@ -40,11 +41,12 @@ export class BuyReefComponent {
     public poolService: PoolService,
     public uniswapService: UniswapService
   ) {
+    super();
     this.ethPrice$ = this.poolService.ethPrice$.pipe(
       map(data => data.ethereum.usd),
     );
 
-    this.selectedTokenBalances$ = combineLatest([
+    this.selectedTokenBalance$ = combineLatest([
       this.selTokenSub,
       this.connectorService.providerUserInfo$.pipe(filter(v => !!v))
     ]).pipe(
@@ -53,10 +55,13 @@ export class BuyReefComponent {
     );
 
     // set token amount value to token balance
-    this.selectedTokenBalances$.subscribe((tokenBalances: Token[]) => {
-      const bal = tokenBalances[0];
+    /*this.selectedTokenBalance$.subscribe((tokenBalance: Token) => {
+      const bal = tokenBalance;
       this.tokenAmountSub.next(bal ? this.toMaxDecimalPlaces(bal.balance, 4) : 0);
-    });
+    });*/
+    this.selTokenSub.pipe(
+      takeUntil(this.onDestroyed$)
+    ).subscribe(() => this.tokenAmountSub.next(0));
 
     // we get all supported token prices in advance
     const tokenLivePrices$: Observable<IReefPricePerToken[]> = this.supportedTokensSub.pipe(
@@ -97,15 +102,10 @@ export class BuyReefComponent {
     return value;
   }
 
-  hasBalanceForPayment(paymentValue: number, selectedToken: TokenSymbol, balances: Token[]): boolean {
-    const tokenBalance = this.getTokenBalance(balances, selectedToken);
+  hasBalanceForPayment(paymentValue: number, tokenBalance: Token): boolean {
     if (tokenBalance && tokenBalance.balance > 0) {
       return tokenBalance.balance >= paymentValue;
     }
     return false;
-  }
-
-  private getTokenBalance(balances: Token[], selectedToken: TokenSymbol): Token {
-    return balances.find(b => selectedToken === TokenSymbol[b.contract_ticker_symbol]);
   }
 }

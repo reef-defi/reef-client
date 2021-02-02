@@ -16,7 +16,7 @@ import {TokenSymbol} from "../../../../core/models/types";
 export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
-  supportedTokens = UniswapService.SUPPORTED_BUY_REEF_TOKENS;
+  supportedTokens = ApiService.SUPPORTED_BUY_REEF_TOKENS;
 
   buyLoading = false;
   reefPriceChartData = null;

@@ -5,11 +5,11 @@
         <ng-container *ngIf="tokenSymbol$ | async as token">
           <div class="row">
             <div class="col">
-              <app-page-title *ngIf="token !== 'TOKEN'"
+              <app-page-title *ngIf="token !== TokenSymbol.REEF"
                               title="Farm"
                               [subtitle]="'Stake your UNI-V2 LP Tokens in the '+getSubtitleTokenPart(token)+' pool to earn REEF!'"
               ></app-page-title>
-              <app-page-title *ngIf="token === 'TOKEN'"
+              <app-page-title *ngIf="token === TokenSymbol.REEF"
                               title="Farm"
                               [subtitle]="'Stake your REEF Tokens in the pool to earn even more REEF!'"
               ></app-page-title>
@@ -21,42 +21,50 @@
                 <div class="card-body">
                   <div class="d-flex align-items-center justify-content-center mb-4">
                     <img
-                      *ngIf="token !== 'TOKEN'"
+                      *ngIf="token === TokenSymbol.REEF_WETH_POOL"
                       class="img-size-top-70"
-                      src="../../../../../assets/images/{{ token === 'ETH' || token === 'WETH' ? 'eth.png' : 'usdt.png' }}"
+                      src="../../../../../assets/images/eth.png"
+                      alt="alt-token">
+                    <img
+                      *ngIf="token === TokenSymbol.REEF_USDT_POOL"
+                      class="img-size-top-70"
+                      src="../../../../../assets/images/usdt.png"
                       alt="alt-token">
                     <img
                       class="img-size-top-70"
                       src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                   </div>
-                  <div *ngIf="token !== 'TOKEN'" class="h6 m-4 text-center">Farm LP tokens</div>
-                  <div *ngIf="token === 'TOKEN'" class="h6 m-4 text-center">Farm REEF token</div>
+                  <div *ngIf="token !== TokenSymbol.REEF" class="h6 m-4 text-center">Farm {{token}} LP tokens</div>
+                  <div *ngIf="token === TokenSymbol.REEF" class="h6 m-4 text-center">Farm REEF token</div>
                   <div
                     class="col-sm-12 col-md-8 offset-md-2 max-w-xs flex-column mb-5 text-muted">
                     <div class="d-flex justify-content-start align-items-center mb-2">
                       <div class="small  align-self-start mr-1">
-                        {{ token !== 'TOKEN' ? 'LP Tokens' : 'REEF' }} amount
+                        {{ token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF' }} amount
                       </div>
                     </div>
                     <input
                       appNumbersOnlyInput
-                      appNumbersOnlyInputNoDecimal="true"
+                      [appNumbersOnlyInputNoDecimal]="token === TokenSymbol.REEF"
                       [(ngModel)]="reefAmount"
                       class="form-control small accent-text"
                       id="reefAmount"
                       placeholder="0" type="number"/>
-                    <ng-container *ngIf="+reefAmount <= tokenBalance; else noBalance">
+                    <ng-container *ngIf="isEnoughTokenBalance(reefAmount, tokenBalance.balance); else noBalance">
                       <app-set-input-relative-amount
-                        [value]="tokenBalance"
-                        [tokenSymbol]="token !== 'TOKEN' ? 'LP Tokens' : 'REEF'"
-                        (valueChange)="reefAmount=toValidReefAmount($event)"
-                        (refreshBalance)="refreshBalance(contract,address)"
+                        [value]="tokenBalance.balance"
+                        [tokenSymbol]="token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF'"
+                        (valueChange)="reefAmount=token === TokenSymbol.REEF?Math.floor($event):$event"
+                        (refreshBalance)="this.apiService.updateTokensInBalances.next([token])"
                       ></app-set-input-relative-amount>
                     </ng-container>
                     <ng-template #noBalance>
                       <div class="small text-center mt-1">
-                        <span class="text-danger">
+                        <span *ngIf="token !== TokenSymbol.REEF" class="text-danger">
                           Insufficient REEF-{{token}} LP Tokens
+                        </span>
+                        <span *ngIf="token === TokenSymbol.REEF" class="text-danger">
+                          Insufficient REEF Tokens
                         </span>
                       </div>
                     </ng-template>
@@ -77,7 +85,7 @@
                           <div class="text-center mt-3">
                             <button
                               [disabled]="!reefAmount ||
-                            reefAmount > tokenBalance || reefAmount <= 0"
+                            reefAmount > tokenBalance.balance || reefAmount <= 0"
                               (click)="deposit(contract, address, reefAmount.toString(10))"
                               (click)="deposit(contract, address, reefAmount.toString(10))"
                               class="btn btn-primary white-space-normal width-100 small-line-h">
@@ -96,7 +104,7 @@
                           *ngIf="stakedAmount$ | async as staked"
                           class="small text-center">
                     <span class="font-weight-bold">
-                      {{ staked | number }} {{ token !== 'TOKEN' ? ' LP Tokens' : 'REEF' }}
+                      {{ staked | number }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
                     </span>
                         </div>
                         <ng-container *ngIf="!loading">

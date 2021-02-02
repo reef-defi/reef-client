@@ -15,15 +15,18 @@
             <div class="card max-w-350 margin-auto">
               <div class="card-body">
                 <div class="text-center">
-                  <img
-                    class="img-size-top-65"
-                    src="../../../../../assets/images/{{ token === 'ETH' ? 'eth.png' : 'usdt.png' }}" alt="alt-token">
+                  <img *ngIf="token === TokenSymbol.ETH"
+                       class="img-size-top-65"
+                       src="../../../../../assets/images/{{ 'eth.png' }}" alt="alt-token">
+                  <img *ngIf="token === TokenSymbol.USDT"
+                       class="img-size-top-65"
+                       src="../../../../../assets/images/{{ 'usdt.png' }}" alt="alt-token">
                   <img
                     class="img-size-top-65"
                     src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
                 </div>
                 <div class="h6 m-4 text-center">Get
-                  <ng-container *ngIf="token !== 'TOKEN'">{{ token }}–</ng-container>
+                  <ng-container *ngIf="token !== TokenSymbol.REEF">{{ token }}–</ng-container>
                   REEF LP token
                 </div>
 
@@ -47,9 +50,8 @@
                     </div>
                     <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
                       <app-exceeded-balance-msg
-                        *ngIf="tokenBalanceReef>0"
-                        [balances]="[tokenBalanceReef]"
-                        [selectedSymbol]="TokenSymbol.REEF" [tokenAmount]="reefAmount"
+                        *ngIf="tokenBalanceReef.balance>0"
+                        [tokenBalance]="tokenBalanceReef" [tokenAmount]="reefAmount"
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
@@ -73,19 +75,18 @@
                         id="tokenAmount"
                         placeholder="0.0" type="number"/>
                       <div class="w-5-pc">
-                        <img class="img-size-top-20" [class.margin-em-05]="token !== 'ETH'"
-                             [class.margin-em-03]="token === 'ETH'"
-                             [class.img-size-top-25]="token === 'ETH'" [class.img-size-top-20]="token === 'USDT'"
-                             src="../../../../../assets/images/{{ token === 'ETH' ? 'eth.png' : 'usdt.png' }}"
+                        <img class=" margin-em-03 img-size-top-25" *ngIf="token === TokenSymbol.ETH"
+                             src="../../../../../assets/images/eth.png"
+                             alt="alt-token">
+                        <img class="img-size-top-20 margin-em-05" *ngIf=" token === TokenSymbol.USDT"
+                             src="../../../../../assets/images/usdt.png"
                              alt="alt-token">
                       </div>
                     </div>
                     <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
-
                       <app-exceeded-balance-msg
-                        *ngIf="tokenBalanceReefOposite>0"
-                        [balances]="[tokenBalanceReefOposite]"
-                        [selectedSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
+                        *ngIf="tokenBalanceReefOposite.balance>0"
+                        [tokenBalance]="tokenBalanceReefOposite"
                         [tokenAmount]="tokenAmount"
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount

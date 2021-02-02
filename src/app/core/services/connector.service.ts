@@ -9,18 +9,15 @@ import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
   AvailableSmartContractAddresses,
   IChainData,
-  IContract,
   IPendingTransactions,
   IProviderUserInfo,
   ITransaction,
-  PendingTransaction,
   TokenSymbol
 } from '../models/types';
 import {getChainData} from '../utils/chains';
 import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
-import {MaxUint256} from '../utils/pools-utils';
-import {getChainAddresses} from '../../../assets/addresses';
+import {getChainAddresses, getTokenSymbolContractAddress} from '../../../assets/addresses';
 import {take} from "rxjs/operators";
 
 const Web3Modal = window.Web3Modal.default;
@@ -102,10 +99,12 @@ export class ConnectorService {
 
   public async onConnect(): Promise<any> {
     this.providerLoading$.next(true);
-    this.currentProvider$.next(await this.web3Modal.connect());
+    const provider = await this.web3Modal.connect();
+    const web3 = this.initWeb3(provider);
+    this.currentProvider$.next(provider);
+    this.currentProviderName$.next(getProviderName(web3));
+    this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
     this.providerLoading$.next(false);
-    console.log(this.currentProvider$.value, 'Current Provider.');
-    const web3 = this.initWeb3(this.currentProvider$.value);
     // TODO remove private web3 - use web3$
     this.web3 = web3;
     this.web3$.next(this.web3);
@@ -140,11 +139,10 @@ export class ConnectorService {
   private async createUserProviderInfo(web3: Web3): Promise<IProviderUserInfo> {
     const address = await this.getAddress(web3);
     const chainInfo = await this.getChainInfo(web3);
-    const availableSmartContractAddresses = getChainAddresses(chainInfo.chain_id);
+    const availableSmartContractAddresses = getChainAddresses(chainInfo);
     if (!availableSmartContractAddresses) {
       throw new Error('Could not get contract addresses for chain_id=' + chainInfo.chain_id);
     }
-    // this.providerUserInfo$.next();
     return Promise.resolve({
       address,
       chainInfo,
@@ -171,7 +169,7 @@ export class ConnectorService {
         const txs = block.transactions.filter((tx) =>
           tx.to && (
             tx.to === info.availableSmartContractAddresses.REEF_BASKET ||
-            tx.to === info.availableSmartContractAddresses.REEF_TOKEN ||
+            tx.to === info.availableSmartContractAddresses.REEF ||
             tx.to === info.availableSmartContractAddresses.REEF_STAKING ||
             tx.to === info.availableSmartContractAddresses.REEF_FARMING
           ) && tx.from === address
@@ -202,12 +200,13 @@ export class ConnectorService {
     };
   }
 
-  public createLpContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): IContract {
-    if (!addresses[tokenSymbol]) {
+  public createErc20TokenContract(tokenSymbol: TokenSymbol, addresses: AvailableSmartContractAddresses): Contract {
+    const tokenContract = getTokenSymbolContractAddress(addresses, tokenSymbol)
+    if (!tokenContract) {
       throw new Error('No address for tokenSymbol=' + tokenSymbol);
     }
     const contractData = getContractData(addresses);
-    return new this.web3.eth.Contract(contractData.lpToken.abi, addresses[tokenSymbol]);
+    return new this.web3.eth.Contract(contractData.lpToken.abi, tokenContract);
   }
 
   public setSelectedGas(type: string, price: number): void {
@@ -248,18 +247,21 @@ export class ConnectorService {
 
   public removePendingTx(hash: string) {
     let {transactions} = this.pendingTransactions$.value;
-    this.pendingTransactions$.next({
-      transactions: transactions.filter((tx: PendingTransaction) => tx.hash === hash)
-    });
+    const txs = {
+      transactions: transactions.filter(tx => tx.hash !== hash)
+    }
+    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs))
+    this.pendingTransactions$.next(txs);
   }
 
-  // TODO could we replace use of this method with apiService.getTokenBalance$(addr: string, tokenSymbol: TokenSymbol)...take(1)
-  public async getReefBalance(address: string): Promise<string> {
-    if (this.reefTokenContract$.value) {
-      const balance = await this.reefTokenContract$.value.methods.balanceOf(address).call();
-      return await this.web3.utils.fromWei(balance);
+  /*public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {
+    const tokenSymbolStr = Object.keys(info.availableSmartContractAddresses)
+      .find(ts => tokenContractAddress.toLowerCase() === info.availableSmartContractAddresses[ts].toLowerCase());
+    if(!TokenSymbol[tokenSymbolStr]){
+      console.log('ERROR resolving address to token symbol =', tokenContractAddress)
     }
-  }
+    return TokenSymbol[tokenSymbolStr];
+  }*/
 
   private async connectToContract(info: IProviderUserInfo, web3: Web3): Promise<void> {
     const addresses = info.availableSmartContractAddresses;
@@ -270,6 +272,7 @@ export class ConnectorService {
     const tokenC = new web3.eth.Contract((contractData.reefToken.abi as any), contractData.reefToken.addr);
     const uniswapC = new web3.eth.Contract((contractData.uniswapRouterV2.abi as any), contractData.uniswapRouterV2.addr);
     const vaultsC = new web3.eth.Contract((contractData.reefVaults.abi as any), contractData.reefVaults.addr);
+    // TODO why is this as a subject - could be cached locally and have a method getContract(contractIdent)
     this.basketContract$.next(basketsC);
     this.farmingContract$.next(farmingC);
     this.stakingContract$.next(stakingC);
@@ -279,14 +282,14 @@ export class ConnectorService {
     return Promise.resolve();
   }
 
-  private async initWeb3Modal(): Promise<any> {
+  /*private async initWeb3Modal(): Promise<any> {
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
       cacheProvider: true,
       disableInjectedProvider: false
     });
     await this.onConnect();
-  }
+  }*/
 
   private initWeb3(provider: any): any {
     const w3 = new Web3(provider);
@@ -294,7 +297,6 @@ export class ConnectorService {
       return provider.send(e, t);
     };
     // this.web3WS = new Web3('wss://mainnet.infura.io/ws/v3/eadc555e1ec7423f94e94d8a06a2f310');
-    this.currentProvider$.next(provider);
     w3.eth.extend({
       methods: [
         {
@@ -305,8 +307,6 @@ export class ConnectorService {
         }
       ]
     });
-    this.currentProviderName$.next(getProviderName(w3));
-    this.notificationService.showNotification(`${this.currentProviderName$.value} wallet connected.`, 'Okay!', 'success');
     return w3;
   }
 
@@ -345,7 +345,7 @@ export class ConnectorService {
 
   private async getTxAction(address: string, value: string, providerInfo: IProviderUserInfo): Promise<string> {
     switch (address) {
-      case providerInfo.availableSmartContractAddresses.REEF_TOKEN:
+      case providerInfo.availableSmartContractAddresses.REEF:
         return Promise.resolve('Transaction');
       case providerInfo.availableSmartContractAddresses.REEF_BASKET:
         return Promise.resolve(+value > 0 ? 'Investment' : 'Liquidation');
@@ -356,36 +356,6 @@ export class ConnectorService {
     }
   }
 
-
-  async approveToken(token: IContract | any, spenderAddr: string): Promise<any> {
-    const allowance = await this.getAllowance(token, spenderAddr);
-    if (allowance && +allowance > 0) {
-      return true;
-    }
-    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
-    return await token.methods.approve(
-      spenderAddr,
-      MaxUint256.toString()
-    ).send({
-      from: info.address, // hardcode
-      gasPrice: this.getGasPrice()
-    }).on('transactionHash', (hash) => {
-      this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info')
-      this.addPendingTx(hash);
-    })
-      .on('receipt', (receipt) => {
-        this.removePendingTx(receipt.transactionHash);
-        this.notificationService.showNotification(`Token approved`, 'Okay', 'success');
-      })
-      .on('error', (err) => {
-        this.notificationService.showNotification('The tx did not go through', 'Close', 'error');
-      })
-  }
-
-  private async getAllowance(token: any, spenderAddr: string): Promise<any> {
-    const info: IProviderUserInfo = await this.providerUserInfo$.pipe(take(1)).toPromise();
-    return token.methods.allowance(info.address, spenderAddr).call();
-  }
 }
 
 declare const window;

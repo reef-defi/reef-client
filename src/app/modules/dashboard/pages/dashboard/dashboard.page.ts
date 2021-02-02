@@ -55,8 +55,8 @@ export class DashboardPage {
         }
         balance.tokens = balance.tokens.filter(token => !!token.balance)
           .sort((t1: Token, t2: Token) => {
-            let bal1 = t1.quote_rate * t1.balance
-            let bal2 = t2.quote_rate * t2.balance
+            let bal1 = t1.quote_rate * t1.balance;
+            let bal2 = t2.quote_rate * t2.balance;
             return bal2 - bal1;
           });
         return balance;

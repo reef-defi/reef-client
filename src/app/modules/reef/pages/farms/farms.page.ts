@@ -20,7 +20,7 @@ export class FarmsPage {
       <strong class="font-weight-bold">Pure REEF</strong>
       farm to earn
       <strong class="font-weight-bold">REEF returns!</strong>`,
-          link: info.availableSmartContractAddresses.PURE_REEF_POOL,
+          link: info.availableSmartContractAddresses.REEF,
           btnLabel: 'Farm REEF',
           imgs: [
             'reef/reef-token.svg'

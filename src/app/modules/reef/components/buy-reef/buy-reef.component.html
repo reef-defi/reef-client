@@ -48,21 +48,17 @@
                 </ng-container>
               </div>
             </div>
-            <ng-container *ngIf="selectedTokenBalances$|async as balances">
-              <ng-container *ngIf="selTokenSub|async as selectedSymbol">
-                <app-exceeded-balance-msg [balances]="balances" [selectedSymbol]="selectedSymbol"
-                                          [tokenAmount]="tokenAmountSub.value"></app-exceeded-balance-msg>
-              </ng-container>
+            <ng-container *ngIf="selectedTokenBalance$|async as tokenBalance">
+              <app-exceeded-balance-msg [tokenBalance]="tokenBalance"
+                                        [tokenAmount]="tokenAmountSub.value"></app-exceeded-balance-msg>
               <ng-container *ngIf="connectorService.providerUserInfo$|async as userInfo">
                 <div class="text-muted ">
-                <span *ngFor="let tokenBalance of balances;let last = last">
                   <app-set-input-relative-amount
                     [value]="tokenBalance.balance"
                     [tokenSymbol]="tokenBalance.contract_ticker_symbol"
                     (refreshBalance)="this.apiService.refreshBalancesForAddress.next(userInfo.address)"
                     (valueChange)="tokenAmountSub.next(toMaxDecimalPlaces($event,4))"
                   ></app-set-input-relative-amount>
-                </span>
                 </div>
               </ng-container>
             </ng-container>
@@ -111,20 +107,18 @@
           </div>
           <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
             <div class="d-flex justify-content-center">
-              <ng-container *ngIf="selectedTokenBalances$|async as balances">
-                <ng-container *ngIf="selTokenSub|async as selectedSymbol">
-                  <button
-                    *ngIf="!loading"
-                    [disabled]="!tokenAmountSub.value
+              <ng-container *ngIf="selectedTokenBalance$|async as balance">
+                <button
+                  *ngIf="!loading"
+                  [disabled]="!tokenAmountSub.value
                     || tokenAmountSub.value<=0
                     || (tokenPrices && tokenPrices.REEF_PER_TOKEN && +tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value > +tokenPrices.totalReefReserve)
-                    || !hasBalanceForPayment(tokenAmountSub.value, selectedSymbol, balances)"
-                    mat-ripple
-                    (click)="this.buy.emit({tokenSymbol: selectedSymbol, tokenAmount: tokenAmountSub.value})"
-                    class="btn btn-primary p-2">
-                    Buy now
+                    || !hasBalanceForPayment(tokenAmountSub.value, balance)"
+                  mat-ripple
+                  (click)="this.buy.emit({tokenSymbol: TokenSymbol[balance.contract_ticker_symbol], tokenAmount: tokenAmountSub.value});tokenAmountSub.next(0)"
+                  class="btn btn-primary p-2">
+                  Buy now
                   </button>
-                </ng-container>
               </ng-container>
               <app-loading *ngIf="loading" [diameter]="25"></app-loading>
             </div>

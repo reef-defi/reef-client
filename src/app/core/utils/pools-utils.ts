@@ -1,6 +1,6 @@
-import { IBasket, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, IPoolsMetadata } from '../models/types';
-import { animals, adjectives } from './basket-name-data';
-import { BigNumber } from '@ethersproject/bignumber';
+import {IBasket, IBasketPoolsAndCoinInfo, IGenerateBasketResponse, IPoolsMetadata} from '../models/types';
+import {adjectives, animals} from './basket-name-data';
+import {BigNumber} from '@ethersproject/bignumber';
 
 export const getBasketPoolsAndCoins = (basket: IGenerateBasketResponse, allPools: IPoolsMetadata[], allCoins: any)
   : IBasketPoolsAndCoinInfo => {
@@ -198,7 +198,3 @@ export const makeBasket = (basket: IGenerateBasketResponse): IGenerateBasketResp
 };
 
 export const MaxUint256: BigNumber = BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-
-export const getKey = (obj: any, val: string): string =>  {
-    return Object.keys(obj)[Object.values(obj).indexOf(val)];
-};

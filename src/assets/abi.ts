@@ -1,12 +1,12 @@
 import {abi as uRouterAbi} from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
-import {abi as lpTokenAbi} from '@uniswap/v2-core/build/IUniswapV2ERC20.json';
+import {abi as erc20Abi} from '@uniswap/v2-core/build/IUniswapV2ERC20.json';
 import {AvailableSmartContractAddresses} from '../app/core/models/types';
 
 export const getContractData = (addresses: AvailableSmartContractAddresses) => {
-  const {REEF_TOKEN, REEF_BASKET, REEF_FARMING, REEF_STAKING, UNISWAP_ROUTER_V2, REEF_VAULT_BASKET} = addresses;
+  const {REEF, REEF_BASKET, REEF_FARMING, REEF_STAKING, UNISWAP_ROUTER_V2, REEF_VAULT_BASKET} = addresses;
   return {
     reefToken: {
-      addr: REEF_TOKEN,
+      addr: REEF,
       "abi": [
         {
           "inputs": [],
@@ -2678,7 +2678,7 @@ export const getContractData = (addresses: AvailableSmartContractAddresses) => {
     },
     lpToken: {
       addr: '',
-      abi: lpTokenAbi,
+      abi: erc20Abi,
     }
   };
 };
