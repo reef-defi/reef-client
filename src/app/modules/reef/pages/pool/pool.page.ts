@@ -10,7 +10,7 @@ import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
 import {roundDownTo} from '../../../../core/utils/math-utils';
 import {Contract} from 'web3-eth-contract';
-import {AddressUtils} from '../../../../shared/service/address.utils';
+import {AddressUtils} from '../../../../shared/utils/address.utils';
 
 @Component({
   selector: 'app-pool-page',
