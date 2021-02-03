@@ -53,8 +53,8 @@
                     <ng-container *ngIf="isEnoughTokenBalance(reefAmount, tokenBalance.balance); else noBalance">
                       <app-set-input-relative-amount
                         [value]="tokenBalance.balance"
-                        [tokenSymbol]="token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF'"
-                        (valueChange)="reefAmount=token === TokenSymbol.REEF?Math.floor($event):$event"
+                        [tokenSymbol]="token"
+                        (valueChange)="reefAmount=$event"
                         (refreshBalance)="this.apiService.updateTokensInBalances.next([token])"
                       ></app-set-input-relative-amount>
                     </ng-container>
@@ -104,7 +104,7 @@
                           *ngIf="stakedAmount$ | async as staked"
                           class="small text-center">
                     <span class="font-weight-bold">
-                      {{ staked | number }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
+                      {{ TokenUtil.toMaxDecimalPlaces(staked, token) }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
                     </span>
                         </div>
                         <ng-container *ngIf="!loading">
@@ -128,7 +128,7 @@
                           *ngIf="reefReward$ | async as pendingReef"
                           class="small text-center">
                     <span class="font-weight-bold">
-                      {{ pendingReef | number:'1.0-0' }} REEF
+                      {{ TokenUtil.toMaxDecimalPlaces(pendingReef, TokenSymbol.REEF) }} REEF
                     </span>
                         </div>
                         <ng-container *ngIf="!loading">

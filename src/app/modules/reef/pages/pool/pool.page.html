@@ -37,7 +37,7 @@
                       <input
                         appNumbersOnlyInput
                         [ngModel]="reefAmount" step="1"
-                        (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF)"
+                        (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF, token)"
                         class="form-control text-monospace small accent-text"
                         id="reefAmount"
                         (keydown)="preventDecimal($event )"
@@ -55,7 +55,7 @@
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
-                        (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF)"
+                        (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF, token)"
                         [tokenSymbol]="TokenSymbol.REEF"
                         (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReef.address)"
                       ></app-set-input-relative-amount>
@@ -70,7 +70,7 @@
                       <input
                         appNumbersOnlyInput
                         [ngModel]="tokenAmount"
-                        (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN)"
+                        (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN, token)"
                         class="form-control text-monospace small accent-text"
                         id="tokenAmount"
                         placeholder="0.0" type="number"/>
@@ -91,7 +91,7 @@
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReefOposite.balance"
-                        (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN)"
+                        (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN, token)"
                         [tokenSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
                         (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReefOposite.address)"
                       ></app-set-input-relative-amount>

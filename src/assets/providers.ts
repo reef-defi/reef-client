@@ -1,6 +1,5 @@
 import {ProviderName} from '../app/core/models/types';
 
-// TODO providers
 export const provider = {
   [ProviderName.INFURA]: {
     url: 'https://mainnet.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310',
