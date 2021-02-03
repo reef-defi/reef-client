@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TokenSymbol} from '../../../core/models/types';
+import {TokenUtil} from '../../utils/token.util';
 
 @Component({
   selector: 'app-set-input-relative-amount',
@@ -11,7 +12,7 @@ export class SetInputRelativeAmountComponent {
   value: number;
 
   @Input()
-  tokenSymbol: string;
+  tokenSymbol: TokenSymbol;
 
   @Output()
   valueChange = new EventEmitter<number>();
@@ -20,5 +21,6 @@ export class SetInputRelativeAmountComponent {
   refreshBalance = new EventEmitter<number>();
 
   TokenSymbol = TokenSymbol;
+  TokenUtil = TokenUtil;
 
 }

@@ -18,7 +18,9 @@
                   appNumbersOnlyInput
                   [ngModel]="tokenAmountSub|async"
                   (ngModelChange)="tokenAmountSub.next($event)"
-                  class="w-75 form-control mr-2 accent-text" type="number"/>
+                  class="w-75 form-control mr-2 accent-text" type="number"
+                  placeholder="0"
+                />
                 <ng-container *ngIf="selTokenSub|async as selectedToken">
                   <div class="d-flex align-items-center">
                     <img (click)="tokenSelect.open()"
@@ -55,9 +57,9 @@
                 <div class="text-muted ">
                   <app-set-input-relative-amount
                     [value]="tokenBalance.balance"
-                    [tokenSymbol]="tokenBalance.contract_ticker_symbol"
+                    [tokenSymbol]="TokenSymbol[tokenBalance.contract_ticker_symbol]"
                     (refreshBalance)="this.apiService.refreshBalancesForAddress.next(userInfo.address)"
-                    (valueChange)="tokenAmountSub.next(toMaxDecimalPlaces($event,4))"
+                    (valueChange)="tokenAmountSub.next($event)"
                   ></app-set-input-relative-amount>
                 </div>
               </ng-container>

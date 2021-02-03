@@ -12,6 +12,7 @@ import {startWith} from 'rxjs/internal/operators/startWith';
 import {Contract} from 'web3-eth-contract';
 import {ApiService} from '../../../../core/services/api.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {TokenUtil} from '../../../../shared/utils/token.util';
 
 @Component({
   selector: 'app-farm-page',
@@ -23,7 +24,7 @@ export class FarmPage implements OnInit {
   public apy = 0;
   public loading = false;
   public TokenSymbol = TokenSymbol;
-  public Math = Math;
+  public TokenUtil = TokenUtil;
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
   readonly lpContract$ = new BehaviorSubject<Contract | null>(null);

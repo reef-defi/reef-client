@@ -22,7 +22,7 @@ import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
 import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
 import {AddressUtils} from '../../shared/utils/address.utils';
-import {ChainUtils} from '../../shared/utils/chain.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +49,8 @@ export class UniswapService {
             map(info => getDefaultProvider(
                 info.chainInfo.network,
               {
-                alchemy: ChainUtils.getProviderApiKey(ProviderName.ALCHEMY),
-                infura: ChainUtils.getProviderApiKey(ProviderName.INFURA)
+                alchemy: ProviderUtil.getProviderApiKey(ProviderName.ALCHEMY),
+                infura: ProviderUtil.getProviderApiKey(ProviderName.INFURA)
               }
             )),
             shareReplay(1)

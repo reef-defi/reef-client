@@ -4,7 +4,7 @@ import {provider} from '../../../assets/providers';
 // TODO currently the provider params are defined
 //  before metamask connects - if there is a way to set provider
 //  from metamask values in connector.service use these methods to get provider based on chainId
-export class ChainUtils {
+export class ProviderUtil {
 
   static getProviderApiKey(providerName: ProviderName): string {
     const apiKey = provider[providerName].apiKey;
