@@ -2,7 +2,7 @@ import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import {AddressUtils} from '../../../../shared/service/address.utils';
+import {AddressUtils} from '../../../../shared/utils/address.utils';
 import {BehaviorSubject} from 'rxjs';
 import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
 import {ConnectorService} from '../../../../core/services/connector.service';

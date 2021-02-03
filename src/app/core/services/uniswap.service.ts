@@ -1,8 +1,13 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {AddressUtils} from '../../shared/service/address.utils';
 import {ConnectorService} from './connector.service';
-import {IProviderUserInfo, IReefPricePerToken, TokenSymbol, TokenSymbolDecimalPlaces} from '../models/types';
+import {
+  IProviderUserInfo,
+  IReefPricePerToken,
+  ProviderName,
+  TokenSymbol,
+  TokenSymbolDecimalPlaces
+} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
 import {combineLatest, Observable, Subject, timer} from 'rxjs';
@@ -16,16 +21,18 @@ import {ApiService} from './api.service';
 import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
 import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ChainUtils} from '../../shared/utils/chain.utils';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class UniswapService {
 
-    private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
+  private static REFRESH_TOKEN_PRICE_RATE_MS = 60000 * 2; // 2 min
 
-    readonly routerContract$ = this.connectorService.uniswapRouterContract$;
-    readonly farmingContract$ = this.connectorService.farmingContract$;
+  readonly routerContract$ = this.connectorService.uniswapRouterContract$;
+  readonly farmingContract$ = this.connectorService.farmingContract$;
 
     slippagePercent$: Observable<Percent>;
     readonly initPrices$: Observable<any>;
@@ -41,10 +48,10 @@ export class UniswapService {
         this.ethersProvider$ = connectorService.providerUserInfo$.pipe(
             map(info => getDefaultProvider(
                 info.chainInfo.network,
-                {
-                    alchemy: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
-                    infura: 'c80b6f5e0b554a59b295f7588eb958b7'
-                }
+              {
+                alchemy: ChainUtils.getProviderApiKey(ProviderName.ALCHEMY),
+                infura: ChainUtils.getProviderApiKey(ProviderName.INFURA)
+              }
             )),
             shareReplay(1)
         );

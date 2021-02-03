@@ -18,7 +18,7 @@ import {
 import {subMonths} from 'date-fns';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {AddressUtils} from '../../shared/service/address.utils';
+import {AddressUtils} from '../../shared/utils/address.utils';
 import {ConnectorService} from './connector.service';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';

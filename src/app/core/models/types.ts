@@ -148,6 +148,7 @@ export interface ITransaction {
 export interface IProviderUserInfo {
   address: string;
   chainInfo: IChainData;
+  provider: any;
   availableSmartContractAddresses: ProtocolAddresses;
 }
 
@@ -170,6 +171,11 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   LOCAL_FORK = 1337
+}
+
+export enum ProviderName {
+  INFURA = 'infura',
+  ALCHEMY = 'alchemy'
 }
 
 export interface ProtocolAddresses {
