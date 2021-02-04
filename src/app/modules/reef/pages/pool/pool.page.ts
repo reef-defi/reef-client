@@ -8,9 +8,9 @@ import {first} from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {ApiService} from '../../../../core/services/api.service';
-import {roundDownTo} from '../../../../core/utils/math-utils';
 import {Contract} from 'web3-eth-contract';
 import {AddressUtils} from '../../../../shared/utils/address.utils';
+import {TokenUtil} from '../../../../shared/utils/token.util';
 
 @Component({
   selector: 'app-pool-page',
@@ -34,6 +34,7 @@ export class PoolPage {
   TokenSymbol = TokenSymbol;
   tokenBalanceReef$: Observable<Token>;
   tokenBalanceReefOposite$: Observable<Token>;
+  TokenUtil = TokenUtil;
   private wasLastCalcForToken: boolean;
 
   constructor(private readonly route: ActivatedRoute,
@@ -42,7 +43,8 @@ export class PoolPage {
               private apiService: ApiService) {
     this.tokenBalanceReefOposite$ = combineLatest([this.token$, this.providerUserInfo$]).pipe(
       switchMap(
-        ([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) => this.apiService.getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
+        ([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) => this.apiService
+          .getTokenBalance$(uInfo.address, TokenSymbol[tokenSymbol])),
       shareReplay(1)
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
@@ -61,18 +63,19 @@ export class PoolPage {
     );
 
     this.pricePerTokens$ = this.token$.pipe(
-      switchMap(token => this.uniswapService.getReefPriceInInterval$(token)),
-      tap((prices: IReefPricePerToken) => {
+      switchMap(token => this.uniswapService.getReefPriceInInterval$(token), (tkn, prices) => [tkn, prices]),
+      tap(([tkn, prices]: [TokenSymbol, IReefPricePerToken]) => {
         if (this.wasLastCalcForToken === undefined) {
           this.tokenBalanceReef$.pipe(first()).subscribe(token => {
-            this.calcTokenAmount(token.balance, prices.TOKEN_PER_REEF);
+            this.calcTokenAmount(token.balance, prices.TOKEN_PER_REEF, tkn);
           });
 
         } else {
-          this.wasLastCalcForToken ? this.calcTokenAmount(this.reefAmount, prices.TOKEN_PER_REEF)
-            : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN);
+          this.wasLastCalcForToken ? this.calcTokenAmount(this.reefAmount, prices.TOKEN_PER_REEF, tkn)
+            : this.calcReefAmount(this.tokenAmount, prices.REEF_PER_TOKEN, tkn);
         }
       }),
+      map(([tkn, prices]: [TokenSymbol, IReefPricePerToken]) => prices),
       catchError(() => {
         this.error$.next(true);
         return EMPTY;
@@ -80,13 +83,16 @@ export class PoolPage {
     );
   }
 
-  calcTokenAmount(val: number, tokenPerReef: string): void {
+  calcTokenAmount(val: number, tokenPerReef: string, oppositeToken: TokenSymbol): void {
     this.wasLastCalcForToken = true;
     if (val && val > 0) {
       const x = new BigNumber(val);
       const y = new BigNumber(tokenPerReef);
-      this.tokenAmount = roundDownTo(x.multipliedBy(y).toNumber(), 5);
-      this.reefAmount = roundDownTo(x.toNumber(), 0);
+      const tokenAmt = x.multipliedBy(y).toNumber();
+      this.tokenAmount = TokenUtil.toMaxDecimalPlaces(tokenAmt, oppositeToken);
+      this.reefAmount = TokenUtil.toMaxDecimalPlaces(x.toNumber(), TokenSymbol.REEF);
+      /*this.tokenAmount = roundDownTo(x.multipliedBy(y).toNumber(), 5);
+      this.reefAmount = roundDownTo(x.toNumber(), 0);*/
     } else {
       this.tokenAmount = undefined;
       this.reefAmount = undefined;
@@ -94,14 +100,19 @@ export class PoolPage {
   }
 
 
-  calcReefAmount(val: number, reefPerToken: string): void {
+  calcReefAmount(val: number, reefPerToken: string, oppositeToken: TokenSymbol): void {
 
     this.wasLastCalcForToken = false;
     if (val && val > 0) {
       const x = new BigNumber(val);
       const y = new BigNumber(reefPerToken);
-      this.reefAmount = roundDownTo(+x.multipliedBy(y).toNumber(), 0);
-      this.tokenAmount = roundDownTo(+x.toNumber(), 5);
+      const reefAmt = +x.multipliedBy(y).toNumber();
+
+      this.reefAmount = TokenUtil.toMaxDecimalPlaces(reefAmt, TokenSymbol.REEF);
+      this.tokenAmount = TokenUtil.toMaxDecimalPlaces(+x.toNumber(), oppositeToken);
+      /*
+      this.reefAmount = roundDownTo(reefAmt, 0);
+      this.tokenAmount = roundDownTo(+x.toNumber(), 5);*/
     } else {
       this.reefAmount = undefined;
       this.tokenAmount = undefined;

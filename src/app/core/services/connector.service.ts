@@ -20,7 +20,7 @@ import {NotificationService} from './notification.service';
 import {getContractData} from '../../../assets/abi';
 import {take} from 'rxjs/operators';
 import {AddressUtils} from '../../shared/utils/address.utils';
-import {ChainUtils} from '../../shared/utils/chain.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -47,13 +47,13 @@ export class ConnectorService {
     appName: 'reef.finance',
   });
   // TODO figure if when MetaMask network is different it connects to that network or url has to be static
-  WalletLinkProvider = this.walletLink.makeWeb3Provider(ChainUtils.getProviderUrl(ProviderName.INFURA), ChainUtils.getProviderChainId(ProviderName.INFURA));
+  WalletLinkProvider = this.walletLink.makeWeb3Provider(ProviderUtil.getProviderUrl(ProviderName.INFURA), ProviderUtil.getProviderChainId(ProviderName.INFURA));
   providerLoading$ = new BehaviorSubject(false);
   providerOptions = {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
-        infuraId: ChainUtils.getProviderApiKey(ProviderName.INFURA)
+        infuraId: ProviderUtil.getProviderApiKey(ProviderName.INFURA)
       },
     },
     torus: {

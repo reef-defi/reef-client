@@ -6,8 +6,8 @@ import {filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from 'rxjs';
 import {PoolService} from '../../../../core/services/pool.service';
 import {UniswapService} from '../../../../core/services/uniswap.service';
-import BigNumber from 'bignumber.js';
 import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
+import {TokenUtil} from '../../../../shared/utils/token.util';
 
 @Component({
   selector: 'app-buy-reef',
@@ -32,8 +32,9 @@ export class BuyReefComponent extends NgDestroyableComponent {
   selectedTokenPrice$: Observable<IReefPricePerToken>;
   supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol, src: string }[]>([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
-  tokenAmountSub = new BehaviorSubject<number>(0);
+  tokenAmountSub = new BehaviorSubject<number>(null);
   ethPrice$: Observable<number>;
+  TokenUtil = TokenUtil;
 
   constructor(
     public connectorService: ConnectorService,
@@ -61,7 +62,7 @@ export class BuyReefComponent extends NgDestroyableComponent {
     });*/
     this.selTokenSub.pipe(
       takeUntil(this.onDestroyed$)
-    ).subscribe(() => this.tokenAmountSub.next(0));
+    ).subscribe(() => this.tokenAmountSub.next(null));
 
     // we get all supported token prices in advance
     const tokenLivePrices$: Observable<IReefPricePerToken[]> = this.supportedTokensSub.pipe(
@@ -91,15 +92,6 @@ export class BuyReefComponent extends NgDestroyableComponent {
       }),
       shareReplay(1)
     );
-  }
-
-  toMaxDecimalPlaces(value: number, maxDecimals: number): number {
-    const num = (new BigNumber(value)).toFixed();
-    const splitDecimals = num.split('.');
-    if (splitDecimals.length === 2 && !!splitDecimals[1].length) {
-      return parseFloat(splitDecimals[0] + '.' + splitDecimals[1].slice(0, maxDecimals));
-    }
-    return value;
   }
 
   hasBalanceForPayment(paymentValue: number, tokenBalance: Token): boolean {

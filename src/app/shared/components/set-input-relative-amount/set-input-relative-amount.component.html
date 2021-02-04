@@ -1,14 +1,14 @@
 <ng-container *ngIf="!!+value; else noBalance">
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
-        (click)="valueChange.emit(value*0.25)">25%</span>
+        (click)="valueChange.emit(TokenUtil.toMaxDecimalPlaces(value*0.25, tokenSymbol))">25%</span>
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
-        (click)="valueChange.emit(value*0.50)">50%</span>
+        (click)="valueChange.emit(TokenUtil.toMaxDecimalPlaces(value*0.5, tokenSymbol))">50%</span>
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
-        (click)="valueChange.emit(value*0.75)">75%</span>
+        (click)="valueChange.emit(TokenUtil.toMaxDecimalPlaces(value*0.75, tokenSymbol))">75%</span>
   <span class="badge badge-pill badge-primary mr-1 c-pointer"
-        (click)="valueChange.emit(value)">100%</span>
-  <small>of
-    <span [ngSwitch]="tokenSymbol">
+        (click)="valueChange.emit(TokenUtil.toMaxDecimalPlaces(value, tokenSymbol))">100%</span>
+  <small>of {{TokenUtil.toMaxDecimalPlaces(value, tokenSymbol)}}
+    <!--<span [ngSwitch]="tokenSymbol">
     <ng-container *ngSwitchCase="TokenSymbol.USDT">
       {{ value | number:'1.1-2' }}
     </ng-container>
@@ -19,7 +19,7 @@
       {{value | number:'1.1-4'}}
     </ng-container>
       {{tokenSymbol}}
-  </span>
+  </span>-->
   </small>
 </ng-container>
 <ng-template #noBalance>
