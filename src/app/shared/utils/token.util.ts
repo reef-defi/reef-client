@@ -2,7 +2,7 @@ import {TokenSymbol} from '../../core/models/types';
 import BigNumber from 'bignumber.js';
 import {roundDownTo} from '../../core/utils/math-utils';
 
-const symbolDecimals = {
+const symbolDisplayMaxDecimals = {
   [TokenSymbol.ETH]: 4,
   [TokenSymbol.WETH]: 4,
   [TokenSymbol.REEF]: 0,
@@ -11,13 +11,17 @@ const symbolDecimals = {
   [TokenSymbol.REEF_WETH_POOL]: 4,
 };
 
+const non18DecimalPlaces = {
+  [TokenSymbol.USDT]: 6,
+};
+
 export class TokenUtil {
 
-  static toMaxDecimalPlaces(value: number | string, tokenSymbol: TokenSymbol): number {
+  static toMaxDisplayDecimalPlaces(value: number | string, tokenSymbol: TokenSymbol): number {
     if (typeof value === 'string') {
       value = (new BigNumber(value, 10)).toNumber();
     }
-    const maxDecimals = TokenUtil.getDecimalPlaces(tokenSymbol);
+    const maxDecimals = TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
     /*const num = (new BigNumber(value)).toFixed();
     const splitDecimals = num.split('.');
     if (splitDecimals.length === 2 && !!splitDecimals[1].length) {
@@ -27,8 +31,24 @@ export class TokenUtil {
     return roundDownTo(value, maxDecimals);
   }
 
-  private static getDecimalPlaces(tokenSymbol: TokenSymbol): number {
-    const decimalPlaces = symbolDecimals[tokenSymbol];
+  static toContractIntegerBalanceValue(fixedFloatNrValue: number, tokenSymbol: TokenSymbol): string {
+    let exponent = non18DecimalPlaces[tokenSymbol];
+    if (!exponent) {
+      exponent = 18;
+    }
+    return (fixedFloatNrValue * Math.pow(10, exponent)).toString(10);
+  }
+
+  static toDisplayDecimalValue(contractIntegerBalanceValue: number, tokenSymbol: TokenSymbol): string {
+    let exponent = non18DecimalPlaces[tokenSymbol];
+    if (!exponent) {
+      exponent = 18;
+    }
+    return (contractIntegerBalanceValue / Math.pow(10, exponent)).toString(10);
+  }
+
+  private static getMaxDecimalsDisplayNr(tokenSymbol: TokenSymbol): number {
+    const decimalPlaces = symbolDisplayMaxDecimals[tokenSymbol];
     if (decimalPlaces == null && !!TokenSymbol[tokenSymbol]) {
       console.log('WARNING decimal places not set for ', tokenSymbol);
       return 2;

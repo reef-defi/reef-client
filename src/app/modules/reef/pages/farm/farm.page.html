@@ -104,7 +104,7 @@
                           *ngIf="stakedAmount$ | async as staked"
                           class="small text-center">
                     <span class="font-weight-bold">
-                      {{ TokenUtil.toMaxDecimalPlaces(staked, token) }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
+                      {{ TokenUtil.toMaxDisplayDecimalPlaces(staked, token) }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
                     </span>
                         </div>
                         <ng-container *ngIf="!loading">
@@ -128,7 +128,7 @@
                           *ngIf="reefReward$ | async as pendingReef"
                           class="small text-center">
                     <span class="font-weight-bold">
-                      {{ TokenUtil.toMaxDecimalPlaces(pendingReef, TokenSymbol.REEF) }} REEF
+                      {{ TokenUtil.toMaxDisplayDecimalPlaces(pendingReef, TokenSymbol.REEF) }} REEF
                     </span>
                         </div>
                         <ng-container *ngIf="!loading">

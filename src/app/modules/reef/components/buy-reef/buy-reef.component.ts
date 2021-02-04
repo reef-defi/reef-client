@@ -100,4 +100,8 @@ export class BuyReefComponent extends NgDestroyableComponent {
     }
     return false;
   }
+
+  sendTokens(addrFrom: string, addrTo: string, number: number) {
+
+  }
 }

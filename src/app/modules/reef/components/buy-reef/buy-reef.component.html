@@ -69,7 +69,8 @@
                 <div
                   *ngIf="tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value > tokenPrices.totalReefReserve"
                   class="small text-danger">
-                  Total REEF Reserve in this pool is {{ tokenPrices.totalReefReserve | number }} REEF
+                  Total REEF Reserve in this pool
+                  is {{ TokenUtil.toMaxDisplayDecimalPlaces(tokenPrices.totalReefReserve, TokenSymbol.REEF) }} REEF
                 </div>
               </div>
             </ng-container>
@@ -85,7 +86,9 @@
                       <div class="small text-monospace ">You get minimum of</div>
                       <div class="text-monospace ">
                         <ng-container *ngIf="selectedTokenPrice$|async as tokenPrices">
-                          <div>~{{tokenPrices.amountOutMin |number: '1.0-0'}} REEF</div>
+                          <div>~{{TokenUtil.toMaxDisplayDecimalPlaces(tokenPrices.amountOutMin, TokenSymbol.REEF)}}
+                            REEF
+                          </div>
                         </ng-container>
                       </div>
                     </div>
@@ -120,7 +123,7 @@
                   (click)="this.buy.emit({tokenSymbol: TokenSymbol[balance.contract_ticker_symbol], tokenAmount: tokenAmountSub.value});tokenAmountSub.next(0)"
                   class="btn btn-primary p-2">
                   Buy now
-                  </button>
+                </button>
               </ng-container>
               <app-loading *ngIf="loading" [diameter]="25"></app-loading>
             </div>
@@ -130,6 +133,10 @@
     </div>
   </div>
 </div>
+
+from:<input #addrFrom>
+to:<input #addrTo>
+<button (click)="sendTokens(addrFrom.value, addrTo.value,10000 )"></button>
 
 <ng-template #loadingTemplate>
   <app-skeleton-loading
