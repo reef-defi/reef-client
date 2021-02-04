@@ -23,6 +23,7 @@ import {ConnectorService} from './connector.service';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import {of} from 'rxjs/internal/observable/of';
+import {TokenUtil} from '../../shared/utils/token.util';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -313,8 +314,8 @@ export class ApiService {
     return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
   }
 
-  checkIfAuth(code: string) {
-    return this.http.post<{ [key: string]: boolean}>(`${this.reefNodeApi}/in`, { code });
+  checkIfAuth(code: string): Observable<any> {
+    return this.http.post<{ [key: string]: boolean }>(`${this.reefNodeApi}/in`, {code});
   }
 
   private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
@@ -340,7 +341,9 @@ export class ApiService {
         }
         return contract.methods.balanceOf(address).call()
           .then(balance => {
-            return web3.utils.fromWei(balance);
+            console.log('Balance', balance, tokenSymbol, TokenUtil.toDisplayDecimalValue(balance, tokenSymbol));
+
+            return TokenUtil.toDisplayDecimalValue(balance, tokenSymbol);
           }) as Promise<string>;
       }),
       catchError(e => {
@@ -362,7 +365,7 @@ export class ApiService {
         map(balance => ({
             contract_ticker_symbol: supportedConfig.tokenSymbol,
             balance: +balance,
-            address: address,
+            address,
             contract_address: tokenAddress
           } as Token)
         ));

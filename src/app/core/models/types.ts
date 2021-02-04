@@ -354,12 +354,6 @@ export interface Token {
   TESTR = 'TESTR'
 }*/
 
-export const TokenSymbolDecimalPlaces = {
-  [TokenSymbol.WETH]: 18,
-  [TokenSymbol.ETH]: 18,
-  [TokenSymbol.USDT]: 6,
-};
-
 export interface IPendingTransactions {
   transactions: PendingTransaction[];
 }

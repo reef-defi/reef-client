@@ -1,13 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {ConnectorService} from './connector.service';
-import {
-  IProviderUserInfo,
-  IReefPricePerToken,
-  ProviderName,
-  TokenSymbol,
-  TokenSymbolDecimalPlaces
-} from '../models/types';
+import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
 import {combineLatest, Observable, Subject, timer} from 'rxjs';
@@ -23,6 +17,7 @@ import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
 import {AddressUtils} from '../../shared/utils/address.utils';
 import {ProviderUtil} from '../../shared/utils/provider.util';
+import {TokenUtil} from '../../shared/utils/token.util';
 
 @Injectable({
   providedIn: 'root'
@@ -75,27 +70,29 @@ export class UniswapService {
       const tokenContractAddress = AddressUtils.getTokenSymbolContractAddress(addresses, tokenSymbol);
         if (tokenContractAddress) {
             let weiAmount;
-            const web3 = await this.getWeb3();
-            const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
-            const REEF = new Token(info.chainInfo.chain_id as ChainId, web3.utils.toChecksumAddress(addresses.REEF), 18);
-            const provider = await this.ethersProvider$.pipe(first()).toPromise();
-            const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
-            const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
-            if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
-                weiAmount = this.connectorService.toWei(amount);
-            } else {
-                weiAmount = amount * +`1e${tokenB.decimals}`;
-            }
-            const route = new Route([pair], tokenB);
-            const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
-            const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
-            const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
-            const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
-            const path = [tokenB.address, REEF.address];
-            const to = info.address;
-            const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
-            const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-            try {
+          const web3 = await this.getWeb3();
+          const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
+          const REEF = new Token(info.chainInfo.chain_id as ChainId, web3.utils.toChecksumAddress(addresses.REEF), 18);
+          const provider = await this.ethersProvider$.pipe(first()).toPromise();
+          const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
+          const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
+          /* replaced
+          if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
+              weiAmount = this.connectorService.toWei(amount);
+          } else {
+              weiAmount = amount * +`1e${tokenB.decimals}`;*/
+          weiAmount = TokenUtil.toContractIntegerBalanceValue(amount, tokenSymbol);
+          // }
+          const route = new Route([pair], tokenB);
+          const trade = new Trade(route, new TokenAmount(tokenB, weiAmount), TradeType.EXACT_INPUT);
+          const slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
+          const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+          const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
+          const path = [tokenB.address, REEF.address];
+          const to = info.address;
+          const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+          const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+          try {
                 const firstConfirm = true;
                 if (tokenSymbol === TokenSymbol.ETH) {
                     this.routerContract$.value.methods.swapExactETHForTokens(
@@ -214,16 +211,19 @@ export class UniswapService {
       const tokenSymbolB = AddressUtils.getAddressTokenSymbol(info, tokenAddressB);
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      const weiA = TokenUtil.toContractIntegerBalanceValue(amountA, tokenSymbolA);
+      const weiB = TokenUtil.toContractIntegerBalanceValue(amountB, tokenSymbolB);
+      /*replaced
       const weiA = this.connectorService.toWei(amountA);
-      const weiB = this.connectorService.toWei(amountB);
+      const weiB = this.connectorService.toWei(amountB);*/
       try {
         const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         this.routerContract$.value.methods.addLiquidity(
           tokenAddressA, tokenAddressB, weiA, weiB, weiA, weiB, to, deadline
         ).send({
           from: to,
-                gasPrice: this.connectorService.getGasPrice()
-            })
+          gasPrice: this.connectorService.getGasPrice()
+        })
                 .on('transactionHash', (hash) => {
                     dialogRef.close();
                     this.notificationService.showNotification('The transaction is now pending.', 'Ok', 'info');
@@ -256,18 +256,19 @@ export class UniswapService {
       const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const tokenSymbol = AddressUtils.getAddressTokenSymbol(info, tokenAddress);
       const to = info.address;
-        const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
-        const tokenAmount = this.connectorService.toWei(amount);
-        const weiEthAmount = this.connectorService.toWei(ethAmount);
-        const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
-        const tokenSlippage = this.getSlippageForAmount(tokenAmount, slippagePer);
-        const ethSlippage = this.getSlippageForAmount(weiEthAmount, slippagePer);
-        try {
-            const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-            this.routerContract$.value.methods.addLiquidityETH(
-                tokenAddress, tokenAmount, tokenSlippage, ethSlippage, to, deadline
-            ).send({
-                from: to,
+      const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
+      // replaced const tokenAmount = this.connectorService.toWei(amount);
+      const tokenAmount = TokenUtil.toContractIntegerBalanceValue(amount, tokenSymbol);
+      const weiEthAmount = this.connectorService.toWei(ethAmount);
+      const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
+      const tokenSlippage = this.getSlippageForAmount(tokenAmount, slippagePer);
+      const ethSlippage = this.getSlippageForAmount(weiEthAmount, slippagePer);
+      try {
+        const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+        this.routerContract$.value.methods.addLiquidityETH(
+          tokenAddress, tokenAmount, tokenSlippage, ethSlippage, to, deadline
+        ).send({
+          from: to,
                 value: `${weiEthAmount}`,
                 gasPrice: this.connectorService.getGasPrice()
             })
@@ -374,13 +375,6 @@ export class UniswapService {
       return this.connectorService.fromWei(amount);
     }
 
-    // TODO use method in api service
-    public async getBalanceOf(tokenContract: Contract, ownerAddress: string): Promise<string> {
-        // @ts-ignore
-        const balance = await tokenContract.methods.balanceOf(ownerAddress).call<number>();
-        return this.connectorService.fromWei(balance);
-    }
-
     public async getStaked(poolAddress: string): Promise<any> {
       const info: IProviderUserInfo = await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const addresses = info.availableSmartContractAddresses;
@@ -443,9 +437,8 @@ export class UniswapService {
             const route = new Route([pair], tokenB);
             const totalReef = await pair.reserveOf(REEF).toExact();
             if (amount > 0) {
-                const exponent = TokenSymbolDecimalPlaces[tokenSymbol];
-                const tokenAmt = (amount * Math.pow(10, exponent)).toString(10);
-                const trade = new Trade(route, new TokenAmount(tokenB, tokenAmt), TradeType.EXACT_INPUT);
+              const tokenAmt = TokenUtil.toContractIntegerBalanceValue(amount, tokenSymbol);
+              const trade = new Trade(route, new TokenAmount(tokenB, tokenAmt), TradeType.EXACT_INPUT);
                 if (!slippageTolerance) {
                     slippageTolerance = await this.slippagePercent$.pipe(first()).toPromise();
                 }

@@ -20,7 +20,7 @@ import {TokenUtil} from '../../../../shared/utils/token.util';
   styleUrls: ['./farm.page.scss']
 })
 export class FarmPage implements OnInit {
-  public reefAmount = 0;
+  public reefAmount = null;
   public apy = 0;
   public loading = false;
   public TokenSymbol = TokenSymbol;

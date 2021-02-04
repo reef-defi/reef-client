@@ -89,8 +89,8 @@ export class PoolPage {
       const x = new BigNumber(val);
       const y = new BigNumber(tokenPerReef);
       const tokenAmt = x.multipliedBy(y).toNumber();
-      this.tokenAmount = TokenUtil.toMaxDecimalPlaces(tokenAmt, oppositeToken);
-      this.reefAmount = TokenUtil.toMaxDecimalPlaces(x.toNumber(), TokenSymbol.REEF);
+      this.tokenAmount = TokenUtil.toMaxDisplayDecimalPlaces(tokenAmt, oppositeToken);
+      this.reefAmount = TokenUtil.toMaxDisplayDecimalPlaces(x.toNumber(), TokenSymbol.REEF);
       /*this.tokenAmount = roundDownTo(x.multipliedBy(y).toNumber(), 5);
       this.reefAmount = roundDownTo(x.toNumber(), 0);*/
     } else {
@@ -108,8 +108,8 @@ export class PoolPage {
       const y = new BigNumber(reefPerToken);
       const reefAmt = +x.multipliedBy(y).toNumber();
 
-      this.reefAmount = TokenUtil.toMaxDecimalPlaces(reefAmt, TokenSymbol.REEF);
-      this.tokenAmount = TokenUtil.toMaxDecimalPlaces(+x.toNumber(), oppositeToken);
+      this.reefAmount = TokenUtil.toMaxDisplayDecimalPlaces(reefAmt, TokenSymbol.REEF);
+      this.tokenAmount = TokenUtil.toMaxDisplayDecimalPlaces(+x.toNumber(), oppositeToken);
       /*
       this.reefAmount = roundDownTo(reefAmt, 0);
       this.tokenAmount = roundDownTo(+x.toNumber(), 5);*/
