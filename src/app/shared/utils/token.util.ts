@@ -36,7 +36,7 @@ export class TokenUtil {
     if (!exponent) {
       exponent = 18;
     }
-    return (fixedFloatNrValue * Math.pow(10, exponent)).toString(10);
+    return (new BigNumber((fixedFloatNrValue * Math.pow(10, exponent)).toString(10))).toFixed();
   }
 
   static toDisplayDecimalValue(contractIntegerBalanceValue: number, tokenSymbol: TokenSymbol): string {
