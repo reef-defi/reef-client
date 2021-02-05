@@ -1,6 +1,6 @@
-import { TokenSymbol } from '../../core/models/types';
+import {TokenSymbol} from '../../core/models/types';
 import BigNumber from 'bignumber.js';
-import { roundDownTo } from '../../core/utils/math-utils';
+import {roundDownTo} from '../../core/utils/math-utils';
 
 const symbolDisplayMaxDecimals = {
   [TokenSymbol.ETH]: 4,
@@ -41,9 +41,10 @@ export class TokenUtil {
     if (!exponent) {
       exponent = 18;
     }
-    return new BigNumber(
-      (fixedFloatNrValue * Math.pow(10, exponent)).toString(10)
-    ).toFixed();
+    const val = new BigNumber(`${fixedFloatNrValue}e+${exponent}`);
+    const fixedVal = val.toFixed();
+    const decimalIndex = fixedVal.indexOf('.');
+    return decimalIndex > -1 ? fixedVal.substring(0, decimalIndex) : fixedVal;
   }
 
   static toDisplayDecimalValue(

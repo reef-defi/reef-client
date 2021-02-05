@@ -1,46 +1,24 @@
-import { Injectable } from '@angular/core';
-import {
-  ChainId,
-  Fetcher,
-  Percent,
-  Route,
-  Token,
-  TokenAmount,
-  Trade,
-  TradeType,
-} from '@uniswap/sdk';
-import { ConnectorService } from './connector.service';
-import {
-  IProviderUserInfo,
-  IReefPricePerToken,
-  ProviderName,
-  TokenSymbol,
-} from '../models/types';
-import { NotificationService } from './notification.service';
-import { addMinutes, getUnixTime } from 'date-fns';
-import { combineLatest, Observable, Subject, timer } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
+import {ConnectorService} from './connector.service';
+import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol} from '../models/types';
+import {NotificationService} from './notification.service';
+import {addMinutes, getUnixTime} from 'date-fns';
+import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import { MaxUint256 } from '../utils/pools-utils';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { TransactionConfirmationComponent } from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {
-  filter,
-  first,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-} from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { BaseProvider, getDefaultProvider } from '@ethersproject/providers';
-import { Contract } from 'web3-eth-contract';
+import {MaxUint256} from '../utils/pools-utils';
+import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
+import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
+import {ApiService} from './api.service';
+import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
+import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
-import { TokenUtil } from '../../shared/utils/token.util';
-import { ErrorUtils } from '../../shared/utils/error.utils';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
+import {TokenUtil} from '../../shared/utils/token.util';
+import {ErrorUtils} from '../../shared/utils/error.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -53,10 +31,8 @@ export class UniswapService {
 
   slippagePercent$: Observable<Percent>;
   readonly initPrices$: Observable<any>;
-  private reefPricesLive = new Map<
-    TokenSymbol,
-    Observable<IReefPricePerToken>
-  >();
+  private reefPricesLive = new Map<TokenSymbol,
+    Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
   private ethersProvider$: Observable<BaseProvider>;
 
@@ -331,6 +307,9 @@ export class UniswapService {
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     const weiA = TokenUtil.toContractIntegerBalanceValue(amountA, tokenSymbolA);
     const weiB = TokenUtil.toContractIntegerBalanceValue(amountB, tokenSymbolB);
+    const weiMinA = TokenUtil.toContractIntegerBalanceValue(amountA * 0.95, tokenSymbolA);
+    const weiMinB = TokenUtil.toContractIntegerBalanceValue(amountB * 0.95, tokenSymbolB);
+
     /*replaced
     const weiA = this.connectorService.toWei(amountA);
     const weiB = this.connectorService.toWei(amountB);*/
@@ -353,8 +332,8 @@ export class UniswapService {
             tokenAddressB,
             weiA,
             weiB,
-            0,
-            0,
+            weiMinA,
+            weiMinB,
             to,
             deadline
           )
@@ -487,19 +466,22 @@ export class UniswapService {
       .pipe(take(1))
       .toPromise();
     const addresses = info.availableSmartContractAddresses;
+    const poolSymbol = AddressUtils.getAddressTokenSymbol(
+      info,
+      poolAddress
+    );
     const allowance = await this.approveToken(
       tokenContract,
-      this.farmingContract$.value.options.address
+      this.farmingContract$.value.options.address.toString()
     );
     if (allowance) {
-      const amount = new BigNumber(tokenAmount).toNumber();
+      const amount = TokenUtil.toContractIntegerBalanceValue(
+        +tokenAmount,
+        poolSymbol
+      );
       try {
         const dialogRef = this.dialog.open(TransactionConfirmationComponent);
         const fromAddress = info.address;
-        const poolSymbol = AddressUtils.getAddressTokenSymbol(
-          info,
-          poolAddress
-        );
         const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
         this.farmingContract$.value.methods
           .deposit(reefPoolId, amount)
@@ -548,8 +530,11 @@ export class UniswapService {
         .pipe(take(1))
         .toPromise();
       const addresses = info.availableSmartContractAddresses;
-      const amount = new BigNumber(tokenAmount).toNumber();
       const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+      const amount = TokenUtil.toContractIntegerBalanceValue(
+        +tokenAmount,
+        poolSymbol
+      );
       const reefPoolId = AddressUtils.getTokenSymbolReefPoolId(poolSymbol);
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       const fromAddress = info.address;
