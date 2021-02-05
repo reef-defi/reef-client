@@ -57,6 +57,19 @@ export class TokenUtil {
     return (contractIntegerBalanceValue / Math.pow(10, exponent)).toString(10);
   }
 
+  public static parseLPTokenName(
+    tokenSymbol: TokenSymbol | string
+  ): TokenSymbol | string {
+    if (
+      tokenSymbol === TokenSymbol.REEF_USDT_POOL ||
+      tokenSymbol === TokenSymbol.REEF_WETH_POOL
+    ) {
+      const symbol = tokenSymbol.split('_').slice(0, 2).join('-');
+      return symbol;
+    }
+    return tokenSymbol;
+  }
+
   private static getMaxDecimalsDisplayNr(tokenSymbol: TokenSymbol): number {
     const decimalPlaces = symbolDisplayMaxDecimals[tokenSymbol];
     if (decimalPlaces == null && !!TokenSymbol[tokenSymbol]) {

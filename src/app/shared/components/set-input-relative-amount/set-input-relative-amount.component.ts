@@ -8,11 +8,17 @@ import { TokenUtil } from '../../utils/token.util';
   styleUrls: ['./set-input-relative-amount.component.scss'],
 })
 export class SetInputRelativeAmountComponent {
+  private _tokenSymbol: TokenSymbol | string;
   @Input()
   value: number;
 
-  @Input()
-  tokenSymbol: TokenSymbol;
+  @Input() set tokenSymbol(val: TokenSymbol | string) {
+    this._tokenSymbol = TokenUtil.parseLPTokenName(val);
+  }
+
+  get tokenSymbol(): TokenSymbol | string {
+    return this._tokenSymbol;
+  }
 
   @Output()
   valueChange = new EventEmitter<number>();

@@ -50,10 +50,14 @@
   </small>
 </ng-container>
 <ng-template #noBalance>
-  <small
-    >Please add {{ tokenSymbol }} then
-    <a href="#" (click)="$event.preventDefault(); refreshBalance.emit()"
-      >refresh balance</a
-    >.
-  </small>
+  <div class="d-flex align-items-center justify-content-center text-danger">
+    <small
+      >Please add {{ tokenSymbol }}
+      <span *ngIf="tokenSymbol !== TokenSymbol.REEF">LP</span>
+      tokens, then
+      <a href="#" (click)="$event.preventDefault(); refreshBalance.emit()"
+        >refresh balance</a
+      >.
+    </small>
+  </div>
 </ng-template>

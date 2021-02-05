@@ -64,7 +64,7 @@ export class FarmPage implements OnInit {
       if (contractTokenSymbol === TokenSymbol.WETH) {
         contractTokenSymbol = TokenSymbol.ETH;
       }
-      return contractTokenSymbol;
+      return TokenUtil.parseLPTokenName(contractTokenSymbol);
     })
   );
   readonly tokenBalance$ = combineLatest([
