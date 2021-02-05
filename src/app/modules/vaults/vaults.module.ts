@@ -9,17 +9,15 @@ import { VaultsListComponent } from './components/vaults-list/vaults-list.compon
 import { VaultsRoiChartComponent } from './components/vaults-roi-chart/vaults-roi-chart.component';
 
 const pages = [VaultsPage];
-const components = [DiversifyVaultsComponent, VaultsListComponent, VaultsRoiChartComponent];
+const components = [
+  DiversifyVaultsComponent,
+  VaultsListComponent,
+  VaultsRoiChartComponent,
+];
 
 @NgModule({
   declarations: [...pages, ...components],
-  exports: [
-    VaultsRoiChartComponent
-  ],
-  imports: [
-    CommonModule,
-    VaultsRoutingModule,
-    SharedModule
-  ]
+  exports: [VaultsRoiChartComponent],
+  imports: [CommonModule, VaultsRoutingModule, SharedModule],
 })
-export class VaultsModule { }
+export class VaultsModule {}

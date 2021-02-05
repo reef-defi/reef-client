@@ -8,9 +8,8 @@ describe('VaultsRoiChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VaultsRoiChartComponent ]
-    })
-    .compileComponents();
+      declarations: [VaultsRoiChartComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

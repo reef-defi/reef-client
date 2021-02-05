@@ -8,9 +8,8 @@ describe('CustomInvestModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CustomInvestModalComponent ]
-    })
-    .compileComponents();
+      declarations: [CustomInvestModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

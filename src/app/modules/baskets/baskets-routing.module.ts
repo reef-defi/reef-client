@@ -21,12 +21,11 @@ const routes: Routes = [
   {
     path: 'basket-types',
     component: BasketTypesPage,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class BasketsRoutingModule {
-}
+export class BasketsRoutingModule {}

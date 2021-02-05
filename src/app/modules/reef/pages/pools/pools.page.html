@@ -2,32 +2,40 @@
   <div class="col">
     <app-page-title
       title="Pools"
-      subtitle="We currently support ETH & USDT Pools"></app-page-title>
+      subtitle="We currently support ETH & USDT Pools"
+    ></app-page-title>
   </div>
 </div>
 <div class="page__wrapper">
   <div class="col-12 col-lg-8 offset-lg-2">
     <div class="row">
       <div class="col h-100" *ngFor="let pool of pools;">
-        <div class="card m-2 ">
-          <div class="card-body ">
+        <div class="card m-2">
+          <div class="card-body">
             <div class="d-flex align-items-center justify-content-center mb-5">
               <img
                 *ngFor="let img of pool.imgs"
                 class="img-size-top-65"
-                [src]="'assets/images/' + img">
+                [src]="'assets/images/' + img"
+              />
             </div>
-            <div class="d-flex flex-column align-items-center justify-content-center">
-              <div class="h6">
-                {{pool.name}}
-            </div>
-            <div class="text-monospace text-muted small text-center" [innerHTML]="pool.description">
-
-            </div>
+            <div
+              class="d-flex flex-column align-items-center justify-content-center"
+            >
+              <div class="h6">{{pool.name}}</div>
+              <div
+                class="text-monospace text-muted small text-center"
+                [innerHTML]="pool.description"
+              ></div>
             </div>
           </div>
-          <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-            <button [routerLink]="['/reef/pool', pool.link]" class="btn btn-primary white-space-normal m-1 p-2">
+          <div
+            class="d-flex align-items-center justify-content-center pb-3 m-2"
+          >
+            <button
+              [routerLink]="['/reef/pool', pool.link]"
+              class="btn btn-primary white-space-normal m-1 p-2"
+            >
               {{pool.btnLabel}}
             </button>
           </div>
@@ -35,5 +43,4 @@
       </div>
     </div>
   </div>
-
 </div>

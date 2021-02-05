@@ -5,13 +5,15 @@
         <ng-container *ngIf="tokenSymbol$ | async as token">
           <div class="row">
             <div class="col">
-              <app-page-title *ngIf="token !== TokenSymbol.REEF"
-                              title="Farm"
-                              [subtitle]="'Stake your UNI-V2 LP Tokens in the '+getSubtitleTokenPart(token)+' pool to earn REEF!'"
+              <app-page-title
+                *ngIf="token !== TokenSymbol.REEF"
+                title="Farm"
+                [subtitle]="'Stake your UNI-V2 LP Tokens in the '+getSubtitleTokenPart(token)+' pool to earn REEF!'"
               ></app-page-title>
-              <app-page-title *ngIf="token === TokenSymbol.REEF"
-                              title="Farm"
-                              [subtitle]="'Stake your REEF Tokens in the pool to earn even more REEF!'"
+              <app-page-title
+                *ngIf="token === TokenSymbol.REEF"
+                title="Farm"
+                [subtitle]="'Stake your REEF Tokens in the pool to earn even more REEF!'"
               ></app-page-title>
             </div>
           </div>
@@ -19,28 +21,48 @@
             <div class="col-12">
               <div class="card align-items-center max-w-550 margin-auto">
                 <div class="card-body">
-                  <div class="d-flex align-items-center justify-content-center mb-4">
+                  <div
+                    class="d-flex align-items-center justify-content-center mb-4"
+                  >
                     <img
                       *ngIf="token === TokenSymbol.REEF_WETH_POOL"
                       class="img-size-top-70"
                       src="../../../../../assets/images/eth.png"
-                      alt="alt-token">
+                      alt="alt-token"
+                    />
                     <img
                       *ngIf="token === TokenSymbol.REEF_USDT_POOL"
                       class="img-size-top-70"
                       src="../../../../../assets/images/usdt.png"
-                      alt="alt-token">
+                      alt="alt-token"
+                    />
                     <img
                       class="img-size-top-70"
-                      src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
+                      src="../../../../../assets/images/reef/reef-token.svg"
+                      alt="reef-token"
+                    />
                   </div>
-                  <div *ngIf="token !== TokenSymbol.REEF" class="h6 m-4 text-center">Farm {{token}} LP tokens</div>
-                  <div *ngIf="token === TokenSymbol.REEF" class="h6 m-4 text-center">Farm REEF token</div>
                   <div
-                    class="col-sm-12 col-md-8 offset-md-2 max-w-xs flex-column mb-5 text-muted">
-                    <div class="d-flex justify-content-start align-items-center mb-2">
-                      <div class="small  align-self-start mr-1">
-                        {{ token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF' }} amount
+                    *ngIf="token !== TokenSymbol.REEF"
+                    class="h6 m-4 text-center"
+                  >
+                    Farm {{token}} LP tokens
+                  </div>
+                  <div
+                    *ngIf="token === TokenSymbol.REEF"
+                    class="h6 m-4 text-center"
+                  >
+                    Farm REEF token
+                  </div>
+                  <div
+                    class="col-sm-12 col-md-8 offset-md-2 max-w-xs flex-column mb-5 text-muted"
+                  >
+                    <div
+                      class="d-flex justify-content-start align-items-center mb-2"
+                    >
+                      <div class="small align-self-start mr-1">
+                        {{ token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF' }}
+                        amount
                       </div>
                     </div>
                     <input
@@ -49,9 +71,12 @@
                       [(ngModel)]="reefAmount"
                       class="form-control small accent-text"
                       id="reefAmount"
-                      placeholder="0" type="number"/>
+                      placeholder="0"
+                      type="number"
+                    />
                     <ng-container
-                      *ngIf="reefAmount>0 && tokenBalance.balance>0?isEnoughTokenBalance(reefAmount, tokenBalance.balance):true; else noBalance">
+                      *ngIf="reefAmount>0 && tokenBalance.balance>0?isEnoughTokenBalance(reefAmount, tokenBalance.balance):true; else noBalance"
+                    >
                       <app-set-input-relative-amount
                         [value]="tokenBalance.balance"
                         [tokenSymbol]="token"
@@ -61,10 +86,16 @@
                     </ng-container>
                     <ng-template #noBalance>
                       <div class="small text-center mt-1">
-                        <span *ngIf="token !== TokenSymbol.REEF" class="text-danger">
+                        <span
+                          *ngIf="token !== TokenSymbol.REEF"
+                          class="text-danger"
+                        >
                           Insufficient REEF-{{token}} LP Tokens
                         </span>
-                        <span *ngIf="token === TokenSymbol.REEF" class="text-danger">
+                        <span
+                          *ngIf="token === TokenSymbol.REEF"
+                          class="text-danger"
+                        >
                           Insufficient REEF Tokens
                         </span>
                       </div>
@@ -72,15 +103,14 @@
                   </div>
                   <div class="row">
                     <div class="mb-4 col">
-                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
-                        <div class="small mb-1 text-center">
-                          Pool APY
-                        </div>
-                        <div
-                          class="small text-center">
-                    <span class="font-weight-bold text-center">
-                      {{ apy | number }} %
-                    </span>
+                      <div
+                        class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                      >
+                        <div class="small mb-1 text-center">Pool APY</div>
+                        <div class="small text-center">
+                          <span class="font-weight-bold text-center">
+                            {{ apy | number }} %
+                          </span>
                         </div>
                         <ng-container *ngIf="!loading">
                           <div class="text-center mt-3">
@@ -89,31 +119,42 @@
                             reefAmount > tokenBalance.balance || reefAmount <= 0"
                               (click)="deposit(contract, address, reefAmount.toString(10))"
                               (click)="deposit(contract, address, reefAmount.toString(10))"
-                              class="btn btn-primary white-space-normal width-100 small-line-h">
-                              Deposit <span class="x-small-text">Tokens</span>
+                              class="btn btn-primary white-space-normal width-100 small-line-h"
+                            >
+                              Deposit
+                              <span class="x-small-text">Tokens</span>
                             </button>
                           </div>
                         </ng-container>
                       </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
+                      <div
+                        class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                      >
                         <div class="small mb-1 text-center">
                           Staked LP Tokens
                         </div>
                         <div
                           *ngIf="stakedAmount$ | async as staked"
-                          class="small text-center">
-                    <span class="font-weight-bold">
-                      {{ TokenUtil.toMaxDisplayDecimalPlaces(staked, token) }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
-                    </span>
+                          class="small text-center"
+                        >
+                          <span class="font-weight-bold">
+                            {{ TokenUtil.toMaxDisplayDecimalPlaces(staked,
+                            token) }} {{ token !== TokenSymbol.REEF ? ' LP
+                            Tokens' : 'REEF' }}
+                          </span>
                         </div>
                         <ng-container *ngIf="!loading">
-                          <div *ngIf="stakedAmount$ | async as staked" class="text-center mt-3">
+                          <div
+                            *ngIf="stakedAmount$ | async as staked"
+                            class="text-center mt-3"
+                          >
                             <button
                               [disabled]="staked <= 0"
                               (click)="withdraw(address, reefAmount)"
-                              class="btn btn-primary white-space-normal width-100">
+                              class="btn btn-primary white-space-normal width-100"
+                            >
                               Withdraw
                             </button>
                           </div>
@@ -121,24 +162,31 @@
                       </div>
                     </div>
                     <div class="mb-4 col">
-                      <div class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center">
-                        <div class="small mb-1 text-center ">
-                          Pending REWARD
-                        </div>
+                      <div
+                        class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                      >
+                        <div class="small mb-1 text-center">Pending REWARD</div>
                         <div
                           *ngIf="reefReward$ | async as pendingReef"
-                          class="small text-center">
-                    <span class="font-weight-bold">
-                      {{ TokenUtil.toMaxDisplayDecimalPlaces(pendingReef, TokenSymbol.REEF) }} REEF
-                    </span>
+                          class="small text-center"
+                        >
+                          <span class="font-weight-bold">
+                            {{ TokenUtil.toMaxDisplayDecimalPlaces(pendingReef,
+                            TokenSymbol.REEF) }} REEF
+                          </span>
                         </div>
                         <ng-container *ngIf="!loading">
-                          <div *ngIf="reefReward$ | async as reward" class="text-center mt-3">
+                          <div
+                            *ngIf="reefReward$ | async as reward"
+                            class="text-center mt-3"
+                          >
                             <button
                               [disabled]="reward <= 0"
                               (click)="withdraw(address, 0)"
-                              class="btn btn-primary white-space-normal width-100 small-line-h">
-                              Harvest <span class="x-small-text">Tokens</span>
+                              class="btn btn-primary white-space-normal width-100 small-line-h"
+                            >
+                              Harvest
+                              <span class="x-small-text">Tokens</span>
                             </button>
                           </div>
                         </ng-container>
@@ -161,7 +209,8 @@
 <ng-template #errorTemplate>
   <app-empty-state
     title="Wrong address"
-    subtitle="You have the wrong address, or we do not support that pool currently.">
+    subtitle="You have the wrong address, or we do not support that pool currently."
+  >
   </app-empty-state>
 </ng-template>
 

@@ -3,9 +3,9 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-content-box',
   templateUrl: './content-box.component.html',
-  styleUrls: ['./content-box.component.scss']
+  styleUrls: ['./content-box.component.scss'],
 })
-export class ContentBoxComponent  {
+export class ContentBoxComponent {
   @Input() isAddress: boolean | undefined;
-  constructor() { }
+  constructor() {}
 }

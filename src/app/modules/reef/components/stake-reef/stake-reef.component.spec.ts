@@ -8,9 +8,8 @@ describe('PoolsPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StakeReefComponent ]
-    })
-    .compileComponents();
+      declarations: [StakeReefComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

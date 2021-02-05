@@ -1,11 +1,13 @@
-import {ChainId, IChainData} from '../models/types';
+import { ChainId, IChainData } from '../models/types';
 
 export const getChainData = (chainId: number): IChainData => {
-  const chainData = supportedChains.find((chain: IChainData) => chain.chain_id === chainId);
+  const chainData = supportedChains.find(
+    (chain: IChainData) => chain.chain_id === chainId
+  );
   if (!chainData) {
     throw new Error('Chain id not supported' + chainId);
   }
-  return {...chainData};
+  return { ...chainData };
 };
 
 export const supportedChains: IChainData[] = [
@@ -22,8 +24,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Ethereum Ropsten',
@@ -38,8 +40,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Ethereum Rinkeby',
@@ -54,8 +56,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Ethereum Görli',
@@ -70,8 +72,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'RSK Mainnet',
@@ -86,8 +88,8 @@ export const supportedChains: IChainData[] = [
       name: 'RSK',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Ethereum Kovan',
@@ -102,8 +104,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Ethereum Classic Mainnet',
@@ -118,8 +120,8 @@ export const supportedChains: IChainData[] = [
       name: 'Ethereum',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'POA Network Sokol',
@@ -134,8 +136,8 @@ export const supportedChains: IChainData[] = [
       name: 'POA',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'POA Network Core',
@@ -150,8 +152,8 @@ export const supportedChains: IChainData[] = [
       name: 'POA',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'xDAI Chain',
@@ -166,8 +168,8 @@ export const supportedChains: IChainData[] = [
       name: 'xDAI',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Callisto Mainnet',
@@ -182,8 +184,8 @@ export const supportedChains: IChainData[] = [
       name: 'CLO',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
+      balance: '',
+    },
   },
   {
     name: 'Localhost mainnet clone',
@@ -198,7 +200,7 @@ export const supportedChains: IChainData[] = [
       name: 'ETH',
       decimals: '18',
       contractAddress: '',
-      balance: ''
-    }
-  }
+      balance: '',
+    },
+  },
 ];

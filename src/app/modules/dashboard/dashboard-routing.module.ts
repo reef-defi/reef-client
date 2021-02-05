@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardPage } from './pages/dashboard/dashboard.page';
-import {SettingsPage} from "./pages/settings/settings.page";
+import { SettingsPage } from './pages/settings/settings.page';
 
 const routes: Routes = [
   {
@@ -11,12 +11,11 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsPage,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DashboardRoutingModule {
-}
+export class DashboardRoutingModule {}

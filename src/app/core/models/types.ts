@@ -98,18 +98,37 @@ export interface IContract {
   getPastEvents: (event: string, options?: any, cb?: () => any) => Promise<any[]>;
 }*/
 
-type ContractMethod = (...params: any) => {
+type ContractMethod = (
+  ...params: any
+) => {
   arguments: [];
   call: <T>(
-    options?: { from?: string, gasPrice?: string, gas?: number },
+    options?: { from?: string; gasPrice?: string; gas?: number },
     defaultBlock?: number | string,
-    callback?: () => any,
+    callback?: () => any
   ) => Promise<T>;
   send: <T>(
-    options?: { from?: string, value?: string | number, gasPrice?: string, gas?: number, amount?: string },
-    callback?: () => any,
-  ) => Promise<{ transactionHash: string; receipt: any; confirmation: number; error?: any }> | any;
-  estimateGas: (options?: { from?: string, gas?: number, value?: number | string }) => Promise<number>;
+    options?: {
+      from?: string;
+      value?: string | number;
+      gasPrice?: string;
+      gas?: number;
+      amount?: string;
+    },
+    callback?: () => any
+  ) =>
+    | Promise<{
+        transactionHash: string;
+        receipt: any;
+        confirmation: number;
+        error?: any;
+      }>
+    | any;
+  estimateGas: (options?: {
+    from?: string;
+    gas?: number;
+    value?: number | string;
+  }) => Promise<number>;
   encodeAbi: () => string;
 };
 
@@ -170,12 +189,12 @@ export enum ChainId {
   RINKEBY = 4,
   GÖRLI = 5,
   KOVAN = 42,
-  LOCAL_FORK = 1337
+  LOCAL_FORK = 1337,
 }
 
 export enum ProviderName {
   INFURA = 'infura',
-  ALCHEMY = 'alchemy'
+  ALCHEMY = 'alchemy',
 }
 
 export interface ProtocolAddresses {
@@ -256,19 +275,19 @@ export interface IBasket {
   investedETH: string[];
   index: number;
   BalancerPools: {
-    pools: any,
+    pools: any;
     weights: any;
   };
   UniswapPools: {
-    pools: any,
+    pools: any;
     weights: any;
   };
   Tokens: {
-    pools: any,
+    pools: any;
     weights: any;
   };
   MooniswapPools: {
-    pools: any,
+    pools: any;
     weights: any;
   };
   referrer: string;
@@ -286,8 +305,8 @@ export interface IGenerateBasketResponse {
 
 export interface IBasketHistoricRoi {
   [key: string]: {
-    [key: string]: number,
-    weighted_roi: number,
+    [key: string]: number;
+    weighted_roi: number;
   };
 }
 
@@ -322,7 +341,7 @@ export type HistoricRoiChartOptions = {
 
 export interface EthPrice {
   ethereum: {
-    usd: number
+    usd: number;
   };
 }
 
@@ -358,7 +377,10 @@ export interface IPendingTransactions {
   transactions: PendingTransaction[];
 }
 
-export function getEnumKeyByEnumValue(myEnum: any, enumValue: number | string): string {
+export function getEnumKeyByEnumValue(
+  myEnum: any,
+  enumValue: number | string
+): string {
   const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
   return keys.length > 0 ? keys[0] : '';
 }

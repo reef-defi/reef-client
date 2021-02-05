@@ -1,23 +1,25 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {balancerPoolQuery, uniswapPoolQuery} from '../models/pool-queries';
-import {combineLatest, Observable, timer} from 'rxjs';
-import {shareReplay, switchMap} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { balancerPoolQuery, uniswapPoolQuery } from '../models/pool-queries';
+import { combineLatest, Observable, timer } from 'rxjs';
+import { shareReplay, switchMap } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PoolService {
   private static ETH_PRICE_REFRESH_INTERVAL = 60000;
 
-  ethPrice$: Observable<any> = timer(0, PoolService.ETH_PRICE_REFRESH_INTERVAL).pipe(
+  ethPrice$: Observable<any> = timer(
+    0,
+    PoolService.ETH_PRICE_REFRESH_INTERVAL
+  ).pipe(
     switchMap(() => this.http.get(environment.ethPriceUrl)),
     shareReplay(1)
   );
 
-  constructor(private readonly http: HttpClient) {
-  }
+  constructor(private readonly http: HttpClient) {}
 
   getAllPools(): Observable<any> {
     return combineLatest(this.getUniPool(), this.getBalancerPool());
@@ -25,12 +27,11 @@ export class PoolService {
 
   getUniPool(): Observable<any> {
     const query = uniswapPoolQuery;
-    return this.http.post(environment.uniswapPoolUrl, {query});
+    return this.http.post(environment.uniswapPoolUrl, { query });
   }
 
   getBalancerPool(): Observable<any> {
     const query = balancerPoolQuery;
-    return this.http.post(environment.balancerPoolUrl, {query});
+    return this.http.post(environment.balancerPoolUrl, { query });
   }
-
 }

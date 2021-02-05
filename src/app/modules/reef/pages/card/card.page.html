@@ -14,41 +14,66 @@
         <div class="card p-2">
           <div class="row">
             <div
-              class="col-12 col-lg-4 d-flex align-items-center justify-content-center reef-card-w flex-column p-4 pt-3 pt-lg-3 pr-lg-0 pl-lg-4 mr-lg-0">
-              <img src="assets/images/reef/reef-card.jpg" class="reef-card-img p-0 mb-4">
-              <button class="btn btn-primary mb-3 p-2" *ngIf="statusInfo.notInterested"
-                      (click)="statusSub.next({ message:null})">Learn more
+              class="col-12 col-lg-4 d-flex align-items-center justify-content-center reef-card-w flex-column p-4 pt-3 pt-lg-3 pr-lg-0 pl-lg-4 mr-lg-0"
+            >
+              <img
+                src="assets/images/reef/reef-card.jpg"
+                class="reef-card-img p-0 mb-4"
+              />
+              <button
+                class="btn btn-primary mb-3 p-2"
+                *ngIf="statusInfo.notInterested"
+                (click)="statusSub.next({ message:null})"
+              >
+                Learn more
               </button>
             </div>
             <div class="col-12 col-lg-8">
-              <div class="row" *ngIf="statusInfo.notInterested; else displayInterested">
+              <div
+                class="row"
+                *ngIf="statusInfo.notInterested; else displayInterested"
+              >
                 <div class="col-12 col-md-6">
                   <div class="card">
                     <div class="card-body">
-                      <h6 class="card-title accent-text">Spend crypto in 60 million stores</h6>
-                      <p class="card-text">With Reef Visa Card you can buy directly at 60 million merchants worldwide.
-                        Just transfer REEF to your card wallet and you are ready to pay. Spend your REEF earnings
-                        anytime,
-                        anywhere.</p>
+                      <h6 class="card-title accent-text">
+                        Spend crypto in 60 million stores
+                      </h6>
+                      <p class="card-text">
+                        With Reef Visa Card you can buy directly at 60 million
+                        merchants worldwide. Just transfer REEF to your card
+                        wallet and you are ready to pay. Spend your REEF
+                        earnings anytime, anywhere.
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div class="col-12 col-md-6">
                   <div class="card">
                     <div class="card-body">
-                      <h6 class="card-title accent-text">Zero, 零, el cero, ゼロ Fees</h6>
-                      <p class="card-text">Your Reef Visa Card is completely free! Reef will not charge any
-                        administrative
-                        or processing fees*.
-                        <br/><small>*Third-party fees might be still applicable</small></p>
+                      <h6 class="card-title accent-text">
+                        Zero, 零, el cero, ゼロ Fees
+                      </h6>
+                      <p class="card-text">
+                        Your Reef Visa Card is completely free! Reef will not
+                        charge any administrative or processing fees*.
+                        <br /><small
+                          >*Third-party fees might be still applicable</small
+                        >
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div class="col-12 col-md-6">
                   <div class="card">
                     <div class="card-body">
-                      <h6 class="card-title accent-text">#hodl and exchange only when needed</h6>
-                      <p class="card-text">Keep your savings in crypto and convert only what you spend.</p>
+                      <h6 class="card-title accent-text">
+                        #hodl and exchange only when needed
+                      </h6>
+                      <p class="card-text">
+                        Keep your savings in crypto and convert only what you
+                        spend.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -56,8 +81,10 @@
                   <div class="card">
                     <div class="card-body">
                       <h6 class="card-title accent-text">Up to 8% cash-back</h6>
-                      <p class="card-text">Earn extra REEF for the money you spend. The more you spend the more REEF you
-                        get.</p>
+                      <p class="card-text">
+                        Earn extra REEF for the money you spend. The more you
+                        spend the more REEF you get.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -66,54 +93,112 @@
                 <ng-template #displayInterested>
                   <div class="card">
                     <div class="card-body" [formGroup]="loginForm">
-                      <ng-container *ngIf="!statusInfo.message; else displayResponseMessage;">
-                        <ng-container *ngIf="loginForm.controls.email as emailCtrl">
-                          <h6 class="card-title accent-text">Thank you, your interest helps Reef community!</h6>
+                      <ng-container
+                        *ngIf="!statusInfo.message; else displayResponseMessage;"
+                      >
+                        <ng-container
+                          *ngIf="loginForm.controls.email as emailCtrl"
+                        >
+                          <h6 class="card-title accent-text">
+                            Thank you, your interest helps Reef community!
+                          </h6>
                           <p class="card-text">Please enter your email:</p>
-                          <input #emailInput placeholder="enter email here" type="email" name="email" email
-                                 formControlName="email"
-                                 class="form-control text-monospace small accent-text max-w-350"/>
+                          <input
+                            #emailInput
+                            placeholder="enter email here"
+                            type="email"
+                            name="email"
+                            email
+                            formControlName="email"
+                            class="form-control text-monospace small accent-text max-w-350"
+                          />
                           <div>
-                            <small *ngIf="emailCtrl.dirty && emailCtrl.hasError('required')" class="red-text">Email
-                              address is required.</small>
-                            <small *ngIf="emailCtrl.dirty && emailCtrl.hasError('pattern')" class="red-text">Please
-                              enter valid email.</small>
+                            <small
+                              *ngIf="emailCtrl.dirty && emailCtrl.hasError('required')"
+                              class="red-text"
+                              >Email address is required.</small
+                            >
+                            <small
+                              *ngIf="emailCtrl.dirty && emailCtrl.hasError('pattern')"
+                              class="red-text"
+                              >Please enter valid email.</small
+                            >
                           </div>
-                          <button class="btn btn-primary mb-3 mt-3 p-2" [disabled]="!!emailCtrl.errors"
-                                  (click)="statusSub.next({email: emailInput.value})">Send email
+                          <button
+                            class="btn btn-primary mb-3 mt-3 p-2"
+                            [disabled]="!!emailCtrl.errors"
+                            (click)="statusSub.next({email: emailInput.value})"
+                          >
+                            Send email
                           </button>
                         </ng-container>
                       </ng-container>
                       <ng-template #displayResponseMessage>
-                        <h6 class="card-title accent-text">{{statusInfo.message}}</h6>
+                        <h6 class="card-title accent-text">
+                          {{statusInfo.message}}
+                        </h6>
                       </ng-template>
 
-                      <p class="card-text accent-text mt-3">Follow our future releases on social channels:</p>
+                      <p class="card-text accent-text mt-3">
+                        Follow our future releases on social channels:
+                      </p>
                       <div>
                         <div class="row text-center">
                           <div class="col-md-2 col-6 social-box pt-4 pb-4">
-                            <a href="https://twitter.com/ReefDeFi" target="_blank">
-                              <img src="https://reef.finance/img/icons/twitter 1.png" width="50px" alt="">
+                            <a
+                              href="https://twitter.com/ReefDeFi"
+                              target="_blank"
+                            >
+                              <img
+                                src="https://reef.finance/img/icons/twitter 1.png"
+                                width="50px"
+                                alt=""
+                              />
                             </a>
                           </div>
                           <div class="col-md-2 col-6 social-box p-4">
-                            <a href="https://www.linkedin.com/company/reef-defi/" target="_blank">
-                              <img src="https://reef.finance/img/icons/linkedin 1.png" width="50px" alt="">
+                            <a
+                              href="https://www.linkedin.com/company/reef-defi/"
+                              target="_blank"
+                            >
+                              <img
+                                src="https://reef.finance/img/icons/linkedin 1.png"
+                                width="50px"
+                                alt=""
+                              />
                             </a>
                           </div>
                           <div class="col-md-2 col-6 social-box p-4">
-                            <a href="https://www.reddit.com/r/ReefDeFi/" target="_blank">
-                              <img src="https://reef.finance/img/icons/reddit 1.png" width="50px" alt="">
+                            <a
+                              href="https://www.reddit.com/r/ReefDeFi/"
+                              target="_blank"
+                            >
+                              <img
+                                src="https://reef.finance/img/icons/reddit 1.png"
+                                width="50px"
+                                alt=""
+                              />
                             </a>
                           </div>
                           <div class="col-md-2 col-6 social-box p-4">
                             <a href="https://t.me/reefdefi" target="_blank">
-                              <img src="https://reef.finance/img/icons/Telegram.png" width="50px" alt="">
+                              <img
+                                src="https://reef.finance/img/icons/Telegram.png"
+                                width="50px"
+                                alt=""
+                              />
                             </a>
                           </div>
                           <div class="col-md-2 social-box p-4">
-                            <a href="https://medium.com/@ReefDefi" target="_blank">
-                              <img src="https://reef.finance/img/icons/LogoMedium.png" width="50px" alt="">
+                            <a
+                              href="https://medium.com/@ReefDefi"
+                              target="_blank"
+                            >
+                              <img
+                                src="https://reef.finance/img/icons/LogoMedium.png"
+                                width="50px"
+                                alt=""
+                              />
                             </a>
                           </div>
                         </div>

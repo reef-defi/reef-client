@@ -8,7 +8,7 @@ import { scan } from 'rxjs/internal/operators/scan';
 @Component({
   selector: 'app-number-counter',
   templateUrl: './number-counter.component.html',
-  styleUrls: ['./number-counter.component.scss']
+  styleUrls: ['./number-counter.component.scss'],
 })
 export class NumberCounterComponent implements OnDestroy {
   @Input()
@@ -27,7 +27,7 @@ export class NumberCounterComponent implements OnDestroy {
   constructor() {
     this.mCounterSub$
       .pipe(
-        switchMap(endRange => {
+        switchMap((endRange) => {
           return timer(0, this.countInterval).pipe(
             mapTo(this.positiveOrNegative(endRange, this.currentNumber)),
             startWith(this.currentNumber),
@@ -37,7 +37,7 @@ export class NumberCounterComponent implements OnDestroy {
         }),
         takeUntil(this.mOnDestroy$)
       )
-      .subscribe((val: number) => this.currentNumber = val);
+      .subscribe((val: number) => (this.currentNumber = val));
   }
 
   private positiveOrNegative(endRange, currentNumber): number {
@@ -47,8 +47,8 @@ export class NumberCounterComponent implements OnDestroy {
 
   private isApproachingRange(endRange, currentNumber): any {
     return endRange > currentNumber
-      ? val => val <= endRange
-      : val => val >= endRange;
+      ? (val) => val <= endRange
+      : (val) => val >= endRange;
   }
 
   private calculateCountStep(endRange: number): number {

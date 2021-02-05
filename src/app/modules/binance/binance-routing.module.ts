@@ -5,12 +5,12 @@ import { BuyCryptoPage } from './pages/buy-crypto/buy-crypto.page';
 const routes: Routes = [
   {
     path: '',
-    component: BuyCryptoPage
-  }
+    component: BuyCryptoPage,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class BinanceRoutingModule { }
+export class BinanceRoutingModule {}

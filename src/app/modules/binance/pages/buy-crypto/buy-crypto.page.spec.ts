@@ -8,9 +8,8 @@ describe('BuyCryptoPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BuyCryptoPage ]
-    })
-    .compileComponents();
+      declarations: [BuyCryptoPage],
+    }).compileComponents();
   });
 
   beforeEach(() => {

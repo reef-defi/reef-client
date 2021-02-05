@@ -1,30 +1,26 @@
 <div *ngIf="providerUserInfo">
-  <nav
-    [class.bg-white]="!isMobileLayout"
-    class="header">
-    <div
-         class="d-flex justify-content-end align-items-center">
+  <nav [class.bg-white]="!isMobileLayout" class="header">
+    <div class="d-flex justify-content-end align-items-center">
       <button
         class="d-flex align-items-center"
-        mat-button [matMenuTriggerFor]="bigMenu">
+        mat-button
+        [matMenuTriggerFor]="bigMenu"
+      >
         <mat-icon color="accent">account_circle</mat-icon>
         <span class="ml-1">Account</span>
       </button>
       <mat-menu #bigMenu="matMenu">
-        <button
-          mat-menu-item>
+        <button mat-menu-item>
           <app-address-shortener [address]="providerUserInfo.address">
           </app-address-shortener>
         </button>
-        <button
-          (click)="onSignOut()"
-          mat-menu-item>
+        <button (click)="onSignOut()" mat-menu-item>
           <mat-icon color="warn">power_settings_new</mat-icon>
           <span>Sign out</span>
         </button>
       </mat-menu>
       <app-content-box>
-        <p class="p-0 m-0">{{version}}</p>
+        <p class="p-0 m-0">{{ version }}</p>
       </app-content-box>
     </div>
   </nav>

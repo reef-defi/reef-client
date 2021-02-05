@@ -3,7 +3,11 @@
     {{ data.message }}
   </div>
   <div>
-    <button mat-raised-button class="btn btn-sm btn-light" (click)="snackBarRef.dismiss()">
+    <button
+      mat-raised-button
+      class="btn btn-sm btn-light"
+      (click)="snackBarRef.dismiss()"
+    >
       <span class="small font-weight-bold">{{ data.buttonText }}</span>
     </button>
   </div>
