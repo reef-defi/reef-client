@@ -124,10 +124,10 @@ export class UniswapService {
       );
       const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
       /* replaced
-          if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
-              weiAmount = this.connectorService.toWei(amount);
-          } else {
-              weiAmount = amount * +`1e${tokenB.decimals}`;*/
+      if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
+          weiAmount = this.connectorService.toWei(amount);
+      } else {
+          weiAmount = amount * +`1e${tokenB.decimals}`;*/
       weiAmount = TokenUtil.toContractIntegerBalanceValue(amount, tokenSymbol);
       // }
       const route = new Route([pair], tokenB);
@@ -256,24 +256,24 @@ export class UniswapService {
   }
 
   /*public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
-      const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
-      const tokenB = new Token(ChainId.MAINNET, addresses[tokenSymbol], 18);
-      const pair = await Fetcher.fetchPairData(REEF, tokenB);
-      const route = new Route([pair], WETH[REEF.chainId]);
-      const route2 = new Route([pair], REEF);
-      console.log(route.midPrice.toSignificant(6), 'ROUTE1');
-      console.log(route2.midPrice.toSignificant(6), 'ROUTE2');
-      const trade = new Trade(route, new TokenAmount(tokenB, tokenBAmount), TradeType.EXACT_INPUT);
-      console.log(
-        trade.executionPrice.toSignificant(6),
-        trade.nextMidPrice.toSignificant(6),
-        'TRADE'
-      );
+    const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
+    const tokenB = new Token(ChainId.MAINNET, addresses[tokenSymbol], 18);
+    const pair = await Fetcher.fetchPairData(REEF, tokenB);
+    const route = new Route([pair], WETH[REEF.chainId]);
+    const route2 = new Route([pair], REEF);
+    console.log(route.midPrice.toSignificant(6), 'ROUTE1');
+    console.log(route2.midPrice.toSignificant(6), 'ROUTE2');
+    const trade = new Trade(route, new TokenAmount(tokenB, tokenBAmount), TradeType.EXACT_INPUT);
+    console.log(
+      trade.executionPrice.toSignificant(6),
+      trade.nextMidPrice.toSignificant(6),
+      'TRADE'
+    );
 
-      const price = new Price(tokenB, REEF, '100000000', '12300000000000');
-      console.log(price.toSignificant(3), 'price');
-      return pair;
-    }*/
+    const price = new Price(tokenB, REEF, '100000000', '12300000000000');
+    console.log(price.toSignificant(3), 'price');
+    return pair;
+  }*/
 
   public getReefPriceInInterval$(
     tokenSymbol: TokenSymbol
@@ -303,10 +303,10 @@ export class UniswapService {
   }
 
   /*public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
-      return this.getReefPriceInInterval$(tokenSymbol).pipe(
-        map((ppt_perOneToken: IReefPricePerToken) => UniswapService.tokenMinAmountCalc(ppt_perOneToken, amount))
-      );
-    }*/
+    return this.getReefPriceInInterval$(tokenSymbol).pipe(
+      map((ppt_perOneToken: IReefPricePerToken) => UniswapService.tokenMinAmountCalc(ppt_perOneToken, amount))
+    );
+  }*/
 
   public async addLiquidity(
     tokenAddressA: string,
@@ -331,59 +331,71 @@ export class UniswapService {
     const weiA = TokenUtil.toContractIntegerBalanceValue(amountA, tokenSymbolA);
     const weiB = TokenUtil.toContractIntegerBalanceValue(amountB, tokenSymbolB);
     /*replaced
-      const weiA = this.connectorService.toWei(amountA);
-      const weiB = this.connectorService.toWei(amountB);*/
+    const weiA = this.connectorService.toWei(amountA);
+    const weiB = this.connectorService.toWei(amountB);*/
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-      this.routerContract$.value.methods
-        .addLiquidity(
-          tokenAddressA,
-          tokenAddressB,
-          weiA,
-          weiB,
-          weiA,
-          weiB,
-          to,
-          deadline
-        )
-        .send({
-          from: to,
-          gasPrice: this.connectorService.getGasPrice(),
-        })
-        .on('transactionHash', (hash) => {
-          dialogRef.close();
-          this.notificationService.showNotification(
-            'The transaction is now pending.',
-            'Ok',
-            'info'
-          );
-          this.connectorService.addPendingTx(hash);
-        })
-        .on('receipt', (receipt) => {
-          this.connectorService.removePendingTx(receipt.transactionHash);
-          this.notificationService.showNotification(
-            `You've successfully added liquidity to the pool`,
-            'Okay',
-            'success'
-          );
-          const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
-            tokenSymbolB,
-            info.availableSmartContractAddresses
-          );
-          this.apiService.updateTokensInBalances.next([
-            tokenSymbolA,
-            tokenSymbolB,
-            poolSymbol,
-          ]);
-        })
-        .on('error', (err) => {
-          dialogRef.close();
-          this.notificationService.showNotification(
-            'The tx did not go through',
-            'Close',
-            'error'
-          );
-        });
+      const contractA = this.connectorService.createErc20TokenContract(
+        tokenSymbolA,
+        info.availableSmartContractAddresses
+      );
+      const contractB = this.connectorService.createErc20TokenContract(
+        tokenSymbolB,
+        info.availableSmartContractAddresses
+      );
+      const hasAllowanceA = await this.approveTokenToRouter(contractA);
+      const hasAllowanceB = await this.approveTokenToRouter(contractB);
+      if (hasAllowanceA && hasAllowanceB) {
+        this.routerContract$.value.methods
+          .addLiquidity(
+            tokenAddressA,
+            tokenAddressB,
+            weiA,
+            weiB,
+            0,
+            0,
+            to,
+            deadline
+          )
+          .send({
+            from: to,
+            gasPrice: this.connectorService.getGasPrice(),
+          })
+          .on('transactionHash', (hash) => {
+            dialogRef.close();
+            this.notificationService.showNotification(
+              'The transaction is now pending.',
+              'Ok',
+              'info'
+            );
+            this.connectorService.addPendingTx(hash);
+          })
+          .on('receipt', (receipt) => {
+            this.connectorService.removePendingTx(receipt.transactionHash);
+            this.notificationService.showNotification(
+              `You've successfully added liquidity to the pool`,
+              'Okay',
+              'success'
+            );
+            const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
+              tokenSymbolB,
+              info.availableSmartContractAddresses
+            );
+            this.apiService.updateTokensInBalances.next([
+              tokenSymbolA,
+              tokenSymbolB,
+              poolSymbol,
+            ]);
+          })
+          .on('error', (err) => {
+            dialogRef.close();
+            this.notificationService.showNotification(
+              'The tx did not go through',
+              'Close',
+              'error'
+            );
+          });
+      }
     } catch (e) {
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
