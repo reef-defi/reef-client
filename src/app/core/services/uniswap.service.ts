@@ -429,7 +429,7 @@ export class UniswapService {
         if (tokenContractAddress) {
             const web3 = await this.getWeb3();
             const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
-            const REEF = new Token(info.chainInfo.chain_id as ChainId, addresses.REEF, 18);
+            const REEF = new Token(info.chainInfo.chain_id as ChainId, web3.utils.toChecksumAddress(addresses.REEF), 18);
             // TODO to observable so previous request could be canceled
             const provider = await this.ethersProvider$.pipe(first()).toPromise();
             const tokenB = await Fetcher.fetchTokenData(info.chainInfo.chain_id as ChainId, checkSummed, provider);
