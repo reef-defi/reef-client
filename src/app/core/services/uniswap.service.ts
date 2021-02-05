@@ -218,14 +218,11 @@ export class UniswapService {
     const weiB = this.connectorService.toWei(amountB);*/
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-      const contract = this.connectorService.createErc20TokenContract(tokenSymbolB, info.availableSmartContractAddresses);
-      const contract1 = this.connectorService.createErc20TokenContract(tokenSymbolA, info.availableSmartContractAddresses);
-      console.log(weiA, weiB, 'weis')
-      console.log(contract)
-      const hasAllowance = await this.approveTokenToRouter(contract);
-      const hasAllowance2 = await this.approveTokenToRouter(contract1);
-      console.log(hasAllowance, 'hmm')
-      if (hasAllowance && hasAllowance2) {
+      const contractA = this.connectorService.createErc20TokenContract(tokenSymbolA, info.availableSmartContractAddresses);
+      const contractB = this.connectorService.createErc20TokenContract(tokenSymbolB, info.availableSmartContractAddresses);
+      const hasAllowanceA = await this.approveTokenToRouter(contractA);
+      const hasAllowanceB = await this.approveTokenToRouter(contractB);
+      if (hasAllowanceA && hasAllowanceB) {
         this.routerContract$.value.methods.addLiquidity(
           tokenAddressA, tokenAddressB, weiA, weiB, 0, 0, to, deadline
         ).send({
