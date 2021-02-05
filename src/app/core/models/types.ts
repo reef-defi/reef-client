@@ -14,8 +14,8 @@ import {
 } from 'ng-apexcharts';
 
 export type RpcErrorTypes = {
-  [key in EErrorTypes]: string
-}
+  [key in EErrorTypes]: string;
+};
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -131,11 +131,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-    transactionHash: string;
-    receipt: any;
-    confirmation: number;
-    error?: any;
-  }>
+        transactionHash: string;
+        receipt: any;
+        confirmation: number;
+        error?: any;
+      }>
     | any;
   estimateGas: (options?: {
     from?: string;
