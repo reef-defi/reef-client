@@ -149,6 +149,9 @@ export class FarmPage implements OnInit {
   }
 
   isEnoughTokenBalance(number: any, number2: any) {
+    if (number == null || number2 == null) {
+      return false;
+    }
     return parseFloat(number) <= parseFloat(number2);
   }
 }
