@@ -14,7 +14,7 @@ export class SetInputRelativeAmountComponent {
 
   @Input() set tokenSymbol(val: TokenSymbol | string) {
     this._tokenSymbol = TokenUtil.parseLPTokenName(val);
-  };
+  }
 
   get tokenSymbol(): TokenSymbol | string {
     return this._tokenSymbol;

@@ -6,7 +6,7 @@
         TokenUtil.toMaxDisplayDecimalPlaces(value * 0.25, tokenSymbol)
       )
     "
-  >25%</span
+    >25%</span
   >
   <span
     class="badge badge-pill badge-primary mr-1 c-pointer"
@@ -15,7 +15,7 @@
         TokenUtil.toMaxDisplayDecimalPlaces(value * 0.5, tokenSymbol)
       )
     "
-  >50%</span
+    >50%</span
   >
   <span
     class="badge badge-pill badge-primary mr-1 c-pointer"
@@ -24,17 +24,17 @@
         TokenUtil.toMaxDisplayDecimalPlaces(value * 0.75, tokenSymbol)
       )
     "
-  >75%</span
+    >75%</span
   >
   <span
     class="badge badge-pill badge-primary mr-1 c-pointer"
     (click)="
       valueChange.emit(TokenUtil.toMaxDisplayDecimalPlaces(value, tokenSymbol))
     "
-  >100%</span
+    >100%</span
   >
   <small
-  >of {{ TokenUtil.toMaxDisplayDecimalPlaces(value, tokenSymbol) }}
+    >of {{ TokenUtil.toMaxDisplayDecimalPlaces(value, tokenSymbol) }}
     <!--<span [ngSwitch]="tokenSymbol">
     <ng-container *ngSwitchCase="TokenSymbol.USDT">
       {{ value | number:'1.1-2' }}
@@ -52,11 +52,11 @@
 <ng-template #noBalance>
   <div class="d-flex align-items-center justify-content-center text-danger">
     <small
-    >Please add {{ tokenSymbol }}
+      >Please add {{ tokenSymbol }}
       <span *ngIf="tokenSymbol !== TokenSymbol.REEF">LP</span>
       tokens, then
       <a href="#" (click)="$event.preventDefault(); refreshBalance.emit()"
-      >refresh balance</a
+        >refresh balance</a
       >.
     </small>
   </div>
