@@ -20,7 +20,7 @@ import {TokenUtil} from '../../../../shared/utils/token.util';
   styleUrls: ['./farm.page.scss']
 })
 export class FarmPage implements OnInit {
-  public reefAmount = 0;
+  public reefAmount = null;
   public apy = 0;
   public loading = false;
   public TokenSymbol = TokenSymbol;
@@ -149,6 +149,9 @@ export class FarmPage implements OnInit {
   }
 
   isEnoughTokenBalance(number: any, number2: any) {
+    if (number == null || number2 == null) {
+      return false;
+    }
     return parseFloat(number) <= parseFloat(number2);
   }
 }
