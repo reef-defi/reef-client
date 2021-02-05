@@ -1,24 +1,48 @@
-<div class="sidebar d-none d-md-flex bg-white px-4 py-4 flex-column vh-100 sticky-top w-2xs">
+<div
+  class="sidebar d-none d-md-flex bg-white px-4 py-4 flex-column vh-100 sticky-top w-2xs"
+>
   <div class="my-4 ml-1">
     <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
-      <img class="mr-2" style="width: 80px" src="../../../../assets/images/reef/reef-v2.svg">
+      <img
+        class="mr-2"
+        style="width: 80px"
+        src="../../../../assets/images/reef/reef-v2.svg"
+      />
     </a>
   </div>
   <div class="icon-container">
     <ng-container *ngTemplateOutlet="menuItems"></ng-container>
   </div>
-  <div class="mb-2 d-flex flex-column align-items-center justify-content-center"
-       *ngIf="pendingTxs$ | async as pendingTxs">
-    <div *ngIf="pendingTxs.transactions.length > 0" class="small text-monospace text-center text-break mb-2 px-2">
-      <ng-container *ngIf="pendingTxs.transactions.length === 1; else multiplePending">
+  <div
+    class="mb-2 d-flex flex-column align-items-center justify-content-center"
+    *ngIf="pendingTxs$ | async as pendingTxs"
+  >
+    <div
+      *ngIf="pendingTxs.transactions.length > 0"
+      class="small text-monospace text-center text-break mb-2 px-2"
+    >
+      <ng-container
+        *ngIf="pendingTxs.transactions.length === 1; else multiplePending"
+      >
         You have one transaction pending. Check it out on
         <a
           target="_blank"
-          href="https://etherscan.io/tx/{{ pendingTxs.transactions[0]?.hash }}" class="font-weight-bold">Etherscan</a>
+          href="https://etherscan.io/tx/{{ pendingTxs.transactions[0]?.hash }}"
+          class="font-weight-bold"
+          >Etherscan</a
+        >
       </ng-container>
       <ng-template #multiplePending>
-        You have <strong>{{ pendingTxs.transactions.length }}</strong> transactions pending.
-        <a href="" (click)="$event.preventDefault(); openPendingTx(pendingTxs.transactions)">Click here to view them</a>
+        You have
+        <strong>{{ pendingTxs.transactions.length }}</strong>
+        transactions pending.
+        <a
+          href=""
+          (click)="
+            $event.preventDefault(); openPendingTx(pendingTxs.transactions)
+          "
+          >Click here to view them</a
+        >
       </ng-template>
       <div class="mt-2">
         <app-loading diameter="25"></app-loading>
@@ -29,26 +53,37 @@
 
 <!--MOBILE MENU-->
 <div class="w-100 mb-3 mb-md-0">
-  <div class="d-md-none navbar-mobile-float navbar navbar-expand-md navbar-light bg-white py-3 px-4 margin-auto"
-       [class.nav-open]="mobileNavShown">
+  <div
+    class="d-md-none navbar-mobile-float navbar navbar-expand-md navbar-light bg-white py-3 px-4 margin-auto"
+    [class.nav-open]="mobileNavShown"
+  >
     <div class="d-flex align-items-center">
       <a class="link-unstyled d-inline-flex align-items-center">
-        <img class="mr-2" style="width:74px; margin-bottom: 5px"
-             src="../../../../assets/images/reef/reef-v2.svg">
+        <img
+          class="mr-2"
+          style="width: 74px; margin-bottom: 5px"
+          src="../../../../assets/images/reef/reef-v2.svg"
+        />
       </a>
       <h5 class="text-body font-weight-bold text-monospace mb-0 ml-2">
         <div class="h6 mb-1"></div>
       </h5>
     </div>
-    <button class="navbar-toggler border-0 px-0" (click)="mobileNavShown = !mobileNavShown">
+    <button
+      class="navbar-toggler border-0 px-0"
+      (click)="mobileNavShown = !mobileNavShown"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse mt-3" [class.show]="mobileNavShown" id="menu">
+    <div
+      class="collapse navbar-collapse mt-3"
+      [class.show]="mobileNavShown"
+      id="menu"
+    >
       <div class="mb-2 d-flex flex-column align-items-start">
         <ng-container *ngTemplateOutlet="menuItems"></ng-container>
       </div>
-      <div
-        (click)="onSignOut()" class="d-flex mt-3">
+      <div (click)="onSignOut()" class="d-flex mt-3">
         <div class="la la-lg la-sign-out-alt mr-1 font-danger"></div>
         <div class="text-height-1">Sign out</div>
       </div>
@@ -62,7 +97,6 @@
       </a>-->
     </div>
   </div>
-
 </div>
 <ng-template #menuItems>
   <div class="d-flex justify-content-center align-items-center">
@@ -70,39 +104,28 @@
       *ngIf="currentAddress"
       id="settings"
       [matMenuTriggerFor]="addressMenu"
-      class="d-flex align-items-center py-1 px-3 sidebar__address  ml-md-4">
-      <mat-icon class="address__circle mr-1">
-        stop_circle
-      </mat-icon>
+      class="d-flex align-items-center py-1 px-3 sidebar__address ml-md-4"
+    >
+      <mat-icon class="address__circle mr-1"> stop_circle </mat-icon>
       <app-address-shortener
         [standalone]="true"
         [showCopy]="false"
-        [address]="currentAddress">
+        [address]="currentAddress"
+      >
       </app-address-shortener>
-      <mat-icon>
-        keyboard_arrow_down
-      </mat-icon>
+      <mat-icon> keyboard_arrow_down </mat-icon>
     </div>
   </div>
-  <mat-menu
-    class="address__menu"
-    xPosition="after"
-    #addressMenu="matMenu">
-    <div
-      [routerLink]="['/dashboard/settings']"
-      class="address__menu--item">
+  <mat-menu class="address__menu" xPosition="after" #addressMenu="matMenu">
+    <div [routerLink]="['/dashboard/settings']" class="address__menu--item">
       <div class="la la-lg la-gear mr-2"></div>
       <div>Settings</div>
     </div>
-    <div
-      [cdkCopyToClipboard]="currentAddress"
-      class="address__menu--item">
+    <div [cdkCopyToClipboard]="currentAddress" class="address__menu--item">
       <div class="la la-lg la-copy mr-2 font-success"></div>
       <div>Copy your address</div>
     </div>
-    <div
-      (click)="onSignOut()"
-      class="address__menu--item">
+    <div (click)="onSignOut()" class="address__menu--item">
       <div class="la la-lg la-sign-out-alt mr-2 font-danger"></div>
       <div>Sign out</div>
     </div>
@@ -111,10 +134,11 @@
     <a
       id="dashboardBtn"
       [routerLink]="['/dashboard']"
-      [routerLinkActiveOptions]="{exact: true}"
+      [routerLinkActiveOptions]="{ exact: true }"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100  text-body my-3"
-      (click)="mobileNavShown=false">
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body my-3"
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="dashboard"></app-svg-icon>
       Dashboard
     </a>
@@ -135,8 +159,9 @@
       id="buyReef"
       [routerLink]="['/reef/buy']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
-      (click)="mobileNavShown=false">
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="reef"></app-svg-icon>
       Buy Reef
     </a>
@@ -144,8 +169,9 @@
       id="reefLiquidity"
       [routerLink]="['/reef/pools']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-3"
-      (click)="mobileNavShown=false">
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="flag"></app-svg-icon>
       Get LP Tokens
     </a>
@@ -153,8 +179,9 @@
       id="farmReef"
       [routerLink]="['/reef/farms']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
-      (click)="mobileNavShown=false">
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="currency"></app-svg-icon>
       Farm Reef
     </a>
@@ -162,8 +189,9 @@
       id="reefCard"
       [routerLink]="['/reef/card']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100  text-body mb-4"
-      (click)="mobileNavShown=false">
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="credit-card"></app-svg-icon>
       Reef Card
     </a>
@@ -194,6 +222,9 @@
   <div *ngFor="let tx of data">
     <a
       target="_blank"
-      href="https://etherscan.io/tx/{{ tx.hash }}" class="font-weight-bold">{{ tx.hash }}</a>
+      href="https://etherscan.io/tx/{{ tx.hash }}"
+      class="font-weight-bold"
+      >{{ tx.hash }}</a
+    >
   </div>
 </ng-template>

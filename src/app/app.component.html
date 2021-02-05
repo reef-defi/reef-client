@@ -1,10 +1,11 @@
 <ng-container
   *ngIf="{
-  ethPrice: poolService.ethPrice$ | async,
-  providerName: providerName$ | async,
-  providerUserInfo: providerUserInfo$ | async,
-  providerLoading: providerLoading$ | async
-   } as obs">
+    ethPrice: poolService.ethPrice$ | async,
+    providerName: providerName$ | async,
+    providerUserInfo: providerUserInfo$ | async,
+    providerLoading: providerLoading$ | async
+  } as obs"
+>
   <div id="mainContainer" class="min-vh-100">
     <div *ngIf="canEnter; else noPermissions">
       <app-sidebar
@@ -12,22 +13,29 @@
         [currentAddress]="obs.providerUserInfo?.address"
         [chainInfo]="obs.providerUserInfo?.chainInfo"
         (signOut)="onSignOut()"
-        *ngIf="obs.providerUserInfo"></app-sidebar>
+        *ngIf="obs.providerUserInfo"
+      ></app-sidebar>
       <div
         [class.main__active]="obs.providerUserInfo"
         *ngIf="!obs.providerLoading; else providerLoadingTemplate"
-        class="main light min-vh-100 container-fluid">
+        class="main light min-vh-100 container-fluid"
+      >
         <router-outlet></router-outlet>
       </div>
       <app-footer *ngIf="obs.providerUserInfo"></app-footer>
     </div>
   </div>
   <ng-template #noPermissions>
-    <div class="mb-5 d-flex flex-column align-items-center justify-content-center">
-        <label class="small text-monospace mt-2" for="code">Enter access code</label>
-        <input class="form-control w-50 mt-2" #code id="code" type="text">
-      <button
-        (click)="checkIfAuth(code.value)" class="btn btn-primary mt-2">Enter</button>
+    <div
+      class="mb-5 d-flex flex-column align-items-center justify-content-center"
+    >
+      <label class="small text-monospace mt-2" for="code"
+        >Enter access code</label
+      >
+      <input class="form-control w-50 mt-2" #code id="code" type="text" />
+      <button (click)="checkIfAuth(code.value)" class="btn btn-primary mt-2">
+        Enter
+      </button>
     </div>
   </ng-template>
   <ng-template #providerLoadingTemplate>

@@ -8,9 +8,8 @@ describe('BinanceRegisterModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BinanceRegisterModalComponent ]
-    })
-    .compileComponents();
+      declarations: [BinanceRegisterModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

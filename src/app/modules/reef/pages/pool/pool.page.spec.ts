@@ -8,9 +8,8 @@ describe('PoolPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PoolPage ]
-    })
-    .compileComponents();
+      declarations: [PoolPage],
+    }).compileComponents();
   });
 
   beforeEach(() => {

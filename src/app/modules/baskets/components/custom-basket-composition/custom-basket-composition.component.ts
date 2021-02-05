@@ -5,7 +5,7 @@ import { ThemePalette } from '@angular/material/core';
 @Component({
   selector: 'app-custom-basket-composition',
   templateUrl: './custom-basket-composition.component.html',
-  styleUrls: ['./custom-basket-composition.component.scss']
+  styleUrls: ['./custom-basket-composition.component.scss'],
 })
 export class CustomBasketCompositionComponent {
   Object = Object;
@@ -26,5 +26,4 @@ export class CustomBasketCompositionComponent {
   onAllocChange(symbol: string, event: any): void {
     this.changeAllocation.emit([symbol, event]);
   }
-
 }

@@ -8,9 +8,8 @@ describe('BasketRoiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BasketRoiComponent ]
-    })
-    .compileComponents();
+      declarations: [BasketRoiComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

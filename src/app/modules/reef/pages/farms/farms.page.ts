@@ -1,17 +1,17 @@
-import {Component} from '@angular/core';
-import {ContractService} from '../../../../core/services/contract.service';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {map} from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { ContractService } from '../../../../core/services/contract.service';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-farm-reef',
   templateUrl: './farms.page.html',
-  styleUrls: ['./farms.page.scss']
+  styleUrls: ['./farms.page.scss'],
 })
 export class FarmsPage {
   farms$ = this.connectorService.providerUserInfo$.pipe(
-    map(info => {
+    map((info) => {
       return [
         {
           name: 'Farm REEF',
@@ -22,9 +22,7 @@ export class FarmsPage {
       <strong class="font-weight-bold">REEF returns!</strong>`,
           link: info.availableSmartContractAddresses.REEF,
           btnLabel: 'Farm REEF',
-          imgs: [
-            'reef/reef-token.svg'
-          ]
+          imgs: ['reef/reef-token.svg'],
         },
         {
           name: 'ETH & REEF',
@@ -35,10 +33,7 @@ export class FarmsPage {
       <strong class="font-weight-bold">REEF tokens</strong>`,
           link: info.availableSmartContractAddresses.REEF_WETH_POOL,
           btnLabel: 'Stake into ETH/REEF',
-          imgs: [
-            'eth.png',
-            'reef/reef-token.svg'
-          ]
+          imgs: ['eth.png', 'reef/reef-token.svg'],
         },
         {
           name: 'USDT & REEF',
@@ -49,18 +44,15 @@ export class FarmsPage {
       <strong class="font-weight-bold">REEF tokens</strong>`,
           link: info.availableSmartContractAddresses.REEF_USDT_POOL,
           btnLabel: 'Stake into USDT/REEF',
-          imgs: [
-            'usdt.png',
-            'reef/reef-token.svg'
-          ]
-        }
+          imgs: ['usdt.png', 'reef/reef-token.svg'],
+        },
       ];
     })
   );
 
-  constructor(private readonly contractService: ContractService,
-              private readonly uniswapService: UniswapService,
-              private connectorService: ConnectorService
-  ) {
-  }
+  constructor(
+    private readonly contractService: ContractService,
+    private readonly uniswapService: UniswapService,
+    private connectorService: ConnectorService
+  ) {}
 }

@@ -37,7 +37,7 @@ const components = [
   CustomInvestModalComponent,
   CustomBasketCompositionComponent,
   VaultComponent,
-  VaultsCompositionComponent
+  VaultsCompositionComponent,
 ];
 
 @NgModule({
@@ -50,7 +50,6 @@ const components = [
     SharedModule,
     MatRippleModule,
     VaultsModule,
-  ]
+  ],
 })
-export class BasketsModule {
-}
+export class BasketsModule {}

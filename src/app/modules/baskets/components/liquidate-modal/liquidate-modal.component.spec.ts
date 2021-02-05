@@ -8,9 +8,8 @@ describe('LiquidateModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LiquidateModalComponent ]
-    })
-    .compileComponents();
+      declarations: [LiquidateModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

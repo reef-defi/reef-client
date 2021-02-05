@@ -1,19 +1,35 @@
-import {Injectable} from '@angular/core';
-import {HistoricRoiChartOptions, PoolsChartOptions} from '../models/types';
+import { Injectable } from '@angular/core';
+import { HistoricRoiChartOptions, PoolsChartOptions } from '../models/types';
 import * as HighCharts from 'highcharts';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChartsService {
-  constructor() {
-  }
+  constructor() {}
 
   private static get pieChartColors(): any {
     const colors = [];
-    const arr = ['#6610f2', '#78ffd6', '#39393a', '#e6e6e6', '#06d6a0', '#f42272', '#b892ff', '#d81e5b', '#533a7b', '#98c1d9'];
+    const arr = [
+      '#6610f2',
+      '#78ffd6',
+      '#39393a',
+      '#e6e6e6',
+      '#06d6a0',
+      '#f42272',
+      '#b892ff',
+      '#d81e5b',
+      '#533a7b',
+      '#98c1d9',
+    ];
     for (let i = 0; i < 10; i++) {
-      colors.push(i % 10 == 0 ? arr[i] : HighCharts.color(arr[i]).brighten((i - 3) / 7).get());
+      colors.push(
+        i % 10 == 0
+          ? arr[i]
+          : HighCharts.color(arr[i])
+              .brighten((i - 3) / 7)
+              .get()
+      );
     }
     return colors;
   }
@@ -26,21 +42,20 @@ export class ChartsService {
         marginBottom: 30,
         plotShadow: false,
         type: 'pie',
-
       },
       title: {
-        text: ''
+        text: '',
       },
       credits: {
         enabled: false,
       },
       tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>',
       },
       accessibility: {
         point: {
-          valueSuffix: '%'
-        }
+          valueSuffix: '%',
+        },
       },
       plotOptions: {
         pie: {
@@ -52,7 +67,10 @@ export class ChartsService {
           colors: ChartsService.pieChartColors,
           showInLegend: true,
           dataLabels: {
-            style: {fontFamily: 'Roboto, "Helvetica Neue", sans-serif', fontSize: '8px'},
+            style: {
+              fontFamily: 'Roboto, "Helvetica Neue", sans-serif',
+              fontSize: '8px',
+            },
             color: '#eeeeee',
             borderWidth: 0,
             connectorColor: '#a7a7a7',
@@ -62,51 +80,56 @@ export class ChartsService {
             enabled: false,
             distance: '-30%',
             format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-          }
-        }
+          },
+        },
       },
       legend: {
         enabled: true,
         floating: true,
         verticalAlign: 'bottom',
         y: 15,
-        itemStyle: {fontFamily: 'Roboto, "Helvetica Neue", sans-serif', fontSize: '10px'},
+        itemStyle: {
+          fontFamily: 'Roboto, "Helvetica Neue", sans-serif',
+          fontSize: '10px',
+        },
         labelFormatter: function () {
           return this.name + ': ' + this.percentage.toFixed(1) + '%';
-        }
+        },
       },
-      series: [{
-        name: 'Distribution',
-        colorByPoint: true,
-        data,
-      }]
+      series: [
+        {
+          name: 'Distribution',
+          colorByPoint: true,
+          data,
+        },
+      ],
     };
   }
 
   composeHighChart(data: any, isReef = false): any {
     return {
       chart: {
-        zoomType: 'x'
+        zoomType: 'x',
       },
       title: {
-        text: ''
+        text: '',
       },
       subtitle: {
-        text: ''
+        text: '',
       },
       credits: {
         enabled: false,
       },
       xAxis: {
-        type: 'datetime'
+        type: 'datetime',
       },
       yAxis: {
         title: {
-          text: isReef ? 'Price in USD' : 'ROI'
-        }
+          text: isReef ? 'Price in USD' : 'ROI',
+        },
       },
       legend: {
-        enabled: false
+        enabled: false,
       },
       plotOptions: {
         area: {
@@ -115,27 +138,32 @@ export class ChartsService {
           color: '#6610f2',
           opacity: 0.7,
           marker: {
-            radius: 2
+            radius: 2,
           },
           lineWidth: 4,
-          threshold: null
-        }
+          threshold: null,
+        },
       },
 
-      series: [{
-        type: 'area',
-        name: isReef ? 'Price in USD' : 'ROI',
-        data,
-      }]
+      series: [
+        {
+          type: 'area',
+          name: isReef ? 'Price in USD' : 'ROI',
+          data,
+        },
+      ],
     };
   }
 
-  composeHistoricRoiChart(labels: any[], data: any[]): Partial<HistoricRoiChartOptions> {
+  composeHistoricRoiChart(
+    labels: any[],
+    data: any[]
+  ): Partial<HistoricRoiChartOptions> {
     return {
       series: [
         {
           name: 'Return of Investment',
-          data: [...data]
+          data: [...data],
         },
       ],
       chart: {
@@ -152,15 +180,15 @@ export class ChartsService {
           shadeIntensity: 1,
           opacityFrom: 0.7,
           opacityTo: 0.9,
-          stops: [0, 90, 100]
-        }
+          stops: [0, 90, 100],
+        },
       },
       colors: ['#DE5DA6'],
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        curve: 'smooth'
+        curve: 'smooth',
       },
       grid: {
         show: false,
@@ -175,12 +203,12 @@ export class ChartsService {
             colors: 'white',
             fontFamily: 'inherit',
             fontSize: '13px',
-            cssClass: 'chart-label'
+            cssClass: 'chart-label',
           },
           show: true,
         },
         axisTicks: {
-          show: false
+          show: false,
         },
       },
       yaxis: {
@@ -191,22 +219,25 @@ export class ChartsService {
             colors: '#FFF',
             fontFamily: 'inherit',
             fontSize: '14px',
-            cssClass: 'chart-label'
+            cssClass: 'chart-label',
           },
-        }
+        },
       },
     };
   }
 
-  composeWeightAllocChart(labels: any, data: any[]): Partial<PoolsChartOptions> {
+  composeWeightAllocChart(
+    labels: any,
+    data: any[]
+  ): Partial<PoolsChartOptions> {
     return {
       series: [
         {
-          data: [...data]
+          data: [...data],
         },
         {
-          data: data.map(d => 100 - d),
-        }
+          data: data.map((d) => 100 - d),
+        },
       ],
       colors: ['#DE5DA6', '#fff'],
       chart: {
@@ -224,9 +255,9 @@ export class ChartsService {
       plotOptions: {
         bar: {
           dataLabels: {
-            position: 'bottom'
-          }
-        }
+            position: 'bottom',
+          },
+        },
       },
       dataLabels: {
         enabled: true,
@@ -238,8 +269,8 @@ export class ChartsService {
           fontFamily: 'inherit',
           fontSize: '13px',
           fontWeight: 400,
-          colors: ['#DADADA']
-        }
+          colors: ['#DADADA'],
+        },
       },
       xaxis: {
         categories: [...labels],
@@ -250,7 +281,7 @@ export class ChartsService {
             colors: 'white',
             fontFamily: 'inherit',
             fontSize: '14px',
-            cssClass: 'text-break'
+            cssClass: 'text-break',
           },
           show: true,
         },
@@ -271,14 +302,14 @@ export class ChartsService {
               colorTo: '#fff',
               stops: [0, 100],
               opacityFrom: 0.4,
-              opacityTo: 0.5
-            }
-          }
+              opacityTo: 0.5,
+            },
+          },
         },
         tooltip: {
           enabled: false,
-          offsetY: -35
-        }
+          offsetY: -35,
+        },
       },
       tooltip: {
         enabled: false,
@@ -297,22 +328,22 @@ export class ChartsService {
           inverseColors: true,
           opacityFrom: 1,
           opacityTo: 1,
-        }
+        },
       },
       yaxis: {
         max: 100,
         axisBorder: {
-          show: false
+          show: false,
         },
         axisTicks: {
-          show: false
+          show: false,
         },
         labels: {
           show: false,
           formatter(val): string {
             return val + '%';
-          }
-        }
+          },
+        },
       },
       title: {
         text: '',
@@ -320,9 +351,9 @@ export class ChartsService {
         offsetY: 320,
         align: 'center',
         style: {
-          color: '#444'
-        }
-      }
+          color: '#444',
+        },
+      },
     };
   }
 }

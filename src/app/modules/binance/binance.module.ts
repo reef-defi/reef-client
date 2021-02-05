@@ -7,14 +7,10 @@ import { SharedModule } from '../../shared/shared.module';
 import { BinanceRegisterModalComponent } from './components/binance-register-modal/binance-register-modal.component';
 
 const pages = [BuyCryptoPage];
-const components = [BinanceRegisterModalComponent]
+const components = [BinanceRegisterModalComponent];
 
 @NgModule({
   declarations: [...pages, ...components],
-  imports: [
-    CommonModule,
-    BinanceRoutingModule,
-    SharedModule
-  ]
+  imports: [CommonModule, BinanceRoutingModule, SharedModule],
 })
-export class BinanceModule { }
+export class BinanceModule {}

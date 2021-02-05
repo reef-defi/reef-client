@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts';
 @Component({
   selector: 'app-vaults-roi-chart',
   templateUrl: './vaults-roi-chart.component.html',
-  styleUrls: ['./vaults-roi-chart.component.scss']
+  styleUrls: ['./vaults-roi-chart.component.scss'],
 })
 export class VaultsRoiChartComponent {
   HighCharts: typeof Highcharts = Highcharts;
@@ -13,7 +13,7 @@ export class VaultsRoiChartComponent {
   @Input() set roiChartData(val: number[][]) {
     if (val) {
       this.options = val;
-      console.log(this.options, "HMMM")
+      console.log(this.options, 'HMMM');
       this.updateFlag = true;
     }
   }

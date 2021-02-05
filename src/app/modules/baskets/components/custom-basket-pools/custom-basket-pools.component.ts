@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { IPoolsMetadata } from '../../../../core/models/types';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -7,7 +14,7 @@ import { MatRadioChange } from '@angular/material/radio';
 @Component({
   selector: 'app-custom-basket-pools',
   templateUrl: './custom-basket-pools.component.html',
-  styleUrls: ['./custom-basket-pools.component.scss']
+  styleUrls: ['./custom-basket-pools.component.scss'],
 })
 export class CustomBasketPoolsComponent implements AfterViewInit {
   poolsDataSource;
@@ -16,7 +23,10 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
 
   @Input() set poolsAndTokens(val: IPoolsMetadata[] | undefined) {
     if (val) {
-      const pools = val.filter((pool: IPoolsMetadata) => pool.ExchangeName.toLocaleLowerCase() !== 'curve');
+      const pools = val.filter(
+        (pool: IPoolsMetadata) =>
+          pool.ExchangeName.toLocaleLowerCase() !== 'curve'
+      );
       this.poolsDataSource = new MatTableDataSource(pools);
     }
   }
@@ -30,8 +40,7 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
 
   public displayedPoolsColumns: string[] = ['Type', 'Name', 'Exchange', 'Add'];
 
-  constructor() {
-  }
+  constructor() {}
 
   search(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -57,5 +66,4 @@ export class CustomBasketPoolsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.poolsDataSource.paginator = this.poolPaginator;
   }
-
 }

@@ -15,7 +15,7 @@ import { ApiService } from '../../../../core/services/api.service';
 @Component({
   selector: 'app-baskets',
   templateUrl: './baskets.page.html',
-  styleUrls: ['./baskets.page.scss']
+  styleUrls: ['./baskets.page.scss'],
 })
 export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   readonly contract$ = this.contractService.basketContract$;
@@ -32,22 +32,19 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
     private readonly vaultsService: VaultsService,
     private readonly apiService: ApiService,
     private readonly dialog: MatDialog,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    combineLatest(this.contract$, this.vaultsContract$).pipe(
-      first(([a, b]) => !!a && !!b)
-    ).subscribe(() => {
-      this.getAllBaskets();
-      this.getVaultsBaskets();
-    });
+    combineLatest(this.contract$, this.vaultsContract$)
+      .pipe(first(([a, b]) => !!a && !!b))
+      .subscribe(() => {
+        this.getAllBaskets();
+        this.getVaultsBaskets();
+      });
   }
 
-  ngAfterViewInit(): void {
-
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     this.contractService.resetBaskets();
@@ -55,11 +52,14 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
 
   onDisinvest(data: number[], type: 'vault' | 'pool'): void {
     const dialogRef = this.openDialog(data);
-    dialogRef.afterClosed()
+    dialogRef
+      .afterClosed()
       .pipe(take(1))
       .subscribe((result) => {
         if (result) {
-          type === 'vault' ? this.disinvestVaultBasket(result) : this.disinvestBasket(result);
+          type === 'vault'
+            ? this.disinvestVaultBasket(result)
+            : this.disinvestBasket(result);
         }
       });
   }
@@ -73,7 +73,12 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async disinvestVaultBasket(data: any): Promise<void> {
-    await this.vaultsService.disinvestFromVaults(data[0], data[1], data[2], data[3]);
+    await this.vaultsService.disinvestFromVaults(
+      data[0],
+      data[1],
+      data[2],
+      data[3]
+    );
     await this.getVaultsBaskets();
   }
 
@@ -90,7 +95,7 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
     return this.dialog.open(LiquidateModalComponent, {
       data: {
         data,
-      }
+      },
     });
   }
 }

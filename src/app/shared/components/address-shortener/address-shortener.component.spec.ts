@@ -8,9 +8,8 @@ describe('AddressShortenerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AddressShortenerComponent ]
-    })
-    .compileComponents();
+      declarations: [AddressShortenerComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,15 +1,13 @@
-import {Component} from '@angular/core';
-import {UniswapService} from '../../../../core/services/uniswap.service';
+import { Component } from '@angular/core';
+import { UniswapService } from '../../../../core/services/uniswap.service';
 
 @Component({
   selector: 'app-stake-reef-page',
   templateUrl: './pools.page.html',
-  styleUrls: ['./pools.page.scss']
+  styleUrls: ['./pools.page.scss'],
 })
 export class PoolsPage {
-
-  constructor(private readonly uniswapService: UniswapService) {
-  }
+  constructor(private readonly uniswapService: UniswapService) {}
   pools = [
     {
       name: 'ETH & REEF',
@@ -19,10 +17,7 @@ export class PoolsPage {
       LP Tokens`,
       link: 'ETH',
       btnLabel: 'Provide Liquidity into ETH/REEF',
-      imgs: [
-        'eth.png',
-        'reef/reef-token.svg'
-      ]
+      imgs: ['eth.png', 'reef/reef-token.svg'],
     },
     {
       name: 'USDT & REEF',
@@ -32,10 +27,7 @@ export class PoolsPage {
       LP Tokens`,
       link: 'USDT',
       btnLabel: 'Provide Liquidity into USDT/REEF',
-      imgs: [
-        'usdt.png',
-        'reef/reef-token.svg'
-      ]
+      imgs: ['usdt.png', 'reef/reef-token.svg'],
     },
-  ]
+  ];
 }

@@ -8,9 +8,8 @@ describe('AssetDistributionChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AssetDistributionChartComponent ]
-    })
-    .compileComponents();
+      declarations: [AssetDistributionChartComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

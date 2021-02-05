@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts';
 @Component({
   selector: 'app-basket-roi',
   templateUrl: './basket-roi.component.html',
-  styleUrls: ['./basket-roi.component.scss']
+  styleUrls: ['./basket-roi.component.scss'],
 })
 export class BasketRoiComponent {
   HighCharts: typeof Highcharts = Highcharts;
@@ -13,7 +13,7 @@ export class BasketRoiComponent {
   @Input() set roiData(val: number[][]) {
     if (val) {
       this.options = val;
-      console.log(this.options, 'Hmm...')
+      console.log(this.options, 'Hmm...');
       this.updateFlag = true;
     }
   }
@@ -21,12 +21,10 @@ export class BasketRoiComponent {
   @Input() isList = false;
   @Output() dateSpanChange = new EventEmitter<number>();
 
-  constructor() {
-  }
+  constructor() {}
 
   onDateSpanChange(val: number): void {
     this.updateFlag = false;
     this.dateSpanChange.emit(val);
   }
-
 }

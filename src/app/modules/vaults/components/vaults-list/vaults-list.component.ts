@@ -4,7 +4,7 @@ import { IVault } from '../../../../core/models/types';
 @Component({
   selector: 'app-vaults-list',
   templateUrl: './vaults-list.component.html',
-  styleUrls: ['./vaults-list.component.scss']
+  styleUrls: ['./vaults-list.component.scss'],
 })
 export class VaultsListComponent {
   Object = Object;
@@ -14,5 +14,4 @@ export class VaultsListComponent {
   onVaultAllocChanged(percentage, name): void {
     this.vaultAllocChanged.emit([name, percentage]);
   }
-
 }

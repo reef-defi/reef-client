@@ -8,9 +8,8 @@ describe('DisclaimerModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DisclaimerModalComponent ]
-    })
-    .compileComponents();
+      declarations: [DisclaimerModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

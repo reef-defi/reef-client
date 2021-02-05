@@ -8,9 +8,8 @@ describe('FarmsPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FarmsPage ]
-    })
-    .compileComponents();
+      declarations: [FarmsPage],
+    }).compileComponents();
   });
 
   beforeEach(() => {

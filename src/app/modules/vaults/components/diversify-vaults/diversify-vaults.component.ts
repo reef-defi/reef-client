@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-diversify-vaults',
   templateUrl: './diversify-vaults.component.html',
-  styleUrls: ['./diversify-vaults.component.scss']
+  styleUrls: ['./diversify-vaults.component.scss'],
 })
 export class DiversifyVaultsComponent {
   @Input() ethAmount: FormControl | undefined;

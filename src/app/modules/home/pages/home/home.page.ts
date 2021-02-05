@@ -1,19 +1,19 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {ContractService} from '../../../../core/services/contract.service';
-import {first, take} from 'rxjs/operators';
-import {hintSteps} from '../../../../shared/data/walkthrough_steps';
-import {MatDialog} from '@angular/material/dialog';
-import {DisclaimerModalComponent} from '../../components/disclaimer-modal/disclaimer-modal.component';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {Router} from '@angular/router';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { ContractService } from '../../../../core/services/contract.service';
+import { first, take } from 'rxjs/operators';
+import { hintSteps } from '../../../../shared/data/walkthrough_steps';
+import { MatDialog } from '@angular/material/dialog';
+import { DisclaimerModalComponent } from '../../components/disclaimer-modal/disclaimer-modal.component';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Router } from '@angular/router';
 
 declare const particlesJS: any;
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss']
+  styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit, AfterViewInit {
   public contract$ = this.contractService.basketContract$;
@@ -24,11 +24,10 @@ export class HomePage implements OnInit, AfterViewInit {
     private readonly contractService: ContractService,
     private readonly notificationService: NotificationService,
     private readonly router: Router,
-    public dialog: MatDialog) {
-  }
+    public dialog: MatDialog
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this.afterRender();
@@ -37,9 +36,7 @@ export class HomePage implements OnInit, AfterViewInit {
   async onConnect(): Promise<any> {
     try {
       await this.connectorService.onConnect();
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   async onDisconnect(): Promise<void> {
@@ -47,24 +44,31 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   openDisclaimer(): void {
-    const ref = this.dialog.open(DisclaimerModalComponent, {width: '475px', panelClass: 'dialog__responsive'});
-    ref.afterClosed().pipe(
-      take(1),
-    ).subscribe((accepted: boolean) => {
-      if (accepted) {
-        this.onConnect();
-      } else {
-        this.notificationService.showNotification('Please accept the terms in order to use our services', 'Close', 'error');
-      }
+    const ref = this.dialog.open(DisclaimerModalComponent, {
+      width: '475px',
+      panelClass: 'dialog__responsive',
     });
+    ref
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((accepted: boolean) => {
+        if (accepted) {
+          this.onConnect();
+        } else {
+          this.notificationService.showNotification(
+            'Please accept the terms in order to use our services',
+            'Close',
+            'error'
+          );
+        }
+      });
   }
 
   private afterRender(): void {
     // particlesJS('particles', ParticlesConfig, null);
-    const hasViewed = JSON.parse(localStorage.getItem('reef_tutorial_viewed')) === true;
-    this.isWalletConnected$.pipe(
-      first((el) => !!el)
-    ).subscribe((data) => {
+    const hasViewed =
+      JSON.parse(localStorage.getItem('reef_tutorial_viewed')) === true;
+    this.isWalletConnected$.pipe(first((el) => !!el)).subscribe((data) => {
       if (data && !hasViewed) {
         setTimeout(() => {
           const EnjoyHint = new (window as any).EnjoyHint({});

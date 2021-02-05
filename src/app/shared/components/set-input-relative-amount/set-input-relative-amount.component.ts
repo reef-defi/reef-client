@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {TokenSymbol} from '../../../core/models/types';
-import {TokenUtil} from '../../utils/token.util';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TokenSymbol } from '../../../core/models/types';
+import { TokenUtil } from '../../utils/token.util';
 
 @Component({
   selector: 'app-set-input-relative-amount',
   templateUrl: './set-input-relative-amount.component.html',
-  styleUrls: ['./set-input-relative-amount.component.scss']
+  styleUrls: ['./set-input-relative-amount.component.scss'],
 })
 export class SetInputRelativeAmountComponent {
   @Input()
@@ -22,5 +22,4 @@ export class SetInputRelativeAmountComponent {
 
   TokenSymbol = TokenSymbol;
   TokenUtil = TokenUtil;
-
 }

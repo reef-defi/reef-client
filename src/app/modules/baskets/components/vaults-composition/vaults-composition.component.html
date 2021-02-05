@@ -1,16 +1,22 @@
-<div
-  id="createBasketComposition"
-  class="content__container" *ngIf="!isList">
+<div id="createBasketComposition" class="content__container" *ngIf="!isList">
   <div>
     <div class="heading__lg mb-3">COMPOSITION</div>
-    <div *ngIf="!isList && vaults && vaults.vaults.length > 0; else loadingTemplate">
-      <div class="mb-2" *ngFor="let vault of vaults.vaults; let i = index;">
+    <div
+      *ngIf="
+        !isList && vaults && vaults.vaults.length > 0;
+        else loadingTemplate
+      "
+    >
+      <div class="mb-2" *ngFor="let vault of vaults.vaults; let i = index">
         <div class="label__md mb-1">{{ vault.name }}</div>
-        <div class="heading__md mb-1">{{ vaults.weights[i] | number:'1.1-2'}}%</div>
+        <div class="heading__md mb-1">
+          {{ vaults.weights[i] | number: '1.1-2' }}%
+        </div>
         <mat-progress-bar
           [color]="colors[i]"
           mode="determinate"
-          [value]="+vaults.weights[i]"></mat-progress-bar>
+          [value]="+vaults.weights[i]"
+        ></mat-progress-bar>
       </div>
     </div>
   </div>
@@ -18,13 +24,16 @@
 
 <ng-container *ngIf="isList">
   <div *ngIf="vaults && vaults.vaults.length > 0">
-    <div class="mb-2" *ngFor="let vault of vaults.vaults; let i = index;">
+    <div class="mb-2" *ngFor="let vault of vaults.vaults; let i = index">
       <div class="label__md mb-1">{{ vault.name }}</div>
-      <div class="heading__md mb-1">{{vaults.weights[i] | number:'1.1-2'}}%</div>
+      <div class="heading__md mb-1">
+        {{ vaults.weights[i] | number: '1.1-2' }}%
+      </div>
       <mat-progress-bar
         [color]="colors[i]"
         mode="determinate"
-        [value]="+vaults.weights[i]"></mat-progress-bar>
+        [value]="+vaults.weights[i]"
+      ></mat-progress-bar>
     </div>
   </div>
 </ng-container>
