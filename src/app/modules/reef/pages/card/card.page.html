@@ -100,9 +100,9 @@
                           *ngIf="loginForm.controls.email as emailCtrl"
                         >
                           <h6 class="card-title accent-text">
-                            Thank you, your interest helps Reef community!
+                            Thank you, your interest helps the growth of the Reef community!
                           </h6>
-                          <p class="card-text">Please enter your email:</p>
+                          <div class="card-text small mb-1">Please enter your email:</div>
                           <input
                             #emailInput
                             placeholder="enter email here"
@@ -129,7 +129,7 @@
                             [disabled]="!!emailCtrl.errors"
                             (click)="statusSub.next({email: emailInput.value})"
                           >
-                            Send email
+                            Send Email
                           </button>
                         </ng-container>
                       </ng-container>
@@ -139,9 +139,9 @@
                         </h6>
                       </ng-template>
 
-                      <p class="card-text accent-text mt-3">
-                        Follow our future releases on social channels:
-                      </p>
+                      <div class="card-text accent-text mt-3 mb-2">
+                        Keep up to date with our latest development on our social channels!
+                      </div>
                       <div>
                         <div class="row text-center">
                           <div class="col-md-2 col-6 social-box pt-4 pb-4">
