@@ -2,36 +2,37 @@
   <div class="col">
     <app-page-title
       title="Dashboard"
-      subtitle="View your transactions, balances, and more."></app-page-title>
+      subtitle="View your transactions, balances, and more."
+    ></app-page-title>
   </div>
 </div>
 
 <div class="page__wrapper row justify-content-between">
   <div class="col-12 col-md-10 offset-md-1">
     <div class="row">
-
       <div class="col-12 col-xl-4">
         <div class="card min-height-100px">
-          <div class="card-body p-4 accent-text ">
+          <div class="card-body p-4 accent-text">
             <div class="small font-weight-bold text-monospace mb-3 text-muted">
               USD Valuation
             </div>
             <h3 class="text-center text-monospace">
-
-              <ng-container *ngIf="tokenBalance$|async as tokenBalance; else calc">
+              <ng-container
+                *ngIf="tokenBalance$|async as tokenBalance; else calc"
+              >
                 ${{tokenBalance?.totalBalance| number:'1.0-0'}}
               </ng-container>
-              <ng-template #calc>
-                Calculating...
-              </ng-template>
+              <ng-template #calc> Calculating... </ng-template>
             </h3>
           </div>
         </div>
-        <div class="card p-4 mt-3 ">
+        <div class="card p-4 mt-3">
           <div class="small font-weight-bold text-monospace text-muted">
             Allocations
           </div>
-          <ng-container *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate">
+          <ng-container
+            *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate"
+          >
             <app-asset-distribution-chart [chartData]="pieChartData">
             </app-asset-distribution-chart>
           </ng-container>
@@ -42,24 +43,28 @@
           <div class="col-12">
             <div class="card mb-3">
               <div class="card-body">
-                <ng-container *ngIf="getPortfolio$ | async as portfolio; else loadingTemplate">
-                  <app-holdings-table [portfolio]="portfolio"></app-holdings-table>
+                <ng-container
+                  *ngIf="getPortfolio$ | async as portfolio; else loadingTemplate"
+                >
+                  <app-holdings-table
+                    [portfolio]="portfolio"
+                  ></app-holdings-table>
                 </ng-container>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <a href="#" (click)="$event.preventDefault(); showTransactions = !showTransactions"
-                   class=" mb-3 float-right">{{showTransactions ? 'Hide' : 'Show'}}
-                  Transactions
+                <a
+                  href="#"
+                  (click)="$event.preventDefault(); showTransactions = !showTransactions"
+                  class="mb-3 float-right"
+                  >{{showTransactions ? 'Hide' : 'Show'}} Transactions
                 </a>
               </div>
               <div class="col-12">
                 <div class="card mb-3" [hidden]="!showTransactions">
                   <div class="card-body">
-                    <div class="h6 mb-4">
-                      Transactions
-                    </div>
+                    <div class="h6 mb-4">Transactions</div>
                     <div class="row mb-2 d-flex justify-content-between">
                       <div class="col-4">
                         <div class="text-monospace small text-muted">Hash</div>
@@ -68,10 +73,14 @@
                         <div class="text-monospace small text-muted">Date</div>
                       </div>
                       <div class="col-3">
-                        <div class="text-monospace small text-muted">To Address</div>
+                        <div class="text-monospace small text-muted">
+                          To Address
+                        </div>
                       </div>
                       <div class="col-3 col-auto">
-                        <div class="text-monospace small text-muted">Tokens</div>
+                        <div class="text-monospace small text-muted">
+                          Tokens
+                        </div>
                       </div>
                     </div>
                     <div class="row mb-2">
@@ -79,34 +88,44 @@
                         <mat-divider></mat-divider>
                       </div>
                     </div>
-                    <div *ngIf="transactions$ | async as transactions; else loadingTemplate">
-                      <div *ngIf="transactions && transactions.length > 0; else emptyTransactions">
+                    <div
+                      *ngIf="transactions$ | async as transactions; else loadingTemplate"
+                    >
+                      <div
+                        *ngIf="transactions && transactions.length > 0; else emptyTransactions"
+                      >
                         <div
                           class="row d-flex justify-content-between mb-1 align-items-center"
-                          *ngFor="let transaction of transactions">
+                          *ngFor="let transaction of transactions"
+                        >
                           <div class="col-4">
                             <app-address-shortener
                               [standalone]="false"
-                              [address]="transaction.tx_hash">
+                              [address]="transaction.tx_hash"
+                            >
                             </app-address-shortener>
                           </div>
                           <div class="col-2">
                             <div class="small">
-                              {{ transaction.block_signed_at | date:'shortDate' }}
+                              {{ transaction.block_signed_at | date:'shortDate'
+                              }}
                             </div>
                           </div>
                           <div class="col-3">
                             <div>
                               <app-address-shortener
                                 [standalone]="false"
-                                [address]="transaction.to_address">
+                                [address]="transaction.to_address"
+                              >
                               </app-address-shortener>
                             </div>
                           </div>
-                          <div class="col-3 col-auto d-flex justify-content-between">
-                <span class="small font-weight-bold">
-                  {{ transaction.value }}
-                </span>
+                          <div
+                            class="col-3 col-auto d-flex justify-content-between"
+                          >
+                            <span class="small font-weight-bold">
+                              {{ transaction.value }}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -118,11 +137,17 @@
 
             <div class="card">
               <ng-template #loadingTemplate>
-                <app-skeleton-loading type="transactions" [count]="3"></app-skeleton-loading>
+                <app-skeleton-loading
+                  type="transactions"
+                  [count]="3"
+                ></app-skeleton-loading>
               </ng-template>
               <ng-template #emptyTransactions>
                 <div class="d-flex justify-content-center align-items-center">
-                  <span class="small mt-2">You have not made any transactions in the recent past.</span>
+                  <span class="small mt-2"
+                    >You have not made any transactions in the recent
+                    past.</span
+                  >
                 </div>
               </ng-template>
               <ng-template #emptyTokensTemplate>
@@ -134,7 +159,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>

@@ -4,7 +4,7 @@ import {
   IBasket,
   IBasketHistoricRoi,
   IGenerateBasketResponse,
-  PoolsChartOptions
+  PoolsChartOptions,
 } from '../../../../core/models/types';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { ApiService } from '../../../../core/services/api.service';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-basket',
   templateUrl: './basket.component.html',
-  styleUrls: ['./basket.component.scss']
+  styleUrls: ['./basket.component.scss'],
 })
 export class BasketComponent {
   private mBasket: IBasket;
@@ -23,7 +23,10 @@ export class BasketComponent {
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
     this.pureBasket = this.getChartLabels(this.mBasket);
-    this.poolChartOptions = this.charts.composeWeightAllocChart(Object.keys(this.pureBasket), Object.values(this.pureBasket));
+    this.poolChartOptions = this.charts.composeWeightAllocChart(
+      Object.keys(this.pureBasket),
+      Object.values(this.pureBasket)
+    );
     this.getHistoricRoi(this.pureBasket, 1);
   }
   get basket(): IBasket {
@@ -35,9 +38,10 @@ export class BasketComponent {
   public disinvestPercentage = 100;
   public activeTimeSpan = 1;
 
-  constructor(private readonly charts: ChartsService,
-              private readonly apiService: ApiService) {
-  }
+  constructor(
+    private readonly charts: ChartsService,
+    private readonly apiService: ApiService
+  ) {}
 
   onDisinvest(): void {
     const data = [this.basketIndex, this.disinvestPercentage];
@@ -45,9 +49,19 @@ export class BasketComponent {
   }
 
   private getChartLabels(basket: IBasket): IGenerateBasketResponse {
-    const {Tokens, BalancerPools, MooniswapPools, UniswapPools} = basket;
-    const names = [...Tokens.pools, ...BalancerPools.pools, ...MooniswapPools.pools, ...UniswapPools.pools].map(p => p.name);
-    const weights = [...Tokens.weights, ...BalancerPools.weights, ...MooniswapPools.weights, ...UniswapPools.weights];
+    const { Tokens, BalancerPools, MooniswapPools, UniswapPools } = basket;
+    const names = [
+      ...Tokens.pools,
+      ...BalancerPools.pools,
+      ...MooniswapPools.pools,
+      ...UniswapPools.pools,
+    ].map((p) => p.name);
+    const weights = [
+      ...Tokens.weights,
+      ...BalancerPools.weights,
+      ...MooniswapPools.weights,
+      ...UniswapPools.weights,
+    ];
     const temp = {};
     for (let i = 0; i < names.length; i++) {
       temp[names[i]] = weights[i];
@@ -55,14 +69,24 @@ export class BasketComponent {
     return temp;
   }
 
-  public getHistoricRoi(basket: IGenerateBasketResponse, subtractMonths: number): Subscription {
+  public getHistoricRoi(
+    basket: IGenerateBasketResponse,
+    subtractMonths: number
+  ): Subscription {
     this.activeTimeSpan = subtractMonths;
-    return this.apiService.getHistoricRoi(basket, subtractMonths).subscribe((historicRoi: IBasketHistoricRoi) => {
-      this.roiData = this.charts.composeHighChart(this.extractRoi(historicRoi));
-    });
+    return this.apiService
+      .getHistoricRoi(basket, subtractMonths)
+      .subscribe((historicRoi: IBasketHistoricRoi) => {
+        this.roiData = this.charts.composeHighChart(
+          this.extractRoi(historicRoi)
+        );
+      });
   }
 
   private extractRoi(obj: IBasketHistoricRoi): number[][] {
-    return Object.keys(obj).map((key) => [new Date(key).getTime(), +obj[key].weighted_roi.toFixed(2)]);
+    return Object.keys(obj).map((key) => [
+      new Date(key).getTime(),
+      +obj[key].weighted_roi.toFixed(2),
+    ]);
   }
 }

@@ -8,11 +8,14 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "format": "prettier --write src/app",
+    "format-check": "prettier --check src/app"
   },
   "husky": {
     "hooks": {
-      "pre-push": "ng build --prod"
+      "pre-push": "npm run format-check && ng build --prod",
+      "pre-commit": "npm run format"
     }
   },
   "private": true,
@@ -70,6 +73,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "prettier": "^2.2.1",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",

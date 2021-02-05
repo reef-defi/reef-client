@@ -8,9 +8,8 @@ describe('VaultComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VaultComponent ]
-    })
-    .compileComponents();
+      declarations: [VaultComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

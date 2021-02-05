@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-liquidate-modal',
   templateUrl: './liquidate-modal.component.html',
-  styleUrls: ['./liquidate-modal.component.scss']
+  styleUrls: ['./liquidate-modal.component.scss'],
 })
 export class LiquidateModalComponent {
   public percentage = new FormControl(0);
@@ -13,7 +13,7 @@ export class LiquidateModalComponent {
   constructor(
     public dialogRef: MatDialogRef<LiquidateModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {}
 
   onClose(): void {
     this.dialogRef.close();
@@ -22,5 +22,4 @@ export class LiquidateModalComponent {
   onLiquidate(): any {
     return [...this.data.data, this.percentage.value, this.isReefStake.value];
   }
-
 }

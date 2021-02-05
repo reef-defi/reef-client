@@ -12,11 +12,6 @@ const pages = [HomePage];
 
 @NgModule({
   declarations: [...pages, ...components],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    SharedModule,
-    MatRippleModule,
-  ]
+  imports: [CommonModule, HomeRoutingModule, SharedModule, MatRippleModule],
 })
-export class HomeModule { }
+export class HomeModule {}

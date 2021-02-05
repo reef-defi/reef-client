@@ -8,9 +8,8 @@ describe('ReefPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReefPage ]
-    })
-    .compileComponents();
+      declarations: [ReefPage],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,14 +1,16 @@
-<div
-  id="emptyState"
-  class="center d-flex flex-column align-items-center">
+<div id="emptyState" class="center d-flex flex-column align-items-center">
   <img
     class="img-fluid"
     height="256"
     width="256"
-    src="../../../../assets/images/emptystate.svg" alt="Empty State">
+    src="../../../../assets/images/emptystate.svg"
+    alt="Empty State"
+  />
   <div class="h2">{{ title }}</div>
   <div class="text-monospace text-center mb-2">{{ subtitle }}</div>
   <div *ngIf="showCtaButton">
-    <button class="btn btn-secondary" (click)="onCta()">{{ ctaButtonText }}</button>
+    <button class="btn btn-secondary" (click)="onCta()">
+      {{ ctaButtonText }}
+    </button>
   </div>
 </div>

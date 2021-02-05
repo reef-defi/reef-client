@@ -4,7 +4,7 @@ import { roundDownTo } from '../../../core/utils/math-utils';
 @Component({
   selector: 'app-percentage-buttons',
   templateUrl: './percentage-buttons.component.html',
-  styleUrls: ['./percentage-buttons.component.scss']
+  styleUrls: ['./percentage-buttons.component.scss'],
 })
 export class PercentageButtonsComponent {
   /**

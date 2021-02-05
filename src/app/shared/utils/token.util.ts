@@ -1,6 +1,6 @@
-import {TokenSymbol} from '../../core/models/types';
+import { TokenSymbol } from '../../core/models/types';
 import BigNumber from 'bignumber.js';
-import {roundDownTo} from '../../core/utils/math-utils';
+import { roundDownTo } from '../../core/utils/math-utils';
 
 const symbolDisplayMaxDecimals = {
   [TokenSymbol.ETH]: 4,
@@ -16,10 +16,12 @@ const non18DecimalPlaces = {
 };
 
 export class TokenUtil {
-
-  static toMaxDisplayDecimalPlaces(value: number | string, tokenSymbol: TokenSymbol): number {
+  static toMaxDisplayDecimalPlaces(
+    value: number | string,
+    tokenSymbol: TokenSymbol
+  ): number {
     if (typeof value === 'string') {
-      value = (new BigNumber(value, 10)).toNumber();
+      value = new BigNumber(value, 10).toNumber();
     }
     const maxDecimals = TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
     /*const num = (new BigNumber(value)).toFixed();
@@ -31,15 +33,23 @@ export class TokenUtil {
     return roundDownTo(value, maxDecimals);
   }
 
-  static toContractIntegerBalanceValue(fixedFloatNrValue: number, tokenSymbol: TokenSymbol): string {
+  static toContractIntegerBalanceValue(
+    fixedFloatNrValue: number,
+    tokenSymbol: TokenSymbol
+  ): string {
     let exponent = non18DecimalPlaces[tokenSymbol];
     if (!exponent) {
       exponent = 18;
     }
-    return (new BigNumber((fixedFloatNrValue * Math.pow(10, exponent)).toString(10))).toFixed();
+    return new BigNumber(
+      (fixedFloatNrValue * Math.pow(10, exponent)).toString(10)
+    ).toFixed();
   }
 
-  static toDisplayDecimalValue(contractIntegerBalanceValue: number, tokenSymbol: TokenSymbol): string {
+  static toDisplayDecimalValue(
+    contractIntegerBalanceValue: number,
+    tokenSymbol: TokenSymbol
+  ): string {
     let exponent = non18DecimalPlaces[tokenSymbol];
     if (!exponent) {
       exponent = 18;
@@ -55,5 +65,4 @@ export class TokenUtil {
     }
     return decimalPlaces != null ? decimalPlaces : 2;
   }
-
 }

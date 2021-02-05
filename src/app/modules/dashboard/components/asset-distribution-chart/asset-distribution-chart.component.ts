@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-asset-distribution-chart',
   templateUrl: './asset-distribution-chart.component.html',
-  styleUrls: ['./asset-distribution-chart.component.scss']
+  styleUrls: ['./asset-distribution-chart.component.scss'],
 })
 export class AssetDistributionChartComponent {
   HighCharts: typeof Highcharts = Highcharts;
@@ -18,5 +18,4 @@ export class AssetDistributionChartComponent {
   }
   @Input() isList = false;
   @Output() dateSpanChange = new EventEmitter();
-
 }

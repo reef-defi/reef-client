@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-reef-historic-price',
   templateUrl: './reef-historic-price.component.html',
-  styleUrls: ['./reef-historic-price.component.scss']
+  styleUrls: ['./reef-historic-price.component.scss'],
 })
 export class ReefHistoricPriceComponent {
   HighCharts: typeof Highcharts = Highcharts;
@@ -12,7 +12,7 @@ export class ReefHistoricPriceComponent {
   public updateFlag: boolean;
   @Input() set chartData(val: number[][]) {
     if (val) {
-      console.log(val, 'hmm')
+      console.log(val, 'hmm');
       this.options = val;
       this.updateFlag = true;
     }

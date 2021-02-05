@@ -8,9 +8,8 @@ describe('ReefHistoricPriceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReefHistoricPriceComponent ]
-    })
-    .compileComponents();
+      declarations: [ReefHistoricPriceComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

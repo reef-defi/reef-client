@@ -5,13 +5,10 @@ import { ThemePalette } from '@angular/material/core';
 @Component({
   selector: 'app-vaults-composition',
   templateUrl: './vaults-composition.component.html',
-  styleUrls: ['./vaults-composition.component.scss']
+  styleUrls: ['./vaults-composition.component.scss'],
 })
 export class VaultsCompositionComponent {
-  private mColors: ThemePalette[] = [
-    'primary',
-    'accent',
-    'warn'];
+  private mColors: ThemePalette[] = ['primary', 'accent', 'warn'];
   @Input() vaults: IVaultInfo | undefined;
   @Input() isList: boolean | undefined;
 

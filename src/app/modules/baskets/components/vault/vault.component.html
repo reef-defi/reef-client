@@ -1,24 +1,34 @@
-<div
-  *ngIf="isListView"
-  class="content__container w-100">
+<div *ngIf="isListView" class="content__container w-100">
   <div class="row justify-content-between align-items-center">
-    <div class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center">
-      <div class="heading__lg font-weight-bold mb-3">{{ vault.name }}</div>
-      <div class="heading__lg font-weight-bold">{{ vault.investedETH | number: '1.2-2' }} ETH</div>
+    <div
+      class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center"
+    >
+      <div class="heading__lg font-weight-bold mb-3">
+        {{ vault.name }}
+      </div>
+      <div class="heading__lg font-weight-bold">
+        {{ vault.investedETH | number: '1.2-2' }} ETH
+      </div>
       <div class="subheading__lg mb-3">INVESTED</div>
       <div class="heading__lg font-weight-bold">Vault Basket</div>
       <div class="subheading__lg mb-3">TYPE</div>
       <div class="heading__lg font-weight-bold roi__percent">+51% ROI</div>
       <div class="subheading__lg mb-3">+ 5.61 ETH</div>
       <div class="mb-3">
-        <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>
+        <button
+          mat-ripple
+          (click)="onDisinvest()"
+          class="button-large danger w-100"
+        >
+          Liquidate
+        </button>
       </div>
     </div>
     <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
-      <ng-container *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate">
-        <app-vaults-composition
-          [vaults]="vault.vaults"
-          [isList]="true">
+      <ng-container
+        *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate"
+      >
+        <app-vaults-composition [vaults]="vault.vaults" [isList]="true">
         </app-vaults-composition>
       </ng-container>
     </div>
@@ -39,13 +49,13 @@
     <div class="col-7 heading__lg font-weight-bold">
       {{ vault.name }}
     </div>
-    <div class="col-4 heading__lg font-weight-bold">
-      Vault Basket
-    </div>
+    <div class="col-4 heading__lg font-weight-bold">Vault Basket</div>
   </div>
   <div class="row mb-2">
     <div class="col-3">
-      <div class="heading__lg font-weight-bold mb-1">{{ vault.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="heading__lg font-weight-bold mb-1">
+        {{ vault.investedETH | number: '1.2-2' }} ETH
+      </div>
       <div class="subheading__lg mb-3">INVESTED</div>
     </div>
     <div class="col-3">
@@ -53,15 +63,21 @@
       <div class="subheading__lg mb-3">+ 5.61 ETH</div>
     </div>
     <div class="col-6">
-      <button mat-ripple (click)="onDisinvest()" class="button-large danger w-100">Liquidate</button>
+      <button
+        mat-ripple
+        (click)="onDisinvest()"
+        class="button-large danger w-100"
+      >
+        Liquidate
+      </button>
     </div>
   </div>
   <div class="row">
     <div class="col-12 mb-2">
-      <ng-container *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate">
-        <app-vaults-composition
-          [vaults]="vault.vaults"
-          [isList]="true">
+      <ng-container
+        *ngIf="vault.vaults && vault.vaults.vaults.length; else loadingTemplate"
+      >
+        <app-vaults-composition [vaults]="vault.vaults" [isList]="true">
         </app-vaults-composition>
       </ng-container>
     </div>

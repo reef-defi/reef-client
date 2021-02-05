@@ -1,5 +1,5 @@
 export const getProviderName = (web3: any): string => {
-  if (!web3){
+  if (!web3) {
     return 'unknown';
   }
   if (web3.currentProvider.isMetaMask) {

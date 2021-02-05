@@ -222,7 +222,7 @@ export const animals = [
   'Worm',
   'Wren',
   'Yak',
-  'Zebra'
+  'Zebra',
 ];
 
 export const adjectives = [

@@ -1,8 +1,10 @@
 <ng-container *ngIf="tokenBalance">
-  <div
-    *ngIf=" !hasBalanceForPayment(tokenAmount, selectedSymbol, tokenBalance)">
+  <div *ngIf="!hasBalanceForPayment(tokenAmount, selectedSymbol, tokenBalance)">
     <small class="red-text">
-      <span>Not enough {{tokenBalance.contract_ticker_symbol}} in your account.</span>
+      <span
+        >Not enough {{ tokenBalance.contract_ticker_symbol }} in your
+        account.</span
+      >
       <!--<ng-template #noBalance>
         Not enough {{selectedSymbol}} on your account.
       </ng-template>-->

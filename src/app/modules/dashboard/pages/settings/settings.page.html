@@ -2,7 +2,8 @@
   <div class="col">
     <app-page-title
       title="Settings"
-      subtitle="Modify the gas price, Set Uniswap Slippage"></app-page-title>
+      subtitle="Modify the gas price, Set Uniswap Slippage"
+    ></app-page-title>
   </div>
 </div>
 
@@ -13,18 +14,26 @@
         <div class="card-body">
           <div *ngIf="gasPrices$ | async as gasPrices">
             <div *ngIf="selectedGas$ | async as selectedGas">
-              <div class="text-monospace small text-muted font-weight-bold mb-2">Select Gas Price</div>
+              <div
+                class="text-monospace small text-muted font-weight-bold mb-2"
+              >
+                Select Gas Price
+              </div>
               <mat-radio-group class="d-flex flex-column">
                 <mat-radio-button
                   (change)="setGas('safeLow', gasPrices['safeLow'])"
                   [checked]="selectedGas.type === 'safeLow'"
-                  [value]="gasPrices['safeLow']">
-                  <span class="small">Slow: {{ gasPrices['safeLow'] }} Gwei</span>
+                  [value]="gasPrices['safeLow']"
+                >
+                  <span class="small"
+                    >Slow: {{ gasPrices['safeLow'] }} Gwei</span
+                  >
                 </mat-radio-button>
                 <mat-radio-button
                   (change)="setGas('standard', gasPrices['standard'])"
                   [checked]="selectedGas.type === 'standard'"
-                  [value]="gasPrices['standard']">
+                  [value]="gasPrices['standard']"
+                >
                   <span class="small">
                     Standard: {{ gasPrices['standard'] }} Gwei
                   </span>
@@ -32,7 +41,8 @@
                 <mat-radio-button
                   (change)="setGas('fast', gasPrices['fast'])"
                   [checked]="selectedGas.type === 'fast'"
-                  [value]="gasPrices['fast']">
+                  [value]="gasPrices['fast']"
+                >
                   <span class="small">
                     Fast: {{ gasPrices['fast'] }} Gwei
                   </span>
@@ -49,25 +59,31 @@
       <div class="card h-100">
         <div class="card-body">
           <div
-            *ngIf="uniswapService.slippagePercent$ | async as slippagePercent">
-            <div class="text-monospace small text-muted font-weight-bold mb-2">Set Uniswap Slippage</div>
+            *ngIf="uniswapService.slippagePercent$ | async as slippagePercent"
+          >
+            <div class="text-monospace small text-muted font-weight-bold mb-2">
+              Set Uniswap Slippage
+            </div>
             <mat-radio-group class="d-flex flex-column">
               <mat-radio-button
                 (change)="uniswapService.setSlippage('0.1')"
                 [checked]="slippagePercent.toFixed(1) === '0.1'"
-                value="0.1">
+                value="0.1"
+              >
                 <span class="small">0.1%</span>
               </mat-radio-button>
               <mat-radio-button
                 (change)="uniswapService.setSlippage('0.5')"
                 [checked]="slippagePercent.toFixed(1) === '0.5'"
-                value="0.5">
+                value="0.5"
+              >
                 <span class="small">0.5%</span>
               </mat-radio-button>
               <mat-radio-button
                 (change)="uniswapService.setSlippage('1')"
                 [checked]="slippagePercent.toFixed(1) === '1.0'"
-                value="1.0">
+                value="1.0"
+              >
                 <span class="small">1%</span>
               </mat-radio-button>
             </mat-radio-group>

@@ -1,17 +1,17 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {ReefPage} from './pages/reef/reef.page';
-import {PoolPage} from './pages/pool/pool.page';
-import {FarmPage} from './pages/farm/farm.page';
-import {FarmsPage} from './pages/farms/farms.page';
-import {PoolsPage} from './pages/pools/pools.page';
-import {ReefMenuPage} from './pages/reef-menu/reef-menu.page';
-import {CardPage} from './pages/card/card.page';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ReefPage } from './pages/reef/reef.page';
+import { PoolPage } from './pages/pool/pool.page';
+import { FarmPage } from './pages/farm/farm.page';
+import { FarmsPage } from './pages/farms/farms.page';
+import { PoolsPage } from './pages/pools/pools.page';
+import { ReefMenuPage } from './pages/reef-menu/reef-menu.page';
+import { CardPage } from './pages/card/card.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ReefMenuPage
+    component: ReefMenuPage,
   },
   {
     path: 'buy',
@@ -36,12 +36,11 @@ const routes: Routes = [
   {
     path: 'card',
     component: CardPage,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ReefRoutingModule {
-}
+export class ReefRoutingModule {}

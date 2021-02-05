@@ -1,6 +1,8 @@
 <ng-container *ngIf="token$ | async as token">
   <ng-container *ngIf="!(error$ | async); else errorTemplate">
-    <ng-container *ngIf="pricePerTokens$ | async as price; else loadingTemplate">
+    <ng-container
+      *ngIf="pricePerTokens$ | async as price; else loadingTemplate"
+    >
       <ng-container *ngIf="providerUserInfo$ | async as userInfo">
         <div class="row">
           <div class="col">
@@ -15,43 +17,63 @@
             <div class="card max-w-350 margin-auto">
               <div class="card-body">
                 <div class="text-center">
-                  <img *ngIf="token === TokenSymbol.ETH"
-                       class="img-size-top-65"
-                       src="../../../../../assets/images/{{ 'eth.png' }}" alt="alt-token">
-                  <img *ngIf="token === TokenSymbol.USDT"
-                       class="img-size-top-65"
-                       src="../../../../../assets/images/{{ 'usdt.png' }}" alt="alt-token">
+                  <img
+                    *ngIf="token === TokenSymbol.ETH"
+                    class="img-size-top-65"
+                    src="../../../../../assets/images/{{ 'eth.png' }}"
+                    alt="alt-token"
+                  />
+                  <img
+                    *ngIf="token === TokenSymbol.USDT"
+                    class="img-size-top-65"
+                    src="../../../../../assets/images/{{ 'usdt.png' }}"
+                    alt="alt-token"
+                  />
                   <img
                     class="img-size-top-65"
-                    src="../../../../../assets/images/reef/reef-token.svg" alt="reef-token">
+                    src="../../../../../assets/images/reef/reef-token.svg"
+                    alt="reef-token"
+                  />
                 </div>
-                <div class="h6 m-4 text-center">Get
-                  <ng-container *ngIf="token !== TokenSymbol.REEF">{{ token }}–</ng-container>
+                <div class="h6 m-4 text-center">
+                  Get
+                  <ng-container *ngIf="token !== TokenSymbol.REEF"
+                    >{{ token }}–</ng-container
+                  >
                   REEF LP token
                 </div>
 
-                <div class="d-flex flex-column  mb-4 text-muted">
+                <div class="d-flex flex-column mb-4 text-muted">
                   <div>
                     <div class="small mb-1">REEF amount:</div>
-                    <div class="d-flex ">
+                    <div class="d-flex">
                       <input
                         appNumbersOnlyInput
-                        [ngModel]="reefAmount" step="1"
+                        [ngModel]="reefAmount"
+                        step="1"
                         (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF, token)"
                         class="form-control text-monospace small accent-text"
                         id="reefAmount"
                         (keydown)="preventDecimal($event )"
-                        placeholder="0" type="number"/>
+                        placeholder="0"
+                        type="number"
+                      />
                       <div class="w-5-pc">
-                      <img style="height: 25px"
-                        class="img-size-top-20 margin-em-05"
-                        src="../../../../../assets/images/reef/reef-token.svg" alt="">
+                        <img
+                          style="height: 25px"
+                          class="img-size-top-20 margin-em-05"
+                          src="../../../../../assets/images/reef/reef-token.svg"
+                          alt=""
+                        />
                       </div>
                     </div>
-                    <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
+                    <ng-container
+                      *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef"
+                    >
                       <app-exceeded-balance-msg
                         *ngIf="tokenBalanceReef.balance>0"
-                        [tokenBalance]="tokenBalanceReef" [tokenAmount]="reefAmount"
+                        [tokenBalance]="tokenBalanceReef"
+                        [tokenAmount]="reefAmount"
                       ></app-exceeded-balance-msg>
                       <app-set-input-relative-amount
                         [value]="tokenBalanceReef.balance"
@@ -62,28 +84,37 @@
                     </ng-container>
                   </div>
                 </div>
-                <div
-                  class="d-flex flex-column  mb-4 text-muted">
+                <div class="d-flex flex-column mb-4 text-muted">
                   <div>
                     <div class="small mb-1">{{ token }} amount:</div>
-                    <div class="d-flex ">
+                    <div class="d-flex">
                       <input
                         appNumbersOnlyInput
                         [ngModel]="tokenAmount"
                         (ngModelChange)="calcReefAmount($event, price.REEF_PER_TOKEN, token)"
                         class="form-control text-monospace small accent-text"
                         id="tokenAmount"
-                        placeholder="0.0" type="number"/>
+                        placeholder="0.0"
+                        type="number"
+                      />
                       <div class="w-5-pc">
-                        <img class=" margin-em-03 img-size-top-25" *ngIf="token === TokenSymbol.ETH"
-                             src="../../../../../assets/images/eth.png"
-                             alt="alt-token">
-                        <img class="img-size-top-20 margin-em-05" *ngIf=" token === TokenSymbol.USDT"
-                             src="../../../../../assets/images/usdt.png"
-                             alt="alt-token">
+                        <img
+                          class="margin-em-03 img-size-top-25"
+                          *ngIf="token === TokenSymbol.ETH"
+                          src="../../../../../assets/images/eth.png"
+                          alt="alt-token"
+                        />
+                        <img
+                          class="img-size-top-20 margin-em-05"
+                          *ngIf=" token === TokenSymbol.USDT"
+                          src="../../../../../assets/images/usdt.png"
+                          alt="alt-token"
+                        />
                       </div>
                     </div>
-                    <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
+                    <ng-container
+                      *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite"
+                    >
                       <app-exceeded-balance-msg
                         *ngIf="tokenBalanceReefOposite.balance>0"
                         [tokenBalance]="tokenBalanceReefOposite"
@@ -98,39 +129,45 @@
                     </ng-container>
                   </div>
                 </div>
-<!--                <div-->
-<!--                  class="row   mb-5">-->
-<!--                  <div class="card col-6">-->
-<!--                    <div class="card-body bg-purple">-->
-<!--                      <div class="small text-monospace text-center text-white">Reef per {{ token }}</div>-->
-<!--                      <div class="text-monospace text-center text-white">-->
-<!--                        {{ price.REEF_PER_TOKEN }}-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                  <div class="card col-6">-->
-<!--                    <div class="card-body bg-purple">-->
-<!--                      <div class="small text-monospace text-center text-white">{{ token }} per Reef</div>-->
-<!--                      <div class="text-monospace text-center text-white">-->
-<!--                        {{ price.TOKEN_PER_REEF }}-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
+                <!--                <div-->
+                <!--                  class="row   mb-5">-->
+                <!--                  <div class="card col-6">-->
+                <!--                    <div class="card-body bg-purple">-->
+                <!--                      <div class="small text-monospace text-center text-white">Reef per {{ token }}</div>-->
+                <!--                      <div class="text-monospace text-center text-white">-->
+                <!--                        {{ price.REEF_PER_TOKEN }}-->
+                <!--                      </div>-->
+                <!--                    </div>-->
+                <!--                  </div>-->
+                <!--                  <div class="card col-6">-->
+                <!--                    <div class="card-body bg-purple">-->
+                <!--                      <div class="small text-monospace text-center text-white">{{ token }} per Reef</div>-->
+                <!--                      <div class="text-monospace text-center text-white">-->
+                <!--                        {{ price.TOKEN_PER_REEF }}-->
+                <!--                      </div>-->
+                <!--                    </div>-->
+                <!--                  </div>-->
+                <!--                </div>-->
                 <div class="text-center">
-                  <ng-container *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef">
-                  <ng-container *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite">
-                  <button
-                    *ngIf="!loading"
-                    [disabled]="!reefAmount || !tokenAmount
+                  <ng-container
+                    *ngIf="(tokenBalanceReef$|async) as tokenBalanceReef"
+                  >
+                    <ng-container
+                      *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite"
+                    >
+                      <button
+                        *ngIf="!loading"
+                        [disabled]="!reefAmount || !tokenAmount
                       || reefAmount > tokenBalanceReef
                       || tokenAmount <= 0 || reefAmount <= 0
                       || tokenAmount > tokenBalanceReefOposite.balance
                       || reefAmount > tokenBalanceReef.balance"
-                    (click)="addLiquidity(token)" class="btn btn-primary m-2">
-                    Add Liquidity
-                  </button>
-                  </ng-container>
+                        (click)="addLiquidity(token)"
+                        class="btn btn-primary m-2"
+                      >
+                        Add Liquidity
+                      </button>
+                    </ng-container>
                   </ng-container>
                   <app-loading *ngIf="loading" diameter="25"></app-loading>
                 </div>
@@ -146,23 +183,42 @@
       <div class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4">
         <div class="card">
           <div class="card-body">
-            <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+            <div
+              class="d-flex flex-column align-items-center justify-content-center mb-3"
+            >
               <div class="d-flex align-items-center mb-2">
                 <div class="w-50">
-                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                  <app-skeleton-loading
+                    [count]="1"
+                    type="circle"
+                    appearance="circle"
+                  ></app-skeleton-loading>
                 </div>
                 <div class="w-50">
-                  <app-skeleton-loading [count]="1" type="circle" appearance="circle"></app-skeleton-loading>
+                  <app-skeleton-loading
+                    [count]="1"
+                    type="circle"
+                    appearance="circle"
+                  ></app-skeleton-loading>
                 </div>
               </div>
               <div class="mb-3 w-50">
-                <app-skeleton-loading [count]="1" type="transaction"></app-skeleton-loading>
+                <app-skeleton-loading
+                  [count]="1"
+                  type="transaction"
+                ></app-skeleton-loading>
               </div>
               <div class="mb-3 w-50">
-                <app-skeleton-loading [count]="2" type="vault"></app-skeleton-loading>
+                <app-skeleton-loading
+                  [count]="2"
+                  type="vault"
+                ></app-skeleton-loading>
               </div>
               <div class="mb-3 w-50">
-                <app-skeleton-loading [count]="1" type="composition"></app-skeleton-loading>
+                <app-skeleton-loading
+                  [count]="1"
+                  type="composition"
+                ></app-skeleton-loading>
               </div>
             </div>
           </div>
@@ -174,7 +230,8 @@
   <ng-template #errorTemplate>
     <app-empty-state
       title="Pool not found"
-      subtitle="{{ token }}-REEF Pool is not supported yet.">
+      subtitle="{{ token }}-REEF Pool is not supported yet."
+    >
     </app-empty-state>
   </ng-template>
 </ng-container>

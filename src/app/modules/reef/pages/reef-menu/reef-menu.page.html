@@ -1,7 +1,8 @@
 <div class="row">
   <app-page-title
     title="REEF Menu"
-    subtitle="Buy REEF, Provide Liquidity, or Farm REEF!"></app-page-title>
+    subtitle="Buy REEF, Provide Liquidity, or Farm REEF!"
+  ></app-page-title>
 </div>
 
 <div class="page__wrapper justify-content-around">
@@ -13,23 +14,27 @@
             <img
               width="75"
               height="75"
-              src="../../../../../assets/images/reef/reef_color.svg" alt="reef-token">
+              src="../../../../../assets/images/reef/reef_color.svg"
+              alt="reef-token"
+            />
           </div>
           <div
             class="d-flex flex-column align-items-center justify-content-center my-5"
-            *ngIf="providerUserInfo$ | async as userInfo">
-            <div class="mb-3 h5">
-              Buy REEF
-            </div>
+            *ngIf="providerUserInfo$ | async as userInfo"
+          >
+            <div class="mb-3 h5">Buy REEF</div>
             <ng-container *ngIf="reefBalance$ | async as reefBalance">
               <p class="text-monospace text-center small">Your REEF Balance</p>
-              <div class="h6">
-                {{ (reefBalance.balance | number) || 0 }}
-              </div>
+              <div class="h6">{{ (reefBalance.balance | number) || 0 }}</div>
             </ng-container>
           </div>
           <div class="d-flex align-items-center justify-content-center">
-            <button [routerLink]="['/reef/buy']" class="btn btn-primary font-weight-bold w-50">Buy</button>
+            <button
+              [routerLink]="['/reef/buy']"
+              class="btn btn-primary font-weight-bold w-50"
+            >
+              Buy
+            </button>
           </div>
         </div>
       </div>
@@ -41,17 +46,24 @@
             <img
               width="125"
               height="75"
-              src="../../../../../assets/images/reef/reef_erc20token.svg" alt="invest">
+              src="../../../../../assets/images/reef/reef_erc20token.svg"
+              alt="invest"
+            />
           </div>
           <div
-            class="d-flex flex-column align-items-center justify-content-center my-5">
-            <div class="mb-3 h5">
-              Earn UNI-LP Tokens
-            </div>
-            <p class="text-monospace text-center small">Provide Liquidity into a pool and earn a fee</p>
+            class="d-flex flex-column align-items-center justify-content-center my-5"
+          >
+            <div class="mb-3 h5">Earn UNI-LP Tokens</div>
+            <p class="text-monospace text-center small">
+              Provide Liquidity into a pool and earn a fee
+            </p>
           </div>
           <div class="d-flex align-items-center justify-content-center">
-            <button [routerLink]="['/reef/pools']" class="btn btn-primary font-weight-bold w-50">Pools
+            <button
+              [routerLink]="['/reef/pools']"
+              class="btn btn-primary font-weight-bold w-50"
+            >
+              Pools
             </button>
           </div>
         </div>
@@ -64,17 +76,25 @@
             <img
               width="75"
               height="75"
-              src="../../../../../assets/images/reef/reef_farming.svg" alt="farming">
+              src="../../../../../assets/images/reef/reef_farming.svg"
+              alt="farming"
+            />
           </div>
           <div
-            class="d-flex flex-column align-items-center justify-content-center my-5">
-            <div class="mb-3 h5">
-              Farm REEF
-            </div>
-            <p class="text-monospace text-center small">Deposit UNI-LP Tokens and earn REEF!</p>
+            class="d-flex flex-column align-items-center justify-content-center my-5"
+          >
+            <div class="mb-3 h5">Farm REEF</div>
+            <p class="text-monospace text-center small">
+              Deposit UNI-LP Tokens and earn REEF!
+            </p>
           </div>
           <div class="d-flex align-items-center justify-content-center">
-            <button [routerLink]="['/reef/farms']" class="btn btn-primary font-weight-bold w-50">Farms</button>
+            <button
+              [routerLink]="['/reef/farms']"
+              class="btn btn-primary font-weight-bold w-50"
+            >
+              Farms
+            </button>
           </div>
         </div>
       </div>

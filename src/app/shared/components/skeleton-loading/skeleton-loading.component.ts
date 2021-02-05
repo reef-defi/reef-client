@@ -1,11 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-type LoaderType = 'composition' | 'vault' | 'transaction' | 'chart' | 'basket' | 'circle';
+type LoaderType =
+  | 'composition'
+  | 'vault'
+  | 'transaction'
+  | 'chart'
+  | 'basket'
+  | 'circle';
 
 @Component({
   selector: 'app-skeleton-loading',
   templateUrl: './skeleton-loading.component.html',
-  styleUrls: ['./skeleton-loading.component.scss']
+  styleUrls: ['./skeleton-loading.component.scss'],
 })
 export class SkeletonLoadingComponent implements OnInit {
   @Input() type: LoaderType;
@@ -36,14 +42,10 @@ export class SkeletonLoadingComponent implements OnInit {
     circle: {
       height: '65px',
       width: '65px',
-    }
+    },
   };
 
-  constructor() {
-  }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
-
+  ngOnInit(): void {}
 }

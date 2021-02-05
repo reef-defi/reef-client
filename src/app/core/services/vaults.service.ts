@@ -6,17 +6,18 @@ import { IVault, IVaultBasket } from '../models/types';
 import { ApiService } from './api.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VaultsService {
   private readonly vaultsContract$ = this.connectorService.vaultsContract$;
   readonly userInfo = this.connectorService.providerUserInfo$;
   transactionInterval = null;
 
-  constructor(private readonly connectorService: ConnectorService,
-              private readonly notificationService: NotificationService,
-              private readonly apiService: ApiService) {
-  }
+  constructor(
+    private readonly connectorService: ConnectorService,
+    private readonly notificationService: NotificationService,
+    private readonly apiService: ApiService
+  ) {}
 
   public async getBasketVaults(): Promise<IVaultBasket[]> {
     const basketCount = await this.getAvailableVaultsBasketsCount();
@@ -40,11 +41,18 @@ export class VaultsService {
       }))
     );
     console.log(vaultBaskets, 'VAULTS_BASKETS');
-    return vaultBaskets
-      .filter((basket: IVaultBasket) => +basket.investedETH > 0 && basket.referrer === this.userInfo.value.address);
+    return vaultBaskets.filter(
+      (basket: IVaultBasket) =>
+        +basket.investedETH > 0 &&
+        basket.referrer === this.userInfo.value.address
+    );
   }
 
-  public async createBasketVaults(vaults: string[], vaultsWeights: number[], vaultsTypes: number[], amount: number
+  public async createBasketVaults(
+    vaults: string[],
+    vaultsWeights: number[],
+    vaultsTypes: number[],
+    amount: number
   ): Promise<any> {
     const wei = this.connectorService.toWei(amount);
     const name = basketNameGenerator();
@@ -52,61 +60,98 @@ export class VaultsService {
     console.log(adjustedWeights, 'adjusted.');
     try {
       console.log(name, 'name');
-      const res = await this.vaultsContract$.value.methods.createBasket(
-        name, vaults, vaultsWeights, vaultsTypes
-      ).send({
-        from: this.userInfo.value.address,
-        gas: 6721975,
-        value: `${wei}`
-      });
-      this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, [], `Vault created! Tx hash: ${res.transactionHash}`), 1000);
+      const res = await this.vaultsContract$.value.methods
+        .createBasket(name, vaults, vaultsWeights, vaultsTypes)
+        .send({
+          from: this.userInfo.value.address,
+          gas: 6721975,
+          value: `${wei}`,
+        });
+      this.transactionInterval = setInterval(
+        async () =>
+          await this.checkIfTransactionSuccess(
+            res,
+            [],
+            `Vault created! Tx hash: ${res.transactionHash}`
+          ),
+        1000
+      );
     } catch (e) {
-      this.notificationService.showNotification('The transaction did not go through.', 'Close', 'error');
+      this.notificationService.showNotification(
+        'The transaction did not go through.',
+        'Close',
+        'error'
+      );
     }
   }
 
-  public async disinvestFromVaults(basketIdx: number, percent: number, yieldRatio: number, shouldRestake: boolean): Promise<any> {
+  public async disinvestFromVaults(
+    basketIdx: number,
+    percent: number,
+    yieldRatio: number,
+    shouldRestake: boolean
+  ): Promise<any> {
     try {
-      const res = await this.vaultsContract$.value.methods.disinvest(basketIdx, percent, yieldRatio, shouldRestake).send({
-        from: this.userInfo.value.address,
-        gas: 6721975,
-      });
-      this.transactionInterval = setInterval(async () =>
-        await this.checkIfTransactionSuccess(res, [], `Successfully disinvested! Tx hash: ${res.transactionHash}`), 1000);
+      const res = await this.vaultsContract$.value.methods
+        .disinvest(basketIdx, percent, yieldRatio, shouldRestake)
+        .send({
+          from: this.userInfo.value.address,
+          gas: 6721975,
+        });
+      this.transactionInterval = setInterval(
+        async () =>
+          await this.checkIfTransactionSuccess(
+            res,
+            [],
+            `Successfully disinvested! Tx hash: ${res.transactionHash}`
+          ),
+        1000
+      );
     } catch (e) {
-      this.notificationService.showNotification('The transaction did not go through', 'Close', 'error');
-
+      this.notificationService.showNotification(
+        'The transaction did not go through',
+        'Close',
+        'error'
+      );
     }
   }
 
   private async getAvailableVaultsBasketsCount(): Promise<any> {
-    return await this.vaultsContract$.value.methods.availableBasketsSize().call();
+    return await this.vaultsContract$.value.methods
+      .availableBasketsSize()
+      .call();
   }
 
   private getAvailableBasket(basketIdx: number): Promise<any> {
-    return this.vaultsContract$.value.methods.availableBaskets(basketIdx).call();
+    return this.vaultsContract$.value.methods
+      .availableBaskets(basketIdx)
+      .call();
   }
 
   private async getBalanceOfVaults(basketIdx: number): Promise<any> {
-    const balance: string[] = await this.vaultsContract$.value.methods.balanceOfVaults(
-      this.userInfo.value.address, basketIdx
-    ).call();
-    return balance.map(vaultBalance => this.connectorService.fromWei(vaultBalance));
+    const balance: string[] = await this.vaultsContract$.value.methods
+      .balanceOfVaults(this.userInfo.value.address, basketIdx)
+      .call();
+    return balance.map((vaultBalance) =>
+      this.connectorService.fromWei(vaultBalance)
+    );
   }
 
   private async getInvestedAmountInBasket(basketIdx: number): Promise<string> {
-    const invested: string = await this.vaultsContract$.value.methods.investedAmountInBasket(
-      this.userInfo.value.address,
-      basketIdx
-    ).call();
+    const invested: string = await this.vaultsContract$.value.methods
+      .investedAmountInBasket(this.userInfo.value.address, basketIdx)
+      .call();
     return this.connectorService.fromWei(invested);
   }
 
   private async getAvailableBasketVaults(basketIdx: number): Promise<any> {
     const allVaults = this.apiService.vaults$.value;
     console.log(allVaults, 'allVaults');
-    const vaults: { [key: number]: string[] } = await this.vaultsContract$.value.methods.getAvailableBasketVaults(basketIdx).call();
+    const vaults: {
+      [key: number]: string[];
+    } = await this.vaultsContract$.value.methods
+      .getAvailableBasketVaults(basketIdx)
+      .call();
     const vaultsInfo = vaults[0].map((addr: string, i: number) => ({
       name: this.getVaultKey(allVaults, addr) || `Vault ${i}`,
       address: addr,
@@ -130,29 +175,50 @@ export class VaultsService {
     return weights;
   }
 
-  private async checkIfTransactionSuccess(tx: any, fns?: string[], text?: string): Promise<any> {
+  private async checkIfTransactionSuccess(
+    tx: any,
+    fns?: string[],
+    text?: string
+  ): Promise<any> {
     console.log(tx);
     if (!tx.transactionHash) {
-      this.notificationService.showNotification('Something went wrong.', 'Close', 'error');
+      this.notificationService.showNotification(
+        'Something went wrong.',
+        'Close',
+        'error'
+      );
       clearInterval(this.transactionInterval);
     }
-    const receipt = await this.connectorService.getTransactionReceipt(tx.transactionHash);
+    const receipt = await this.connectorService.getTransactionReceipt(
+      tx.transactionHash
+    );
     if (receipt && receipt.status) {
       if (fns && fns.length) {
-        fns.forEach(fn => this[fn]());
+        fns.forEach((fn) => this[fn]());
       }
-      this.notificationService.showNotification(text || `Tx Hash: ${tx.transactionHash}`, 'Okay', 'success');
-      const latestTx = await this.connectorService.getTxByHash(tx.transactionHash);
+      this.notificationService.showNotification(
+        text || `Tx Hash: ${tx.transactionHash}`,
+        'Okay',
+        'success'
+      );
+      const latestTx = await this.connectorService.getTxByHash(
+        tx.transactionHash
+      );
       if (this.connectorService.transactionsForAccount$.value) {
-        this.connectorService.transactionsForAccount$.next(
-          [...this.connectorService.transactionsForAccount$.value, latestTx]
-        );
+        this.connectorService.transactionsForAccount$.next([
+          ...this.connectorService.transactionsForAccount$.value,
+          latestTx,
+        ]);
       }
       clearInterval(this.transactionInterval);
     }
   }
 
   private getVaultKey(vaults: IVault, address: string): string {
-    return Object.keys(vaults)[Object.values(vaults).map(val => val.address).indexOf(address)];
+    return Object.keys(vaults)[
+      Object.values(vaults)
+        .map((val) => val.address)
+        .indexOf(address)
+    ];
   }
 }
