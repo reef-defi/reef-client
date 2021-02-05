@@ -75,10 +75,12 @@
               </div>
             </div>
             <ng-container *ngIf="selectedTokenBalance$ | async as tokenBalance">
-              <app-exceeded-balance-msg
-                [tokenBalance]="tokenBalance"
-                [tokenAmount]="tokenAmountSub.value"
-              ></app-exceeded-balance-msg>
+              <div class="d-flex align-items-center justify-content-center">
+                <app-exceeded-balance-msg
+                  [tokenBalance]="tokenBalance"
+                  [tokenAmount]="tokenAmountSub.value"
+                ></app-exceeded-balance-msg>
+              </div>
               <ng-container
                 *ngIf="connectorService.providerUserInfo$ | async as userInfo"
               >
@@ -114,10 +116,10 @@
                 >
                   Total REEF Reserve in this pool is
                   {{
-                    TokenUtil.toMaxDisplayDecimalPlaces(
-                      tokenPrices.totalReefReserve,
-                      TokenSymbol.REEF
-                    )
+                  TokenUtil.toMaxDisplayDecimalPlaces(
+                    tokenPrices.totalReefReserve,
+                    TokenSymbol.REEF
+                  )
                   }}
                   REEF
                 </div>
@@ -146,10 +148,10 @@
                         >
                           <div>
                             ~{{
-                              TokenUtil.toMaxDisplayDecimalPlaces(
-                                tokenPrices.amountOutMin,
-                                TokenSymbol.REEF
-                              )
+                            TokenUtil.toMaxDisplayDecimalPlaces(
+                              tokenPrices.amountOutMin,
+                              TokenSymbol.REEF
+                            )
                             }}
                             REEF
                           </div>
