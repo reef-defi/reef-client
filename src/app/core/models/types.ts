@@ -13,6 +13,19 @@ import {
   ApexYAxis,
 } from 'ng-apexcharts';
 
+export type RpcErrorTypes = {
+  [key in EErrorTypes]: string
+}
+
+export enum EErrorTypes {
+  USER_CANCELLED = 4001,
+  PARSE_ERROR = -32700,
+  INVALID_REQUEST = -32600,
+  METHOD_NOT_FOUND = -32601,
+  INVALID_PARAMS = -32602,
+  INTERNAL_ERROR = -32603,
+}
+
 export interface PendingTransaction {
   hash: string;
 }
@@ -118,11 +131,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
