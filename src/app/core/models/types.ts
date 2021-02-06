@@ -131,11 +131,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -396,4 +396,23 @@ export function getEnumKeyByEnumValue(
 ): string {
   const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
   return keys.length > 0 ? keys[0] : '';
+}
+
+export interface Bond {
+  id: number;
+  bondName: string;
+  bondDescription: string;
+  stake: string;
+  stakeTokenAddress: string;
+  stakeTokenLogo: string;
+  stakeDecimals: boolean;
+  farm: string;
+  farmTokenAddress: string;
+  farmTokenLogo: string;
+  farmStartTime: string;
+  farmEndTime: string;
+  entryExpirationTime: string;
+  apy: string;
+  lockDurationText: string;
+  bondContractAddress: string;
 }

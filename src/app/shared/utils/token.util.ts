@@ -1,6 +1,6 @@
-import { TokenSymbol } from '../../core/models/types';
+import {TokenSymbol} from '../../core/models/types';
 import BigNumber from 'bignumber.js';
-import { roundDownTo } from '../../core/utils/math-utils';
+import {roundDownTo} from '../../core/utils/math-utils';
 
 const symbolDisplayMaxDecimals = {
   [TokenSymbol.ETH]: 4,
@@ -49,7 +49,7 @@ export class TokenUtil {
 
   static toDisplayDecimalValue(
     contractIntegerBalanceValue: number,
-    tokenSymbol: TokenSymbol
+    tokenSymbol?: TokenSymbol
   ): string {
     let exponent = non18DecimalPlaces[tokenSymbol];
     if (!exponent) {

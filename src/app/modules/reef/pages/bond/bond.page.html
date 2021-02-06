@@ -1,0 +1,107 @@
+<ng-container *ngIf="bond$ | async as bond; else errorTemplate;">
+  <ng-container *ngIf="connectorService.providerUserInfo$ | async as userInfo">
+    <div class="row">
+      <div class="col">
+        <app-page-title
+          title="Bond"
+          subtitle="Stake tokens long-term and get returns"
+        ></app-page-title>
+      </div>
+    </div>
+    <div class="page__wrapper row">
+      <div class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4">
+        <div class="card max-w-350 margin-auto">
+          <div class="card-body">
+            <div class="text-center">
+              <img
+                class="img-size-top-65"
+                src="{{bond.farmTokenLogo}}"
+                alt="reef-bond"
+              />
+            </div>
+            <div class="h6 m-4 text-center">
+              Stake {{bond.farm}} for {{bond.lockDurationText}} <br> and get {{bond.apy}}% APY
+            </div>
+            <ng-container *ngIf="!!DateTimeUtil.getTimeDiff(now, bond.entryExpirationTime) else expired">
+              <div class="text-center text-muted text-monospace">
+                <app-countdown-timer [expiresDate]="bond.entryExpirationTime"></app-countdown-timer>
+              </div>
+
+              <div class="d-flex flex-column mb-4 text-muted">
+                <div>
+                  <div class="small mb-1">Deposit {{bond.stake}} amount:</div>
+                  <div class="d-flex">
+                    <input
+                      appNumbersOnlyInput
+                      [(ngModel)]="stakeAmount"
+                      step="1"
+                      class="form-control text-monospace small accent-text"
+                      id="stakeAmount"
+                      (keydown)="bond.stakeDecimals ? null : UiUtils.keydownPreventDecimal($event)"
+                      placeholder="0"
+                      type="number"
+                    />
+                    <div class="w-5-pc">
+                      <img
+                        style="height: 25px"
+                        class="img-size-top-20 margin-em-05"
+                        src="{{bond.stakeTokenLogo}}"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                  <ng-container
+                    *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance">
+                    <app-exceeded-balance-msg
+                      *ngIf="stakeAmount!=null && stakeTokenBalance.balance>0"
+                      [tokenBalance]="stakeTokenBalance"
+                      [tokenAmount]="stakeAmount"
+                    ></app-exceeded-balance-msg>
+                    <app-set-input-relative-amount
+                      [value]="stakeTokenBalance.balance"
+                      (valueChange)="stakeAmount=$event.toString()"
+                      [tokenSymbol]="bond.stake"
+                      (refreshBalance)="apiService.refreshBalancesForAddress.next(stakeTokenBalance.address)"
+                    ></app-set-input-relative-amount>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="text-center">
+                <ng-container *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance">
+                  <button
+                    [disabled]="!stakeAmount
+                      || stakeAmount <= 0
+                      || stakeAmount > stakeTokenBalance.balance"
+                    (click)="getBonds(bond, stakeAmount)"
+                    class="btn btn-primary m-2"
+                  >
+                    Get bonds
+                  </button>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-template #expired>
+              This bond sale ended.
+              Release of the funds will be on {{bond.farmEndTime|date}}.
+              <ng-container *ngIf="stakedBalance$|async as staked">
+                {{staked}} {{bond.farm}}
+                <ng-container *ngIf="stakedBalanceCurrentReturn$|async as stakedReturn">
+                  current amount earned {{stakedReturn}}
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</ng-container>
+
+<ng-template #errorTemplate>
+  <app-empty-state
+    title="Bond not found"
+    subtitle="Bond is not supported yet."
+  >
+  </app-empty-state>
+</ng-template>
