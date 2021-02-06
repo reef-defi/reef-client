@@ -383,11 +383,14 @@ export class ApiService {
           return of(tokenBalance);
         }
         return this.getBalanceOnChain$(addr, tokenSymbol).pipe(
-          map(v => ({
-            balance: parseFloat(v),
-            contract_ticker_symbol: tokenSymbol,
-            address: addr,
-          } as Token))
+          map(
+            (v) =>
+              ({
+                balance: parseFloat(v),
+                contract_ticker_symbol: tokenSymbol,
+                address: addr,
+              } as Token)
+          )
         );
       }),
       shareReplay(1)
@@ -463,7 +466,11 @@ export class ApiService {
     );
   }
 
-  private getContractBalance$(tokenSymbol: TokenSymbol, info: IProviderUserInfo, address: string) {
+  private getContractBalance$(
+    tokenSymbol: TokenSymbol,
+    info: IProviderUserInfo,
+    address: string
+  ) {
     const contract = this.connectorService.createErc20TokenContract(
       tokenSymbol,
       info.availableSmartContractAddresses

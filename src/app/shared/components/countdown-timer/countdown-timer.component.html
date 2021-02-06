@@ -1,7 +1,5 @@
-<ng-container *ngIf="expiresCountdownTime$|async as time else expired">
-  This bond sale ends in<br>
-  {{time.hours}}hours {{time.minutes}} minutes {{time.seconds}}  seconds.
+<ng-container *ngIf="expiresCountdownTime$ | async as time; else expired">
+  This bond sale ends in<br/>
+  {{ time.hours }}hours {{ time.minutes }} minutes {{ time.seconds }} seconds.
 </ng-container>
-<ng-template #expired>
-  This bond sale expired.
-</ng-template>
+<ng-template #expired> This bond sale expired.</ng-template>

@@ -20,11 +20,16 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Stake {{bond.farm}} for {{bond.lockDurationText}} <br> and get {{bond.apy}}% APY
+              Stake {{bond.farm}} for {{bond.lockDurationText}} <br/>
+              and get {{bond.apy}}% APY
             </div>
-            <ng-container *ngIf="!!DateTimeUtil.getTimeDiff(now, bond.entryExpirationTime) else expired">
+            <ng-container
+              *ngIf="!!DateTimeUtil.getTimeDiff(now, bond.entryExpirationTime) else expired"
+            >
               <div class="text-center text-muted text-monospace">
-                <app-countdown-timer [expiresDate]="bond.entryExpirationTime"></app-countdown-timer>
+                <app-countdown-timer
+                  [expiresDate]="bond.entryExpirationTime"
+                ></app-countdown-timer>
               </div>
 
               <div class="d-flex flex-column mb-4 text-muted">
@@ -51,7 +56,8 @@
                     </div>
                   </div>
                   <ng-container
-                    *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance">
+                    *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance"
+                  >
                     <app-exceeded-balance-msg
                       *ngIf="stakeAmount!=null && stakeTokenBalance.balance>0"
                       [tokenBalance]="stakeTokenBalance"
@@ -67,7 +73,9 @@
                 </div>
               </div>
               <div class="text-center">
-                <ng-container *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance">
+                <ng-container
+                  *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance"
+                >
                   <button
                     [disabled]="!stakeAmount
                       || stakeAmount <= 0
@@ -81,11 +89,13 @@
               </div>
             </ng-container>
             <ng-template #expired>
-              This bond sale ended.
-              Release of the funds will be on {{bond.farmEndTime|date}}.
+              This bond sale ended. Release of the funds will be on
+              {{bond.farmEndTime|date}}.
               <ng-container *ngIf="stakedBalance$|async as staked">
                 {{staked}} {{bond.farm}}
-                <ng-container *ngIf="stakedBalanceCurrentReturn$|async as stakedReturn">
+                <ng-container
+                  *ngIf="stakedBalanceCurrentReturn$|async as stakedReturn"
+                >
                   current amount earned {{stakedReturn}}
                 </ng-container>
               </ng-container>
@@ -95,13 +105,9 @@
       </div>
     </div>
   </ng-container>
-
 </ng-container>
 
 <ng-template #errorTemplate>
-  <app-empty-state
-    title="Bond not found"
-    subtitle="Bond is not supported yet."
-  >
+  <app-empty-state title="Bond not found" subtitle="Bond is not supported yet.">
   </app-empty-state>
 </ng-template>

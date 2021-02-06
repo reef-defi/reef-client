@@ -105,7 +105,12 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes, CountdownTimerComponent],
+  declarations: [
+    ...components,
+    ...directives,
+    ...pipes,
+    CountdownTimerComponent,
+  ],
   providers: [
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
@@ -117,6 +122,12 @@ const modules = [
     },
   ],
   imports: [...modules],
-  exports: [...components, ...directives, ...pipes, ...modules, CountdownTimerComponent],
+  exports: [
+    ...components,
+    ...directives,
+    ...pipes,
+    ...modules,
+    CountdownTimerComponent,
+  ],
 })
 export class SharedModule {}

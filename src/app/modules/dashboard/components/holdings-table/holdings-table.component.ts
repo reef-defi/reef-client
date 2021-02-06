@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, Input} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-holdings-table',
@@ -9,6 +9,7 @@ import {Router} from "@angular/router";
 export class HoldingsTableComponent {
   constructor(private readonly router: Router) {
   }
+
   @Input() portfolio;
 
   goToReef() {

@@ -27,7 +27,7 @@ const pages = [
   PoolsPage,
   CardPage,
   BondsPage,
-  BondPage
+  BondPage,
 ];
 
 @NgModule({
