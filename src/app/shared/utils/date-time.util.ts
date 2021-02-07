@@ -5,7 +5,9 @@ export class DateTimeUtil {
   public static getTimeDiff(
     startDate: Date | string,
     endDate: Date | string
-  ): { days: number; hours: number; minutes: number; seconds: number } {
+  ): {
+    years: number; months: number; weeks: number; days: number, hours: number, minutes: number, seconds: number
+  } {
     startDate = DateTimeUtil.toDate(startDate);
     endDate = DateTimeUtil.toDate(endDate);
     const diff = endDate.getTime() - startDate.getTime();
@@ -13,14 +15,8 @@ export class DateTimeUtil {
     if (isNaN(diff) || diff < 0) {
       return null;
     }
-    const diffDate = new Date(diff);
     const diffDays = Math.floor(diff / this._MS_PER_DAY);
-    return {
-      days: diffDays,
-      hours: diffDate.getHours(),
-      minutes: diffDate.getMinutes(),
-      seconds: diffDate.getSeconds(),
-    };
+    return {...DateTimeUtil.toYMDValue(diffDays), ...DateTimeUtil.toHMSValue(diff)};
   }
 
   static toYMDValue(
@@ -50,6 +46,28 @@ export class DateTimeUtil {
       months,
       weeks,
       days,
+    };
+  }
+
+  static toHMSValue(
+    millis: number
+  ): {
+    hours: number,
+    minutes: number,
+    seconds: number
+  } {
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+
+    const hours = Math.floor(millis / hour % 24);
+    const minutes = Math.floor(millis / minute % 60);
+    const seconds = Math.floor(millis / second % 60);
+
+    return {
+      hours,
+      minutes,
+      seconds
     };
   }
 

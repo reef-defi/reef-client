@@ -34,7 +34,7 @@ export class BondsService {
         1000 * 60 * 60 * 24 * 365
       ).toString(),
       farmDecimals: 1,
-      entryExpirationTime: (new Date().getTime() - 1000 * 60 * 60).toString(),
+      entryExpirationTime: (new Date().getTime() + (1000 * 10)).toString(),
       apy: '40',
       // lockDurationText: '1 year',
       bondContractAddress: '',
