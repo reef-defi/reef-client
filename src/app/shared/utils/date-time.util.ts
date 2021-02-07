@@ -86,7 +86,11 @@ export class DateTimeUtil {
     }
     console.log('toDate VVV=', dateVal);
 
-    if (typeof dateVal === 'string' && dateVal.indexOf(':') < 0 && !isNaN(parseInt(dateVal, 10))) {
+    if (
+      typeof dateVal === 'string' &&
+      dateVal.indexOf(':') < 0 &&
+      !isNaN(parseInt(dateVal, 10))
+    ) {
       dateVal = parseInt(dateVal, 10);
     }
     return new Date(dateVal);

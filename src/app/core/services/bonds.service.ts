@@ -46,20 +46,28 @@ export class BondsService {
       farm: 'REEF',
       farmTokenAddress: '',
       farmTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      farmStartTime: (new Date(((new Date().getTime()) - (1000 * 60 * 60 * 24 * 365)))).toString(),
-      farmEndTime: (new Date(((new Date().getTime()) + (1000 * 60 * 60 * 24 * 365)))).toString(),
+      farmStartTime: new Date(
+        new Date().getTime() - 1000 * 60 * 60 * 24 * 365
+      ).toString(),
+      farmEndTime: new Date(
+        new Date().getTime() + 1000 * 60 * 60 * 24 * 365
+      ).toString(),
       farmDecimals: 1,
-      entryExpirationTime: (new Date(((new Date().getTime()) + (1000 * 10)))).toString(),
+      entryExpirationTime: new Date(
+        new Date().getTime() + 1000 * 10
+      ).toString(),
       apy: '40',
       // lockDurationText: '1 year',
       bondContractAddress: '',
     } as Bond,
   ]);
 
-  public bondsList_$: Observable<Bond[]> = this.http.get(environment.reefNodeApiUrl + '/bonds').pipe(
-    tap(v => console.log('BBB=', v)),
-    shareReplay(1)
-  ) as Observable<Bond[]>;
+  public bondsList_$: Observable<Bond[]> = this.http
+    .get(environment.reefNodeApiUrl + '/bonds')
+    .pipe(
+      tap((v) => console.log('BBB=', v)),
+      shareReplay(1)
+    ) as Observable<Bond[]>;
 
   constructor(
     private http: HttpClient,

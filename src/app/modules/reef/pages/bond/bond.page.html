@@ -27,9 +27,11 @@
             </div>
             <div class="h6 m-4 text-center">
               Stake {{bond.farm}}
-              <ng-container *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
-              bond.farmEndTime) as timespanText">for
-                {{timespanText}}</ng-container>
+              <ng-container
+                *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
+              bond.farmEndTime) as timespanText"
+              >for {{timespanText}}</ng-container
+              >
               <br/>
               and get {{bond.apy}}% APY
             </div>
