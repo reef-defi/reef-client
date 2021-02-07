@@ -9,11 +9,12 @@ import {UiUtils} from '../../../../shared/utils/ui.utils';
 import {ApiService} from '../../../../core/services/api.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {DateTimeUtil} from '../../../../shared/utils/date-time.util';
-import Web3 from 'web3';
-import {abi as erc20Abi} from '@uniswap/v2-core/build/IUniswapV2ERC20.json';
 import {TokenUtil} from '../../../../shared/utils/token.util';
-import {timer} from 'rxjs';
-import {tap} from 'rxjs/internal/operators/tap';
+import {Observable, timer} from 'rxjs';
+import {BondUtil} from '../../../../shared/utils/bond.util';
+
+
+let timer$ = timer(0, 1000);
 
 @Component({
   selector: 'app-bond',
@@ -26,8 +27,8 @@ export class BondPage {
 
   UiUtils = UiUtils;
   DateTimeUtil = DateTimeUtil;
-  now = new Date();
-  private millisPerYear = 1000 * 60 * 60 * 24 * 365;
+  BondUtil = BondUtil;
+  TokenUtil = TokenUtil;
 
   bond$ = combineLatest([
     this.bondsService.bondsList$,
@@ -49,54 +50,30 @@ export class BondPage {
     shareReplay(1)
   );
 
-  stakedBalance$ = combineLatest([
-    this.connectorService.web3$,
+  private stakedBalance$ = combineLatest([
     this.bond$,
     this.connectorService.providerUserInfo$,
   ]).pipe(
-    switchMap(([web3, bond, info]: [Web3, Bond, IProviderUserInfo]) =>
-      this.getBalanceOf(web3, bond, info.address)
-    ),
+    switchMap(([bond, info]: [Bond, IProviderUserInfo]) =>
+        this.bondsService.getStakedBalanceOf(bond, info.address),
+      (bondInfo, balance
+      ) => ({bond: bondInfo[0], info: bondInfo[1], balance})),
     shareReplay(1)
   );
-  stakedBalanceCurrentReturn$ = timer(0, 1000).pipe(
-    tap((v) => console.log('TTTT')),
-    switchMap((_) =>
-      combineLatest([this.bond$, this.stakedBalance$]).pipe(
-        map(([bond, balance]: [Bond, string]) => {
-          const yearlyReturnTotal =
-            (parseFloat(bond.apy) / 100) * parseFloat(balance);
-          const startT = DateTimeUtil.toDate(bond.farmStartTime).getTime();
-          const endT = DateTimeUtil.toDate(bond.farmEndTime).getTime();
-          const secDiff = endT - startT;
-          const yearlyFarmDurationTimeRel = secDiff / this.millisPerYear;
-          const farmReturnTotal = yearlyReturnTotal * yearlyFarmDurationTimeRel;
-          const farmRelTimeElapsed = (this.now.getTime() - startT) / secDiff;
-          console.log('fa VVV=', farmRelTimeElapsed);
-          return farmReturnTotal * farmRelTimeElapsed;
-        })
-      )
-    ),
+  stakedBalanceReturn$ = combineLatest([this.stakedBalance$, timer$]).pipe(
+    // tslint:disable-next-line:variable-name
+    map(([bond_info_balance, tmr]: [{ bond: Bond, info: IProviderUserInfo, balance: string }, any]
+    ) => ({
+      bond: bond_info_balance.bond,
+      staked: parseFloat(bond_info_balance.balance),
+      ...BondUtil.getBondReturn(bond_info_balance.bond, bond_info_balance.balance)
+      // totalInterestReturn: (parseFloat(bond_info_balance.bond.apy) / 100) * parseFloat(bond_info_balance.balance)
+    })),
     shareReplay(1)
+  ) as Observable<{ bond: Bond, staked: number, currentInterestReturn: number, totalInterestReturn: number }>;
+  timeLeftToExpired$ = combineLatest([this.bond$, timer$]).pipe(
+    map(([bond, _]: [Bond, any]) => DateTimeUtil.getTimeDiff(new Date(), bond.entryExpirationTime))
   );
-
-  private getBalanceOf(web3: Web3, bond: Bond, balanceForAddress: string) {
-    console.log('getBalanceOf !!! REMOVE mock');
-    return Promise.resolve('1000');
-    const contract = new web3.eth.Contract(
-      erc20Abi as any,
-      bond.bondContractAddress
-    );
-    return contract.methods
-      .balanceOf(balanceForAddress)
-      .call()
-      .then((balance) => {
-        return TokenUtil.toDisplayDecimalValue(
-          balance,
-          bond.farm as TokenSymbol
-        );
-      }) as Promise<string>;
-  }
 
   constructor(
     private route: ActivatedRoute,

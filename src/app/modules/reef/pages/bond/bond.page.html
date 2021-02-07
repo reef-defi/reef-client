@@ -13,6 +13,11 @@
         <div class="card max-w-350 margin-auto">
           <div class="card-body">
             <div class="text-center">
+              <img *ngIf="bond.farm!==bond.stake"
+                   class="img-size-top-65"
+                   src="{{bond.stakeTokenLogo}}"
+                   alt="reef-bond"
+              />
               <img
                 class="img-size-top-65"
                 src="{{bond.farmTokenLogo}}"
@@ -20,11 +25,12 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Stake {{bond.farm}} for {{bond.lockDurationText}} <br/>
+              Stake {{bond.farm}} for {{UiUtils.toMinTimespanText(bond.farmStartTime, bond.farmEndTime)}} <br/>
               and get {{bond.apy}}% APY
+
             </div>
             <ng-container
-              *ngIf="!!DateTimeUtil.getTimeDiff(now, bond.entryExpirationTime) else expired"
+              *ngIf="(timeLeftToExpired$|async)!=null else expired"
             >
               <div class="text-center text-muted text-monospace">
                 <app-countdown-timer
@@ -74,6 +80,13 @@
               </div>
               <div class="text-center">
                 <ng-container
+                  *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bond, stakeAmount).totalInterestReturn, null, bond.farmDecimals) as stakeAmountInterest; else enterValue ">
+                  <h5>You will earn <br>{{stakeAmountInterest}} {{bond.farm}} extra.</h5>
+                </ng-container>
+                <ng-template #enterValue>
+                  <h5>Enter value to see the return.</h5>
+                </ng-template>
+                <ng-container
                   *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance"
                 >
                   <button
@@ -83,22 +96,28 @@
                     (click)="getBonds(bond, stakeAmount)"
                     class="btn btn-primary m-2"
                   >
-                    Get bonds
+                    Get the bond
                   </button>
                 </ng-container>
               </div>
             </ng-container>
             <ng-template #expired>
-              This bond sale ended. Release of the funds will be on
-              {{bond.farmEndTime|date}}.
-              <ng-container *ngIf="stakedBalance$|async as staked">
-                {{staked}} {{bond.farm}}
-                <ng-container
-                  *ngIf="stakedBalanceCurrentReturn$|async as stakedReturn"
-                >
-                  current amount earned {{stakedReturn}}
+              <p class="text-center">
+                This bond sale <span class="accent-text">ended {{bond.entryExpirationTime|date:'short'}}</span>.<br>
+                <span class="accent-text">Release</span> of the funds will be <span class="accent-text">on
+                {{bond.farmEndTime|date}}</span>.<br>
+                <ng-container *ngIf="stakedBalanceReturn$|async as stakedReturn">
+                  You have <span class="accent-text">staked {{stakedReturn.staked}} {{stakedReturn.bond.farm}}</span>.
+
+                  <span class="accent-text">Current interest</span> return amounts to <span
+                  class="accent-text">{{stakedReturn.currentInterestReturn}} {{stakedReturn.bond.farm}}</span>
+                  .<br>
+                  You will <span class="accent-text">receive</span> total of <span
+                  class="accent-text">{{stakedReturn.totalInterestReturn}} {{stakedReturn.bond.farm}}</span> in interest
+                  and <span class="accent-text">{{stakedReturn.staked}} {{stakedReturn.bond.stake}}</span> staked <span
+                  class="accent-text">on {{stakedReturn.bond.farmEndTime|date}}</span>.
                 </ng-container>
-              </ng-container>
+              </p>
             </ng-template>
           </div>
         </div>

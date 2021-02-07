@@ -411,8 +411,8 @@ export interface Bond {
   farmTokenLogo: string;
   farmStartTime: string;
   farmEndTime: string;
+  farmDecimals: number;
   entryExpirationTime: string;
   apy: string;
-  lockDurationText: string;
   bondContractAddress: string;
 }

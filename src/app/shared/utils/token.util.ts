@@ -18,18 +18,13 @@ const non18DecimalPlaces = {
 export class TokenUtil {
   static toMaxDisplayDecimalPlaces(
     value: number | string,
-    tokenSymbol: TokenSymbol
+    tokenSymbol: TokenSymbol,
+    maxDecimalPlaces?: number
   ): number {
     if (typeof value === 'string') {
       value = new BigNumber(value, 10).toNumber();
     }
-    const maxDecimals = TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
-    /*const num = (new BigNumber(value)).toFixed();
-    const splitDecimals = num.split('.');
-    if (splitDecimals.length === 2 && !!splitDecimals[1].length) {
-      return parseFloat(splitDecimals[0] + '.' + splitDecimals[1].slice(0, maxDecimals));
-    }
-    return value;*/
+    const maxDecimals = maxDecimalPlaces != null ? maxDecimalPlaces : TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
     return roundDownTo(value, maxDecimals);
   }
 
