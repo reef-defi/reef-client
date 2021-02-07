@@ -14,10 +14,7 @@ export class CountdownTimerComponent {
 
   @Input()
   set expiresDate(val: Date | string) {
-    if (typeof val === 'string') {
-      val = new Date(parseInt(val));
-    }
-    this.expiredDateSub.next(val);
+    this.expiredDateSub.next(DateTimeUtil.toDate(val));
   }
 
   expiresCountdownTime$ = timer(0, 1000).pipe(

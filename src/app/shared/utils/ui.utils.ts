@@ -13,19 +13,18 @@ export class UiUtils {
   ): string {
     let returnStr = '';
     const diff = DateTimeUtil.getTimeDiff(startDate, endDate);
-    if (diff && diff.days) {
-      const ymd = DateTimeUtil.toYMDValue(diff.days);
-      if (!!ymd.years) {
-        returnStr += ymd.years + ' years';
+    if (diff) {
+      if (!!diff.years) {
+        returnStr += diff.years + ' years';
       }
-      if (!!ymd.months) {
-        returnStr += ' ' + ymd.months + ' months';
+      if (!!diff.months) {
+        returnStr += ' ' + diff.months + ' months';
       }
-      if (!!ymd.weeks) {
-        returnStr += ' ' + ymd.weeks + ' weeks';
+      if (!!diff.weeks) {
+        returnStr += ' ' + diff.weeks + ' weeks';
       }
-      if (!!ymd.days) {
-        returnStr += ' ' + ymd.days + ' days';
+      if (!!diff.days) {
+        returnStr += ' ' + diff.days + ' days';
       }
     }
     return returnStr;

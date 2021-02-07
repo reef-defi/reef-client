@@ -6,7 +6,13 @@ export class DateTimeUtil {
     startDate: Date | string,
     endDate: Date | string
   ): {
-    years: number; months: number; weeks: number; days: number, hours: number, minutes: number, seconds: number
+    years: number;
+    months: number;
+    weeks: number;
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
   } {
     startDate = DateTimeUtil.toDate(startDate);
     endDate = DateTimeUtil.toDate(endDate);
@@ -16,7 +22,10 @@ export class DateTimeUtil {
       return null;
     }
     const diffDays = Math.floor(diff / this._MS_PER_DAY);
-    return {...DateTimeUtil.toYMDValue(diffDays), ...DateTimeUtil.toHMSValue(diff)};
+    return {
+      ...DateTimeUtil.toYMDValue(diffDays),
+      ...DateTimeUtil.toHMSValue(diff),
+    };
   }
 
   static toYMDValue(
@@ -52,22 +61,22 @@ export class DateTimeUtil {
   static toHMSValue(
     millis: number
   ): {
-    hours: number,
-    minutes: number,
-    seconds: number
+    hours: number;
+    minutes: number;
+    seconds: number;
   } {
     const second = 1000;
     const minute = second * 60;
     const hour = minute * 60;
 
-    const hours = Math.floor(millis / hour % 24);
-    const minutes = Math.floor(millis / minute % 60);
-    const seconds = Math.floor(millis / second % 60);
+    const hours = Math.floor((millis / hour) % 24);
+    const minutes = Math.floor((millis / minute) % 60);
+    const seconds = Math.floor((millis / second) % 60);
 
     return {
       hours,
       minutes,
-      seconds
+      seconds,
     };
   }
 
@@ -75,7 +84,9 @@ export class DateTimeUtil {
     if (dateVal instanceof Date) {
       return dateVal;
     }
-    if (typeof dateVal === 'string' && !isNaN(parseInt(dateVal, 10))) {
+    console.log('toDate VVV=', dateVal);
+
+    if (typeof dateVal === 'string' && dateVal.indexOf(':') < 0 && !isNaN(parseInt(dateVal, 10))) {
       dateVal = parseInt(dateVal, 10);
     }
     return new Date(dateVal);

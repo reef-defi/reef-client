@@ -26,9 +26,11 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Stake {{bond.farm}} for
-              {{UiUtils.toMinTimespanText(bond.farmStartTime,
-              bond.farmEndTime)}} <br/>
+              Stake {{bond.farm}}
+              <ng-container *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
+              bond.farmEndTime) as timespanText">for
+                {{timespanText}}</ng-container>
+              <br/>
               and get {{bond.apy}}% APY
             </div>
             <ng-container *ngIf="(timeLeftToExpired$|async)!=null else expired">
@@ -107,7 +109,7 @@
             </ng-container>
             <ng-template #expired>
               <p class="text-center">
-                This bond sale
+                This bond offer
                 <span class="accent-text"
                 >ended {{bond.entryExpirationTime|date:'short'}}</span
                 >.<br/>
