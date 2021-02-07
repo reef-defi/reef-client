@@ -9,7 +9,8 @@ export class UiUtils {
 
   static toMinTimespanText(
     startDate: Date | string,
-    endDate: Date | string): string {
+    endDate: Date | string
+  ): string {
     let returnStr = '';
     const diff = DateTimeUtil.getTimeDiff(startDate, endDate);
     if (diff && diff.days) {
@@ -29,5 +30,4 @@ export class UiUtils {
     }
     return returnStr;
   }
-
 }

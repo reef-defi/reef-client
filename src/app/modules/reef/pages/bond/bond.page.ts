@@ -13,7 +13,6 @@ import {TokenUtil} from '../../../../shared/utils/token.util';
 import {Observable, timer} from 'rxjs';
 import {BondUtil} from '../../../../shared/utils/bond.util';
 
-
 let timer$ = timer(0, 1000);
 
 @Component({
@@ -54,25 +53,40 @@ export class BondPage {
     this.bond$,
     this.connectorService.providerUserInfo$,
   ]).pipe(
-    switchMap(([bond, info]: [Bond, IProviderUserInfo]) =>
+    switchMap(
+      ([bond, info]: [Bond, IProviderUserInfo]) =>
         this.bondsService.getStakedBalanceOf(bond, info.address),
-      (bondInfo, balance
-      ) => ({bond: bondInfo[0], info: bondInfo[1], balance})),
+      (bondInfo, balance) => ({bond: bondInfo[0], info: bondInfo[1], balance})
+    ),
     shareReplay(1)
   );
   stakedBalanceReturn$ = combineLatest([this.stakedBalance$, timer$]).pipe(
     // tslint:disable-next-line:variable-name
-    map(([bond_info_balance, tmr]: [{ bond: Bond, info: IProviderUserInfo, balance: string }, any]
-    ) => ({
-      bond: bond_info_balance.bond,
-      staked: parseFloat(bond_info_balance.balance),
-      ...BondUtil.getBondReturn(bond_info_balance.bond, bond_info_balance.balance)
-      // totalInterestReturn: (parseFloat(bond_info_balance.bond.apy) / 100) * parseFloat(bond_info_balance.balance)
-    })),
+    map(
+      ([bond_info_balance, tmr]: [
+        { bond: Bond; info: IProviderUserInfo; balance: string },
+        any
+      ]) => ({
+        bond: bond_info_balance.bond,
+        staked: parseFloat(bond_info_balance.balance),
+        ...BondUtil.getBondReturn(
+          bond_info_balance.bond,
+          bond_info_balance.balance
+        ),
+        // totalInterestReturn: (parseFloat(bond_info_balance.bond.apy) / 100) * parseFloat(bond_info_balance.balance)
+      })
+    ),
     shareReplay(1)
-  ) as Observable<{ bond: Bond, staked: number, currentInterestReturn: number, totalInterestReturn: number }>;
+  ) as Observable<{
+    bond: Bond;
+    staked: number;
+    currentInterestReturn: number;
+    totalInterestReturn: number;
+  }>;
   timeLeftToExpired$ = combineLatest([this.bond$, timer$]).pipe(
-    map(([bond, _]: [Bond, any]) => DateTimeUtil.getTimeDiff(new Date(), bond.entryExpirationTime))
+    map(([bond, _]: [Bond, any]) =>
+      DateTimeUtil.getTimeDiff(new Date(), bond.entryExpirationTime)
+    )
   );
 
   constructor(

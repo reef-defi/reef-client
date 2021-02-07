@@ -20,13 +20,11 @@ export class BondsService {
       bondDescription: '',
       stake: 'REEF',
       stakeTokenAddress: '',
-      stakeTokenLogo:
-        'http://localhost:4200/assets/images/reef/reef-token.svg',
+      stakeTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
       stakeDecimals: false,
       farm: 'REEF',
       farmTokenAddress: '',
-      farmTokenLogo:
-        'http://localhost:4200/assets/images/reef/reef-token.svg',
+      farmTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
       farmStartTime: (
         new Date().getTime() -
         1000 * 60 * 60 * 24 * 365
@@ -41,14 +39,20 @@ export class BondsService {
       // lockDurationText: '1 year',
       bondContractAddress: '',
     } as Bond,
-  ]);/*,
+  ]); /*,
     shareReplay(1)
   ) as Observable<Bond[]>;*/
 
-  constructor(private http: HttpClient, private connectorService: ConnectorService) {
+  constructor(
+    private http: HttpClient,
+    private connectorService: ConnectorService
+  ) {
   }
 
-  getStakedBalanceOf(bond: Bond, balanceForAddress: string): Observable<string> {
+  getStakedBalanceOf(
+    bond: Bond,
+    balanceForAddress: string
+  ): Observable<string> {
     console.log('getBalanceOf !!! REMOVE mock');
     return of('1000');
     return this.connectorService.web3$.pipe(
@@ -69,5 +73,4 @@ export class BondsService {
       })
     ) as Observable<string>;
   }
-
 }

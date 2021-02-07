@@ -24,7 +24,10 @@ export class TokenUtil {
     if (typeof value === 'string') {
       value = new BigNumber(value, 10).toNumber();
     }
-    const maxDecimals = maxDecimalPlaces != null ? maxDecimalPlaces : TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
+    const maxDecimals =
+      maxDecimalPlaces != null
+        ? maxDecimalPlaces
+        : TokenUtil.getMaxDecimalsDisplayNr(tokenSymbol);
     return roundDownTo(value, maxDecimals);
   }
 

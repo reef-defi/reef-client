@@ -23,7 +23,9 @@ export class DateTimeUtil {
     };
   }
 
-  static toYMDValue(daysParam: number): { years: number, months: number, weeks: number, days: number } {
+  static toYMDValue(
+    daysParam: number
+  ): { years: number; months: number; weeks: number; days: number } {
     let months = 0;
     let years = 0;
     let days = 0;
@@ -44,7 +46,10 @@ export class DateTimeUtil {
       }
     }
     return {
-      years, months, weeks, days
+      years,
+      months,
+      weeks,
+      days,
     };
   }
 
