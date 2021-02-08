@@ -1,4 +1,4 @@
-import { TokenSymbol } from '../../core/models/types';
+import { TokenSymbol, TransactionType } from '../../core/models/types';
 import BigNumber from 'bignumber.js';
 import { roundDownTo } from '../../core/utils/math-utils';
 
@@ -69,6 +69,21 @@ export class TokenUtil {
       return symbol;
     }
     return tokenSymbol;
+  }
+
+  public static getTransactionTypeByTokenName(
+    tokenSymbol: TokenSymbol
+  ): TransactionType {
+    switch (tokenSymbol) {
+      case TokenSymbol.REEF_USDT_POOL:
+        return TransactionType.REEF_USDT_FARM;
+      case TokenSymbol.REEF_WETH_POOL:
+        return TransactionType.REEF_ETH_FARM;
+      case TokenSymbol.REEF:
+        return TransactionType.REEF_FARM;
+      default:
+        return TransactionType.REEF_FARM;
+    }
   }
 
   private static getMaxDecimalsDisplayNr(tokenSymbol: TokenSymbol): number {

@@ -19,6 +19,7 @@ import { IPendingTransactions } from './core/models/types';
 import { GoogleAnalyticsService } from './shared/service/google-analytics.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationService } from './core/services/notification.service';
+import { TransactionsService } from './core/services/transactions.service';
 // GoogleAnalytics - declare gtag as a function to access the JS code in TS
 declare let gtag: Function;
 
@@ -43,7 +44,8 @@ export class AppComponent implements OnInit {
     private readonly router: Router,
     private readonly uniswapService: UniswapService,
     googleAnalyticsService: GoogleAnalyticsService,
-    private readonly notification: NotificationService
+    private readonly notification: NotificationService,
+    private readonly transactionService: TransactionsService
   ) {
     const isWalletConnected$ = this.connectorService.currentProviderName$;
     isWalletConnected$.subscribe((v) => {
@@ -110,12 +112,12 @@ export class AppComponent implements OnInit {
 
   private checkPendingTransactions() {
     const pendingTxs: IPendingTransactions = JSON.parse(
-      localStorage.getItem(ConnectorService.PENDING_TX_KEY)
+      localStorage.getItem(TransactionsService.PENDING_TX_KEY)
     );
     if (!!pendingTxs && pendingTxs.transactions.length > 0) {
-      this.connectorService.initPendingTxs(pendingTxs);
+      this.transactionService.initPendingTxs(pendingTxs);
       setInterval(() => {
-        this.connectorService.initPendingTxs(pendingTxs);
+        this.transactionService.initPendingTxs(pendingTxs);
       }, 5000);
     }
   }

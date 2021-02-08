@@ -14,8 +14,10 @@ import { BehaviorSubject, combineLatest, EMPTY, Observable, of } from 'rxjs';
 import {
   IProviderUserInfo,
   IReefPricePerToken,
+  PendingTransaction,
   Token,
   TokenSymbol,
+  TransactionType,
 } from '../../../../core/models/types';
 import { first } from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
@@ -24,6 +26,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { Contract } from 'web3-eth-contract';
 import { AddressUtils } from '../../../../shared/utils/address.utils';
 import { TokenUtil } from '../../../../shared/utils/token.util';
+import { TransactionsService } from '../../../../core/services/transactions.service';
 
 @Component({
   selector: 'app-pool-page',
@@ -31,6 +34,7 @@ import { TokenUtil } from '../../../../shared/utils/token.util';
   styleUrls: ['./pool.page.scss'],
 })
 export class PoolPage {
+  TransactionType = TransactionType;
   readonly token$: Observable<TokenSymbol> = this.route.params.pipe(
     map((params) => TokenSymbol[params.token]),
     filter((v) => !!v),
@@ -38,6 +42,9 @@ export class PoolPage {
   );
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly error$ = new BehaviorSubject<boolean>(false);
+  readonly pendingTransactions$ = this.transactionService.getPendingTransactions(
+    [TransactionType.LIQUIDITY_USDT, TransactionType.LIQUIDITY_ETH]
+  );
   public reefContract$: Observable<Contract | null>;
   public lpTokenContract$: Observable<Contract | null>;
   public pricePerTokens$: Observable<IReefPricePerToken | null> = of(null);
@@ -54,7 +61,8 @@ export class PoolPage {
     private readonly route: ActivatedRoute,
     private readonly uniswapService: UniswapService,
     private readonly connectorService: ConnectorService,
-    private apiService: ApiService
+    public apiService: ApiService,
+    private readonly transactionService: TransactionsService
   ) {
     this.tokenBalanceReefOposite$ = combineLatest([
       this.token$,
@@ -254,6 +262,21 @@ export class PoolPage {
       }),
     );*!/
   }*/
+
+  public checkTokenTxPair(
+    token: TokenSymbol,
+    transactions: PendingTransaction[]
+  ): boolean {
+    if (transactions.length > 0) {
+      return (
+        (token === TokenSymbol.ETH &&
+          transactions[0].type === TransactionType.LIQUIDITY_ETH) ||
+        (token === TokenSymbol.USDT &&
+          transactions[0].type === TransactionType.LIQUIDITY_USDT)
+      );
+    }
+    return false;
+  }
 
   preventDecimal($event: any): void {
     if ($event.key === '.' || $event.key === ',') {

@@ -15,6 +15,7 @@ import {
   IReefPricePerToken,
   ProviderName,
   TokenSymbol,
+  TransactionType,
 } from '../models/types';
 import { NotificationService } from './notification.service';
 import { addMinutes, getUnixTime } from 'date-fns';
@@ -41,6 +42,7 @@ import { AddressUtils } from '../../shared/utils/address.utils';
 import { ProviderUtil } from '../../shared/utils/provider.util';
 import { TokenUtil } from '../../shared/utils/token.util';
 import { ErrorUtils } from '../../shared/utils/error.utils';
+import { TransactionsService } from './transactions.service';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +67,8 @@ export class UniswapService {
     private readonly notificationService: NotificationService,
     private readonly router: Router,
     public dialog: MatDialog,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private readonly transactionService: TransactionsService
   ) {
     this.ethersProvider$ = connectorService.providerUserInfo$.pipe(
       map((info) =>
@@ -163,10 +166,13 @@ export class UniswapService {
                 'Ok',
                 'info'
               );
-              this.connectorService.addPendingTx(hash);
+              this.transactionService.addPendingTx(
+                hash,
+                TransactionType.BUY_REEF
+              );
             })
             .on('receipt', async (receipt) => {
-              this.connectorService.removePendingTx(receipt.transactionHash);
+              this.transactionService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(
                 `You've successfully bought ${amountOutMin} REEF!`,
                 'Okay',
@@ -212,10 +218,15 @@ export class UniswapService {
                   'Ok',
                   'info'
                 );
-                this.connectorService.addPendingTx(hash);
+                this.transactionService.addPendingTx(
+                  hash,
+                  TransactionType.BUY_REEF
+                );
               })
               .on('receipt', (receipt) => {
-                this.connectorService.removePendingTx(receipt.transactionHash);
+                this.transactionService.removePendingTx(
+                  receipt.transactionHash
+                );
                 this.notificationService.showNotification(
                   `You've successfully bought ${amountOutMin} REEF!`,
                   'Okay',
@@ -378,10 +389,13 @@ export class UniswapService {
               'Ok',
               'info'
             );
-            this.connectorService.addPendingTx(hash);
+            this.transactionService.addPendingTx(
+              hash,
+              TransactionType.LIQUIDITY_USDT
+            );
           })
           .on('receipt', (receipt) => {
-            this.connectorService.removePendingTx(receipt.transactionHash);
+            this.transactionService.removePendingTx(receipt.transactionHash);
             this.notificationService.showNotification(
               `You've successfully added liquidity to the pool`,
               'Okay',
@@ -455,10 +469,13 @@ export class UniswapService {
             'Ok',
             'info'
           );
-          this.connectorService.addPendingTx(hash);
+          this.transactionService.addPendingTx(
+            hash,
+            TransactionType.LIQUIDITY_ETH
+          );
         })
         .on('receipt', (receipt) => {
-          this.connectorService.removePendingTx(receipt.transactionHash);
+          this.transactionService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(
             `You've successfully added liquidity to the pool`,
             'Okay',
@@ -497,6 +514,8 @@ export class UniswapService {
       .toPromise();
     const addresses = info.availableSmartContractAddresses;
     const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+    const transactionType = TokenUtil.getTransactionTypeByTokenName(poolSymbol);
+    console.log(transactionType, 'TX TYPE');
     const allowance = await this.approveToken(
       tokenContract,
       this.farmingContract$.value.options.address.toString()
@@ -522,10 +541,10 @@ export class UniswapService {
               'Ok',
               'info'
             );
-            this.connectorService.addPendingTx(hash);
+            this.transactionService.addPendingTx(hash, transactionType);
           })
           .on('receipt', (receipt) => {
-            this.connectorService.removePendingTx(receipt.transactionHash);
+            this.transactionService.removePendingTx(receipt.transactionHash);
             this.notificationService.showNotification(
               `You've successfully deposited ${tokenAmount}`,
               'Okay',
@@ -558,6 +577,9 @@ export class UniswapService {
         .toPromise();
       const addresses = info.availableSmartContractAddresses;
       const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
+      const transactionType = TokenUtil.getTransactionTypeByTokenName(
+        poolSymbol
+      );
       const amount = TokenUtil.toContractIntegerBalanceValue(
         +tokenAmount,
         poolSymbol
@@ -578,10 +600,10 @@ export class UniswapService {
             'Ok',
             'info'
           );
-          this.connectorService.addPendingTx(hash);
+          this.transactionService.addPendingTx(hash, transactionType);
         })
         .on('receipt', (receipt) => {
-          this.connectorService.removePendingTx(receipt.transactionHash);
+          this.transactionService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(
             `You've withdrawn ${tokenAmount}`,
             'Okay',
@@ -670,10 +692,13 @@ export class UniswapService {
           'Ok',
           'info'
         );
-        this.connectorService.addPendingTx(hash);
+        this.transactionService.addPendingTx(
+          hash,
+          TransactionType.APPROVE_TOKEN
+        );
       })
       .on('receipt', (receipt) => {
-        this.connectorService.removePendingTx(receipt.transactionHash);
+        this.transactionService.removePendingTx(receipt.transactionHash);
         this.notificationService.showNotification(
           `Token approved`,
           'Okay',

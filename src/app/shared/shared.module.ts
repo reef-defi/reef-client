@@ -52,6 +52,7 @@ import { ProviderLoadingComponent } from './components/provider-loading/provider
 import { DecimalNumberPipe } from './pipes/decimal.pipe';
 import { CategorizePipe } from './pipes/categorize.pipe';
 import { NumbersOnlyInputDirective } from './directives/numbers-only-input.directive';
+import { PendingTransactionMsgComponent } from './components/pending-transaction-msg/pending-transaction-msg.component';
 
 const components = [
   FooterComponent,
@@ -72,6 +73,7 @@ const components = [
   SetInputRelativeAmountComponent,
   ExceededBalanceMsgComponent,
   ProviderLoadingComponent,
+  PendingTransactionMsgComponent,
 ];
 const directives = [NumbersOnlyInputDirective];
 const pipes = [FilterPipe, SmallNumberPipe, DecimalNumberPipe, CategorizePipe];
