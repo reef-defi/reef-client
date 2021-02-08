@@ -9,14 +9,19 @@ import {ConnectorService} from './connector.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {environment} from '../../../environments/environment';
 import {shareReplay} from 'rxjs/operators';
-import {tap} from 'rxjs/internal/operators/tap';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BondsService {
-  public bondsList$: Observable<Bond[]> = of([
-    {
+  public bondsList_$: Observable<Bond[]> = this.http
+    .get(environment.reefNodeApiUrl + '/bonds')
+    .pipe(
+      shareReplay(1)
+    ) as Observable<Bond[]>;
+
+  public bondsList$: Observable<Bond[]> = of(
+    [{
       'id': 1,
       'bondName': 'Shell',
       'bondDescription': '',
@@ -25,49 +30,18 @@ export class BondsService {
       'stake': 'REEF',
       'stakeTokenAddress': '',
       'stakeTokenLogo': 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      'stakeDecimals': false,
+      'stakeDecimals': 0,
       'farm': 'REEF',
       'farmTokenAddress': '',
       'farmTokenLogo': 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      'farmStartTime': 'Sun Feb 09 2021 23:58:31 GMT+0100',
-      'farmEndTime': 'Sun Feb 09 2022 23:58:31 GMT+0100',
-      'farmDecimals': 1,
-      'entryExpirationTime': 'Sun Feb 09 2021 23:58:31 GMT+0100',
+      'farmStartTime': '2021-02-08T15:00:00.000Z',
+      'farmEndTime': '2022-02-07T23:00:00.000Z',
+      'farmDecimals': 0,
+      'entryStartTime': '2021-02-08T12:00:00.000Z',
+      'entryEndTime': '2021-02-08T15:00:00.000Z',
       'apy': '40'
-    } as Bond
-    /*{
-      id: 1,
-      bondName: 'Shell',
-      bondDescription: '',
-      stake: 'REEF',
-      stakeTokenAddress: '',
-      stakeTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      stakeDecimals: false,
-      farm: 'REEF',
-      farmTokenAddress: '',
-      farmTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      farmStartTime: new Date(
-        new Date().getTime() - 1000 * 60 * 60 * 24 * 365
-      ).toString(),
-      farmEndTime: new Date(
-        new Date().getTime() + 1000 * 60 * 60 * 24 * 365
-      ).toString(),
-      farmDecimals: 1,
-      entryExpirationTime: new Date(
-        new Date().getTime() + 1000 * 10
-      ).toString(),
-      apy: '40',
-      // lockDurationText: '1 year',
-      bondContractAddress: '',
-    } as Bond,*/
-  ]);
-
-  public bondsList_$: Observable<Bond[]> = this.http
-    .get(environment.reefNodeApiUrl + '/bonds')
-    .pipe(
-      tap((v) => console.log('BBB=', v)),
-      shareReplay(1)
-    ) as Observable<Bond[]>;
+    }]
+  ) as Observable<Bond[]>;
 
   constructor(
     private http: HttpClient,

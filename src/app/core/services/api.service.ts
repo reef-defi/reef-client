@@ -375,14 +375,17 @@ export class ApiService {
     return requested.length && requested[0].address === address;
   }
 
-  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token> {
+  getTokenBalance$(addr: string, tokenSymbol?: TokenSymbol, tokenAddress?: string): Observable<Token> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
     return this.getTokenBalances$(addr).pipe(
       switchMap((balances: Token[]) => {
-        const tokenBalance = this.findTokenBalance(balances, tokenSymbol);
+        const tokenBalance = tokenSymbol ? this.findTokenBalance(balances, tokenSymbol) : null;
         if (tokenBalance) {
           return of(tokenBalance);
         }
-        return this.getBalanceOnChain$(addr, tokenSymbol).pipe(
+        return this.getBalanceOnChain$(addr, tokenSymbol, tokenAddress).pipe(
           map(
             (v) =>
               ({
@@ -444,8 +447,12 @@ export class ApiService {
 
   private getBalanceOnChain$(
     address: string,
-    tokenSymbol: TokenSymbol
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
   ): Observable<string> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
     return combineLatest([
       this.connectorService.providerUserInfo$,
       this.connectorService.web3$,
@@ -457,7 +464,7 @@ export class ApiService {
             .getBalance(address)
             .then((b) => web3.utils.fromWei(b));
         }
-        return this.getContractBalance$(tokenSymbol, info, address);
+        return this.getContractBalance$(info, address, tokenSymbol, tokenAddress);
       }),
       catchError((e) => {
         console.warn('ERROR GETTING BALANCE', e);
@@ -467,16 +474,27 @@ export class ApiService {
   }
 
   private getContractBalance$(
-    tokenSymbol: TokenSymbol,
     info: IProviderUserInfo,
-    address: string
-  ) {
-    const contract = this.connectorService.createErc20TokenContract(
-      tokenSymbol,
-      info.availableSmartContractAddresses
-    );
+    address: string,
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
+  ): Promise<string> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
+    let contract;
+    if (tokenSymbol) {
+      contract = this.connectorService.createErc20TokenContract(
+        tokenSymbol,
+        info.availableSmartContractAddresses
+      );
+    }
+    if (!contract && tokenAddress) {
+      this.connectorService.createErc20TokenContractFromAddress(tokenAddress);
+    }
+
     if (!contract) {
-      console.log('No ERC20 contract for' + tokenSymbol);
+      throw new Error('No ERC20 contract for' + tokenSymbol + ' cAddr=' + tokenAddress);
     }
     return contract.methods
       .balanceOf(address)

@@ -3,7 +3,7 @@ import {BondsService} from '../../../../core/services/bonds.service';
 import {ActivatedRoute} from '@angular/router';
 import {map, pluck, shareReplay} from 'rxjs/operators';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {Bond, IProviderUserInfo, TokenSymbol,} from '../../../../core/models/types';
+import {Bond, BondSaleStatus, IProviderUserInfo, TokenSymbol,} from '../../../../core/models/types';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {UiUtils} from '../../../../shared/utils/ui.utils';
 import {ApiService} from '../../../../core/services/api.service';
@@ -28,6 +28,7 @@ export class BondPage {
   DateTimeUtil = DateTimeUtil;
   BondUtil = BondUtil;
   TokenUtil = TokenUtil;
+  BondSaleStatus = BondSaleStatus;
 
   bond$ = combineLatest([
     this.bondsService.bondsList$,
@@ -44,7 +45,7 @@ export class BondPage {
     this.connectorService.providerUserInfo$,
   ]).pipe(
     switchMap(([bond, info]: [Bond, IProviderUserInfo]) =>
-      this.apiService.getTokenBalance$(info.address, bond.stake as TokenSymbol)
+      this.apiService.getTokenBalance$(info.address, bond.stake as TokenSymbol, bond.stakeTokenAddress)
     ),
     shareReplay(1)
   );
@@ -84,8 +85,13 @@ export class BondPage {
     totalInterestReturn: number;
   }>;
   timeLeftToExpired$ = combineLatest([this.bond$, timer$]).pipe(
-    map(([bond, _]: [Bond, any]) =>
-      DateTimeUtil.getTimeDiff(new Date(), bond.entryExpirationTime)
+    map(([bond, _]: [Bond, any]) => {
+        const now = new Date();
+        if (!!bond.entryStartTime && DateTimeUtil.toDate(bond.entryStartTime) > now) {
+          return null;
+        }
+        return DateTimeUtil.getTimeDiff(now, bond.entryEndTime);
+      }
     )
   );
 
@@ -98,5 +104,23 @@ export class BondPage {
   }
 
   getBonds(bond: Bond, stakeAmount: string) {
+  }
+
+  toBondSaleStatus(bond: Bond): BondSaleStatus {
+    const now = new Date();
+    if (!!bond.entryStartTime && DateTimeUtil.toDate(bond.entryStartTime) > now) {
+      return BondSaleStatus.EARLY;
+    }
+    if (!!bond.entryEndTime && DateTimeUtil.toDate(bond.entryEndTime) > now) {
+      return BondSaleStatus.OPEN;
+    }
+    return BondSaleStatus.LATE;
+  }
+
+  hasExpired(bond: Bond): boolean {
+    if (!!bond.entryEndTime && DateTimeUtil.toDate(bond.entryEndTime) > new Date()) {
+      return true;
+    }
+    return false;
   }
 }

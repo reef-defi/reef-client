@@ -405,14 +405,21 @@ export interface Bond {
   stake: string;
   stakeTokenAddress: string;
   stakeTokenLogo: string;
-  stakeDecimals: boolean;
+  stakeDecimals: number;
   farm: string;
   farmTokenAddress: string;
   farmTokenLogo: string;
   farmStartTime: string;
   farmEndTime: string;
   farmDecimals: number;
-  entryExpirationTime: string;
+  entryEndTime: string;
+  entryStartTime: string;
   apy: string;
   bondContractAddress: string;
+}
+
+export enum BondSaleStatus {
+  EARLY,
+  OPEN,
+  LATE,
 }

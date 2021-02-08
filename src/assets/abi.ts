@@ -2676,7 +2676,7 @@ export const getContractData = (addresses: ProtocolAddresses) => {
       addr: UNISWAP_ROUTER_V2,
       abi: uRouterAbi,
     },
-    lpToken: {
+    erc20Token: {
       addr: '',
       abi: erc20Abi,
     }

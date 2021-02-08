@@ -1,18 +1,18 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { first, map, mapTo, shareReplay, take } from 'rxjs/operators';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { AddressUtils } from '../../../../shared/utils/address.utils';
-import { BehaviorSubject } from 'rxjs';
-import { IProviderUserInfo, TokenSymbol } from '../../../../core/models/types';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { getContractData } from '../../../../../assets/abi';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { startWith } from 'rxjs/internal/operators/startWith';
-import { Contract } from 'web3-eth-contract';
-import { ApiService } from '../../../../core/services/api.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { TokenUtil } from '../../../../shared/utils/token.util';
+import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {AddressUtils} from '../../../../shared/utils/address.utils';
+import {BehaviorSubject} from 'rxjs';
+import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {getContractData} from '../../../../../assets/abi';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {startWith} from 'rxjs/internal/operators/startWith';
+import {Contract} from 'web3-eth-contract';
+import {ApiService} from '../../../../core/services/api.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {TokenUtil} from '../../../../shared/utils/token.util';
 
 @Component({
   selector: 'app-farm-page',
@@ -171,7 +171,7 @@ export class FarmPage implements OnInit {
     const web3 = await this.connectorSerivce.web3$.pipe(first()).toPromise();
     const contractData = getContractData(info.availableSmartContractAddresses);
     const tokenContract = new web3.eth.Contract(
-      contractData.lpToken.abi as any,
+      contractData.erc20Token.abi as any,
       lpToken
     );
     const totalStaked = await tokenContract.methods

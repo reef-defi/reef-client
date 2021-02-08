@@ -4,7 +4,7 @@
       <div class="col">
         <app-page-title
           title="Bond"
-          subtitle="Stake tokens long-term and get returns"
+          subtitle="Lock tokens long-term and get returns"
         ></app-page-title>
       </div>
     </div>
@@ -26,20 +26,24 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Stake {{bond.farm}}
+              Lock token: {{bond.stake}} <br>
+              <span *ngIf="bond.stake!==bond.farm">Rewards token: {{bond.stake}} <br></span>
+              Lock duration:
               <ng-container
                 *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
               bond.farmEndTime) as timespanText"
-              >for {{timespanText}}</ng-container
+              > {{timespanText}}</ng-container
               >
               <br/>
-              and get {{bond.apy}}% APY
+              APY: {{bond.apy}}%
             </div>
-            <ng-container *ngIf="(timeLeftToExpired$|async)!=null else expired">
+            <ng-container
+              *ngIf="(timeLeftToExpired$|async)!=null && toBondSaleStatus(bond)===BondSaleStatus.OPEN else closed">
               <div class="text-center text-muted text-monospace">
                 <app-countdown-timer
-                  [expiresDate]="bond.entryExpirationTime"
-                ></app-countdown-timer>
+                  [expiresDate]="bond.entryEndTime"
+                >This bond sale ends in
+                </app-countdown-timer>
               </div>
 
               <div class="d-flex flex-column mb-4 text-muted">
@@ -109,46 +113,59 @@
                 </ng-container>
               </div>
             </ng-container>
-            <ng-template #expired>
-              <p class="text-center">
-                This bond offer
-                <span class="accent-text"
-                >ended {{bond.entryExpirationTime|date:'short'}}</span
-                >.<br/>
-                <span class="accent-text">Release</span> of the funds will be
-                <span class="accent-text">on {{bond.farmEndTime|date}}</span
-                >.<br/>
-                <ng-container
-                  *ngIf="stakedBalanceReturn$|async as stakedReturn"
-                >
-                  You have
-                  <span class="accent-text"
-                  >staked {{stakedReturn.staked}}
-                    {{stakedReturn.bond.farm}}</span
-                  >.
 
-                  <span class="accent-text">Current interest</span> return
-                  amounts to
+            <ng-template #closed>
+              <ng-container *ngIf="toBondSaleStatus(bond)===BondSaleStatus.LATE; else notStarted">
+                <p class="text-center">
+                  This bond sale
                   <span class="accent-text"
-                  >{{stakedReturn.currentInterestReturn}}
-                    {{stakedReturn.bond.farm}}</span
+                  >ended {{bond.entryEndTime|date:'short'}}</span
+                  >.<br/>
+                  <span class="accent-text">Release</span> of the funds will be
+                  <span class="accent-text">on {{bond.farmEndTime|date}}</span
+                  >.<br/>
+                  <ng-container
+                    *ngIf="stakedBalanceReturn$|async as stakedReturn"
                   >
-                  .<br/>
-                  You will <span class="accent-text">receive</span> total of
-                  <span class="accent-text"
-                  >{{stakedReturn.totalInterestReturn}}
-                    {{stakedReturn.bond.farm}}</span
-                  >
-                  in interest and
-                  <span class="accent-text"
-                  >{{stakedReturn.staked}} {{stakedReturn.bond.stake}}</span
-                  >
-                  staked
-                  <span class="accent-text"
-                  >on {{stakedReturn.bond.farmEndTime|date}}</span
-                  >.
-                </ng-container>
-              </p>
+                    You have
+                    <span class="accent-text"
+                    >staked {{stakedReturn.staked}}
+                      {{stakedReturn.bond.farm}}</span
+                    >.
+
+                    <span class="accent-text">Current interest</span> return
+                    amounts to
+                    <span class="accent-text"
+                    >{{stakedReturn.currentInterestReturn}}
+                      {{stakedReturn.bond.farm}}</span
+                    >
+                    .<br/>
+                    You will <span class="accent-text">receive</span> total of
+                    <span class="accent-text"
+                    >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}}
+                      {{stakedReturn.bond.farm}}</span
+                    >
+                    in interest and
+                    <span class="accent-text"
+                    >{{stakedReturn.staked}} {{stakedReturn.bond.stake}}</span
+                    >
+                    staked
+                    <span class="accent-text"
+                    >on {{stakedReturn.bond.farmEndTime|date}}</span
+                    >.
+                  </ng-container>
+                </p>
+              </ng-container>
+              <ng-template #notStarted>
+                <p class="text-center">
+                  This bond sale is starting<br>
+                  <span class="accent-text">at {{bond.entryStartTime|date:'short'}}</span><br>
+                  <span class="accent-text"><app-countdown-timer
+                    [expiresDate]="bond.entryStartTime"
+                  >Get ready for the opening!</app-countdown-timer>
+                  </span>
+                </p>
+              </ng-template>
             </ng-template>
           </div>
         </div>
