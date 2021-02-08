@@ -26,22 +26,25 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Lock token: {{bond.stake}} <br>
-              <span *ngIf="bond.stake!==bond.farm">Rewards token: {{bond.stake}} <br></span>
+              Lock token: {{bond.stake}} <br/>
+              <span *ngIf="bond.stake!==bond.farm"
+              >Rewards token: {{bond.stake}} <br
+              /></span>
               Lock duration:
               <ng-container
                 *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
               bond.farmEndTime) as timespanText"
-              > {{timespanText}}</ng-container
+              >
+                {{timespanText}}</ng-container
               >
               <br/>
               APY: {{bond.apy}}%
             </div>
             <ng-container
-              *ngIf="(timeLeftToExpired$|async)!=null && toBondSaleStatus(bond)===BondSaleStatus.OPEN else closed">
+              *ngIf="(timeLeftToExpired$|async)!=null && toBondSaleStatus(bond)===BondSaleStatus.OPEN else closed"
+            >
               <div class="text-center text-muted text-monospace">
-                <app-countdown-timer
-                  [expiresDate]="bond.entryEndTime"
+                <app-countdown-timer [expiresDate]="bond.entryEndTime"
                 >This bond sale ends in
                 </app-countdown-timer>
               </div>
@@ -96,7 +99,7 @@
                   </h5>
                 </ng-container>
                 <ng-template #enterValue>
-                  <h5>Enter value to <br>see calculated profits.</h5>
+                  <h5>Enter value to <br/>see calculated profits.</h5>
                 </ng-template>
                 <ng-container
                   *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance"
@@ -112,18 +115,20 @@
                   </button>
                 </ng-container>
               </div>
-              <ng-container
-                *ngIf="stakedBalanceReturn$|async as stakedReturn"
-              >
-                <p class="text-muted text-center"> So far {{stakedReturn.staked}} {{stakedReturn.bond.stake}} locked
-                  <br>for profit
-                  of {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}} {{stakedReturn.bond.farm}}
-                  .</p>
+              <ng-container *ngIf="stakedBalanceReturn$|async as stakedReturn">
+                <p class="text-muted text-center">
+                  So far {{stakedReturn.staked}} {{stakedReturn.bond.stake}}
+                  locked <br/>for profit of
+                  {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                  null, bond.farmDecimals)}} {{stakedReturn.bond.farm}} .
+                </p>
               </ng-container>
             </ng-container>
 
             <ng-template #closed>
-              <ng-container *ngIf="toBondSaleStatus(bond)===BondSaleStatus.LATE; else notStarted">
+              <ng-container
+                *ngIf="toBondSaleStatus(bond)===BondSaleStatus.LATE; else notStarted"
+              >
                 <p class="text-center">
                   This bond sale
                   <span class="accent-text"
@@ -136,33 +141,41 @@
                     <span class="accent-text"
                     >locked {{stakedReturn.staked}}
                       {{stakedReturn.bond.farm}}</span
-                    >.<br>
+                    >.<br/>
 
-                    To this moment your interest return
-                    amounts to
+                    To this moment your interest return amounts to
                     <span class="accent-text"
                     >{{stakedReturn.currentInterestReturn}}
                       {{stakedReturn.bond.farm}}</span
                     >.<br/>
-                    Funds will be <span class="accent-text"
-                  >unlocked on {{stakedReturn.bond.farmEndTime|date}}</span> in amount of
+                    Funds will be
+                    <span class="accent-text"
+                    >unlocked on {{stakedReturn.bond.farmEndTime|date}}</span
+                    >
+                    in amount of
                     <span class="accent-text"
                     >{{stakedReturn.staked}} {{stakedReturn.bond.stake}}</span
                     >
-                    locked and<br>
-                    <span
-                      class="accent-text">{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}}
-                      {{stakedReturn.bond.farm}}</span> interest profit.
+                    locked and<br/>
+                    <span class="accent-text"
+                    >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                      null, bond.farmDecimals)}}
+                      {{stakedReturn.bond.farm}}</span
+                    >
+                    interest profit.
                   </ng-container>
                 </p>
               </ng-container>
               <ng-template #notStarted>
                 <p class="text-center">
-                  This bond sale is starting<br>
-                  <span class="accent-text">at {{bond.entryStartTime|date:'short'}}</span><br>
-                  <span class="accent-text"><app-countdown-timer
-                    [expiresDate]="bond.entryStartTime"
-                  >Get ready for the opening!</app-countdown-timer>
+                  This bond sale is starting<br/>
+                  <span class="accent-text"
+                  >at {{bond.entryStartTime|date:'short'}}</span
+                  ><br/>
+                  <span class="accent-text"
+                  ><app-countdown-timer [expiresDate]="bond.entryStartTime"
+                  >Get ready for the opening!</app-countdown-timer
+                  >
                   </span>
                 </p>
               </ng-template>

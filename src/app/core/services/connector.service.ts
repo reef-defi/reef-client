@@ -242,7 +242,10 @@ export class ConnectorService {
       return null;
     }
     const contractData = getContractData(addresses);
-    return new this.web3.eth.Contract(contractData.erc20Token.abi, tokenSymbolContractAddress);
+    return new this.web3.eth.Contract(
+      contractData.erc20Token.abi,
+      tokenSymbolContractAddress
+    );
   }
 
   public createErc20TokenContractFromAddress(
@@ -252,7 +255,10 @@ export class ConnectorService {
       throw new Error('No address provided');
     }
     const contractData = getContractData({} as ProtocolAddresses);
-    return new this.web3.eth.Contract(contractData.erc20Token.abi, contractAddress);
+    return new this.web3.eth.Contract(
+      contractData.erc20Token.abi,
+      contractAddress
+    );
   }
 
   public setSelectedGas(type: string, price: number): void {

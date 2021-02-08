@@ -47,7 +47,11 @@ export class BondPage {
     this.connectorService.providerUserInfo$,
   ]).pipe(
     switchMap(([bond, info]: [Bond, IProviderUserInfo]) =>
-      this.apiService.getTokenBalance$(info.address, bond.stake as TokenSymbol, bond.stakeTokenAddress)
+      this.apiService.getTokenBalance$(
+        info.address,
+        bond.stake as TokenSymbol,
+        bond.stakeTokenAddress
+      )
     ),
     shareReplay(1)
   );
@@ -55,7 +59,7 @@ export class BondPage {
   private stakedBalance$ = combineLatest([
     this.bond$,
     this.connectorService.providerUserInfo$,
-    this.stakedBalanceUpdate.pipe(startWith(null))
+    this.stakedBalanceUpdate.pipe(startWith(null)),
   ]).pipe(
     switchMap(
       ([bond, info, _]: [Bond, IProviderUserInfo, any]) =>
@@ -89,13 +93,15 @@ export class BondPage {
   }>;
   timeLeftToExpired$ = combineLatest([this.bond$, timer$]).pipe(
     map(([bond, _]: [Bond, any]) => {
-        const now = new Date();
-        if (!!bond.entryStartTime && DateTimeUtil.toDate(bond.entryStartTime) > now) {
-          return null;
-        }
-        return DateTimeUtil.getTimeDiff(now, bond.entryEndTime);
+      const now = new Date();
+      if (
+        !!bond.entryStartTime &&
+        DateTimeUtil.toDate(bond.entryStartTime) > now
+      ) {
+        return null;
       }
-    )
+      return DateTimeUtil.getTimeDiff(now, bond.entryEndTime);
+    })
   );
 
   constructor(
@@ -108,7 +114,10 @@ export class BondPage {
 
   toBondSaleStatus(bond: Bond): BondSaleStatus {
     const now = new Date();
-    if (!!bond.entryStartTime && DateTimeUtil.toDate(bond.entryStartTime) > now) {
+    if (
+      !!bond.entryStartTime &&
+      DateTimeUtil.toDate(bond.entryStartTime) > now
+    ) {
       return BondSaleStatus.EARLY;
     }
     if (!!bond.entryEndTime && DateTimeUtil.toDate(bond.entryEndTime) > now) {

@@ -375,13 +375,19 @@ export class ApiService {
     return requested.length && requested[0].address === address;
   }
 
-  getTokenBalance$(addr: string, tokenSymbol?: TokenSymbol, tokenAddress?: string): Observable<Token> {
+  getTokenBalance$(
+    addr: string,
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
+  ): Observable<Token> {
     if (!tokenSymbol && !tokenAddress) {
       throw new Error('Token symbol or address is required.');
     }
     return this.getTokenBalances$(addr).pipe(
       switchMap((balances: Token[]) => {
-        const tokenBalance = tokenSymbol ? this.findTokenBalance(balances, tokenSymbol) : null;
+        const tokenBalance = tokenSymbol
+          ? this.findTokenBalance(balances, tokenSymbol)
+          : null;
         if (tokenBalance) {
           return of(tokenBalance);
         }
@@ -464,7 +470,12 @@ export class ApiService {
             .getBalance(address)
             .then((b) => web3.utils.fromWei(b));
         }
-        return this.getContractBalance$(info, address, tokenSymbol, tokenAddress);
+        return this.getContractBalance$(
+          info,
+          address,
+          tokenSymbol,
+          tokenAddress
+        );
       }),
       catchError((e) => {
         console.warn('ERROR GETTING BALANCE', e);
@@ -494,7 +505,9 @@ export class ApiService {
     }
 
     if (!contract) {
-      throw new Error('No ERC20 contract for' + tokenSymbol + ' cAddr=' + tokenAddress);
+      throw new Error(
+        'No ERC20 contract for' + tokenSymbol + ' cAddr=' + tokenAddress
+      );
     }
     return contract.methods
       .balanceOf(address)
