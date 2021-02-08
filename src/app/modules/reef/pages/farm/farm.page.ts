@@ -4,7 +4,7 @@ import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
 import {UniswapService} from '../../../../core/services/uniswap.service';
 import {AddressUtils} from '../../../../shared/utils/address.utils';
 import {BehaviorSubject} from 'rxjs';
-import {IProviderUserInfo, TokenSymbol} from '../../../../core/models/types';
+import {IProviderUserInfo, TokenSymbol, TransactionType,} from '../../../../core/models/types';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {getContractData} from '../../../../../assets/abi';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
@@ -13,6 +13,7 @@ import {Contract} from 'web3-eth-contract';
 import {ApiService} from '../../../../core/services/api.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {TokenUtil} from '../../../../shared/utils/token.util';
+import {TransactionsService} from '../../../../core/services/transactions.service';
 
 @Component({
   selector: 'app-farm-page',
@@ -25,6 +26,13 @@ export class FarmPage implements OnInit {
   public loading = false;
   public TokenSymbol = TokenSymbol;
   public TokenUtil = TokenUtil;
+  readonly pendingTransactions$ = this.transactionService.getPendingTransactions(
+    [
+      TransactionType.REEF_FARM,
+      TransactionType.REEF_USDT_FARM,
+      TransactionType.REEF_ETH_FARM,
+    ]
+  );
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
   readonly lpContract$ = new BehaviorSubject<Contract | null>(null);
@@ -85,6 +93,7 @@ export class FarmPage implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly uniswapService: UniswapService,
     public readonly connectorSerivce: ConnectorService,
+    private readonly transactionService: TransactionsService,
     public apiService: ApiService,
     @Inject(LOCALE_ID) private locale: string
   ) {}

@@ -6,7 +6,8 @@ import { PoolService } from '../../../../core/services/pool.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { format, subMonths } from 'date-fns';
-import { TokenSymbol } from '../../../../core/models/types';
+import { TokenSymbol, TransactionType } from '../../../../core/models/types';
+import { TransactionsService } from '../../../../core/services/transactions.service';
 
 @Component({
   selector: 'app-reef',
@@ -16,6 +17,9 @@ import { TokenSymbol } from '../../../../core/models/types';
 export class ReefPage implements OnInit {
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
+  readonly pendingTransactions = this.transactionService.getPendingTransactions(
+    [TransactionType.BUY_REEF]
+  );
   supportedTokens = ApiService.SUPPORTED_BUY_REEF_TOKENS;
 
   buyLoading = false;
@@ -28,7 +32,8 @@ export class ReefPage implements OnInit {
     private readonly uniswapService: UniswapService,
     private readonly poolService: PoolService,
     private readonly chartService: ChartsService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly transactionService: TransactionsService
   ) {}
 
   ngOnInit(): void {

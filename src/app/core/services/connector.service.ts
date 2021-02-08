@@ -28,7 +28,6 @@ const Web3Modal = window.Web3Modal.default;
   providedIn: 'root',
 })
 export class ConnectorService {
-  static readonly PENDING_TX_KEY = 'pending_txs';
   basketContract$ = new BehaviorSubject<Contract>(null);
   stakingContract$ = new BehaviorSubject<Contract>(null);
   farmingContract$ = new BehaviorSubject<Contract>(null);
@@ -273,43 +272,6 @@ export class ConnectorService {
       'Gwei'
     );
     return gwei;
-  }
-
-  // TODO create/move to pendingTransactions.service.ts
-  public addPendingTx(hash: string): void {
-    const transactions = this.pendingTransactions$.value.transactions || [];
-    const pendingTransactions: IPendingTransactions = {
-      transactions: [...transactions, { hash }],
-    };
-    this.pendingTransactions$.next(pendingTransactions);
-    localStorage.setItem(
-      ConnectorService.PENDING_TX_KEY,
-      JSON.stringify(pendingTransactions)
-    );
-  }
-
-  public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
-    for (const [i, tx] of txs.transactions.entries()) {
-      const { blockHash, blockNumber } = await this.web3.eth.getTransaction(
-        tx.hash
-      );
-      if (blockHash && blockNumber) {
-        txs.transactions.splice(i, 1);
-      }
-    }
-    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs));
-    this.pendingTransactions$.next({
-      transactions: txs.transactions,
-    });
-  }
-
-  public removePendingTx(hash: string) {
-    let { transactions } = this.pendingTransactions$.value;
-    const txs = {
-      transactions: transactions.filter((tx) => tx.hash !== hash),
-    };
-    localStorage.setItem(ConnectorService.PENDING_TX_KEY, JSON.stringify(txs));
-    this.pendingTransactions$.next(txs);
   }
 
   /*public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {

@@ -3,8 +3,8 @@
     <div class="h5">Tokens</div>
     <div>
       <span class="hide-lg text-muted small-text"
-      ><mat-icon class="small-icon">multiple_stop</mat-icon
-      ><span class="align-to-icon">scroll data</span></span
+        ><mat-icon class="small-icon">multiple_stop</mat-icon
+        ><span class="align-to-icon">scroll data</span></span
       >
     </div>
   </div>
@@ -48,14 +48,14 @@
           >
             <span style="display: inline-block; width: 25%">{{
               token.contract_ticker_symbol
-              }}</span>
+            }}</span>
             <span>{{ token.contract_name }}</span>
           </a>
           <ng-template #ethNoLink>
             <div style="width: 100%" class="small font-weight-bolder">
               <span style="display: inline-block; width: 25%">{{
                 token.contract_ticker_symbol
-                }}</span>
+              }}</span>
               <span>{{ token.contract_name }}</span>
             </div>
           </ng-template>
@@ -88,8 +88,8 @@
     <div class="h5">Uniswap</div>
     <div *ngIf="portfolio?.uniswapPositions?.length">
       <span class="hide-lg text-muted small-text"
-      ><mat-icon class="small-icon">multiple_stop</mat-icon
-      ><span class="align-to-icon">scroll data</span></span
+        ><mat-icon class="small-icon">multiple_stop</mat-icon
+        ><span class="align-to-icon">scroll data</span></span
       >
     </div>
   </div>
@@ -136,14 +136,14 @@
               class="small font-weight-bolder d-flex align-items-center"
             >
               {{ pool.token_0.contract_ticker_symbol }}/{{
-              pool.token_1.contract_ticker_symbol
+                pool.token_1.contract_ticker_symbol
               }}
             </a>
           </div>
         </div>
         <div class="col text-right text-monospace small m-wide-cell">
           {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{
-          pool.token_1.balance | decimal: pool.token_1.balance
+            pool.token_1.balance | decimal: pool.token_1.balance
           }}
         </div>
         <div class="col text-right m-wide-cell">
@@ -173,8 +173,8 @@
     <div class="h5">Balancer</div>
     <div *ngIf="portfolio?.balancerPositions?.length">
       <span class="hide-lg text-muted small-text"
-      ><mat-icon class="small-icon">multiple_stop</mat-icon
-      ><span class="align-to-icon">scroll data</span></span
+        ><mat-icon class="small-icon">multiple_stop</mat-icon
+        ><span class="align-to-icon">scroll data</span></span
       >
     </div>
   </div>
@@ -221,14 +221,14 @@
               class="small font-weight-bolder d-flex align-items-center"
             >
               {{ pool.token_0.contract_ticker_symbol }}/{{
-              pool.token_1.contract_ticker_symbol
+                pool.token_1.contract_ticker_symbol
               }}
             </a>
           </div>
         </div>
         <div class="col text-right text-monospace small m-wide-cell">
           {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{
-          pool.token_1.balance | decimal: pool.token_1.balance
+            pool.token_1.balance | decimal: pool.token_1.balance
           }}
         </div>
         <div class="col text-right m-wide-cell">
@@ -263,8 +263,8 @@
     <div class="h5">Compound</div>
     <div *ngIf="portfolio?.compoundPositions?.length">
       <span class="hide-lg text-muted small-text"
-      ><mat-icon class="small-icon">multiple_stop</mat-icon
-      ><span class="align-to-icon">scroll data</span></span
+        ><mat-icon class="small-icon">multiple_stop</mat-icon
+        ><span class="align-to-icon">scroll data</span></span
       >
     </div>
   </div>
@@ -304,7 +304,7 @@
           >
             <span style="display: inline-block; width: 25%">{{
               token.contract_ticker_symbol
-              }}</span>
+            }}</span>
             <span>{{ token.contract_name }}</span>
           </a>
         </div>
@@ -336,8 +336,8 @@
     <div class="h5">Aave</div>
     <div *ngIf="portfolio?.aavePositions?.length">
       <span class="hide-lg text-muted small-text"
-      ><mat-icon class="small-icon">multiple_stop</mat-icon
-      ><span class="align-to-icon">scroll data</span></span
+        ><mat-icon class="small-icon">multiple_stop</mat-icon
+        ><span class="align-to-icon">scroll data</span></span
       >
     </div>
   </div>
@@ -379,7 +379,7 @@
           >
             <span style="display: inline-block; width: 25%">{{
               token.atoken_contract_ticker_symbol
-              }}</span>
+            }}</span>
             <span>{{ token.atoken_contract_name }}</span>
           </a>
         </div>

@@ -38,8 +38,8 @@
                 <div class="h6 m-4 text-center">
                   Get
                   <ng-container *ngIf="token !== TokenSymbol.REEF"
-                    >{{ token }}–</ng-container
-                  >
+                    >{{ token }}–
+                  </ng-container>
                   REEF LP token
                 </div>
 
@@ -54,7 +54,7 @@
                         (ngModelChange)="calcTokenAmount($event, price.TOKEN_PER_REEF, token)"
                         class="form-control text-monospace small accent-text"
                         id="reefAmount"
-                        (keydown)="preventDecimal($event )"
+                        (keydown)="preventDecimal($event)"
                         placeholder="0"
                         type="number"
                       />
@@ -155,18 +155,39 @@
                     <ng-container
                       *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite"
                     >
-                      <button
-                        *ngIf="!loading"
-                        [disabled]="!reefAmount || !tokenAmount
+                      <ng-container
+                        *ngIf="pendingTransactions$ | async as pendingTxs"
+                      >
+                        <button
+                          *ngIf="!loading"
+                          [disabled]="!reefAmount || !tokenAmount
                       || reefAmount > tokenBalanceReef
                       || tokenAmount <= 0 || reefAmount <= 0
                       || tokenAmount > tokenBalanceReefOposite.balance
-                      || reefAmount > tokenBalanceReef.balance"
-                        (click)="addLiquidity(token)"
-                        class="btn btn-primary m-2"
-                      >
-                        Add Liquidity
-                      </button>
+                      || reefAmount > tokenBalanceReef.balance
+                      || checkTokenTxPair(token, pendingTxs)"
+                          (click)="addLiquidity(token)"
+                          class="btn btn-primary m-2"
+                        >
+                          Add Liquidity
+                        </button>
+                        <div *ngIf="pendingTxs.length && pendingTxs[0].hash">
+                          <ng-container
+                            *ngIf="token === TokenSymbol.ETH && pendingTxs[0].type === TransactionType.LIQUIDITY_ETH"
+                          >
+                            <app-pending-transaction-msg
+                              [transaction]="pendingTxs[0]"
+                            ></app-pending-transaction-msg>
+                          </ng-container>
+                          <ng-container
+                            *ngIf="token === TokenSymbol.USDT && pendingTxs[0].type === TransactionType.LIQUIDITY_USDT"
+                          >
+                            <app-pending-transaction-msg
+                              [transaction]="pendingTxs[0]"
+                            ></app-pending-transaction-msg>
+                          </ng-container>
+                        </div>
+                      </ng-container>
                     </ng-container>
                   </ng-container>
                   <app-loading *ngIf="loading" diameter="25"></app-loading>

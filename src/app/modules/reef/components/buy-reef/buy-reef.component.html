@@ -116,10 +116,10 @@
                 >
                   Total REEF Reserve in this pool is
                   {{
-                  TokenUtil.toMaxDisplayDecimalPlaces(
-                    tokenPrices.totalReefReserve,
-                    TokenSymbol.REEF
-                  )
+                    TokenUtil.toMaxDisplayDecimalPlaces(
+                      tokenPrices.totalReefReserve,
+                      TokenSymbol.REEF
+                    )
                   }}
                   REEF
                 </div>
@@ -148,10 +148,10 @@
                         >
                           <div>
                             ~{{
-                            TokenUtil.toMaxDisplayDecimalPlaces(
-                              tokenPrices.amountOutMin,
-                              TokenSymbol.REEF
-                            )
+                              TokenUtil.toMaxDisplayDecimalPlaces(
+                                tokenPrices.amountOutMin,
+                                TokenSymbol.REEF
+                              )
                             }}
                             REEF
                           </div>
@@ -187,34 +187,43 @@
             </ng-container>
           </div>
           <ng-container *ngIf="selectedTokenPrice$ | async as tokenPrices">
-            <div class="d-flex justify-content-center">
-              <ng-container *ngIf="selectedTokenBalance$ | async as balance">
-                <button
-                  *ngIf="!loading"
-                  [disabled]="
-                    !tokenAmountSub.value ||
-                    tokenAmountSub.value <= 0 ||
-                    (tokenPrices &&
-                      tokenPrices.REEF_PER_TOKEN &&
-                      +tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value >
-                        +tokenPrices.totalReefReserve) ||
-                    !hasBalanceForPayment(tokenAmountSub.value, balance)
-                  "
-                  mat-ripple
-                  (click)="
-                    this.buy.emit({
-                      tokenSymbol: TokenSymbol[balance.contract_ticker_symbol],
-                      tokenAmount: tokenAmountSub.value
-                    });
-                    tokenAmountSub.next(0)
-                  "
-                  class="btn btn-primary p-2"
-                >
-                  Buy now
-                </button>
+            <ng-container *ngIf="selectedTokenBalance$ | async as balance">
+              <ng-container *ngIf="pendingTransactions | async as pendingTx">
+                <div class="d-flex justify-content-center">
+                  <button
+                    *ngIf="!loading"
+                    [disabled]="
+                      !tokenAmountSub.value ||
+                      tokenAmountSub.value <= 0 ||
+                      (tokenPrices &&
+                        tokenPrices.REEF_PER_TOKEN &&
+                        +tokenPrices.REEF_PER_TOKEN * tokenAmountSub.value >
+                          +tokenPrices.totalReefReserve) ||
+                      !hasBalanceForPayment(tokenAmountSub.value, balance) ||
+                      (pendingTx.length && pendingTx[0].hash)
+                    "
+                    mat-ripple
+                    (click)="
+                      this.buy.emit({
+                        tokenSymbol:
+                          TokenSymbol[balance.contract_ticker_symbol],
+                        tokenAmount: tokenAmountSub.value
+                      });
+                      tokenAmountSub.next(0)
+                    "
+                    class="btn btn-primary p-2"
+                  >
+                    Buy now
+                  </button>
+                </div>
+                <div *ngIf="pendingTx.length && pendingTx[0].hash">
+                  <app-pending-transaction-msg
+                    [transaction]="pendingTx[0]"
+                  ></app-pending-transaction-msg>
+                </div>
               </ng-container>
-              <app-loading *ngIf="loading" [diameter]="25"></app-loading>
-            </div>
+            </ng-container>
+            <app-loading *ngIf="loading" [diameter]="25"></app-loading>
           </ng-container>
         </div>
       </div>
