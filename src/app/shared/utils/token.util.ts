@@ -1,4 +1,4 @@
-import { TokenSymbol, TransactionType } from '../../core/models/types';
+import {TokenSymbol, TransactionType} from '../../core/models/types';
 import BigNumber from 'bignumber.js';
 import {roundDownTo} from '../../core/utils/math-utils';
 
