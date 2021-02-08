@@ -1,0 +1,38 @@
+<ng-container *ngIf="transaction">
+  <div class="d-flex mt-1 align-items-center justify-content-center">
+    <div class="small text-monospace text-center text-warning">
+      You have a pending transaction for
+      <ng-container [ngSwitch]="transaction.type">
+        <span *ngSwitchCase="TransactionType.BUY_REEF">
+          purchasing REEF.
+        </span>
+        <span *ngSwitchCase="TransactionType.LIQUIDITY_ETH">
+          adding liquidity to the REEF/ETH pool.
+        </span>
+        <span *ngSwitchCase="TransactionType.LIQUIDITY_USDT">
+          adding liquidity to the REEF/USDT pool.
+        </span>
+        <span *ngSwitchCase="TransactionType.REEF_ETH_FARM">
+          using the REEF/ETH farm.
+        </span>
+        <span *ngSwitchCase="TransactionType.REEF_USDT_FARM">
+          using the REEF/USDT farm.
+        </span>
+        <span *ngSwitchCase="TransactionType.REEF_FARM">
+          using the REEF farm.
+        </span>
+        <span *ngSwitchCase="TransactionType.APPROVE_TOKEN">
+          approving a token.
+        </span>
+      </ng-container>
+
+      Check it out on
+      <a
+        target="_blank"
+        href="https://etherscan.io/tx/{{ transaction?.hash }}"
+        class="font-weight-bold"
+      >Etherscan</a
+      >
+    </div>
+  </div>
+</ng-container>

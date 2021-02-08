@@ -10,6 +10,7 @@ import { IChainData, PendingTransaction } from '../../../core/models/types';
 import { MatDialog } from '@angular/material/dialog';
 import { UniswapService } from '../../../core/services/uniswap.service';
 import { ConnectorService } from '../../../core/services/connector.service';
+import {TransactionsService} from "../../../core/services/transactions.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -23,13 +24,13 @@ export class SidebarComponent {
   @Input() version: string | undefined;
   @Input() currentAddress: string | undefined;
   @Output() signOut = new EventEmitter();
-  readonly pendingTxs$ = this.connectorService.pendingTransactions$;
+  readonly pendingTxs$ = this.transactionService.pendingTransactions$;
   mobileNavShown: boolean;
 
   constructor(
     private dialog: MatDialog,
     private readonly uniswapService: UniswapService,
-    private readonly connectorService: ConnectorService
+    private readonly transactionService: TransactionsService
   ) {}
 
   openPendingTx(tx: PendingTransaction[]) {

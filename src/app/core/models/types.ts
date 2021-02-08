@@ -26,8 +26,19 @@ export enum EErrorTypes {
   INTERNAL_ERROR = -32603,
 }
 
+export enum TransactionType {
+  BUY_REEF = 'BUY_REEF',
+  LIQUIDITY_ETH = 'LIQUIDITY_ETH',
+  LIQUIDITY_USDT = 'LIQUIDITY_USDT',
+  REEF_FARM = 'REEF_FARM',
+  REEF_USDT_FARM = 'REEF_USDT_FARM',
+  REEF_ETH_FARM = 'REEF_ETH_FARM',
+  APPROVE_TOKEN = 'APPROVE_TOKEN'
+}
+
 export interface PendingTransaction {
   hash: string;
+  type?: TransactionType,
 }
 
 export interface QuoteResponse {

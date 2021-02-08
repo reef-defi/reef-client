@@ -6,8 +6,9 @@ import {
   Output,
 } from '@angular/core';
 import {
+  IPendingTransactions,
   IProviderUserInfo,
-  IReefPricePerToken,
+  IReefPricePerToken, PendingTransaction,
   Token,
   TokenSymbol,
 } from '../../../../core/models/types';
@@ -33,6 +34,8 @@ import { TokenUtil } from '../../../../shared/utils/token.util';
 })
 export class BuyReefComponent extends NgDestroyableComponent {
   private static ETH_PRICE_INTERVAL = 60000;
+
+  @Input() pendingTransactions: Observable<PendingTransaction[]> | undefined;
 
   @Input()
   set supportedTokens(val: { tokenSymbol: TokenSymbol; src: string }[]) {
