@@ -1,4 +1,4 @@
-import {TokenSymbol, TransactionType} from '../../core/models/types';
+import { TokenSymbol, TransactionType } from '../../core/models/types';
 import BigNumber from 'bignumber.js';
 import { roundDownTo } from '../../core/utils/math-utils';
 
@@ -71,7 +71,9 @@ export class TokenUtil {
     return tokenSymbol;
   }
 
-  public static getTransactionTypeByTokenName(tokenSymbol: TokenSymbol): TransactionType {
+  public static getTransactionTypeByTokenName(
+    tokenSymbol: TokenSymbol
+  ): TransactionType {
     switch (tokenSymbol) {
       case TokenSymbol.REEF_USDT_POOL:
         return TransactionType.REEF_USDT_FARM;

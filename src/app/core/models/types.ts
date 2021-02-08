@@ -33,12 +33,12 @@ export enum TransactionType {
   REEF_FARM = 'REEF_FARM',
   REEF_USDT_FARM = 'REEF_USDT_FARM',
   REEF_ETH_FARM = 'REEF_ETH_FARM',
-  APPROVE_TOKEN = 'APPROVE_TOKEN'
+  APPROVE_TOKEN = 'APPROVE_TOKEN',
 }
 
 export interface PendingTransaction {
   hash: string;
-  type?: TransactionType,
+  type?: TransactionType;
 }
 
 export interface QuoteResponse {

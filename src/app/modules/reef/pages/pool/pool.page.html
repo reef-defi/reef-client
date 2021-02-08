@@ -38,9 +38,8 @@
                 <div class="h6 m-4 text-center">
                   Get
                   <ng-container *ngIf="token !== TokenSymbol.REEF"
-                  >{{ token }}–
-                  </ng-container
-                  >
+                    >{{ token }}–
+                  </ng-container>
                   REEF LP token
                 </div>
 
@@ -156,7 +155,9 @@
                     <ng-container
                       *ngIf="(tokenBalanceReefOposite$|async) as tokenBalanceReefOposite"
                     >
-                      <ng-container *ngIf="pendingTransactions$ | async as pendingTxs">
+                      <ng-container
+                        *ngIf="pendingTransactions$ | async as pendingTxs"
+                      >
                         <button
                           *ngIf="!loading"
                           [disabled]="!reefAmount || !tokenAmount
@@ -170,16 +171,17 @@
                         >
                           Add Liquidity
                         </button>
-                        <div
-                          *ngIf="pendingTxs.length && pendingTxs[0].hash">
+                        <div *ngIf="pendingTxs.length && pendingTxs[0].hash">
                           <ng-container
-                            *ngIf="token === TokenSymbol.ETH && pendingTxs[0].type === TransactionType.LIQUIDITY_ETH">
+                            *ngIf="token === TokenSymbol.ETH && pendingTxs[0].type === TransactionType.LIQUIDITY_ETH"
+                          >
                             <app-pending-transaction-msg
                               [transaction]="pendingTxs[0]"
                             ></app-pending-transaction-msg>
                           </ng-container>
                           <ng-container
-                            *ngIf="token === TokenSymbol.USDT && pendingTxs[0].type === TransactionType.LIQUIDITY_USDT">
+                            *ngIf="token === TokenSymbol.USDT && pendingTxs[0].type === TransactionType.LIQUIDITY_USDT"
+                          >
                             <app-pending-transaction-msg
                               [transaction]="pendingTxs[0]"
                             ></app-pending-transaction-msg>

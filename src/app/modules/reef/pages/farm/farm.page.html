@@ -102,16 +102,18 @@
                     </ng-template>
                   </div>
                   <div class="row">
-                    <ng-container *ngIf="pendingTransactions$ | async as pendingTxs">
+                    <ng-container
+                      *ngIf="pendingTransactions$ | async as pendingTxs"
+                    >
                       <div class="mb-4 col">
                         <div
                           class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
                         >
                           <div class="small mb-1 text-center">Pool APY</div>
                           <div class="small text-center">
-                          <span class="font-weight-bold text-center">
-                            {{ apy | number }} %
-                          </span>
+                            <span class="font-weight-bold text-center">
+                              {{ apy | number }} %
+                            </span>
                           </div>
                           <ng-container *ngIf="!loading">
                             <div class="text-center mt-3">
@@ -141,10 +143,11 @@
                             *ngIf="stakedAmount$ | async as staked"
                             class="small text-center"
                           >
-                          <span class="font-weight-bold">
-                            {{ TokenUtil.toMaxDisplayDecimalPlaces(staked,
-                            token) }} {{ token !== TokenSymbol.REEF ? ' LP Tokens' : 'REEF' }}
-                          </span>
+                            <span class="font-weight-bold">
+                              {{ TokenUtil.toMaxDisplayDecimalPlaces(staked,
+                              token) }} {{ token !== TokenSymbol.REEF ? ' LP
+                              Tokens' : 'REEF' }}
+                            </span>
                           </div>
                           <ng-container *ngIf="!loading">
                             <div
@@ -166,15 +169,18 @@
                         <div
                           class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
                         >
-                          <div class="small mb-1 text-center">Pending REWARD</div>
+                          <div class="small mb-1 text-center">
+                            Pending REWARD
+                          </div>
                           <div
                             *ngIf="reefReward$ | async as pendingReef"
                             class="small text-center"
                           >
-                          <span class="font-weight-bold">
-                            {{ TokenUtil.toMaxDisplayDecimalPlaces(pendingReef,
-                            TokenSymbol.REEF) }} REEF
-                          </span>
+                            <span class="font-weight-bold">
+                              {{
+                              TokenUtil.toMaxDisplayDecimalPlaces(pendingReef,
+                              TokenSymbol.REEF) }} REEF
+                            </span>
                           </div>
                           <ng-container *ngIf="!loading">
                             <div
@@ -193,8 +199,7 @@
                           </ng-container>
                         </div>
                       </div>
-                      <div
-                        *ngIf="pendingTxs.length && pendingTxs[0].hash">
+                      <div *ngIf="pendingTxs.length && pendingTxs[0].hash">
                         <app-pending-transaction-msg
                           [transaction]="pendingTxs[0]"
                         ></app-pending-transaction-msg>

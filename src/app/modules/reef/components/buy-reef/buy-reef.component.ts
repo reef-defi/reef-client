@@ -8,7 +8,8 @@ import {
 import {
   IPendingTransactions,
   IProviderUserInfo,
-  IReefPricePerToken, PendingTransaction,
+  IReefPricePerToken,
+  PendingTransaction,
   Token,
   TokenSymbol,
 } from '../../../../core/models/types';

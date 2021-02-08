@@ -1,23 +1,32 @@
-import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {catchError, filter, map, shareReplay, switchMap, take, tap,} from 'rxjs/operators';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {BehaviorSubject, combineLatest, EMPTY, Observable, of} from 'rxjs';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+  catchError,
+  filter,
+  map,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { BehaviorSubject, combineLatest, EMPTY, Observable, of } from 'rxjs';
 import {
   IProviderUserInfo,
-  IReefPricePerToken, PendingTransaction,
+  IReefPricePerToken,
+  PendingTransaction,
   Token,
   TokenSymbol,
   TransactionType,
 } from '../../../../core/models/types';
-import {first} from 'rxjs/internal/operators/first';
+import { first } from 'rxjs/internal/operators/first';
 import BigNumber from 'bignumber.js';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {ApiService} from '../../../../core/services/api.service';
-import {Contract} from 'web3-eth-contract';
-import {AddressUtils} from '../../../../shared/utils/address.utils';
-import {TokenUtil} from '../../../../shared/utils/token.util';
-import {TransactionsService} from "../../../../core/services/transactions.service";
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { ApiService } from '../../../../core/services/api.service';
+import { Contract } from 'web3-eth-contract';
+import { AddressUtils } from '../../../../shared/utils/address.utils';
+import { TokenUtil } from '../../../../shared/utils/token.util';
+import { TransactionsService } from '../../../../core/services/transactions.service';
 
 @Component({
   selector: 'app-pool-page',
@@ -53,7 +62,7 @@ export class PoolPage {
     private readonly uniswapService: UniswapService,
     private readonly connectorService: ConnectorService,
     public apiService: ApiService,
-    private readonly transactionService: TransactionsService,
+    private readonly transactionService: TransactionsService
   ) {
     this.tokenBalanceReefOposite$ = combineLatest([
       this.token$,
@@ -254,10 +263,17 @@ export class PoolPage {
     );*!/
   }*/
 
-  public checkTokenTxPair(token: TokenSymbol, transactions: PendingTransaction[]): boolean {
+  public checkTokenTxPair(
+    token: TokenSymbol,
+    transactions: PendingTransaction[]
+  ): boolean {
     if (transactions.length > 0) {
-      return (token === TokenSymbol.ETH && transactions[0].type === TransactionType.LIQUIDITY_ETH) ||
-        (token === TokenSymbol.USDT && transactions[0].type === TransactionType.LIQUIDITY_USDT)
+      return (
+        (token === TokenSymbol.ETH &&
+          transactions[0].type === TransactionType.LIQUIDITY_ETH) ||
+        (token === TokenSymbol.USDT &&
+          transactions[0].type === TransactionType.LIQUIDITY_USDT)
+      );
     }
     return false;
   }

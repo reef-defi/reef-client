@@ -109,7 +109,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [...components, ...directives, ...pipes,],
+  declarations: [...components, ...directives, ...pipes],
   providers: [
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,

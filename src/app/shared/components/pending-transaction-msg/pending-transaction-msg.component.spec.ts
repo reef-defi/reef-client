@@ -8,9 +8,8 @@ describe('PendingTransactionMsgComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PendingTransactionMsgComponent ]
-    })
-    .compileComponents();
+      declarations: [PendingTransactionMsgComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
