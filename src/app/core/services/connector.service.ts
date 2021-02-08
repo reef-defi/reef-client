@@ -266,7 +266,6 @@ export class ConnectorService {
       Math.round(this.selectedGasPrice$.value.price),
       'Gwei'
     );
-    console.log(gwei, 'gwei');
     return gwei;
   }
 

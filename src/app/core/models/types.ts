@@ -208,6 +208,7 @@ export enum ChainId {
 export enum ProviderName {
   INFURA = 'infura',
   ALCHEMY = 'alchemy',
+  LOCAL_FORK = 'localhost',
 }
 
 export interface ProtocolAddresses {

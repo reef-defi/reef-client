@@ -10,8 +10,9 @@ import {ApiService} from '../../../../core/services/api.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {DateTimeUtil} from '../../../../shared/utils/date-time.util';
 import {TokenUtil} from '../../../../shared/utils/token.util';
-import {Observable, timer} from 'rxjs';
+import {Observable, Subject, timer} from 'rxjs';
 import {BondUtil} from '../../../../shared/utils/bond.util';
+import {startWith} from 'rxjs/internal/operators/startWith';
 
 let timer$ = timer(0, 1000);
 
@@ -40,6 +41,7 @@ export class BondPage {
     shareReplay(1)
   );
 
+  stakedBalanceUpdate = new Subject();
   stakeTokenBalance$ = combineLatest([
     this.bond$,
     this.connectorService.providerUserInfo$,
@@ -53,17 +55,18 @@ export class BondPage {
   private stakedBalance$ = combineLatest([
     this.bond$,
     this.connectorService.providerUserInfo$,
+    this.stakedBalanceUpdate.pipe(startWith(null))
   ]).pipe(
     switchMap(
-      ([bond, info]: [Bond, IProviderUserInfo]) =>
+      ([bond, info, _]: [Bond, IProviderUserInfo, any]) =>
         this.bondsService.getStakedBalanceOf(bond, info.address),
       (bondInfo, balance) => ({bond: bondInfo[0], info: bondInfo[1], balance})
     ),
     shareReplay(1)
   );
   stakedBalanceReturn$ = combineLatest([this.stakedBalance$, timer$]).pipe(
-    // tslint:disable-next-line:variable-name
     map(
+      // tslint:disable-next-line:variable-name
       ([bond_info_balance, tmr]: [
         { bond: Bond; info: IProviderUserInfo; balance: string },
         any
@@ -103,9 +106,6 @@ export class BondPage {
   ) {
   }
 
-  getBonds(bond: Bond, stakeAmount: string) {
-  }
-
   toBondSaleStatus(bond: Bond): BondSaleStatus {
     const now = new Date();
     if (!!bond.entryStartTime && DateTimeUtil.toDate(bond.entryStartTime) > now) {
@@ -117,10 +117,10 @@ export class BondPage {
     return BondSaleStatus.LATE;
   }
 
-  hasExpired(bond: Bond): boolean {
-    if (!!bond.entryEndTime && DateTimeUtil.toDate(bond.entryEndTime) > new Date()) {
-      return true;
-    }
-    return false;
+  stake(bond: Bond, stakeAmount: string): void {
+    this.bondsService.stake(bond, stakeAmount).then(() => {
+      this.stakeAmount = null;
+      this.stakedBalanceUpdate.next();
+    });
   }
 }

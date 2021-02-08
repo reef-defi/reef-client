@@ -96,7 +96,7 @@
                   </h5>
                 </ng-container>
                 <ng-template #enterValue>
-                  <h5>Enter value to see the return.</h5>
+                  <h5>Enter value to <br>see calculated profits.</h5>
                 </ng-template>
                 <ng-container
                   *ngIf="(stakeTokenBalance$|async) as stakeTokenBalance"
@@ -105,13 +105,21 @@
                     [disabled]="!stakeAmount
                       || stakeAmount <= 0
                       || stakeAmount > stakeTokenBalance.balance"
-                    (click)="getBonds(bond, stakeAmount)"
+                    (click)="stake(bond, stakeAmount);"
                     class="btn btn-primary m-2"
                   >
                     Get the bond
                   </button>
                 </ng-container>
               </div>
+              <ng-container
+                *ngIf="stakedBalanceReturn$|async as stakedReturn"
+              >
+                <p class="text-muted text-center"> So far {{stakedReturn.staked}} {{stakedReturn.bond.stake}} locked
+                  <br>for profit
+                  of {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}} {{stakedReturn.bond.farm}}
+                  .</p>
+              </ng-container>
             </ng-container>
 
             <ng-template #closed>
@@ -121,38 +129,30 @@
                   <span class="accent-text"
                   >ended {{bond.entryEndTime|date:'short'}}</span
                   >.<br/>
-                  <span class="accent-text">Release</span> of the funds will be
-                  <span class="accent-text">on {{bond.farmEndTime|date}}</span
-                  >.<br/>
                   <ng-container
                     *ngIf="stakedBalanceReturn$|async as stakedReturn"
                   >
                     You have
                     <span class="accent-text"
-                    >staked {{stakedReturn.staked}}
+                    >locked {{stakedReturn.staked}}
                       {{stakedReturn.bond.farm}}</span
-                    >.
+                    >.<br>
 
-                    <span class="accent-text">Current interest</span> return
+                    To this moment your interest return
                     amounts to
                     <span class="accent-text"
                     >{{stakedReturn.currentInterestReturn}}
                       {{stakedReturn.bond.farm}}</span
-                    >
-                    .<br/>
-                    You will <span class="accent-text">receive</span> total of
-                    <span class="accent-text"
-                    >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}}
-                      {{stakedReturn.bond.farm}}</span
-                    >
-                    in interest and
+                    >.<br/>
+                    Funds will be <span class="accent-text"
+                  >unlocked on {{stakedReturn.bond.farmEndTime|date}}</span> in amount of
                     <span class="accent-text"
                     >{{stakedReturn.staked}} {{stakedReturn.bond.stake}}</span
                     >
-                    staked
-                    <span class="accent-text"
-                    >on {{stakedReturn.bond.farmEndTime|date}}</span
-                    >.
+                    locked and<br>
+                    <span
+                      class="accent-text">{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn, null, bond.farmDecimals)}}
+                      {{stakedReturn.bond.farm}}</span> interest profit.
                   </ng-container>
                 </p>
               </ng-container>
