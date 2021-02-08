@@ -84,7 +84,6 @@ export class DateTimeUtil {
     if (dateVal instanceof Date) {
       return dateVal;
     }
-    console.log('toDate VVV=', dateVal);
 
     if (
       typeof dateVal === 'string' &&

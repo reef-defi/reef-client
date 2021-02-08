@@ -16,7 +16,7 @@ import {tap} from 'rxjs/internal/operators/tap';
 })
 export class BondsService {
   public bondsList$: Observable<Bond[]> = of([
-    /*{
+    {
       'id': 1,
       'bondName': 'Shell',
       'bondDescription': '',
@@ -29,13 +29,13 @@ export class BondsService {
       'farm': 'REEF',
       'farmTokenAddress': '',
       'farmTokenLogo': 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      'farmStartTime': 'Mon Feb 08 2021 00:13:58 GMT+0100 (Central European Standard Time)',
-      'farmEndTime': 'Mon Feb 08 2022 00:13:58 GMT+0100 (Central European Standard Time)',
+      'farmStartTime': 'Sun Feb 09 2021 23:58:31 GMT+0100',
+      'farmEndTime': 'Sun Feb 09 2022 23:58:31 GMT+0100',
       'farmDecimals': 1,
-      'entryExpirationTime': 'Mon Feb 08 2021 00:19:58 GMT+0100 (Central European Standard Time)',
+      'entryExpirationTime': 'Sun Feb 09 2021 23:58:31 GMT+0100',
       'apy': '40'
-    } as Bond*/
-    {
+    } as Bond
+    /*{
       id: 1,
       bondName: 'Shell',
       bondDescription: '',
@@ -59,7 +59,7 @@ export class BondsService {
       apy: '40',
       // lockDurationText: '1 year',
       bondContractAddress: '',
-    } as Bond,
+    } as Bond,*/
   ]);
 
   public bondsList_$: Observable<Bond[]> = this.http
