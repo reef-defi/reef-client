@@ -40,11 +40,13 @@
             <div>
               APY: <span class="font-weight-bold">{{bond.apy}}%</span>
             </div>
+            <!-- TODO: Do we need innerhtml here -->
             <div
               class="text-monospace text-muted small text-center"
               [innerHTML]="bond.bondDescription"
             ></div>
-            <div *ngIf="true" class="text-center text-muted text-monospace mb-2 mt-2">
+            <!-- TODO: why always truthy? -->
+            <div *ngIf="true" class="text-center text-muted text-monospace mt-2">
               <app-countdown-timer [expiresDate]="bond.entryEndTime"
               >Closes in
               </app-countdown-timer>
@@ -58,7 +60,7 @@
               [routerLink]="['/reef/bond', bond.id]"
               class="btn btn-primary p-2"
             >
-              accepting funds
+              Accepting Funds
             </button>
           </div>
         </div>
