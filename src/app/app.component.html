@@ -7,7 +7,7 @@
   } as obs"
 >
   <div id="mainContainer" class="min-vh-100">
-    <div *ngIf="canEnter; else noPermissions">
+    <div>
       <app-sidebar
         [version]="VERSION"
         [currentAddress]="obs.providerUserInfo?.address"
@@ -25,19 +25,6 @@
       <app-footer *ngIf="obs.providerUserInfo"></app-footer>
     </div>
   </div>
-  <ng-template #noPermissions>
-    <div
-      class="mb-5 d-flex flex-column align-items-center justify-content-center"
-    >
-      <label class="small text-monospace mt-2" for="code"
-        >Enter access code</label
-      >
-      <input class="form-control w-50 mt-2" #code id="code" type="text" />
-      <button (click)="checkIfAuth(code.value)" class="btn btn-primary mt-2">
-        Enter
-      </button>
-    </div>
-  </ng-template>
   <ng-template #providerLoadingTemplate>
     <app-provider-loading></app-provider-loading>
   </ng-template>

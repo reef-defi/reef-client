@@ -26,24 +26,29 @@
               />
             </div>
             <div class="h6 m-4 text-center">
-              Lock token: {{bond.stake}} <br/>
-              <span *ngIf="bond.stake!==bond.farm"
-              >Rewards token: {{bond.stake}} <br
-              /></span>
-              Lock duration:
-              <ng-container
-                *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
-              bond.farmEndTime) as timespanText"
-              >
-                {{timespanText}}</ng-container
-              >
-              <br/>
-              APY: {{bond.apy}}%
+              <div class="mb-1">      
+                Lock token: {{bond.stake}}
+              </div>
+              <div class="mb-1" *ngIf="bond.stake!==bond.farm">
+                Rewards token: {{bond.stake}}
+              </div>
+              <div class="mb-1">
+                Lock duration:
+                <ng-container
+                  *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
+                bond.farmEndTime) as timespanText"
+                >
+                  {{timespanText}}</ng-container
+                >
+              </div>
+              <div class="mb-1">
+                APY: {{bond.apy}}%
+              </div>
             </div>
             <ng-container
               *ngIf="(timeLeftToExpired$|async)!=null && toBondSaleStatus(bond)===BondSaleStatus.OPEN else closed"
             >
-              <div class="text-center text-muted text-monospace">
+              <div class="text-center text-muted text-monospace mb-3">
                 <app-countdown-timer [expiresDate]="bond.entryEndTime"
                 >This offer ends <br>
                   when filled up or in
