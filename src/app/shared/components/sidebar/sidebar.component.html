@@ -176,6 +176,16 @@
       Get LP Tokens
     </a>
     <a
+      id="bonds"
+      [routerLink]="['/reef/bonds']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      (click)="mobileNavShown = false"
+    >
+      <app-svg-icon icon="currency"></app-svg-icon>
+      Reef Bonds
+    </a>
+    <!--<a
       id="farmReef"
       [routerLink]="['/reef/farms']"
       routerLinkActive="active"
@@ -184,7 +194,7 @@
     >
       <app-svg-icon icon="currency"></app-svg-icon>
       Farm Reef
-    </a>
+    </a>-->
     <a
       id="reefCard"
       [routerLink]="['/reef/card']"

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Web3 from 'web3';
-import { Contract } from 'web3-eth-contract';
+import {Contract} from 'web3-eth-contract';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
-import { getProviderName } from '../utils/provider-name';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import {getProviderName} from '../utils/provider-name';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
   IChainData,
   IPendingTransactions,
@@ -15,12 +15,12 @@ import {
   ProviderName,
   TokenSymbol,
 } from '../models/types';
-import { getChainData } from '../utils/chains';
-import { NotificationService } from './notification.service';
-import { getContractData } from '../../../assets/abi';
-import { take } from 'rxjs/operators';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
+import {getChainData} from '../utils/chains';
+import {NotificationService} from './notification.service';
+import {getContractData} from '../../../assets/abi';
+import {take} from 'rxjs/operators';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -232,20 +232,37 @@ export class ConnectorService {
     tokenSymbol: TokenSymbol,
     addresses: ProtocolAddresses
   ): Contract {
-    const tokenContract = AddressUtils.getTokenSymbolContractAddress(
+    const tokenSymbolContractAddress = AddressUtils.getTokenSymbolContractAddress(
       addresses,
       tokenSymbol
     );
-    if (!tokenContract) {
-      throw new Error('No address for tokenSymbol=' + tokenSymbol);
+    if (!tokenSymbolContractAddress) {
+      console.log('No address for tokenSymbol=' + tokenSymbol);
+      return null;
     }
     const contractData = getContractData(addresses);
-    return new this.web3.eth.Contract(contractData.lpToken.abi, tokenContract);
+    return new this.web3.eth.Contract(
+      contractData.erc20Token.abi,
+      tokenSymbolContractAddress
+    );
+  }
+
+  public createErc20TokenContractFromAddress(
+    contractAddress: string
+  ): Contract {
+    if (!contractAddress) {
+      throw new Error('No address provided');
+    }
+    const contractData = getContractData({} as ProtocolAddresses);
+    return new this.web3.eth.Contract(
+      contractData.erc20Token.abi,
+      contractAddress
+    );
   }
 
   public setSelectedGas(type: string, price: number): void {
-    this.selectedGasPrice$.next({ type, price });
-    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+    this.selectedGasPrice$.next({type, price});
+    localStorage.setItem('reef_gas_price', JSON.stringify({type, price}));
   }
 
   public getGasPrice(): string {
@@ -254,7 +271,6 @@ export class ConnectorService {
       Math.round(this.selectedGasPrice$.value.price),
       'Gwei'
     );
-    console.log(gwei, 'gwei');
     return gwei;
   }
 

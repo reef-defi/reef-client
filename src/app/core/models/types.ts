@@ -34,6 +34,7 @@ export enum TransactionType {
   REEF_USDT_FARM = 'REEF_USDT_FARM',
   REEF_ETH_FARM = 'REEF_ETH_FARM',
   APPROVE_TOKEN = 'APPROVE_TOKEN',
+  REEF_BOND = 'REEF_BOND',
 }
 
 export interface PendingTransaction {
@@ -142,11 +143,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -219,6 +220,7 @@ export enum ChainId {
 export enum ProviderName {
   INFURA = 'infura',
   ALCHEMY = 'alchemy',
+  LOCAL_FORK = 'localhost',
 }
 
 export interface ProtocolAddresses {
@@ -407,4 +409,32 @@ export function getEnumKeyByEnumValue(
 ): string {
   const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
   return keys.length > 0 ? keys[0] : '';
+}
+
+export interface Bond {
+  id: number;
+  bondName: string;
+  bondDescription: string;
+  stake: string;
+  stakeTokenAddress: string;
+  stakeTokenLogo: string;
+  stakeDecimals: number;
+  stakeMaxAmountReached: boolean;
+  farm: string;
+  farmTokenAddress: string;
+  farmTokenLogo: string;
+  farmStartTime: string;
+  farmEndTime: string;
+  farmDecimals: number;
+  entryEndTime: string;
+  entryStartTime: string;
+  apy: string;
+  bondContractAddress: string;
+}
+
+export enum BondSaleStatus {
+  EARLY,
+  OPEN,
+  LATE,
+  FILLED
 }

@@ -10,5 +10,10 @@ export const provider = {
     url: 'https://mainnet.infura.io/v3/eadc555e1ec7423f94e94d8a06a2f310',
     apiKey: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
     chainId: 1
-  }
+  },
+  [ProviderName.LOCAL_FORK]: {
+    url: 'https://localhost:8545',
+    apiKey: '',
+    chainId: 1337
+  },
 };

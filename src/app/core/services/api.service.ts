@@ -1,13 +1,7 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  EMPTY,
-  Observable,
-  Subject,
-  Subscription,
-} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, EMPTY, Observable, Subject, Subscription,} from 'rxjs';
 import {
   ChainId,
   IBasketHistoricRoi,
@@ -21,25 +15,15 @@ import {
   Vault,
   VaultAPY,
 } from '../models/types';
-import { subMonths } from 'date-fns';
-import {
-  catchError,
-  filter,
-  map,
-  mergeMap,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ConnectorService } from './connector.service';
+import {subMonths} from 'date-fns';
+import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap,} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ConnectorService} from './connector.service';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
-import { of } from 'rxjs/internal/observable/of';
-import { TokenUtil } from '../../shared/utils/token.util';
+import {of} from 'rxjs/internal/observable/of';
+import {TokenUtil} from '../../shared/utils/token.util';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -52,15 +36,15 @@ const httpOptions = {
 })
 export class ApiService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
-    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
+    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
+    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...ApiService.SUPPORTED_BUY_REEF_TOKENS,
-    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
-    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
-    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
+    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
+    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
   ];
 
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
@@ -159,7 +143,7 @@ export class ApiService {
               },
             }))
             .sort((a, b) => Object.values(b)[0].APY - Object.values(a)[0].APY)
-            .reduce((memo, curr) => ({ ...memo, ...curr }));
+            .reduce((memo, curr) => ({...memo, ...curr}));
         }),
         catchError((err) => EMPTY)
       )
@@ -180,19 +164,19 @@ export class ApiService {
 
   registerBinanceUser(email: string, address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/register`, { email, address })
+      .post(`${this.binanceApiUrl}/register`, {email, address})
       .pipe(take(1));
   }
 
   bindBinanceUser(email: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/redirect`, { email })
+      .post(`${this.binanceApiUrl}/redirect`, {email})
       .pipe(take(1));
   }
 
   getBindingStatus(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/bindingStatus`, { address })
+      .post(`${this.binanceApiUrl}/bindingStatus`, {address})
       .pipe(take(1));
   }
 
@@ -231,7 +215,7 @@ export class ApiService {
 
   getBinanceTransactions(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/transactions`, { address })
+      .post(`${this.binanceApiUrl}/transactions`, {address})
       .pipe(take(1));
   }
 
@@ -251,7 +235,7 @@ export class ApiService {
 
   checkIfUserRegistered(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/registrationStatus`, { address })
+      .post(`${this.binanceApiUrl}/registrationStatus`, {address})
       .pipe(take(1));
   }
 
@@ -295,7 +279,7 @@ export class ApiService {
         tokenSymbols: TokenSymbol[];
         isIncludedInBalances: boolean;
       }> = this.updateTokensInBalances.pipe(
-        map((t) => ({ tokenSymbols: t, isIncludedInBalances: false })),
+        map((t) => ({tokenSymbols: t, isIncludedInBalances: false})),
         startWith(null),
         shareReplay(1)
       );
@@ -391,17 +375,32 @@ export class ApiService {
     return requested.length && requested[0].address === address;
   }
 
-  getTokenBalance$(addr: string, tokenSymbol: TokenSymbol): Observable<Token> {
+  getTokenBalance$(
+    addr: string,
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
+  ): Observable<Token> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
     return this.getTokenBalances$(addr).pipe(
-      map((balances: Token[]) => {
-        const tokenBalance = this.findTokenBalance(balances, tokenSymbol);
-        return tokenBalance
-          ? tokenBalance
-          : ({
-              balance: 0,
-              contract_ticker_symbol: tokenSymbol,
-              address: addr,
-            } as Token);
+      switchMap((balances: Token[]) => {
+        const tokenBalance = tokenSymbol
+          ? this.findTokenBalance(balances, tokenSymbol)
+          : null;
+        if (tokenBalance) {
+          return of(tokenBalance);
+        }
+        return this.getBalanceOnChain$(addr, tokenSymbol, tokenAddress).pipe(
+          map(
+            (v) =>
+              ({
+                balance: parseFloat(v),
+                contract_ticker_symbol: tokenSymbol,
+                address: addr,
+              } as Token)
+          )
+        );
       }),
       shareReplay(1)
     );
@@ -435,7 +434,7 @@ export class ApiService {
   checkIfAuth(code: string): Observable<any> {
     return this.http.post<{ [key: string]: boolean }>(
       `${this.reefNodeApi}/in`,
-      { code }
+      {code}
     );
   }
 
@@ -454,8 +453,12 @@ export class ApiService {
 
   private getBalanceOnChain$(
     address: string,
-    tokenSymbol: TokenSymbol
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
   ): Observable<string> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
     return combineLatest([
       this.connectorService.providerUserInfo$,
       this.connectorService.web3$,
@@ -467,32 +470,58 @@ export class ApiService {
             .getBalance(address)
             .then((b) => web3.utils.fromWei(b));
         }
-        const contract = this.connectorService.createErc20TokenContract(
+        return this.getContractBalance$(
+          info,
+          address,
           tokenSymbol,
-          info.availableSmartContractAddresses
+          tokenAddress
         );
-        if (!contract) {
-          console.log('No ERC20 contract for' + tokenSymbol);
-        }
-        return contract.methods
-          .balanceOf(address)
-          .call()
-          .then((balance) => {
-            console.log(
-              'Balance',
-              balance,
-              tokenSymbol,
-              TokenUtil.toDisplayDecimalValue(balance, tokenSymbol)
-            );
-
-            return TokenUtil.toDisplayDecimalValue(balance, tokenSymbol);
-          }) as Promise<string>;
       }),
       catchError((e) => {
         console.warn('ERROR GETTING BALANCE', e);
         return of('0');
       })
     );
+  }
+
+  private getContractBalance$(
+    info: IProviderUserInfo,
+    address: string,
+    tokenSymbol?: TokenSymbol,
+    tokenAddress?: string
+  ): Promise<string> {
+    if (!tokenSymbol && !tokenAddress) {
+      throw new Error('Token symbol or address is required.');
+    }
+    let contract;
+    if (tokenSymbol) {
+      contract = this.connectorService.createErc20TokenContract(
+        tokenSymbol,
+        info.availableSmartContractAddresses
+      );
+    }
+    if (!contract && tokenAddress) {
+      this.connectorService.createErc20TokenContractFromAddress(tokenAddress);
+    }
+
+    if (!contract) {
+      throw new Error(
+        'No ERC20 contract for' + tokenSymbol + ' cAddr=' + tokenAddress
+      );
+    }
+    return contract.methods
+      .balanceOf(address)
+      .call()
+      .then((balance) => {
+        console.log(
+          'Balance',
+          balance,
+          tokenSymbol,
+          TokenUtil.toDisplayDecimalValue(balance, tokenSymbol)
+        );
+
+        return TokenUtil.toDisplayDecimalValue(balance, tokenSymbol);
+      }) as Promise<string>;
   }
 
   private getReefProtocolBalancesFromChain$(
