@@ -18,13 +18,13 @@ export class UiUtils {
         returnStr += diff.years + `${diff.years === 1 ? ' year' : ' years'}`;
       }
       if (!!diff.months) {
-        returnStr += ' ' + diff.months + ' months';
+        returnStr += ' ' + diff.months + `${diff.months === 1 ? ' month' : ' months'}`;
       }
       if (!!diff.weeks) {
-        returnStr += ' ' + diff.weeks + ' weeks';
+        returnStr += ' ' + diff.weeks + `${diff.weeks === 1 ? ' week' : ' weeks'}`;
       }
       if (!!diff.days) {
-        returnStr += ' ' + diff.days + ' days';
+        returnStr += ' ' + diff.days + `${diff.days === 1 ? ' day' : ' days'}`;
       }
     }
     return returnStr;
