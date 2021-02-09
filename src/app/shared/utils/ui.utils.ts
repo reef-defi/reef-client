@@ -15,7 +15,7 @@ export class UiUtils {
     const diff = DateTimeUtil.getPositiveTimeDiff(startDate, endDate);
     if (diff) {
       if (!!diff.years) {
-        returnStr += diff.years + ' years';
+        returnStr += diff.years + `${diff.years === 1 ? ' year' : ' years'}`;
       }
       if (!!diff.months) {
         returnStr += ' ' + diff.months + ' months';

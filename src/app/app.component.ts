@@ -34,7 +34,6 @@ export class AppComponent implements OnInit {
   providerName$ = this.connectorService.currentProviderName$;
   providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly providerLoading$ = this.connectorService.providerLoading$;
-  public canEnter = false;
 
   constructor(
     public readonly poolService: PoolService,
@@ -120,33 +119,6 @@ export class AppComponent implements OnInit {
         this.transactionService.initPendingTxs(pendingTxs);
       }, 5000);
     }
-  }
-
-  checkIfAuth(code: string) {
-    this.apiService
-      .checkIfAuth(code)
-      .pipe(
-        distinctUntilChanged(),
-        catchError((err: HttpErrorResponse) => {
-          if (err.status === 429) {
-            this.notification.showNotification(
-              err.error.message,
-              'Ok',
-              'error'
-            );
-          }
-          this.canEnter = false;
-          return EMPTY;
-        })
-      )
-      .subscribe((data) => {
-        this.canEnter = data.status;
-        if (this.canEnter) {
-          this.notification.showNotification('Code accepted', 'Ok', 'success');
-        } else {
-          this.notification.showNotification('Wrong Code', 'Ok', 'error');
-        }
-      });
   }
 
   async onSignOut(): Promise<void> {
