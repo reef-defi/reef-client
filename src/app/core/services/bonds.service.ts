@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Bond, ProtocolAddresses, TokenSymbol} from '../models/types';
+import {Bond, ProtocolAddresses, TokenSymbol, TransactionType} from '../models/types';
 import {TokenUtil} from '../../shared/utils/token.util';
 import {ConnectorService} from './connector.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
@@ -13,6 +13,7 @@ import {first} from 'rxjs/internal/operators/first';
 import {ErrorUtils} from '../../shared/utils/error.utils';
 import {NotificationService} from './notification.service';
 import {ApiService} from './api.service';
+import {TransactionsService} from './transactions.service';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +51,8 @@ export class BondsService {
     private connectorService: ConnectorService,
     private uniswapService: UniswapService,
     private notificationService: NotificationService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private transactionsService: TransactionsService
   ) {
   }
 
@@ -123,10 +125,10 @@ export class BondsService {
           'Ok',
           'info'
         );
-        this.connectorService.addPendingTx(hash);
+        this.transactionsService.addPendingTx(hash, TransactionType.REEF_BOND);
       })
       .on('receipt', (receipt) => {
-        this.connectorService.removePendingTx(receipt.transactionHash);
+        this.transactionsService.removePendingTx(receipt.transactionHash);
         this.notificationService.showNotification(
           `Locked ${amount} ${bond.stake}`,
           'Okay',

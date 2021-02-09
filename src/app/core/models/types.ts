@@ -34,6 +34,7 @@ export enum TransactionType {
   REEF_USDT_FARM = 'REEF_USDT_FARM',
   REEF_ETH_FARM = 'REEF_ETH_FARM',
   APPROVE_TOKEN = 'APPROVE_TOKEN',
+  REEF_BOND = 'REEF_BOND',
 }
 
 export interface PendingTransaction {
