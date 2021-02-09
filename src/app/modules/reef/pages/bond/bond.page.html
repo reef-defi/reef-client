@@ -51,7 +51,7 @@
               <div class="text-center text-muted text-monospace mb-3">
                 <app-countdown-timer [expiresDate]="bond.entryEndTime"
                 >This offer ends <br>
-                  when filled up or in
+                  <span class="small-text">when filled up or in</span>
                 </app-countdown-timer>
               </div>
 
@@ -100,8 +100,8 @@
                   *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bond, stakeAmount).totalInterestReturn, null, bond.farmDecimals) as stakeAmountInterest; else enterValue "
                 >
                   <h5>
-                    You will earn <br/>{{stakeAmountInterest}} {{bond.farm}}
-                    extra.
+                    You get <br/>{{stakeAmountInterest}} {{bond.farm}}
+                    in profit.
                   </h5>
                 </ng-container>
                 <ng-template #enterValue>
@@ -188,8 +188,8 @@
                 </ng-container>
                 <ng-container *ngSwitchCase="BondSaleStatus.FILLED">
                   <p class="text-center">
-                    You missed it.<br>
-                    This bond sale was sold out.<br/>
+                    You missed it unfortunately.<br>
+                    <span class="accent-text">This bond sale is already sold out</span>.<br/>
                     <span class="accent-text"
                     >Get ready for the next one!
                   </span>

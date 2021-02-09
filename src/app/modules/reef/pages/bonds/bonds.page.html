@@ -2,7 +2,7 @@
   <div class="col">
     <app-page-title
       title="Bonds"
-      subtitle="Stake your coins in our bonds"
+      subtitle="Stake your coins for profit"
     ></app-page-title>
   </div>
 </div>
@@ -16,25 +16,51 @@
       <div class="card m-2">
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-center mb-5">
+            <img *ngIf="bond.farm!==bond.stake" class="img-size-top-65" [src]="bond.stakeTokenLogo"/>
             <img class="img-size-top-65" [src]="bond.farmTokenLogo"/>
           </div>
           <div
             class="d-flex flex-column align-items-center justify-content-center"
           >
-            <div class="h6">{{bond.bondName}}</div>
+            <div class="h5">{{bond.bondName}}</div>
+            <div>Lock token: <span class="font-weight-bold">{{bond.stake}}</span></div>
+            <div>
+              <span *ngIf="bond.stake!==bond.farm"
+              >Rewards token: <span class="font-weight-bold">{{bond.stake}}</span> </span>
+            </div>
+            <div>
+              Lock duration:
+              <ng-container
+                *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
+              bond.farmEndTime) as timespanText"
+              >
+                <span class="font-weight-bold">{{timespanText}}</span></ng-container
+              >
+            </div>
+            <div>
+              APY: <span class="font-weight-bold">{{bond.apy}}%</span>
+            </div>
             <div
               class="text-monospace text-muted small text-center"
               [innerHTML]="bond.bondDescription"
             ></div>
+            <div *ngIf="true" class="text-center text-muted text-monospace mb-2 mt-2">
+              <app-countdown-timer [expiresDate]="bond.entryEndTime"
+              >Closes in
+              </app-countdown-timer>
+            </div>
           </div>
+
         </div>
-        <div class="d-flex align-items-center justify-content-center pb-3 m-2">
-          <button
-            [routerLink]="['/reef/bond', bond.id]"
-            class="btn btn-primary p-2"
-          >
-            open
-          </button>
+        <div class="d-flex align-items-center justify-content-center flex-column pb-3 m-2">
+          <div>
+            <button
+              [routerLink]="['/reef/bond', bond.id]"
+              class="btn btn-primary p-2"
+            >
+              accepting funds
+            </button>
+          </div>
         </div>
       </div>
     </div>
