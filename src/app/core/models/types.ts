@@ -419,6 +419,7 @@ export interface Bond {
   stakeTokenAddress: string;
   stakeTokenLogo: string;
   stakeDecimals: number;
+  stakeMaxAmountReached: boolean;
   farm: string;
   farmTokenAddress: string;
   farmTokenLogo: string;
@@ -435,4 +436,5 @@ export enum BondSaleStatus {
   EARLY,
   OPEN,
   LATE,
+  FILLED
 }

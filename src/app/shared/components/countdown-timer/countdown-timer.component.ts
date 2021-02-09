@@ -21,7 +21,7 @@ export class CountdownTimerComponent {
     map((_) => new Date()),
     withLatestFrom(this.expiredDateSub),
     map(([currTime, expiresDate]: [Date, Date]) => {
-      return DateTimeUtil.getTimeDiff(currTime, expiresDate);
+      return DateTimeUtil.getPositiveTimeDiff(currTime, expiresDate);
     }),
     shareReplay(1)
   ) as Observable<{

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Bond, ProtocolAddresses, TokenSymbol, TransactionType} from '../models/types';
+import {Bond, ProtocolAddresses, TokenSymbol, TransactionType,} from '../models/types';
 import {TokenUtil} from '../../shared/utils/token.util';
 import {ConnectorService} from './connector.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
@@ -37,11 +37,11 @@ export class BondsService {
       farm: 'REEF',
       farmTokenAddress: '0x3F2D78c7F1A20BF14E1f4D249973968146Fb5Ee1',
       farmTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      farmStartTime: '2021-02-08T15:00:00.000Z',
+      farmStartTime: '2021-02-09T09:00:00.000Z',
       farmEndTime: '2022-02-07T23:00:00.000Z',
       farmDecimals: 0,
-      entryStartTime: '2021-02-08T12:00:00.000Z',
-      entryEndTime: '2021-02-08T13:00:00.000Z',
+      entryStartTime: '2021-02-09T12:00:00.000Z',
+      entryEndTime: '2021-02-09T13:00:00.000Z',
       apy: '40',
     },
   ]) as Observable<Bond[]>;*/
@@ -140,11 +140,19 @@ export class BondsService {
         ]);
       })
       .on('error', (err) => {
-        this.notificationService.showNotification(
-          ErrorUtils.parseError(err.code),
-          'Close',
-          'error'
-        );
+        if (err.message.indexOf('missed it') > 0 || err.message.indexOf('expired') > 0) {
+          this.notificationService.showNotification(
+            'Bond offer already closed.',
+            'Close',
+            'error'
+          );
+        } else {
+          this.notificationService.showNotification(
+            ErrorUtils.parseError(err.code),
+            'Close',
+            'error'
+          );
+        }
       });
   }
 }

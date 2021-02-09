@@ -100,7 +100,7 @@ export class BondPage {
       ) {
         return null;
       }
-      return DateTimeUtil.getTimeDiff(now, bond.entryEndTime);
+      return DateTimeUtil.getPositiveTimeDiff(now, bond.entryEndTime);
     })
   );
 
@@ -113,6 +113,9 @@ export class BondPage {
   }
 
   toBondSaleStatus(bond: Bond): BondSaleStatus {
+    if (bond.stakeMaxAmountReached) {
+      return BondSaleStatus.FILLED;
+    }
     const now = new Date();
     if (
       !!bond.entryStartTime &&
@@ -127,9 +130,15 @@ export class BondPage {
   }
 
   stake(bond: Bond, stakeAmount: string): void {
-    this.bondsService.stake(bond, stakeAmount).then(() => {
-      this.stakeAmount = null;
-      this.stakedBalanceUpdate.next();
-    });
+    this.bondsService.stake(bond, stakeAmount).then((res) => {
+        this.stakeAmount = null;
+        this.stakedBalanceUpdate.next();
+
+      },
+      (err) => {
+        if (err.message.indexOf('oversubscribed') > 0) {
+          bond.stakeMaxAmountReached = true;
+        }
+      });
   }
 }

@@ -12,7 +12,7 @@ export class UiUtils {
     endDate: Date | string
   ): string {
     let returnStr = '';
-    const diff = DateTimeUtil.getTimeDiff(startDate, endDate);
+    const diff = DateTimeUtil.getPositiveTimeDiff(startDate, endDate);
     if (diff) {
       if (!!diff.years) {
         returnStr += diff.years + ' years';

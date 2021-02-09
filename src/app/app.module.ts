@@ -16,7 +16,7 @@ import {CommonModule} from '@angular/common';
     HttpClientModule,
     SharedModule,
     BrowserAnimationsModule,
-    CommonModule
+    CommonModule,
   ],
   providers: [
     // { provide: HTTP_INTERCEPTORS, useClass: CovalentAuthInterceptor, multi: true },
