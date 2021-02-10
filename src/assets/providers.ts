@@ -7,8 +7,8 @@ export const provider = {
     chainId: 1
   },
   [ProviderName.ALCHEMY]: {
-    url: '',
-    apiKey: '',
+    url: 'https://eth-mainnet.alchemyapi.io/v2/yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
+    apiKey: 'yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
     chainId: 1
   },
   [ProviderName.LOCAL_FORK]: {

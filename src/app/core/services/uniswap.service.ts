@@ -48,7 +48,7 @@ export class UniswapService {
     this.ethersProvider$ = connectorService.providerUserInfo$.pipe(
       map((info) =>
         getDefaultProvider(info.chainInfo.network, {
-          // alchemy: ProviderUtil.getProviderApiKey(ProviderName.ALCHEMY),
+          alchemy: ProviderUtil.getProviderApiKey(ProviderName.ALCHEMY),
           infura: ProviderUtil.getProviderApiKey(ProviderName.INFURA),
         })
       ),
