@@ -8,11 +8,13 @@ export class UiUtils {
   }
 
   static toMinTimespanText(
-    startDate: Date | string,
-    endDate: Date | string
+    startDate: Date | string | number,
+    endDate: Date | string | number
   ): string {
     let returnStr = '';
+
     const diff = DateTimeUtil.getPositiveTimeDiff(startDate, endDate);
+
     if (diff) {
       if (!!diff.years) {
         returnStr += diff.years + `${diff.years === 1 ? ' year' : ' years'}`;
@@ -25,6 +27,9 @@ export class UiUtils {
       }
       if (!!diff.days) {
         returnStr += ' ' + diff.days + `${diff.days === 1 ? ' day' : ' days'}`;
+      }
+      if (!!diff.hours) {
+        returnStr += ' ' + diff.hours + `${diff.hours === 1 ? ' hour' : ' hours'}`;
       }
     }
     return returnStr;

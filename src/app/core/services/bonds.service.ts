@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Bond, ProtocolAddresses, TokenSymbol, TransactionType,} from '../models/types';
+import {from, Observable} from 'rxjs';
+import {Bond, BondSaleStatus, ProtocolAddresses, TokenSymbol, TransactionType} from '../models/types';
 import {TokenUtil} from '../../shared/utils/token.util';
 import {ConnectorService} from './connector.service';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {environment} from '../../../environments/environment';
-import {shareReplay} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {getContractData} from '../../../assets/abi';
 import {UniswapService} from './uniswap.service';
 import {first} from 'rxjs/internal/operators/first';
@@ -14,6 +14,10 @@ import {ErrorUtils} from '../../shared/utils/error.utils';
 import {NotificationService} from './notification.service';
 import {ApiService} from './api.service';
 import {TransactionsService} from './transactions.service';
+import Web3 from 'web3';
+import {of} from 'rxjs/internal/observable/of';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {DateTimeUtil} from '../../shared/utils/date-time.util';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +25,9 @@ import {TransactionsService} from './transactions.service';
 export class BondsService {
   public bondsList$: Observable<Bond[]> = this.http
     .get(environment.reefNodeApiUrl + '/bonds')
-    .pipe(shareReplay(1)) as Observable<Bond[]>;
+    .pipe(
+      shareReplay(1)
+    ) as Observable<Bond[]>;
 
   /*public bondsList$: Observable<Bond[]> = of([
     {
@@ -45,6 +51,7 @@ export class BondsService {
       apy: '40',
     },
   ]) as Observable<Bond[]>;*/
+  private bondTimeValues = new Map();
 
   constructor(
     private http: HttpClient,
@@ -83,6 +90,39 @@ export class BondsService {
     ) as Observable<string>;
   }
 
+  getBondTimeValues$(bond: Bond): Observable<Bond> {
+    if (!this.bondTimeValues.has(bond.id)) {
+      const bTimeValues$ = this.connectorService.web3$.pipe(
+        switchMap((web3: Web3) => {
+          const reefAbis = getContractData({} as ProtocolAddresses);
+          const bondContract = new web3.eth.Contract(
+            reefAbis.reefBond.abi as any,
+            bond.bondContractAddress
+          );
+          const entryStart$ = of(bond.entryStartTime || (new Date()).getTime());
+          const entryEnd$ = from(bondContract.methods
+            .windowOfOpportunity()
+            .call() as Promise<number>).pipe(shareReplay(1));
+          const farmEnd$ = bondContract.methods
+            .releaseTime()
+            .call() as Promise<number>;
+          return combineLatest([entryStart$, entryEnd$, farmEnd$]).pipe(
+            map(([eStart, eEnd, fEnd]) => {
+              bond.entryStartTime = eStart;
+              bond.entryEndTime = DateTimeUtil.toJSTimestamp(eEnd); // (new Date()).getTime() + 1000 * 1 ; //
+              bond.farmStartTime = bond.entryEndTime;
+              bond.farmEndTime = DateTimeUtil.toJSTimestamp(fEnd); // bond.entryEndTime+(1000*60*60*24*181) //
+              return bond;
+            })
+          ) as Observable<Bond>;
+        }),
+        shareReplay(1)
+      );
+      this.bondTimeValues.set(bond.id, bTimeValues$);
+    }
+    return this.bondTimeValues.get(bond.id);
+  }
+
   async stake(bond: Bond, amount: string): Promise<void> {
     const amt = parseFloat(amount);
     if (amt && amt <= 0) {
@@ -102,8 +142,6 @@ export class BondsService {
       reefAbis.erc20Token.abi,
       bond.stakeTokenAddress
     );
-    console.log('stake VVV=', bond.stakeTokenAddress);
-
     await this.uniswapService.approveToken(
       stakeTokenContract,
       bond.bondContractAddress
@@ -154,5 +192,22 @@ export class BondsService {
           );
         }
       });
+  }
+
+  toBondSaleStatus(bond: Bond): BondSaleStatus {
+    if (bond.stakeMaxAmountReached) {
+      return BondSaleStatus.FILLED;
+    }
+    const now = new Date();
+    if (
+      !!bond.entryStartTime &&
+      DateTimeUtil.toDate(bond.entryStartTime) > now
+    ) {
+      return BondSaleStatus.EARLY;
+    }
+    if (!!bond.entryEndTime && DateTimeUtil.toDate(bond.entryEndTime) > now) {
+      return BondSaleStatus.OPEN;
+    }
+    return BondSaleStatus.LATE;
   }
 }

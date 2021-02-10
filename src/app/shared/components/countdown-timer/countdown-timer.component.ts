@@ -17,6 +17,9 @@ export class CountdownTimerComponent {
     this.expiredDateSub.next(DateTimeUtil.toDate(val));
   }
 
+  @Input()
+  accentColor: boolean;
+
   expiresCountdownTime$ = timer(0, 1000).pipe(
     map((_) => new Date()),
     withLatestFrom(this.expiredDateSub),
@@ -30,4 +33,5 @@ export class CountdownTimerComponent {
     minutes: number;
     seconds: number;
   }>;
+
 }

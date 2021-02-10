@@ -423,11 +423,11 @@ export interface Bond {
   farm: string;
   farmTokenAddress: string;
   farmTokenLogo: string;
-  farmStartTime: string;
-  farmEndTime: string;
+  farmStartTime: number;
+  farmEndTime: number;
   farmDecimals: number;
-  entryEndTime: string;
-  entryStartTime: string;
+  entryEndTime: number;
+  entryStartTime: number;
   apy: string;
   bondContractAddress: string;
 }

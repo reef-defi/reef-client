@@ -3,11 +3,12 @@ import {Duration, intervalToDuration, isAfter} from 'date-fns';
 export class DateTimeUtil {
 
   public static getPositiveTimeDiff(
-    startDate: Date | string,
-    endDate: Date | string
+    startDate: Date | string | number,
+    endDate: Date | string | number
   ): Duration {
     startDate = DateTimeUtil.toDate(startDate);
     endDate = DateTimeUtil.toDate(endDate);
+
     if (!isAfter(endDate, startDate)) {
       return null;
     }
@@ -27,5 +28,9 @@ export class DateTimeUtil {
       dateVal = parseInt(dateVal, 10);
     }
     return new Date(dateVal);
+  }
+
+  static toJSTimestamp(blockchainTimestamp: number) {
+    return blockchainTimestamp * 1000;
   }
 }

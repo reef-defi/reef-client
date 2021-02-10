@@ -356,3 +356,7 @@ body {
 .highcharts-container svg:not(:root) {
   overflow: visible !important;
 }
+
+.max-w-440 {
+  max-width: 420px;
+}
