@@ -1,29 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { from, Observable } from 'rxjs';
-import {
-  Bond,
-  BondSaleStatus,
-  ProtocolAddresses,
-  TokenSymbol,
-  TransactionType,
-} from '../models/types';
-import { TokenUtil } from '../../shared/utils/token.util';
-import { ConnectorService } from './connector.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { environment } from '../../../environments/environment';
-import { map, shareReplay } from 'rxjs/operators';
-import { getContractData } from '../../../assets/abi';
-import { UniswapService } from './uniswap.service';
-import { first } from 'rxjs/internal/operators/first';
-import { ErrorUtils } from '../../shared/utils/error.utils';
-import { NotificationService } from './notification.service';
-import { ApiService } from './api.service';
-import { TransactionsService } from './transactions.service';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {from, Observable} from 'rxjs';
+import {Bond, BondSaleStatus, ProtocolAddresses, TokenSymbol, TransactionType,} from '../models/types';
+import {TokenUtil} from '../../shared/utils/token.util';
+import {ConnectorService} from './connector.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {environment} from '../../../environments/environment';
+import {map, shareReplay} from 'rxjs/operators';
+import {getContractData} from '../../../assets/abi';
+import {UniswapService} from './uniswap.service';
+import {first} from 'rxjs/internal/operators/first';
+import {ErrorUtils} from '../../shared/utils/error.utils';
+import {NotificationService} from './notification.service';
+import {ApiService} from './api.service';
+import {TransactionsService} from './transactions.service';
 import Web3 from 'web3';
-import { of } from 'rxjs/internal/observable/of';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { DateTimeUtil } from '../../shared/utils/date-time.util';
+import {of} from 'rxjs/internal/observable/of';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {DateTimeUtil} from '../../shared/utils/date-time.util';
 
 @Injectable({
   providedIn: 'root',
@@ -47,11 +41,7 @@ export class BondsService {
       farm: 'REEF',
       farmTokenAddress: '0x3F2D78c7F1A20BF14E1f4D249973968146Fb5Ee1',
       farmTokenLogo: 'http://localhost:4200/assets/images/reef/reef-token.svg',
-      farmStartTime: '2021-02-09T09:00:00.000Z',
-      farmEndTime: '2022-02-07T23:00:00.000Z',
       farmDecimals: 0,
-      entryStartTime: '2021-02-09T12:00:00.000Z',
-      entryEndTime: '2021-02-09T13:00:00.000Z',
       apy: '40',
     },
   ]) as Observable<Bond[]>;*/
@@ -64,7 +54,8 @@ export class BondsService {
     private notificationService: NotificationService,
     private apiService: ApiService,
     private transactionsService: TransactionsService
-  ) {}
+  ) {
+  }
 
   getStakedBalanceOf(
     bond: Bond,
@@ -106,15 +97,18 @@ export class BondsService {
           const entryEnd$ = from(
             bondContract.methods.windowOfOpportunity().call() as Promise<number>
           ).pipe(shareReplay(1));
+          const farmStart$ = bondContract.methods
+            .startTime()
+            .call() as Promise<number>;
           const farmEnd$ = bondContract.methods
             .releaseTime()
             .call() as Promise<number>;
-          return combineLatest([entryStart$, entryEnd$, farmEnd$]).pipe(
-            map(([eStart, eEnd, fEnd]) => {
+          return combineLatest([entryStart$, entryEnd$, farmStart$, farmEnd$]).pipe(
+            map(([eStart, eEnd, fStart, fEnd]) => {
               bond.entryStartTime = eStart;
-              bond.entryEndTime = DateTimeUtil.toJSTimestamp(eEnd); // (new Date()).getTime() + 1000 * 1 ; //
-              bond.farmStartTime = bond.entryEndTime;
-              bond.farmEndTime = DateTimeUtil.toJSTimestamp(fEnd); // bond.entryEndTime+(1000*60*60*24*181) //
+              bond.entryEndTime = DateTimeUtil.toJSTimestamp(eEnd);
+              bond.farmStartTime = DateTimeUtil.toJSTimestamp(fStart);
+              bond.farmEndTime = DateTimeUtil.toJSTimestamp(fEnd);
               return bond;
             })
           ) as Observable<Bond>;

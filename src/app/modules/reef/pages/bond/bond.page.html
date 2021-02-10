@@ -40,15 +40,10 @@
                 <div class="mb-1" *ngIf="bondNoTimes.stake!==bondNoTimes.farm">
                   Rewards token: {{bondNoTimes.stake}}
                 </div>
-                <ng-container *ngIf="bondWithTimes$| async as bond;">
+                <ng-container *ngIf="lockDurationString$| async as timespanText;">
                   <div class="mb-1">
                     Lock duration:
-                    <ng-container
-                      *ngIf="UiUtils.toMinTimespanText(bond.farmStartTime,
-                bond.farmEndTime) as timespanText"
-                    >
-                      {{timespanText}}</ng-container
-                    >
+                    {{timespanText}}
                   </div>
                 </ng-container>
                 <div class="mb-1">APY: {{bondNoTimes.apy}}%</div>
@@ -63,12 +58,12 @@
                     *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bond, stakeAmount).totalInterestReturn, null, bond.farmDecimals) as stakeAmountInterest; else enterValue "
                   >
                     <h5>
-                      You get <br />{{stakeAmountInterest}} {{bond.farm}} in
+                      You get <br/>{{stakeAmountInterest}} {{bond.farm}} in
                       profit.
                     </h5>
                   </ng-container>
                   <ng-template #enterValue>
-                    <h5>Enter value to <br />see calculated profits.</h5>
+                    <h5>Enter value to <br/>see calculated profits.</h5>
                   </ng-template>
                 </div>
 
@@ -119,7 +114,7 @@
                   <app-countdown-timer
                     [expiresDate]="bond.entryEndTime"
                     accentColor="true"
-                    >This offer ends <br />
+                  >This offer ends <br/>
                     when filled up or in
                   </app-countdown-timer>
                 </div>
@@ -148,7 +143,8 @@
                     {{stakedReturn.bond.stake}} locked <br/>for profit interest
                     of
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                    null, bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}} .
+                    null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}}
+                    .
                   </p>
                 </ng-container>
               </ng-container>
@@ -194,13 +190,13 @@
                           *ngIf="stakedBalanceReturn$|async as stakedReturn"
                         >
                           <span class="bold"
-                            >{{stakedReturn.staked}}
+                          >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          locked and<br />
+                          locked for<br/>
                           <span class="bold"
                           >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                            null, bond.farmDecimals + 1)}}
+                            null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}}
                             {{stakedReturn.bond.farm}}</span
                           >
                           interest profit.
@@ -210,15 +206,15 @@
                   </ng-container>
                   <ng-container *ngSwitchCase="BondSaleStatus.EARLY">
                     <p class="text-center">
-                      This bond sale is starting<br />
+                      This bond sale is starting<br/>
                       <span class="accent-text"
-                        >at {{bond.entryStartTime|date:'short'}}</span
-                      ><br />
+                      >at {{bond.entryStartTime|date:'short'}}</span
+                      ><br/>
                       <span class="accent-text"
-                        ><app-countdown-timer
-                          [expiresDate]="bond.entryStartTime"
-                          >Get ready for the opening!</app-countdown-timer
-                        >
+                      ><app-countdown-timer
+                        [expiresDate]="bond.entryStartTime"
+                      >Get ready for the opening!</app-countdown-timer
+                      >
                       </span>
                     </p>
                   </ng-container>
@@ -226,13 +222,13 @@
                     <div>
                       <p class="text-center">
                         <span class="accent-text font-weight-bold"
-                          >Oh, this one sold out</span
-                        >.<br />
+                        >Oh, this one sold out</span
+                        >.<br/>
                         <span class="text-muted"
-                          >Some limited time offers on the way.</span
-                        ><br />
+                        >Some limited time offers on the way.</span
+                        ><br/>
                         <span class="accent-text font-weight-bold"
-                          >Get ready for the next one!
+                        >Get ready for the next one!
                         </span>
                       </p>
                       <div class="card border-purple m-4">
