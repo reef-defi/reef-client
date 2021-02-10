@@ -176,14 +176,14 @@
                             {{stakedReturn.bond.farm}}</span
                           >.<br/>-->
 
-                          Your growing profit:
+                          Your growing profit:<br *ngIf="stakedReturn.currentInterestReturn?.toString().length>5">
                           <span class="accent-text"
-                            >{{stakedReturn.currentInterestReturn}}
+                          >{{stakedReturn.currentInterestReturn}}
                             {{stakedReturn.bond.farm}}</span
-                          ><br />
+                          ><br/>
                           Unlock date:
                           <span class="accent-text"
-                            >{{bond.farmEndTime|date}}</span
+                          >{{bond.farmEndTime|date}}</span
                           >
                         </ng-container>
                       </p>
