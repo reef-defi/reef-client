@@ -145,10 +145,10 @@
                 >
                   <p class="text-muted text-center text-monospace small-text">
                     So far you have {{stakedReturn.staked}}
-                    {{stakedReturn.bond.stake}} locked <br />for profit interest
+                    {{stakedReturn.bond.stake}} locked <br/>for profit interest
                     of
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                    null, bond.farmDecimals)}} {{stakedReturn.bond.farm}} .
+                    null, bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}} .
                   </p>
                 </ng-container>
               </ng-container>
