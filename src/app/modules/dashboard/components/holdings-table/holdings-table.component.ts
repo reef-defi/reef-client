@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import {TokenSymbol} from "../../../../core/models/types";
 
 @Component({
   selector: 'app-holdings-table',
@@ -7,6 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./holdings-table.component.scss'],
 })
 export class HoldingsTableComponent {
+  TokenSymbol = TokenSymbol;
   constructor(private readonly router: Router) {}
   @Input() portfolio;
 

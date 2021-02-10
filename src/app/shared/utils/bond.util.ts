@@ -1,5 +1,5 @@
-import {Bond} from '../../core/models/types';
-import {DateTimeUtil} from './date-time.util';
+import { Bond } from '../../core/models/types';
+import { DateTimeUtil } from './date-time.util';
 
 export class BondUtil {
   private static MILLIS_PER_YEAR = 1000 * 60 * 60 * 24 * 365;
@@ -9,7 +9,7 @@ export class BondUtil {
     amountInvested: string
   ): { currentInterestReturn: number; totalInterestReturn: number } {
     const now = new Date().getTime();
-    const {farmStartTime, farmEndTime, farmTimeSpan} = this.getBondFarmTime(
+    const { farmStartTime, farmEndTime, farmTimeSpan } = this.getBondFarmTime(
       bond
     );
     const relativeYearlyFarmDuration = farmTimeSpan / BondUtil.MILLIS_PER_YEAR;
@@ -29,6 +29,6 @@ export class BondUtil {
     const farmStartTime = DateTimeUtil.toDate(bond.farmStartTime).getTime();
     const farmEndTime = DateTimeUtil.toDate(bond.farmEndTime).getTime();
     const farmTimeSpan = farmEndTime - farmStartTime;
-    return {farmStartTime, farmEndTime, farmTimeSpan};
+    return { farmStartTime, farmEndTime, farmTimeSpan };
   }
 }

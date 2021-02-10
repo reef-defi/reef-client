@@ -1,19 +1,23 @@
-import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {first, map, mapTo, shareReplay, take} from 'rxjs/operators';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {AddressUtils} from '../../../../shared/utils/address.utils';
-import {BehaviorSubject} from 'rxjs';
-import {IProviderUserInfo, TokenSymbol, TransactionType,} from '../../../../core/models/types';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {getContractData} from '../../../../../assets/abi';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {Contract} from 'web3-eth-contract';
-import {ApiService} from '../../../../core/services/api.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {TokenUtil} from '../../../../shared/utils/token.util';
-import {TransactionsService} from '../../../../core/services/transactions.service';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { first, map, mapTo, shareReplay, take } from 'rxjs/operators';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { AddressUtils } from '../../../../shared/utils/address.utils';
+import { BehaviorSubject } from 'rxjs';
+import {
+  IProviderUserInfo,
+  TokenSymbol,
+  TransactionType,
+} from '../../../../core/models/types';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { getContractData } from '../../../../../assets/abi';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { Contract } from 'web3-eth-contract';
+import { ApiService } from '../../../../core/services/api.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { TokenUtil } from '../../../../shared/utils/token.util';
+import { TransactionsService } from '../../../../core/services/transactions.service';
 
 @Component({
   selector: 'app-farm-page',

@@ -1,7 +1,6 @@
-import {Duration, intervalToDuration, isAfter} from 'date-fns';
+import { Duration, intervalToDuration, isAfter } from 'date-fns';
 
 export class DateTimeUtil {
-
   public static getPositiveTimeDiff(
     startDate: Date | string | number,
     endDate: Date | string | number
@@ -12,7 +11,7 @@ export class DateTimeUtil {
     if (!isAfter(endDate, startDate)) {
       return null;
     }
-    return intervalToDuration({start: startDate, end: endDate});
+    return intervalToDuration({ start: startDate, end: endDate });
   }
 
   static toDate(dateVal: number | string | Date): Date {

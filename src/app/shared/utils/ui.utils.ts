@@ -1,4 +1,4 @@
-import {DateTimeUtil} from './date-time.util';
+import { DateTimeUtil } from './date-time.util';
 
 export class UiUtils {
   static keydownPreventDecimal($event: any): void {
@@ -20,16 +20,19 @@ export class UiUtils {
         returnStr += diff.years + `${diff.years === 1 ? ' year' : ' years'}`;
       }
       if (!!diff.months) {
-        returnStr += ' ' + diff.months + `${diff.months === 1 ? ' month' : ' months'}`;
+        returnStr +=
+          ' ' + diff.months + `${diff.months === 1 ? ' month' : ' months'}`;
       }
       if (!!diff.weeks) {
-        returnStr += ' ' + diff.weeks + `${diff.weeks === 1 ? ' week' : ' weeks'}`;
+        returnStr +=
+          ' ' + diff.weeks + `${diff.weeks === 1 ? ' week' : ' weeks'}`;
       }
       if (!!diff.days) {
         returnStr += ' ' + diff.days + `${diff.days === 1 ? ' day' : ' days'}`;
       }
       if (!!diff.hours) {
-        returnStr += ' ' + diff.hours + `${diff.hours === 1 ? ' hour' : ' hours'}`;
+        returnStr +=
+          ' ' + diff.hours + `${diff.hours === 1 ? ' hour' : ' hours'}`;
       }
     }
     return returnStr;

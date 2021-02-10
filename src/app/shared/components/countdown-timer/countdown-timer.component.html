@@ -1,15 +1,15 @@
 <ng-container *ngIf="expiresCountdownTime$ | async as time; else expired">
   <ng-content></ng-content>
-  <br/>
+  <br />
   <div [class.accent-text]="accentColor">
     <span *ngIf="!!time.days">
-    <span class="font-weight-bold">{{ time.days }}</span> days
-  </span>
+      <span class="font-weight-bold">{{ time.days }}</span> days
+    </span>
     <span class="font-weight-bold">
-    {{ time.hours }}
-  </span> hours <span class="font-weight-bold">{{ time.minutes }}</span> minutes <span
-    class="font-weight-bold">{{ time.seconds }}</span> seconds.
-
+      {{ time.hours }}
+    </span>
+    hours <span class="font-weight-bold">{{ time.minutes }}</span> minutes
+    <span class="font-weight-bold">{{ time.seconds }}</span> seconds.
   </div>
 </ng-container>
 <ng-template #expired> This bond sale closed.</ng-template>

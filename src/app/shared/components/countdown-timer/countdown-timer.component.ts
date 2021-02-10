@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Observable, ReplaySubject, timer} from 'rxjs';
-import {map, shareReplay, withLatestFrom} from 'rxjs/operators';
-import {DateTimeUtil} from '../../utils/date-time.util';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Observable, ReplaySubject, timer } from 'rxjs';
+import { map, shareReplay, withLatestFrom } from 'rxjs/operators';
+import { DateTimeUtil } from '../../utils/date-time.util';
 
 @Component({
   selector: 'app-countdown-timer',
@@ -33,5 +33,4 @@ export class CountdownTimerComponent {
     minutes: number;
     seconds: number;
   }>;
-
 }

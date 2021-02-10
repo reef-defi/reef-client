@@ -143,11 +143,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-    transactionHash: string;
-    receipt: any;
-    confirmation: number;
-    error?: any;
-  }>
+        transactionHash: string;
+        receipt: any;
+        confirmation: number;
+        error?: any;
+      }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -436,5 +436,5 @@ export enum BondSaleStatus {
   EARLY,
   OPEN,
   LATE,
-  FILLED
+  FILLED,
 }
