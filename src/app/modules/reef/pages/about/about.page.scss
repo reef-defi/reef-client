@@ -5,11 +5,17 @@
   background-repeat: no-repeat;
   background-position-x: 54%;
 }
+@media (max-width: 467px) {
+  /* Target devices narrower than 768px. */
+  .reef-bg {
+    padding-bottom: 10em;
+  }
+}
 
 .card-body {
   padding-bottom: 13em !important;
 }
 
 .bottom-logo {
-  width: 120px;
+  width: 60px;
 }
