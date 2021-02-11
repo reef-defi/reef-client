@@ -122,7 +122,7 @@ export class BondPage {
 
   constructor(
     private route: ActivatedRoute,
-    private bondsService: BondsService,
+    public bondsService: BondsService,
     public connectorService: ConnectorService,
     public apiService: ApiService
   ) {}
