@@ -61,70 +61,70 @@ export class BuyCryptoPage implements OnInit {
       });
   }
 
-  public openDialog(action: 'register' | 'redirect'): void {
-    const dialogRef = this.dialog.open(BinanceRegisterModalComponent, {
-      width: '450px',
-      data: {
-        action,
-      },
-    });
-    dialogRef
-      .afterClosed()
-      .pipe(take(1))
-      .subscribe((email) => {
-        if (email) {
-          const address = this.userInfo$.value.address;
-          action === 'register'
-            ? this.registerBinanceUser(email, address)
-            : this.redirectToBind(email).subscribe(({ redirectUrl }) =>
-                window.open(redirectUrl)
-              );
-        }
-      });
-  }
+  // public openDialog(action: 'register' | 'redirect'): void {
+  //   const dialogRef = this.dialog.open(BinanceRegisterModalComponent, {
+  //     width: '450px',
+  //     data: {
+  //       action,
+  //     },
+  //   });
+  //   dialogRef
+  //     .afterClosed()
+  //     .pipe(take(1))
+  //     .subscribe((email) => {
+  //       if (email) {
+  //         const address = this.userInfo$.value.address;
+  //         action === 'register'
+  //           ? this.registerBinanceUser(email, address)
+  //           : this.redirectToBind(email).subscribe(({ redirectUrl }) =>
+  //               window.open(redirectUrl)
+  //             );
+  //       }
+  //     });
+  // }
 
-  public getQuote(): Subscription {
-    this.loading = true;
-    const address = this.userInfo$.value.address;
-    const email = this.binanceUserInfo$.value.email;
-    const payload: QuotePayload = {
-      address,
-      cryptoCurrency: this.selectedCrypto.currency,
-      baseCurrency: this.selectedCrypto.currency,
-      requestedAmount: +this.amount,
-      email,
-    };
-    if (!this.amount) {
-      this.loading = false;
-      this.quoteInformation.next(null);
-      return;
-    }
-    return of(this.amount)
-      .pipe(
-        filter((amount: number) => amount && amount > 0),
-        take(1),
-        debounceTime(1000),
-        switchMap((amount: number) => this.apiService.getBinanceQuote(payload)),
-        catchError((e: HttpErrorResponse) => {
-          this.loading = false;
-          this.error = true;
-          return EMPTY;
-        })
-      )
-      .subscribe((data: QuoteResponse) => {
-        this.loading = false;
-        this.error = false;
-        this.quoteInformation.next({
-          ...data,
-          totalPrice: this.amount * data.quotePrice,
-        });
-      });
+  public getQuote(): any {
+    // this.loading = true;
+    // const address = this.userInfo$.value.address;
+    // const email = this.binanceUserInfo$.value.email;
+    // const payload: QuotePayload = {
+    //   address,
+    //   cryptoCurrency: this.selectedCrypto.currency,
+    //   baseCurrency: this.selectedCrypto.currency,
+    //   requestedAmount: +this.amount,
+    //   email,
+    // };
+    // if (!this.amount) {
+    //   this.loading = false;
+    //   this.quoteInformation.next(null);
+    //   return;
+    // }
+    // return of(this.amount)
+    //   .pipe(
+    //     filter((amount: number) => amount && amount > 0),
+    //     take(1),
+    //     debounceTime(1000),
+    //     switchMap((amount: number) => this.apiService.getBinanceQuote(payload)),
+    //     catchError((e: HttpErrorResponse) => {
+    //       this.loading = false;
+    //       this.error = true;
+    //       return EMPTY;
+    //     })
+    //   )
+    //   .subscribe((data: QuoteResponse) => {
+    //     this.loading = false;
+    //     this.error = false;
+    //     this.quoteInformation.next({
+    //       ...data,
+    //       totalPrice: this.amount * data.quotePrice,
+    //     });
+    //   });
   }
 
   public executeTrade() {
-    const address = this.userInfo$.value.address;
-    const { quoteId } = this.quoteInformation.value;
-    this.apiService.executeTrade(address, quoteId).subscribe();
+    // const address = this.userInfo$.value.address;
+    // const { quoteId } = this.quoteInformation.value;
+    // this.apiService.executeTrade(address, quoteId).subscribe();
   }
 
   private checkIfUserRegistered(address: string): Subscription {

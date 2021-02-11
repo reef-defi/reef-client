@@ -28,6 +28,22 @@ export const supportedChains: IChainData[] = [
     },
   },
   {
+    name: 'Binance Smart Chain',
+    short_name: 'bsc',
+    chain: 'BSC',
+    network: 'binance',
+    chain_id: ChainId.BINANCE,
+    network_id: 56,
+    rpc_url: 'https://bsc-dataseed.binance.org',
+    native_currency: {
+      symbol: 'BNB',
+      name: 'Binance Coin',
+      decimals: '8',
+      contractAddress: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+      balance: '',
+    },
+  },
+  {
     name: 'Ethereum Ropsten',
     short_name: 'rop',
     chain: 'ETH',

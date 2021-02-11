@@ -1,7 +1,7 @@
 <div
   class="sidebar d-none d-md-flex bg-white px-4 py-4 flex-column vh-100 sticky-top w-2xs"
 >
-  <div class="my-4 ml-1">
+  <div class="my-3 ml-1">
     <a class="link-unstyled d-inline-flex align-items-center text-center pl-3">
       <img
         class="mr-2"
@@ -9,6 +9,18 @@
         src="../../../../assets/images/reef/reef-v2.svg"
       />
     </a>
+  </div>
+  <div
+    class="d-flex justify-content-center align-items-center p-2 mb-3 ml-1 bg-danger border rounded"
+    *ngIf="chainInfo.chain_id === 56"
+  >
+    <div class="text-monospace small text-white">
+      <mat-icon class="p-0 m-0">dangerous</mat-icon>
+      <span class="text-break text-wrap">
+        We currently do not support <b>BSC</b>. Please switch to
+        <b>ETH Mainnet</b> to use our staking functionality.
+      </span>
+    </div>
   </div>
   <div class="icon-container">
     <ng-container *ngTemplateOutlet="menuItems"></ng-container>
@@ -106,14 +118,14 @@
       [matMenuTriggerFor]="addressMenu"
       class="d-flex align-items-center py-1 px-3 sidebar__address ml-md-4"
     >
-      <mat-icon class="address__circle mr-1"> stop_circle </mat-icon>
+      <mat-icon class="address__circle mr-1"> stop_circle</mat-icon>
       <app-address-shortener
         [standalone]="true"
         [showCopy]="false"
         [address]="currentAddress"
       >
       </app-address-shortener>
-      <mat-icon> keyboard_arrow_down </mat-icon>
+      <mat-icon> keyboard_arrow_down</mat-icon>
     </div>
   </div>
   <mat-menu class="address__menu" xPosition="after" #addressMenu="matMenu">

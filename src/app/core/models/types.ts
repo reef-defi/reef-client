@@ -215,6 +215,7 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   LOCAL_FORK = 1337,
+  BINANCE = 56,
 }
 
 export enum ProviderName {
