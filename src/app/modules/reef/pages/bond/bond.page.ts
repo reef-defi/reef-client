@@ -1,18 +1,23 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {BondsService} from '../../../../core/services/bonds.service';
-import {ActivatedRoute} from '@angular/router';
-import {filter, map, pluck, shareReplay} from 'rxjs/operators';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {Bond, BondSaleStatus, IProviderUserInfo, TokenSymbol,} from '../../../../core/models/types';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {UiUtils} from '../../../../shared/utils/ui.utils';
-import {ApiService} from '../../../../core/services/api.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {DateTimeUtil} from '../../../../shared/utils/date-time.util';
-import {TokenUtil} from '../../../../shared/utils/token.util';
-import {Observable, Subject, timer} from 'rxjs';
-import {BondUtil} from '../../../../shared/utils/bond.util';
-import {startWith} from 'rxjs/internal/operators/startWith';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BondsService } from '../../../../core/services/bonds.service';
+import { ActivatedRoute } from '@angular/router';
+import { filter, map, pluck, shareReplay } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {
+  Bond,
+  BondSaleStatus,
+  IProviderUserInfo,
+  TokenSymbol,
+} from '../../../../core/models/types';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { UiUtils } from '../../../../shared/utils/ui.utils';
+import { ApiService } from '../../../../core/services/api.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { DateTimeUtil } from '../../../../shared/utils/date-time.util';
+import { TokenUtil } from '../../../../shared/utils/token.util';
+import { Observable, Subject, timer } from 'rxjs';
+import { BondUtil } from '../../../../shared/utils/bond.util';
+import { startWith } from 'rxjs/internal/operators/startWith';
 
 const timer$ = timer(0, 1000);
 
@@ -47,7 +52,9 @@ export class BondPage {
     shareReplay(1)
   );
   lockDurationString$ = this.bondWithTimes$.pipe(
-    map(bond => UiUtils.toMinTimespanText(bond.farmStartTime, bond.farmEndTime))
+    map((bond) =>
+      UiUtils.toMinTimespanText(bond.farmStartTime, bond.farmEndTime)
+    )
   );
 
   stakedBalanceUpdate = new Subject();
@@ -73,7 +80,7 @@ export class BondPage {
     switchMap(
       ([bond, info, _]: [Bond, IProviderUserInfo, any]) =>
         this.bondsService.getStakedBalanceOf(bond, info.address),
-      (bondInfo, balance) => ({bond: bondInfo[0], info: bondInfo[1], balance})
+      (bondInfo, balance) => ({ bond: bondInfo[0], info: bondInfo[1], balance })
     ),
     shareReplay(1)
   );
@@ -118,8 +125,7 @@ export class BondPage {
     private bondsService: BondsService,
     public connectorService: ConnectorService,
     public apiService: ApiService
-  ) {
-  }
+  ) {}
 
   stake(bond: Bond, stakeAmount: string): void {
     this.bondsService.stake(bond, stakeAmount).then(

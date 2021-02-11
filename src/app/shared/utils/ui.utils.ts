@@ -1,4 +1,4 @@
-import {DateTimeUtil} from './date-time.util';
+import { DateTimeUtil } from './date-time.util';
 
 export class UiUtils {
   static keydownPreventDecimal($event: any): void {

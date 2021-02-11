@@ -1,23 +1,29 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {from, Observable} from 'rxjs';
-import {Bond, BondSaleStatus, ProtocolAddresses, TokenSymbol, TransactionType,} from '../models/types';
-import {TokenUtil} from '../../shared/utils/token.util';
-import {ConnectorService} from './connector.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {environment} from '../../../environments/environment';
-import {map, shareReplay} from 'rxjs/operators';
-import {getContractData} from '../../../assets/abi';
-import {UniswapService} from './uniswap.service';
-import {first} from 'rxjs/internal/operators/first';
-import {ErrorUtils} from '../../shared/utils/error.utils';
-import {NotificationService} from './notification.service';
-import {ApiService} from './api.service';
-import {TransactionsService} from './transactions.service';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { from, Observable } from 'rxjs';
+import {
+  Bond,
+  BondSaleStatus,
+  ProtocolAddresses,
+  TokenSymbol,
+  TransactionType,
+} from '../models/types';
+import { TokenUtil } from '../../shared/utils/token.util';
+import { ConnectorService } from './connector.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { environment } from '../../../environments/environment';
+import { map, shareReplay } from 'rxjs/operators';
+import { getContractData } from '../../../assets/abi';
+import { UniswapService } from './uniswap.service';
+import { first } from 'rxjs/internal/operators/first';
+import { ErrorUtils } from '../../shared/utils/error.utils';
+import { NotificationService } from './notification.service';
+import { ApiService } from './api.service';
+import { TransactionsService } from './transactions.service';
 import Web3 from 'web3';
-import {of} from 'rxjs/internal/observable/of';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {DateTimeUtil} from '../../shared/utils/date-time.util';
+import { of } from 'rxjs/internal/observable/of';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { DateTimeUtil } from '../../shared/utils/date-time.util';
 
 @Injectable({
   providedIn: 'root',
@@ -54,8 +60,7 @@ export class BondsService {
     private notificationService: NotificationService,
     private apiService: ApiService,
     private transactionsService: TransactionsService
-  ) {
-  }
+  ) {}
 
   getStakedBalanceOf(
     bond: Bond,
@@ -103,7 +108,12 @@ export class BondsService {
           const farmEnd$ = bondContract.methods
             .releaseTime()
             .call() as Promise<number>;
-          return combineLatest([entryStart$, entryEnd$, farmStart$, farmEnd$]).pipe(
+          return combineLatest([
+            entryStart$,
+            entryEnd$,
+            farmStart$,
+            farmEnd$,
+          ]).pipe(
             map(([eStart, eEnd, fStart, fEnd]) => {
               bond.entryStartTime = eStart;
               bond.entryEndTime = DateTimeUtil.toJSTimestamp(eEnd);

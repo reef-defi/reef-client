@@ -161,7 +161,6 @@ export class DashboardPage implements AfterViewInit {
       )
         payload[asset.contract_ticker_symbol] = 100 / assets.length;
     });
-    console.log(payload);
     return this.apiService
       .getHistoricRoi(payload, 1)
       .subscribe((historicRoi: IBasketHistoricRoi) => {

@@ -12,7 +12,6 @@ export class ReefHistoricPriceComponent {
   public updateFlag: boolean;
   @Input() set chartData(val: number[][]) {
     if (val) {
-      console.log(val, 'hmm');
       this.options = val;
       this.updateFlag = true;
     }

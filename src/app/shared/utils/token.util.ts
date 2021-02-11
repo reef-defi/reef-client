@@ -87,7 +87,6 @@ export class TokenUtil {
   private static getMaxDecimalsDisplayNr(tokenSymbol: TokenSymbol): number {
     const decimalPlaces = symbolDisplayMaxDecimals[tokenSymbol];
     if (decimalPlaces == null && !!TokenSymbol[tokenSymbol]) {
-      console.log('WARNING decimal places not set for ', tokenSymbol);
       return 2;
     }
     return decimalPlaces != null ? decimalPlaces : 2;

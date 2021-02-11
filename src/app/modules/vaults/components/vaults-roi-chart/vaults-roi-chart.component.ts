@@ -13,7 +13,6 @@ export class VaultsRoiChartComponent {
   @Input() set roiChartData(val: number[][]) {
     if (val) {
       this.options = val;
-      console.log(this.options, 'HMMM');
       this.updateFlag = true;
     }
   }

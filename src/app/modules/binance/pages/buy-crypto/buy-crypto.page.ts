@@ -87,7 +87,6 @@ export class BuyCryptoPage implements OnInit {
     this.loading = true;
     const address = this.userInfo$.value.address;
     const email = this.binanceUserInfo$.value.email;
-    console.log(email, 'Hmm wtf?');
     const payload: QuotePayload = {
       address,
       cryptoCurrency: this.selectedCrypto.currency,
@@ -125,7 +124,7 @@ export class BuyCryptoPage implements OnInit {
   public executeTrade() {
     const address = this.userInfo$.value.address;
     const { quoteId } = this.quoteInformation.value;
-    this.apiService.executeTrade(address, quoteId).subscribe(console.log);
+    this.apiService.executeTrade(address, quoteId).subscribe();
   }
 
   private checkIfUserRegistered(address: string): Subscription {

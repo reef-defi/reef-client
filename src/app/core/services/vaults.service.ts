@@ -29,7 +29,6 @@ export class VaultsService {
       basketProms.push(this.getAvailableBasket(i));
     }
     const allBaskets = await Promise.all(basketProms);
-    console.log(allBaskets, 'all..');
     const vaultBaskets = await Promise.all(
       allBaskets.map(async (basket, idx) => ({
         ...basket,
@@ -40,7 +39,6 @@ export class VaultsService {
         index: idx,
       }))
     );
-    console.log(vaultBaskets, 'VAULTS_BASKETS');
     return vaultBaskets.filter(
       (basket: IVaultBasket) =>
         +basket.investedETH > 0 &&
@@ -57,9 +55,7 @@ export class VaultsService {
     const wei = this.connectorService.toWei(amount);
     const name = basketNameGenerator();
     const adjustedWeights = this.adjustWeights(vaultsWeights);
-    console.log(adjustedWeights, 'adjusted.');
     try {
-      console.log(name, 'name');
       const res = await this.vaultsContract$.value.methods
         .createBasket(name, vaults, vaultsWeights, vaultsTypes)
         .send({
@@ -146,7 +142,6 @@ export class VaultsService {
 
   private async getAvailableBasketVaults(basketIdx: number): Promise<any> {
     const allVaults = this.apiService.vaults$.value;
-    console.log(allVaults, 'allVaults');
     const vaults: {
       [key: number]: string[];
     } = await this.vaultsContract$.value.methods
@@ -180,7 +175,6 @@ export class VaultsService {
     fns?: string[],
     text?: string
   ): Promise<any> {
-    console.log(tx);
     if (!tx.transactionHash) {
       this.notificationService.showNotification(
         'Something went wrong.',

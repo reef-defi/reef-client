@@ -68,7 +68,6 @@ export class ContractService {
       this.basketsError$.next(true);
       this.loading$.next(false);
     }
-    console.log(this.baskets$.value);
   }
 
   async resetBaskets(): Promise<any> {
@@ -115,10 +114,6 @@ export class ContractService {
         mooniswapPools,
         mooniswapWeights,
       } = basketPoolTokenInfo;
-      console.log(
-        this.basketContract$.value.options.jsonInterface,
-        'FROM_CREATE'
-      );
       const response = await this.basketContract$.value.methods
         .createBasket(
           name,
@@ -152,7 +147,6 @@ export class ContractService {
     const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
       .pipe(take(1))
       .toPromise();
-    console.log(info.address, 'ADDR???');
     return this.basketContract$.value.methods
       .getAvailableBasketUniswapPools(basketIdx)
       .call();
@@ -191,12 +185,6 @@ export class ContractService {
       const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
         .pipe(take(1))
         .toPromise();
-      console.log(
-        basketIdxs,
-        basketIdxPercentage,
-        yieldRatio,
-        'Disinvest Params'
-      );
       const res = await this.basketContract$.value.methods
         .disinvest(basketIdxs, basketIdxPercentage, yieldRatio, shouldRestake)
         .send({
@@ -212,7 +200,6 @@ export class ContractService {
         1000
       );
     } catch (e) {
-      console.log(e);
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }
@@ -249,10 +236,6 @@ export class ContractService {
       .pipe(take(1))
       .toPromise();
     //TODO refresh balance
-    console.log(
-      'TODO check if CALL BALANCE REFRESH is successful for ',
-      info.address
-    );
     this.apiService.refreshBalancesForAddress.next(info.address);
     // this is old way of refreshing balance - this.connectorService.getUserProviderInfo();
   }
@@ -261,7 +244,6 @@ export class ContractService {
     tx: any,
     fns?: string[]
   ): Promise<any> {
-    console.log(tx);
     if (!tx.transactionHash) {
       this.notificationService.showNotification(
         'Something went wrong.',

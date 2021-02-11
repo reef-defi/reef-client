@@ -35,16 +35,17 @@
                 <p>{{bondNoTimes.bondDescription}}</p>
               </div>
 
-              <div class="card border-purple accent-text text-monospace p-2 text-left">
+              <div
+                class="card border-purple accent-text text-monospace p-2 text-left"
+              >
                 <div class="mb-1">Lock token: {{bondNoTimes.stake}}</div>
                 <div class="mb-1" *ngIf="bondNoTimes.stake!==bondNoTimes.farm">
                   Rewards token: {{bondNoTimes.stake}}
                 </div>
-                <ng-container *ngIf="lockDurationString$| async as timespanText;">
-                  <div class="mb-1">
-                    Lock duration:
-                    {{timespanText}}
-                  </div>
+                <ng-container
+                  *ngIf="lockDurationString$| async as timespanText;"
+                >
+                  <div class="mb-1">Lock duration: {{timespanText}}</div>
                 </ng-container>
                 <div class="mb-1">APY: {{bondNoTimes.apy}}%</div>
               </div>
@@ -58,11 +59,11 @@
                     *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bond, stakeAmount).totalInterestReturn, null, bond.farmDecimals) as stakeAmountInterest; else enterValue "
                   >
                     <h5>
-                      You will earn <br/>{{stakeAmountInterest}} {{bond.farm}}
+                      You will earn <br />{{stakeAmountInterest}} {{bond.farm}}
                     </h5>
                   </ng-container>
                   <ng-template #enterValue>
-                    <h5>Enter value to <br/>see calculated profits.</h5>
+                    <h5>Enter value to <br />see calculated profits.</h5>
                   </ng-template>
                 </div>
 
@@ -113,7 +114,7 @@
                   <app-countdown-timer
                     [expiresDate]="bond.entryEndTime"
                     accentColor="true"
-                  >This offer ends <br/>
+                    >This offer ends <br />
                     when filled up or in
                   </app-countdown-timer>
                 </div>
@@ -138,14 +139,13 @@
                   *ngIf="stakedBalanceReturn$|async as stakedReturn"
                 >
                   <p class="text-muted text-center text-monospace small-text">
-
                     You have locked {{stakedReturn.staked}}
-                    {{stakedReturn.bond.stake}}  <br /> that will earn
-
+                    {{stakedReturn.bond.stake}} <br />
+                    that will earn
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                    null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}}
-                    in rewards.
-
+                    null, stakedReturn.totalInterestReturn > 100 ?
+                    bond.farmDecimals : bond.farmDecimals + 1)}}
+                    {{stakedReturn.bond.farm}} in rewards.
                   </p>
                 </ng-container>
               </ng-container>
@@ -193,12 +193,14 @@
                           *ngIf="stakedBalanceReturn$|async as stakedReturn"
                         >
                           <span class="bold"
-                          >{{stakedReturn.staked}}
+                            >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          locked for<br/>
-                          <span class="bold">{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                            null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}}
+                          locked for<br />
+                          <span class="bold"
+                            >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                            null, stakedReturn.totalInterestReturn > 100 ?
+                            bond.farmDecimals : bond.farmDecimals + 1)}}
                             {{stakedReturn.bond.farm}}
                           </span>
                           interest profit.
@@ -208,15 +210,15 @@
                   </ng-container>
                   <ng-container *ngSwitchCase="BondSaleStatus.EARLY">
                     <p class="text-center">
-                      This bond sale is starting<br/>
+                      This bond sale is starting<br />
                       <span class="accent-text"
-                      >at {{bond.entryStartTime|date:'short'}}</span
-                      ><br/>
+                        >at {{bond.entryStartTime|date:'short'}}</span
+                      ><br />
                       <span class="accent-text"
-                      ><app-countdown-timer
-                        [expiresDate]="bond.entryStartTime"
-                      >Get ready for the opening!</app-countdown-timer
-                      >
+                        ><app-countdown-timer
+                          [expiresDate]="bond.entryStartTime"
+                          >Get ready for the opening!</app-countdown-timer
+                        >
                       </span>
                     </p>
                   </ng-container>
@@ -224,10 +226,14 @@
                     <div>
                       <p class="text-center">
                         <span class="accent-text font-weight-bold"
-                        >This one sold out</span>.<br/>
-                        <span class="text-muted">Few limited time offers still on the way. Follow us on social media to get notified.</span
-                        ><br/>
-                        <span class="accent-text font-weight-bold">Get ready for the next one!
+                          >This one sold out</span
+                        >.<br />
+                        <span class="text-muted"
+                          >Few limited time offers still on the way. Follow us
+                          on social media to get notified.</span
+                        ><br />
+                        <span class="accent-text font-weight-bold"
+                          >Get ready for the next one!
                         </span>
                       </p>
                       <div class="card border-purple m-4">

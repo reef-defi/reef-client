@@ -53,7 +53,6 @@ export class VaultsPage implements OnInit {
     const vaultsWeights = Object.values(this.currentVaults).map(
       (val) => val.percentage
     );
-    console.log(types, vaults, vaultsWeights);
     this.vaultsService.createBasketVaults(
       vaults,
       vaultsWeights,

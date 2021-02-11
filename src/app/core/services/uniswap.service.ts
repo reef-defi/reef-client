@@ -515,7 +515,6 @@ export class UniswapService {
     const addresses = info.availableSmartContractAddresses;
     const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
     const transactionType = TokenUtil.getTransactionTypeByTokenName(poolSymbol);
-    console.log(transactionType, 'TX TYPE');
     const allowance = await this.approveToken(
       tokenContract,
       this.farmingContract$.value.options.address.toString()

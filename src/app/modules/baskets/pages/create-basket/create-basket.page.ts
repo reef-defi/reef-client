@@ -100,14 +100,12 @@ export class CreateBasketPage implements OnInit {
   }
 
   async createBasket(): Promise<any> {
-    console.log('Creating Basket...');
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
       this.basket,
       this.pools$.value,
       this.tokens$.value
     );
     const name = basketNameGenerator();
-    console.log(basketPoolAndCoinInfo, name, 'CREATING_BASKET....');
     await this.contractService.createBasket(
       name,
       basketPoolAndCoinInfo,
@@ -120,11 +118,11 @@ export class CreateBasketPage implements OnInit {
   }
 
   getAllPools(): void {
-    this.poolService.getAllPools().subscribe(console.log);
+    this.poolService.getAllPools().subscribe();
   }
 
   getEthPrice(): void {
-    this.poolService.ethPrice$.pipe(take(1)).subscribe(console.log);
+    this.poolService.ethPrice$.pipe(take(1)).subscribe();
   }
 
   getMinimalInvestment(): Promise<string> {

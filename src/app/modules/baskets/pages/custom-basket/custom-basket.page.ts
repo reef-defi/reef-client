@@ -136,7 +136,6 @@ export class CustomBasketPage implements OnInit {
       this.pools$.value,
       this.tokens$.value
     );
-    console.log(this.basketPayload);
   }
 
   private setChart(): void {

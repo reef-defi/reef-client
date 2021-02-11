@@ -358,7 +358,6 @@ export class ApiService {
             return of(cachedBalances);
           }
         ),
-        tap((v) => console.log('balances=', v)),
         shareReplay(1)
       );
       this.balancesByAddr.set(address, finalBalances$);
@@ -529,13 +528,6 @@ export class ApiService {
       .balanceOf(address)
       .call()
       .then((balance) => {
-        console.log(
-          'Balance',
-          balance,
-          tokenSymbol,
-          TokenUtil.toDisplayDecimalValue(balance, tokenSymbol)
-        );
-
         return TokenUtil.toDisplayDecimalValue(balance, tokenSymbol);
       }) as Promise<string>;
   }

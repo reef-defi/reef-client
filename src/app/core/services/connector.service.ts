@@ -72,7 +72,6 @@ export class ConnectorService {
       },
       package: this.WalletLinkProvider,
       connector: async (provider, options) => {
-        console.log(this.WalletLinkProvider);
         await provider.enable();
         return provider;
       },
@@ -86,9 +85,7 @@ export class ConnectorService {
   // public web3WS = null;
 
   constructor(private readonly notificationService: NotificationService) {
-    this.providerUserInfo$.subscribe((v) => {
-      console.log('providerUserInfo$ value change=', v);
-    });
+    this.providerUserInfo$.subscribe();
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
       cacheProvider: true,
@@ -243,7 +240,6 @@ export class ConnectorService {
       tokenSymbol
     );
     if (!tokenSymbolContractAddress) {
-      console.log('No address for tokenSymbol=' + tokenSymbol);
       return null;
     }
     const contractData = getContractData(addresses);
@@ -272,7 +268,6 @@ export class ConnectorService {
   }
 
   public getGasPrice(): string {
-    console.log(this.selectedGasPrice$.value.price, 'price');
     const gwei = this.toWei(
       Math.round(this.selectedGasPrice$.value.price),
       'Gwei'

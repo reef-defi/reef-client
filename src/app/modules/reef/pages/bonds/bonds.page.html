@@ -33,7 +33,8 @@
             >
               <div class="mb-1">Lock token: {{bond.stake}}</div>
               <div class="mb-1" *ngIf="bond.stake!==bond.farm">
-                <span class="text-left">Rewards token: </span> <b>{{bond.stake}}</b>
+                <span class="text-left">Rewards token: </span>
+                <b>{{bond.stake}}</b>
               </div>
               <ng-container
                 *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes"

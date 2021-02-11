@@ -22,7 +22,6 @@ export class AddressUtils {
   static getChainAddresses(chainInfo: IChainData): ProtocolAddresses {
     const chainAddresses = addresses[chainInfo.chain_id];
     if (!!chainAddresses) {
-      console.log('ADDRESSES for chainId=', chainInfo.chain_id, chainInfo.name);
     } else {
       throw new Error('ERROR getting addresses for chain=' + chainInfo);
     }
