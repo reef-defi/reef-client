@@ -7,7 +7,7 @@ RUN rm -rf node_modules
 RUN npm install --loglevel=error
 RUN npm install -g @angular/cli@10.1.7 --loglevel=error
 
-RUN npm run ng build --prod
+RUN npm run ng build --prod --aot --outputHashing=all
 
 ENV PATH /app/node_modules/.bin:$PATH
 
