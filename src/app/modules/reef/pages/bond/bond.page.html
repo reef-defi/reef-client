@@ -63,7 +63,9 @@
                     </h5>
                   </ng-container>
                   <ng-template #enterValue>
-                    <h5 *ngIf="!stakeAmount; else amountTooLow">Enter value to <br/>see calculated profits.</h5>
+                    <h5 *ngIf="!stakeAmount; else amountTooLow">
+                      Enter value to <br />see calculated profits.
+                    </h5>
                     <ng-template #amountTooLow>
                       <h5>Value too low for calculation.</h5>
                     </ng-template>

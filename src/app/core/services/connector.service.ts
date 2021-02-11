@@ -7,6 +7,7 @@ import Torus from '@toruslabs/torus-embed';
 import { getProviderName } from '../utils/provider-name';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {
+  ChainId,
   IChainData,
   IPendingTransactions,
   IProviderUserInfo,

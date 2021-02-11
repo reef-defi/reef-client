@@ -15,7 +15,19 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.USDT]: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     [TokenSymbol.WETH]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   },
-
+  [ChainId.BINANCE]: {
+    REEF_BASKET: '',
+    REEF_VAULT_BASKET: '',
+    REEF_FARMING: '',
+    REEF_STAKING: '',
+    UNISWAP_ROUTER_V2: '',
+    [TokenSymbol.REEF_WETH_POOL]: '',
+    [TokenSymbol.REEF_USDT_POOL]: '',
+    // reef token
+    [TokenSymbol.REEF]: '',
+    [TokenSymbol.USDT]: '',
+    [TokenSymbol.WETH]: '',
+  },
   [ChainId.LOCAL_FORK]: {
     REEF_BASKET: '0x16361f8Ca082c8481E74e53110E4c09Fb6631d55',
     REEF_VAULT_BASKET: '0x90B1453aB17c8269E8B8DA7ddbd54300B5BC775e',
