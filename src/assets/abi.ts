@@ -3071,6 +3071,19 @@ export const getContractData = (addresses: ProtocolAddresses) => {
         },
         {
           'inputs': [],
+          'name': 'startTime',
+          'outputs': [
+            {
+              'internalType': 'uint256',
+              'name': '',
+              'type': 'uint256'
+            }
+          ],
+          'stateMutability': 'view',
+          'type': 'function'
+        },
+        {
+          'inputs': [],
           'name': 'totalSupply',
           'outputs': [
             {
