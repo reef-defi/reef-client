@@ -35,7 +35,7 @@
                 <p>{{bondNoTimes.bondDescription}}</p>
               </div>
 
-              <div class="card border-purple accent-text text-monospace p-2">
+              <div class="card border-purple accent-text text-monospace p-2 text-left">
                 <div class="mb-1">Lock token: {{bondNoTimes.stake}}</div>
                 <div class="mb-1" *ngIf="bondNoTimes.stake!==bondNoTimes.farm">
                   Rewards token: {{bondNoTimes.stake}}
@@ -58,8 +58,7 @@
                     *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bond, stakeAmount).totalInterestReturn, null, bond.farmDecimals) as stakeAmountInterest; else enterValue "
                   >
                     <h5>
-                      You get <br/>{{stakeAmountInterest}} {{bond.farm}} in
-                      profit.
+                      You will earn <br/>{{stakeAmountInterest}} {{bond.farm}}
                     </h5>
                   </ng-container>
                   <ng-template #enterValue>
@@ -139,12 +138,14 @@
                   *ngIf="stakedBalanceReturn$|async as stakedReturn"
                 >
                   <p class="text-muted text-center text-monospace small-text">
-                    So far you have {{stakedReturn.staked}}
-                    {{stakedReturn.bond.stake}} locked <br />for profit interest
-                    of
+
+                    You have locked {{stakedReturn.staked}}
+                    {{stakedReturn.bond.stake}}  <br /> that will earn
+
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                     null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}}
-                    .
+                    in rewards.
+
                   </p>
                 </ng-container>
               </ng-container>

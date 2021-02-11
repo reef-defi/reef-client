@@ -2,7 +2,7 @@
   <div class="col">
     <app-page-title
       title="REEF Bonds"
-      subtitle="Stake REEF and other DeFi tokens to earn handsome APY"
+      subtitle="Stake REEF and other DeFi tokens to earn APY"
     ></app-page-title>
   </div>
 </div>
@@ -29,11 +29,11 @@
             <div class="h5">{{bond.bondName}}</div>
             <p class="text-center">{{bond.bondDescription}}</p>
             <div
-              class="card border-purple accent-text text-monospace small-text text-center p-2"
+              class="card border-purple accent-text text-monospace small-text text-left p-2"
             >
               <div class="mb-1">Lock token: {{bond.stake}}</div>
               <div class="mb-1" *ngIf="bond.stake!==bond.farm">
-                Rewards token: {{bond.stake}}
+                <span class="text-left">Rewards token: </span> <b>{{bond.stake}}</b>
               </div>
               <ng-container
                 *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes"
