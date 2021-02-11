@@ -83,7 +83,7 @@
       <div class="mb-2 d-flex flex-column align-items-start">
         <ng-container *ngTemplateOutlet="menuItems"></ng-container>
       </div>
-      <div (click)="onSignOut()" class="d-flex mt-3">
+      <div (click)="onSignOut()" class="d-flex mt-3 c-pointer">
         <div class="la la-lg la-sign-out-alt mr-1 font-danger"></div>
         <div class="text-height-1">Sign out</div>
       </div>
@@ -204,6 +204,16 @@
     >
       <app-svg-icon icon="credit-card"></app-svg-icon>
       Reef Card
+    </a>
+    <a
+      id="about"
+      [routerLink]="['/reef/about']"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      (click)="mobileNavShown = false"
+    >
+      <app-svg-icon icon="info"></app-svg-icon>
+      About Reef
     </a>
     <!--    <div-->
     <!--      id="myBaskets"-->
