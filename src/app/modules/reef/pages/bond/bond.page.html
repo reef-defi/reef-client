@@ -140,7 +140,7 @@
                 >
                   <p class="text-muted text-center text-monospace small-text">
                     So far you have {{stakedReturn.staked}}
-                    {{stakedReturn.bond.stake}} locked <br/>for profit interest
+                    {{stakedReturn.bond.stake}} locked <br />for profit interest
                     of
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                     null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}} {{stakedReturn.bond.farm}}
@@ -172,14 +172,16 @@
                             {{stakedReturn.bond.farm}}</span
                           >.<br/>-->
 
-                          Your growing profit:<br *ngIf="stakedReturn.currentInterestReturn?.toString().length>5">
+                          Your growing profit:<br
+                            *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
+                          />
                           <span class="accent-text"
-                          >{{stakedReturn.currentInterestReturn}}
+                            >{{stakedReturn.currentInterestReturn}}
                             {{stakedReturn.bond.farm}}</span
-                          ><br/>
+                          ><br />
                           Unlock date:
                           <span class="accent-text"
-                          >{{bond.farmEndTime|date}}</span
+                            >{{bond.farmEndTime|date}}</span
                           >
                         </ng-container>
                       </p>
@@ -194,11 +196,10 @@
                             {{stakedReturn.bond.stake}}</span
                           >
                           locked for<br/>
-                          <span class="bold"
-                          >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                          <span class="bold">{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                             null, stakedReturn.totalInterestReturn > 100 ? bond.farmDecimals : bond.farmDecimals + 1)}}
-                            {{stakedReturn.bond.farm}}</span
-                          >
+                            {{stakedReturn.bond.farm}}
+                          </span>
                           interest profit.
                         </ng-container>
                       </div>

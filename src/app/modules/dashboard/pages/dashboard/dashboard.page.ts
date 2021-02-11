@@ -1,32 +1,44 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { PoolService } from '../../../../core/services/pool.service';
-import { filter, map, shareReplay, tap } from 'rxjs/operators';
+import {
+  catchError,
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+  tap,
+} from 'rxjs/operators';
 import {
   IBasketHistoricRoi,
   Token,
   TokenBalance,
 } from '../../../../core/models/types';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { of } from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage {
+export class DashboardPage implements AfterViewInit {
   Object = Object;
   public transactions$;
   public tokenBalance$: Observable<TokenBalance>;
-  public pieChartData;
   public pieChartData$: Observable<any>;
-  showTransactions: any;
+  public portfolioError$ = new BehaviorSubject<boolean>(false);
+  showTransactions: boolean;
   getPortfolio$: Observable<unknown>;
+  getPortfolio2$: Observable<any>;
   public roiData: number[][];
+
+  private triggerPortfolio = new Subject();
 
   constructor(
     private readonly connectorService: ConnectorService,
@@ -34,7 +46,8 @@ export class DashboardPage {
     private readonly uniswapService: UniswapService,
     private readonly chartsService: ChartsService,
     public readonly apiService: ApiService,
-    private readonly charts: ChartsService
+    private readonly charts: ChartsService,
+    private readonly cdRef: ChangeDetectorRef
   ) {
     const address$ = this.connectorService.providerUserInfo$.pipe(
       filter((v) => !!v),
@@ -45,13 +58,24 @@ export class DashboardPage {
       switchMap((address) => this.apiService.getTransactions(address)),
       shareReplay(1)
     );
-    this.getPortfolio$ = address$.pipe(
-      switchMap((address) => this.apiService.getPortfolio(address)),
-      tap((data) => {
-        this.getHistoricData(data.tokens);
+
+    this.getPortfolio$ = this.triggerPortfolio.pipe(
+      distinctUntilChanged(),
+      tap(() => this.portfolioError$.next(false)),
+      switchMap(() => {
+        return address$.pipe(
+          switchMap((address) => this.apiService.getPortfolio(address)),
+          tap((data) => {
+            this.getHistoricData(data.tokens);
+          })
+        );
       }),
-      shareReplay(1)
+      catchError((err) => {
+        this.portfolioError$.next(true);
+        return EMPTY;
+      })
     );
+
     this.tokenBalance$ = address$.pipe(
       switchMap((address) => this.getTokenBalances(address)),
       map((balance) => {
@@ -99,10 +123,20 @@ export class DashboardPage {
     );
   }
 
+  ngAfterViewInit() {
+    this.triggerPortfolio.next();
+  }
+
   public setDefaultImage(imgIdx: number) {
     document
       .getElementById(`img-${imgIdx}`)
       .setAttribute('src', 'assets/images/image-missing.png');
+  }
+
+  public getPortfolio() {
+    this.portfolioError$.next(false);
+    this.cdRef.detectChanges();
+    this.triggerPortfolio.next();
   }
 
   private getTokenBalances(address: string): Observable<TokenBalance> {
