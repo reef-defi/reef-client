@@ -1,13 +1,12 @@
-import {formatNumber} from '@angular/common';
-import {Inject, LOCALE_ID, Pipe, PipeTransform} from '@angular/core';
-import {TokenSymbol} from "../../core/models/types";
+import { formatNumber } from '@angular/common';
+import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
+import { TokenSymbol } from '../../core/models/types';
 
 @Pipe({
   name: 'decimal',
 })
 export class DecimalNumberPipe implements PipeTransform {
-  constructor(@Inject(LOCALE_ID) private locale: string) {
-  }
+  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   transform(amount: number, price: number, token?: TokenSymbol): string {
     if (token && token === TokenSymbol.ETH) {

@@ -21,6 +21,7 @@ import { getContractData } from '../../../assets/abi';
 import { take } from 'rxjs/operators';
 import { AddressUtils } from '../../shared/utils/address.utils';
 import { ProviderUtil } from '../../shared/utils/provider.util';
+import { first } from 'rxjs/internal/operators/first';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -125,17 +126,19 @@ export class ConnectorService {
   }
 
   public async onDisconnect(): Promise<any> {
+    const web3 = await this.getWeb3();
     this.currentProvider$.next(null);
     this.providerUserInfo$.next(null);
     this.currentProviderName$.next(null);
-    if (this.web3.currentProvider.close) {
-      await this.web3.currentProvider.close();
+    if (web3.currentProvider.close) {
+      await web3.currentProvider.close();
     }
     await this.web3Modal.clearCachedProvider();
   }
 
   public async getTransactionReceipt(txHash: string): Promise<any> {
-    return await this.web3.eth.getTransactionReceipt(txHash);
+    const web3 = await this.getWeb3();
+    return await web3.eth.getTransactionReceipt(txHash);
   }
 
   public toWei(amount: number, unit = 'ether'): string {
@@ -169,6 +172,7 @@ export class ConnectorService {
     startBlock?: number,
     endBlock?: number
   ): Promise<void> {
+    const web3 = await this.getWeb3();
     if (
       this.transactionsForAccount$.value &&
       this.transactionsForAccount$.value.length > 0
@@ -177,7 +181,7 @@ export class ConnectorService {
       return;
     }
     if (!endBlock) {
-      endBlock = await this.web3.eth.getBlockNumber();
+      endBlock = await web3.eth.getBlockNumber();
     }
     if (!startBlock) {
       startBlock = endBlock - 10;
@@ -187,7 +191,7 @@ export class ConnectorService {
       .toPromise();
     const transactions: ITransaction[] = [];
     for (let i = startBlock; i <= endBlock; i++) {
-      const block = await this.web3.eth.getBlock(i, true);
+      const block = await web3.eth.getBlock(i, true);
       if (block && block.transactions) {
         const txs = block.transactions
           .filter(
@@ -214,10 +218,11 @@ export class ConnectorService {
   }
 
   public async getTxByHash(hash: string): Promise<ITransaction | null> {
+    const web3 = await this.getWeb3();
     const info: IProviderUserInfo = await this.providerUserInfo$
       .pipe(take(1))
       .toPromise();
-    const tx = await this.web3.eth.getTransaction(hash);
+    const tx = await web3.eth.getTransaction(hash);
     if (!tx) {
       return;
     }
@@ -272,6 +277,10 @@ export class ConnectorService {
       'Gwei'
     );
     return gwei;
+  }
+
+  public async getWeb3(): Promise<any> {
+    return await this.web3$.pipe(first()).toPromise();
   }
 
   /*public toTokenSymbol(info: IProviderUserInfo, tokenContractAddress): TokenSymbol {
@@ -372,8 +381,9 @@ export class ConnectorService {
   }
 
   private async getUserBalance(address: string): Promise<string> {
-    const balance = await this.web3.eth.getBalance(address);
-    return await this.web3.utils.fromWei(balance);
+    const web3 = await this.getWeb3();
+    const balance = await web3.eth.getBalance(address);
+    return await web3.utils.fromWei(balance);
   }
 
   private async getAddress(web3: Web3): Promise<string> {
