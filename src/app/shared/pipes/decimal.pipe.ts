@@ -24,7 +24,7 @@ export class DecimalNumberPipe implements PipeTransform {
     if (price > 100 && price < 1000) {
       return formatNumber(amount, this.locale, `1.0-2`);
     }
-    if (price > 1000) {
+    if (price > 1000 || amount > 1000) {
       return formatNumber(amount, this.locale, `1.0-0`);
     }
     return formatNumber(amount, this.locale, `1.0-5`);

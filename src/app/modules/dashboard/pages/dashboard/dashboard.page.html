@@ -22,7 +22,7 @@
               >
                 ${{tokenBalance?.totalBalance| number:'1.0-0'}}
               </ng-container>
-              <ng-template #calc> Calculating... </ng-template>
+              <ng-template #calc> Calculating...</ng-template>
             </h3>
           </div>
         </div>
@@ -44,11 +44,15 @@
             <div class="card mb-3">
               <div class="card-body">
                 <ng-container
-                  *ngIf="getPortfolio$ | async as portfolio; else loadingTemplate"
+                  *ngIf="!(portfolioError$ | async); else portfolioErrorTemplate"
                 >
-                  <app-holdings-table
-                    [portfolio]="portfolio"
-                  ></app-holdings-table>
+                  <ng-container
+                    *ngIf="getPortfolio$ | async as portfolio; else loadingTemplate"
+                  >
+                    <app-holdings-table
+                      [portfolio]="portfolio"
+                    ></app-holdings-table>
+                  </ng-container>
                 </ng-container>
               </div>
             </div>
@@ -153,6 +157,16 @@
               <ng-template #emptyTokensTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2">No tokens to display.</span>
+                </div>
+              </ng-template>
+              <ng-template #portfolioErrorTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2"
+                    >Something went wrong while fetching your tokens.
+                    <a href="" (click)="$event.preventDefault(); getPortfolio()"
+                      >Refresh?</a
+                    >
+                  </span>
                 </div>
               </ng-template>
             </div>
