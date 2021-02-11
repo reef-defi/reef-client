@@ -9,6 +9,7 @@ import { ReefMenuPage } from './pages/reef-menu/reef-menu.page';
 import { CardPage } from './pages/card/card.page';
 import { BondsPage } from './pages/bonds/bonds.page';
 import { BondPage } from './pages/bond/bond.page';
+import { AboutPage } from './pages/about/about.page';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
   {
     path: 'card',
     component: CardPage,
+  },
+  {
+    path: 'about',
+    component: AboutPage,
   },
 ];
 

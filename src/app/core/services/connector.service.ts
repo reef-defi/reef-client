@@ -66,6 +66,7 @@ export class ConnectorService {
     },
     'custom-walletlink': {
       display: {
+        logo: '/assets/images/wallet_link.png',
         name: 'Wallet Link',
         description: 'Scan with WalletLink to connect',
       },

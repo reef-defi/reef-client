@@ -15,8 +15,13 @@ import { ReefHistoricPriceComponent } from './components/reef-historic-price/ree
 import { CardPage } from './pages/card/card.page';
 import { BondsPage } from './pages/bonds/bonds.page';
 import { BondPage } from './pages/bond/bond.page';
+import { AboutPage } from './pages/about/about.page';
 
-const components = [BuyReefComponent, StakeReefComponent];
+const components = [
+  BuyReefComponent,
+  StakeReefComponent,
+  ReefHistoricPriceComponent,
+];
 const pages = [
   ReefPage,
   FarmsPage,
@@ -28,10 +33,11 @@ const pages = [
   CardPage,
   BondsPage,
   BondPage,
+  AboutPage,
 ];
 
 @NgModule({
-  declarations: [...pages, ...components, ReefHistoricPriceComponent],
+  declarations: [...pages, ...components],
   imports: [CommonModule, ReefRoutingModule, SharedModule],
 })
 export class ReefModule {}
