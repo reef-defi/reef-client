@@ -1,4 +1,4 @@
-import { DateTimeUtil } from './date-time.util';
+import {DateTimeUtil} from './date-time.util';
 
 export class UiUtils {
   static keydownPreventDecimal($event: any): void {
@@ -14,6 +14,14 @@ export class UiUtils {
     let returnStr = '';
 
     const diff = DateTimeUtil.getPositiveTimeDiff(startDate, endDate);
+
+    if (diff.months > 0 && diff.days === 30) {
+      diff.months = diff.months + 1;
+      diff.days = 0;
+      diff.hours = 0;
+      diff.minutes = 0;
+      diff.seconds = 0;
+    }
 
     if (diff) {
       if (!!diff.years) {
