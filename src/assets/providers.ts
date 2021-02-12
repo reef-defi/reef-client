@@ -2,8 +2,8 @@ import {ProviderName} from '../app/core/models/types';
 
 export const provider = {
   [ProviderName.INFURA]: {
-    url: 'https://mainnet.infura.io/v3/944e0650418142c4a352e7e802e71ee1',
-    apiKey: '944e0650418142c4a352e7e802e71ee1',
+    url: 'https://mainnet.infura.io/v3/395d6f5d9a324c799a3becf85449122a',
+    apiKey: '395d6f5d9a324c799a3becf85449122a',
     chainId: 1
   },
   [ProviderName.ALCHEMY]: {
