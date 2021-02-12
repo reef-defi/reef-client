@@ -81,6 +81,8 @@ export interface IVault {
 export enum TokenSymbol {
   ETH = 'ETH',
   WETH = 'WETH',
+  BNB = 'BNB',
+  WBNB = 'WBNB',
   USDT = 'USDT',
   REEF = 'REEF',
   REEF_WETH_POOL = 'REEF_WETH_POOL',
@@ -215,7 +217,7 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   LOCAL_FORK = 1337,
-  BINANCE = 56,
+  BINANCE_SMART_CHAIN = 56,
 }
 
 export enum ProviderName {
@@ -236,6 +238,7 @@ export interface ProtocolAddresses {
   REEF: string;
   USDT: string;
   WETH: string;
+  BNB: string;
   // TESTR: string;
 }
 

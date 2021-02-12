@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   ChainId,
   IPendingTransactions,
   PendingTransaction,
   TransactionType,
 } from '../models/types';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ConnectorService } from './connector.service';
-import { first, map } from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ConnectorService} from './connector.service';
+import {first, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,8 @@ export class TransactionsService {
     return this.SUPPORTED_CHAIN_TRANSACTIONS[transactionType].includes(chainId);
   }
 
-  constructor(private readonly connectorService: ConnectorService) {}
+  constructor(private readonly connectorService: ConnectorService) {
+  }
 
   public pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({
     transactions: [],
@@ -41,7 +42,7 @@ export class TransactionsService {
     types: TransactionType[]
   ): Observable<PendingTransaction[]> {
     return this.pendingTransactions$.pipe(
-      map(({ transactions }: IPendingTransactions) =>
+      map(({transactions}: IPendingTransactions) =>
         transactions.filter((tx) => types.includes(tx.type))
       )
     );
@@ -50,7 +51,7 @@ export class TransactionsService {
   public addPendingTx(hash: string, type: TransactionType): void {
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
-      transactions: [...transactions, { hash, type }],
+      transactions: [...transactions, {hash, type}],
     };
     this.pendingTransactions$.next(pendingTransactions);
     localStorage.setItem(
@@ -62,7 +63,7 @@ export class TransactionsService {
   public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
     const web3 = await this.connectorService.web3$.pipe(first()).toPromise();
     for (const [i, tx] of txs.transactions.entries()) {
-      const { blockHash, blockNumber } = await web3.eth.getTransaction(tx.hash);
+      const {blockHash, blockNumber} = await web3.eth.getTransaction(tx.hash);
       if (blockHash && blockNumber) {
         txs.transactions.splice(i, 1);
       }
@@ -76,8 +77,8 @@ export class TransactionsService {
     });
   }
 
-  public removePendingTx(hash: string) {
-    let { transactions } = this.pendingTransactions$.value;
+  public removePendingTx(hash: string): void {
+    const {transactions} = this.pendingTransactions$.value;
     const txs = {
       transactions: transactions.filter((tx) => tx.hash !== hash),
     };
