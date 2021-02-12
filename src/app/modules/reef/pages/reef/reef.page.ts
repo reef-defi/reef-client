@@ -6,14 +6,8 @@ import { PoolService } from '../../../../core/services/pool.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { format, subMonths } from 'date-fns';
-import {
-  IProviderUserInfo,
-  TokenSymbol,
-  TransactionType,
-} from '../../../../core/models/types';
+import { TokenSymbol, TransactionType } from '../../../../core/models/types';
 import { TransactionsService } from '../../../../core/services/transactions.service';
-import { first } from 'rxjs/internal/operators/first';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-reef',
@@ -22,9 +16,6 @@ import { Observable } from 'rxjs';
 })
 export class ReefPage implements OnInit {
   TransactionType = TransactionType;
-  public readonly userInfo$: Observable<IProviderUserInfo> = this.connectorService.providerUserInfo$.pipe(
-    first()
-  );
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
   readonly pendingTransactions = this.transactionService.getPendingTransactions(
@@ -38,7 +29,7 @@ export class ReefPage implements OnInit {
 
   constructor(
     private contractService: ContractService,
-    private readonly connectorService: ConnectorService,
+    public readonly connectorService: ConnectorService,
     private readonly uniswapService: UniswapService,
     private readonly poolService: PoolService,
     private readonly chartService: ChartsService,

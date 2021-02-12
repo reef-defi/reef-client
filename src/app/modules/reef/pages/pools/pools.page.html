@@ -4,7 +4,7 @@
       title="Get LP Tokens"
       subtitle="Provide liquidity to ETH/REEF and USDT/REEF pools"
       [transactionType]="TransactionType.LIQUIDITY_ETH"
-      [chainId]="(userInfo | async)?.chainInfo.chain_id"
+      [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
     ></app-page-title>
   </div>
 </div>

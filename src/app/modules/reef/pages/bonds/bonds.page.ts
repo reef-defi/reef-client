@@ -6,13 +6,11 @@ import { Observable, timer } from 'rxjs';
 import {
   Bond,
   BondSaleStatus,
-  IProviderUserInfo,
   TransactionType,
 } from '../../../../core/models/types';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { map, shareReplay } from 'rxjs/operators';
 import { ConnectorService } from '../../../../core/services/connector.service';
-import { first } from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-bonds',
@@ -25,15 +23,12 @@ export class BondsPage {
   DateTimeUtil = DateTimeUtil;
   BondSaleStatus = BondSaleStatus;
   TransactionType = TransactionType;
-  public userInfo: Observable<IProviderUserInfo> = this.connectorService.providerUserInfo$.pipe(
-    first()
-  );
   private timer$ = timer(0, 1000);
   private bondStatus = new Map();
 
   constructor(
     public bondsService: BondsService,
-    private readonly connectorService: ConnectorService
+    public readonly connectorService: ConnectorService
   ) {}
 
   getBondStatus$(bond: Bond): Observable<BondSaleStatus> {

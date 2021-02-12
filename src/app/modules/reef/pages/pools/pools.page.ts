@@ -14,10 +14,7 @@ import {
 })
 export class PoolsPage {
   TransactionType = TransactionType;
-  public readonly userInfo: Observable<IProviderUserInfo> = this.connectorService.providerUserInfo$.pipe(
-    first()
-  );
-  constructor(private readonly connectorService: ConnectorService) {}
+  constructor(public readonly connectorService: ConnectorService) {}
   pools = [
     {
       name: 'ETH & REEF',

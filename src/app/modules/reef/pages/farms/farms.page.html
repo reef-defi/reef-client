@@ -4,7 +4,7 @@
       title="Farms"
       subtitle="Stake your LP Coins in our farms"
       [transactionType]="TransactionType.REEF_FARM"
-      [chainId]="(userInfo | async)?.chainInfo.chain_id"
+      [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
     ></app-page-title>
   </div>
 </div>
