@@ -1,4 +1,4 @@
-import {ChainId, IChainData} from '../models/types';
+import { ChainId, IChainData } from '../models/types';
 
 export const getChainData = (chainId: number): IChainData => {
   const chainData = supportedChains.find(
