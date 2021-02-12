@@ -3,6 +3,7 @@ import { ContractService } from '../../../../core/services/contract.service';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { map } from 'rxjs/operators';
+import { TransactionType } from '../../../../core/models/types';
 
 @Component({
   selector: 'app-farm-reef',
@@ -10,6 +11,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./farms.page.scss'],
 })
 export class FarmsPage {
+  TransactionType = TransactionType;
   farms$ = this.connectorService.providerUserInfo$.pipe(
     map((info) => {
       return [
@@ -53,6 +55,6 @@ export class FarmsPage {
   constructor(
     private readonly contractService: ContractService,
     private readonly uniswapService: UniswapService,
-    private connectorService: ConnectorService
+    public readonly connectorService: ConnectorService
   ) {}
 }

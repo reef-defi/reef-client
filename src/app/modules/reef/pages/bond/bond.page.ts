@@ -8,6 +8,7 @@ import {
   BondSaleStatus,
   IProviderUserInfo,
   TokenSymbol,
+  TransactionType,
 } from '../../../../core/models/types';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { UiUtils } from '../../../../shared/utils/ui.utils';
@@ -30,6 +31,7 @@ const timer$ = timer(0, 1000);
 export class BondPage {
   stakeAmount: string;
 
+  TransactionType = TransactionType;
   UiUtils = UiUtils;
   DateTimeUtil = DateTimeUtil;
   BondUtil = BondUtil;
