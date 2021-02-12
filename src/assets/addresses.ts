@@ -14,8 +14,9 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.REEF]: '0xfe3e6a25e6b192a42a44ecddcd13796471735acf',
     [TokenSymbol.USDT]: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     [TokenSymbol.WETH]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    [TokenSymbol.BNB]: '',
   },
-  [ChainId.BINANCE]: {
+  [ChainId.BINANCE_SMART_CHAIN]: {
     REEF_BASKET: '',
     REEF_VAULT_BASKET: '',
     REEF_FARMING: '',
@@ -24,9 +25,10 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.REEF_WETH_POOL]: '',
     [TokenSymbol.REEF_USDT_POOL]: '',
     // reef token
-    [TokenSymbol.REEF]: '',
+    [TokenSymbol.REEF]: '0x0618aaaef80d148f44c4d5ceca1e290713c6251f',
     [TokenSymbol.USDT]: '',
     [TokenSymbol.WETH]: '',
+    [TokenSymbol.BNB]: '',
   },
   [ChainId.LOCAL_FORK]: {
     REEF_BASKET: '0x16361f8Ca082c8481E74e53110E4c09Fb6631d55',
@@ -40,6 +42,7 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.REEF]: '0x3F2D78c7F1A20BF14E1f4D249973968146Fb5Ee1', // '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab', // TESTR
     [TokenSymbol.USDT]: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     [TokenSymbol.WETH]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    [TokenSymbol.BNB]: '',
   }
 
 };
