@@ -12,8 +12,8 @@ export const environment = {
   uniswapPoolUrl: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
   gasPriceUrl: 'https://www.etherchain.org/api/gasPriceOracle',
   cmcReefPriceUrl: 'https://web-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest?slug=reef&start=1&limit=6&convert=USD',
-  // reefNodeApiUrl: 'https://node-api.reef.finance/api',
-  reefNodeApiUrl: 'http://localhost:3000/api',
+  reefNodeApiUrl: 'https://node-api.reef.finance/api',
+  // reefNodeApiUrl: 'http://localhost:3000/api',
 };
 
 /*
