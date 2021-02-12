@@ -15,15 +15,14 @@ export class UiUtils {
 
     const diff = DateTimeUtil.getPositiveTimeDiff(startDate, endDate);
 
-    if (diff.months > 0 && diff.days === 30) {
-      diff.months = diff.months + 1;
-      diff.days = 0;
-      diff.hours = 0;
-      diff.minutes = 0;
-      diff.seconds = 0;
-    }
-
     if (diff) {
+      if (diff.months > 0 && diff.days === 30) {
+        diff.months = diff.months + 1;
+        diff.days = 0;
+        diff.hours = 0;
+        diff.minutes = 0;
+        diff.seconds = 0;
+      }
       if (!!diff.years) {
         returnStr += diff.years + `${diff.years === 1 ? ' year' : ' years'}`;
       }
