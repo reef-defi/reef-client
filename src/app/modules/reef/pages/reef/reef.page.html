@@ -3,6 +3,8 @@
     <app-page-title
       title="Buy REEF"
       subtitle="Buy REEF tokens with just one click!"
+      [transactionType]="TransactionType.BUY_REEF"
+      [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
     ></app-page-title>
   </div>
 </div>

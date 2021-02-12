@@ -32,7 +32,7 @@ export const supportedChains: IChainData[] = [
     short_name: 'bsc',
     chain: 'BSC',
     network: 'binance',
-    chain_id: ChainId.BINANCE,
+    chain_id: ChainId.BINANCE_SMART_CHAIN,
     network_id: 56,
     rpc_url: 'https://bsc-dataseed.binance.org',
     native_currency: {

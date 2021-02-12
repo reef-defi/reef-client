@@ -29,9 +29,16 @@ import { DateTimeUtil } from '../../shared/utils/date-time.util';
   providedIn: 'root',
 })
 export class BondsService {
-  public bondsList$: Observable<Bond[]> = this.http
-    .get(environment.reefNodeApiUrl + '/bonds')
-    .pipe(shareReplay(1)) as Observable<Bond[]>;
+  public bondsList$: Observable<
+    Bond[]
+  > = this.connectorService.providerUserInfo$.pipe(
+    switchMap((info) =>
+      this.http.get(environment.reefNodeApiUrl + '/bonds', {
+        params: { chainId: info.chainInfo.chain_id.toString() },
+      })
+    ),
+    shareReplay(1)
+  ) as Observable<Bond[]>;
 
   /*public bondsList$: Observable<Bond[]> = of([
     {

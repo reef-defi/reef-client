@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
+  ChainId,
   IPendingTransactions,
   PendingTransaction,
   TransactionType,
@@ -13,6 +14,22 @@ import { first, map } from 'rxjs/operators';
 })
 export class TransactionsService {
   static readonly PENDING_TX_KEY = 'pending_txs';
+  private static SUPPORTED_CHAIN_TRANSACTIONS = {
+    [TransactionType.BUY_REEF]: [ChainId.MAINNET],
+    [TransactionType.REEF_BOND]: [ChainId.MAINNET],
+    [TransactionType.LIQUIDITY_USDT]: [ChainId.MAINNET],
+    [TransactionType.LIQUIDITY_ETH]: [ChainId.MAINNET],
+    [TransactionType.REEF_FARM]: [ChainId.MAINNET],
+    [TransactionType.REEF_ETH_FARM]: [ChainId.MAINNET],
+    [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
+  };
+
+  static checkIfTransactionSupported(
+    transactionType: TransactionType,
+    chainId: ChainId
+  ): boolean {
+    return this.SUPPORTED_CHAIN_TRANSACTIONS[transactionType].includes(chainId);
+  }
 
   constructor(private readonly connectorService: ConnectorService) {}
 
@@ -59,8 +76,8 @@ export class TransactionsService {
     });
   }
 
-  public removePendingTx(hash: string) {
-    let { transactions } = this.pendingTransactions$.value;
+  public removePendingTx(hash: string): void {
+    const { transactions } = this.pendingTransactions$.value;
     const txs = {
       transactions: transactions.filter((tx) => tx.hash !== hash),
     };

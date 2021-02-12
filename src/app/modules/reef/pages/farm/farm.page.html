@@ -9,11 +9,15 @@
                 *ngIf="token !== TokenSymbol.REEF"
                 title="Farm"
                 [subtitle]="'Stake your UNI-V2 LP Tokens in the '+token+' pool to earn REEF!'"
+                [transactionType]="TransactionType.REEF_FARM"
+                [chainId]="(providerUserInfo$ | async).chainInfo.chain_id"
               ></app-page-title>
               <app-page-title
                 *ngIf="token === TokenSymbol.REEF"
                 title="Farm"
                 [subtitle]="'Stake your REEF Tokens in the pool to earn even more REEF!'"
+                [transactionType]="TransactionType.REEF_FARM"
+                [chainId]="(providerUserInfo$ | async).chainInfo.chain_id"
               ></app-page-title>
             </div>
           </div>

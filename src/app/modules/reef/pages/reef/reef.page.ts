@@ -15,6 +15,7 @@ import { TransactionsService } from '../../../../core/services/transactions.serv
   styleUrls: ['./reef.page.scss'],
 })
 export class ReefPage implements OnInit {
+  TransactionType = TransactionType;
   readonly reefToken$ = this.contractService.reefTokenContract$;
   readonly reefStaking$ = this.contractService.stakingContract$;
   readonly pendingTransactions = this.transactionService.getPendingTransactions(
@@ -28,7 +29,7 @@ export class ReefPage implements OnInit {
 
   constructor(
     private contractService: ContractService,
-    private readonly connectorService: ConnectorService,
+    public readonly connectorService: ConnectorService,
     private readonly uniswapService: UniswapService,
     private readonly poolService: PoolService,
     private readonly chartService: ChartsService,

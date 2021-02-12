@@ -10,18 +10,6 @@
       />
     </a>
   </div>
-  <div
-    class="d-flex justify-content-center align-items-center p-2 mb-3 ml-1 bg-danger border rounded"
-    *ngIf="chainInfo.chain_id === 56"
-  >
-    <div class="text-monospace small text-white">
-      <mat-icon class="p-0 m-0">dangerous</mat-icon>
-      <span class="text-break text-wrap">
-        We currently do not support <b>BSC</b>. Please switch to
-        <b>ETH Mainnet</b> to use our staking functionality.
-      </span>
-    </div>
-  </div>
   <div class="icon-container">
     <ng-container *ngTemplateOutlet="menuItems"></ng-container>
   </div>
