@@ -86,7 +86,7 @@ export class ConnectorService {
   // public web3WS = null;
 
   constructor(private readonly notificationService: NotificationService) {
-    this.providerUserInfo$.subscribe();
+    // this.providerUserInfo$.subscribe();
     this.web3Modal = new Web3Modal({
       providerOptions: this.providerOptions,
       cacheProvider: true,

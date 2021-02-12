@@ -3,6 +3,12 @@ import { ContractService } from '../../../../core/services/contract.service';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { map } from 'rxjs/operators';
+import {
+  IProviderUserInfo,
+  TransactionType,
+} from '../../../../core/models/types';
+import { first } from 'rxjs/internal/operators/first';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-farm-reef',
@@ -10,6 +16,10 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./farms.page.scss'],
 })
 export class FarmsPage {
+  TransactionType = TransactionType;
+  public readonly userInfo: Observable<IProviderUserInfo> = this.connectorService.providerUserInfo$.pipe(
+    first()
+  );
   farms$ = this.connectorService.providerUserInfo$.pipe(
     map((info) => {
       return [

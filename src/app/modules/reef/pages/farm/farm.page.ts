@@ -25,6 +25,7 @@ import { TransactionsService } from '../../../../core/services/transactions.serv
   styleUrls: ['./farm.page.scss'],
 })
 export class FarmPage implements OnInit {
+  TransactionType = TransactionType;
   public reefAmount = null;
   public apy = 0;
   public loading = false;

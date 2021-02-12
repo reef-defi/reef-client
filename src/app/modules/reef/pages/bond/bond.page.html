@@ -9,6 +9,8 @@
         <app-page-title
           title="Bond"
           subtitle="Lock tokens long-term and get returns"
+          [chainId]="userInfo.chainInfo.chain_id"
+          [transactionType]="TransactionType.REEF_BOND"
         ></app-page-title>
       </div>
     </div>

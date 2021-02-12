@@ -9,6 +9,8 @@
             <app-page-title
               title="Pool"
               subtitle="Get UNI-V2 LP Tokens by adding liquidity to the {{token}}/REEF pool"
+              [transactionType]="token === TokenSymbol.ETH ? TransactionType.LIQUIDITY_USDT : TransactionType.LIQUIDITY_ETH"
+              [chainId]="userInfo.chainInfo.chain_id"
             ></app-page-title>
           </div>
         </div>

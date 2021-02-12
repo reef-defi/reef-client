@@ -3,6 +3,8 @@
     <app-page-title
       title="REEF Bonds"
       subtitle="Stake REEF and other DeFi tokens to earn APY"
+      [transactionType]="TransactionType.REEF_BOND"
+      [chainId]="(userInfo | async)?.chainInfo.chain_id"
     ></app-page-title>
   </div>
 </div>

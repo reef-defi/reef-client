@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { first } from 'rxjs/internal/operators/first';
+import { Observable } from 'rxjs';
+import {
+  IProviderUserInfo,
+  TransactionType,
+} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-stake-reef-page',
@@ -7,7 +13,11 @@ import { UniswapService } from '../../../../core/services/uniswap.service';
   styleUrls: ['./pools.page.scss'],
 })
 export class PoolsPage {
-  constructor(private readonly uniswapService: UniswapService) {}
+  TransactionType = TransactionType;
+  public readonly userInfo: Observable<IProviderUserInfo> = this.connectorService.providerUserInfo$.pipe(
+    first()
+  );
+  constructor(private readonly connectorService: ConnectorService) {}
   pools = [
     {
       name: 'ETH & REEF',
