@@ -108,7 +108,7 @@ export class ConnectorService {
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
     this.currentProvider$.next(provider);
-    this.currentProviderName$.next(getProviderName(web3));
+    this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(
       `${this.currentProviderName$.value} wallet connected.`,
       'Okay!',
