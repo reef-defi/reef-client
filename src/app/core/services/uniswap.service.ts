@@ -146,7 +146,6 @@ export class UniswapService {
       const amountOutMin = trade
         .minimumAmountOut(slippageTolerance)
         .raw.toString();
-      const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
       const path = [tokenB.address, REEF.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
