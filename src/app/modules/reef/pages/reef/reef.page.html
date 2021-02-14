@@ -17,7 +17,7 @@
         [pendingTransactions]="pendingTransactions"
         [supportedTokens]="supportedTokens"
         [loading]="buyLoading"
-        (buy)="buyReef($event.tokenSymbol, $event.tokenAmount)"
+        (buy)="buyReef($event.tokenSymbol, $event.tokenAmount, $event.amountOutMin)"
       ></app-buy-reef>
     </div>
     <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">

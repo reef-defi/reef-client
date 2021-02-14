@@ -48,6 +48,7 @@ export class BuyReefComponent extends NgDestroyableComponent {
   @Output() buy = new EventEmitter<{
     tokenSymbol: TokenSymbol;
     tokenAmount: number;
+    amountOutMin: number;
   }>();
 
   TokenSymbol = TokenSymbol;
@@ -133,6 +134,4 @@ export class BuyReefComponent extends NgDestroyableComponent {
     }
     return false;
   }
-
-  sendTokens(addrFrom: string, addrTo: string, number: number) {}
 }

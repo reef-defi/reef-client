@@ -16,8 +16,6 @@ import { TransactionsService } from '../../../../core/services/transactions.serv
 })
 export class ReefPage implements OnInit {
   TransactionType = TransactionType;
-  readonly reefToken$ = this.contractService.reefTokenContract$;
-  readonly reefStaking$ = this.contractService.stakingContract$;
   readonly pendingTransactions = this.transactionService.getPendingTransactions(
     [TransactionType.BUY_REEF]
   );
@@ -41,26 +39,26 @@ export class ReefPage implements OnInit {
     this.getReefHistoricalPrice();
   }
 
-  async buyReef(tokenSymbol: TokenSymbol, tokenAmount: number): Promise<any> {
+  async buyReef(tokenSymbol: TokenSymbol, tokenAmount: number, amountOutMin: number): Promise<any> {
     this.buyLoading = true;
-    await this.uniswapService.buyReef(tokenSymbol, tokenAmount, 10);
+    await this.uniswapService.buyReef(tokenSymbol, tokenAmount, amountOutMin, 10);
     this.buyLoading = false;
   }
 
-  public onDateChange(val: number) {
+  public onDateChange(val: number): void {
     const endDate = format(new Date(), 'yyyy-MM-dd');
     const startDate = format(subMonths(new Date(), val), 'yyyy-MM-dd');
     this.getReefHistoricalPrice(endDate, startDate);
   }
 
-  private getReefHistoricalPrice(to?: string, from?: string) {
+  private getReefHistoricalPrice(to?: string, from?: string): void {
     if (!from) {
       from = '2020-12-29'; // Date Of Reef TGE
     }
     if (!to) {
       to = format(new Date(), 'yyyy-MM-dd');
     }
-    this.apiService.getReefPricing(from, to).subscribe(({ data }) => {
+    this.apiService.getReefPricing(from, to).subscribe(({data}) => {
       this.reefPriceChartData = this.chartService.composeHighChart(
         data.prices.map((obj) => [new Date(obj.date).getTime(), obj.price]),
         true

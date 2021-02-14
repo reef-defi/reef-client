@@ -1,14 +1,15 @@
 import {ProviderName} from '../app/core/models/types';
+import {environment} from '../environments/environment';
 
 export const provider = {
   [ProviderName.INFURA]: {
-    url: 'https://mainnet.infura.io/v3/395d6f5d9a324c799a3becf85449122a',
-    apiKey: '395d6f5d9a324c799a3becf85449122a',
+    url: 'https://mainnet.infura.io/v3/' + environment.infuraApiKey,
+    apiKey: environment.infuraApiKey,
     chainId: 1
   },
   [ProviderName.ALCHEMY]: {
-    url: 'https://eth-mainnet.alchemyapi.io/v2/yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
-    apiKey: 'yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
+    url: 'https://eth-mainnet.alchemyapi.io/v2/' + environment.alchemyApiKey,
+    apiKey: environment.alchemyApiKey,
     chainId: 1
   },
   [ProviderName.LOCAL_FORK]: {
