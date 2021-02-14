@@ -207,9 +207,9 @@
                       this.buy.emit({
                         tokenSymbol:
                           TokenSymbol[balance.contract_ticker_symbol],
-                        tokenAmount: tokenAmountSub.value
+                        tokenAmount: tokenAmountSub.value,
+                        amountOutMin: tokenPrices.amountOutMin
                       });
-                      tokenAmountSub.next(0)
                     "
                     class="btn btn-primary p-2"
                   >

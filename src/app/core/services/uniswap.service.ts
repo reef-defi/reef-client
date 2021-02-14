@@ -1,48 +1,25 @@
-import { Injectable } from '@angular/core';
-import {
-  ChainId,
-  Fetcher,
-  Percent,
-  Route,
-  Token,
-  TokenAmount,
-  Trade,
-  TradeType,
-} from '@uniswap/sdk';
-import { ConnectorService } from './connector.service';
-import {
-  IProviderUserInfo,
-  IReefPricePerToken,
-  ProviderName,
-  TokenSymbol,
-  TransactionType,
-} from '../models/types';
-import { NotificationService } from './notification.service';
-import { addMinutes, getUnixTime } from 'date-fns';
-import { combineLatest, Observable, Subject, timer } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
+import {ConnectorService} from './connector.service';
+import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol, TransactionType} from '../models/types';
+import {NotificationService} from './notification.service';
+import {addMinutes, getUnixTime} from 'date-fns';
+import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import { MaxUint256 } from '../utils/pools-utils';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { TransactionConfirmationComponent } from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {
-  filter,
-  first,
-  map,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-} from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { BaseProvider, getDefaultProvider } from '@ethersproject/providers';
-import { Contract } from 'web3-eth-contract';
+import {MaxUint256} from '../utils/pools-utils';
+import {Router} from '@angular/router';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
+import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
+import {ApiService} from './api.service';
+import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
+import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
-import { TokenUtil } from '../../shared/utils/token.util';
-import { ErrorUtils } from '../../shared/utils/error.utils';
-import { TransactionsService } from './transactions.service';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
+import {TokenUtil} from '../../shared/utils/token.util';
+import {ErrorUtils} from '../../shared/utils/error.utils';
+import {TransactionsService} from './transactions.service';
 
 @Injectable({
   providedIn: 'root',
@@ -55,10 +32,8 @@ export class UniswapService {
 
   slippagePercent$: Observable<Percent>;
   readonly initPrices$: Observable<any>;
-  private reefPricesLive = new Map<
-    TokenSymbol,
-    Observable<IReefPricePerToken>
-  >();
+  private reefPricesLive = new Map<TokenSymbol,
+    Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
   private ethersProvider$: Observable<BaseProvider>;
 
@@ -100,67 +75,47 @@ export class UniswapService {
   }
 
   public async buyReef(
-    tokenSymbol: TokenSymbol,
-    amount: number,
+    payTokenSymbol: TokenSymbol,
+    payAmount: number,
+    amountOutMin: number,
     minutesDeadline: number
   ): Promise<void> {
     const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
       .pipe(take(1))
       .toPromise();
     const addresses = info.availableSmartContractAddresses;
-    const tokenContractAddress = AddressUtils.getTokenSymbolContractAddress(
+    const payTokenContractAddress = AddressUtils.getTokenSymbolContractAddress(
       addresses,
-      tokenSymbol
+      payTokenSymbol
     );
-    if (tokenContractAddress) {
-      let weiAmount;
+    if (payTokenContractAddress) {
+      let payWeiAmount;
       const web3 = await this.getWeb3();
-      const checkSummed = web3.utils.toChecksumAddress(tokenContractAddress);
-      const REEF = new Token(
+      const payTokenAddressChecksummed = web3.utils.toChecksumAddress(payTokenContractAddress);
+      const REEFToken = new Token(
         info.chainInfo.chain_id as ChainId,
         web3.utils.toChecksumAddress(addresses.REEF),
         18
       );
       const provider = await this.ethersProvider$.pipe(first()).toPromise();
-      const tokenB = await Fetcher.fetchTokenData(
+      const payToken = await Fetcher.fetchTokenData(
         info.chainInfo.chain_id as ChainId,
-        checkSummed,
+        payTokenAddressChecksummed,
         provider
       );
-      const pair = await Fetcher.fetchPairData(REEF, tokenB, provider);
-      /* replaced
-      if (tokenSymbol === TokenSymbol.ETH || tokenSymbol === TokenSymbol.WETH) {
-          weiAmount = this.connectorService.toWei(amount);
-      } else {
-          weiAmount = amount * +`1e${tokenB.decimals}`;*/
-      weiAmount = TokenUtil.toContractIntegerBalanceValue(amount, tokenSymbol);
-      // }
-      const route = new Route([pair], tokenB);
-      const trade = new Trade(
-        route,
-        new TokenAmount(tokenB, weiAmount),
-        TradeType.EXACT_INPUT
-      );
-      const slippageTolerance = await this.slippagePercent$
-        .pipe(first())
-        .toPromise();
-      const amountOutMin = trade
-        .minimumAmountOut(slippageTolerance)
-        .raw.toString();
-      console.log('buyReef VVV=', amountOutMin);
-
-      const path = [tokenB.address, REEF.address];
+      payWeiAmount = TokenUtil.toContractIntegerBalanceValue(payAmount, payTokenSymbol);
+      const amountOutMinWei = TokenUtil.toContractIntegerBalanceValue(amountOutMin, TokenSymbol.REEF);
+      const path = [payToken.address, REEFToken.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       try {
-        const firstConfirm = true;
-        if (tokenSymbol === TokenSymbol.ETH) {
+        if (payTokenSymbol === TokenSymbol.ETH) {
           this.routerContract$.value.methods
-            .swapExactETHForTokens(amountOutMin, path, to, deadline)
+            .swapExactETHForTokens(amountOutMinWei, path, to, deadline)
             .send({
               from: to,
-              value: weiAmount,
+              value: payWeiAmount,
               gasPrice: this.connectorService.getGasPrice(),
             })
             .on('transactionHash', (hash) => {
@@ -178,35 +133,29 @@ export class UniswapService {
             .on('receipt', async (receipt) => {
               this.transactionService.removePendingTx(receipt.transactionHash);
               this.notificationService.showNotification(
-                `You've successfully bought ${amountOutMin} REEF!`,
+                this.boughtReefConfirmationMessage(amountOutMinWei.toString()),
                 'Okay',
                 'success'
               );
               this.apiService.updateTokensInBalances.next([
-                tokenSymbol,
+                payTokenSymbol,
                 TokenSymbol.REEF,
               ]);
             })
             .on('error', (err) => {
-              dialogRef.close();
-              this.notificationService.showNotification(
-                ErrorUtils.parseError(err.code),
-                'Close',
-                'error'
-              );
+              this.displayBuyReefTxError(dialogRef, err);
             });
         } else {
           const contract = this.connectorService.createErc20TokenContract(
-            tokenSymbol,
+            payTokenSymbol,
             addresses
           );
           const hasAllowance = await this.approveTokenToRouter(contract);
           if (hasAllowance) {
-            amount = amount * +`1e${tokenB.decimals}`;
             this.routerContract$.value.methods
               .swapExactTokensForTokens(
-                amount,
-                amountOutMin,
+                payWeiAmount,
+                amountOutMinWei,
                 path,
                 to,
                 deadline
@@ -232,22 +181,17 @@ export class UniswapService {
                   receipt.transactionHash
                 );
                 this.notificationService.showNotification(
-                  `You've successfully bought ${amountOutMin} REEF!`,
+                  this.boughtReefConfirmationMessage(amountOutMinWei),
                   'Okay',
                   'success'
                 );
                 this.apiService.updateTokensInBalances.next([
-                  tokenSymbol,
+                  payTokenSymbol,
                   TokenSymbol.REEF,
                 ]);
               })
               .on('error', (err) => {
-                dialogRef.close();
-                this.notificationService.showNotification(
-                  ErrorUtils.parseError(err.code),
-                  'Close',
-                  'error'
-                );
+                this.displayBuyReefTxError(dialogRef, err);
               });
           }
         }
@@ -260,8 +204,27 @@ export class UniswapService {
         );
       }
     } else {
-      throw new Error('Can not find contract address for ' + tokenSymbol);
+      throw new Error('Can not find contract address for ' + payTokenSymbol);
     }
+  }
+
+  private displayBuyReefTxError(dialogRef: MatDialogRef<any>, err): void {
+    dialogRef.close();
+    let message = ErrorUtils.parseError(err.code);
+    if (err.message.indexOf('INSUFFICIENT_OUTPUT_AMOUNT') > 0) {
+      message = `Price went above slippage tolerance. You can adjust slippage in settings and try again.`;
+    }
+    this.notificationService.showNotification(
+      message,
+      'Close',
+      'error'
+    );
+  }
+
+  private boughtReefConfirmationMessage(amountOutMin: string): string {
+    const fixedVal = TokenUtil.toDisplayDecimalValue(amountOutMin, TokenSymbol.REEF);
+    const fixedDecimal = TokenUtil.toMaxDisplayDecimalPlaces(fixedVal, TokenSymbol.REEF);
+    return `Successfully bought minimum of ${fixedDecimal} REEF!`;
   }
 
   private async getAllowance(token: any, spenderAddr: string): Promise<any> {
@@ -270,26 +233,6 @@ export class UniswapService {
       .toPromise();
     return token.methods.allowance(info.address, spenderAddr).call();
   }
-
-  /*public async getReefPairWith(tokenSymbol: string, reefAmount: string, tokenBAmount: string): Promise<any> {
-    const REEF = new Token(ChainId.MAINNET, addresses.REEF_TOKEN, 18);
-    const tokenB = new Token(ChainId.MAINNET, addresses[tokenSymbol], 18);
-    const pair = await Fetcher.fetchPairData(REEF, tokenB);
-    const route = new Route([pair], WETH[REEF.chainId]);
-    const route2 = new Route([pair], REEF);
-    console.log(route.midPrice.toSignificant(6), 'ROUTE1');
-    console.log(route2.midPrice.toSignificant(6), 'ROUTE2');
-    const trade = new Trade(route, new TokenAmount(tokenB, tokenBAmount), TradeType.EXACT_INPUT);
-    console.log(
-      trade.executionPrice.toSignificant(6),
-      trade.nextMidPrice.toSignificant(6),
-      'TRADE'
-    );
-
-    const price = new Price(tokenB, REEF, '100000000', '12300000000000');
-    console.log(price.toSignificant(3), 'price');
-    return pair;
-  }*/
 
   public getReefPriceInInterval$(
     tokenSymbol: TokenSymbol
@@ -349,18 +292,6 @@ export class UniswapService {
     const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
     const weiMinA = this.getMinAmountFromSlippagePercent(weiA, slippagePer);
     const weiMinB = this.getMinAmountFromSlippagePercent(weiB, slippagePer);
-    /*const weiMinA = TokenUtil.toContractIntegerBalanceValue(
-      amountA * 0.99,
-      tokenSymbolA
-    );*/
-    /*const weiMinB = TokenUtil.toContractIntegerBalanceValue(
-      amountB * 0.99,
-      tokenSymbolB
-    );*/
-
-    /*replaced
-    const weiA = this.connectorService.toWei(amountA);
-    const weiB = this.connectorService.toWei(amountB);*/
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       const contractA = this.connectorService.createErc20TokenContract(
@@ -374,8 +305,6 @@ export class UniswapService {
       const hasAllowanceA = await this.approveTokenToRouter(contractA);
       const hasAllowanceB = await this.approveTokenToRouter(contractB);
       if (hasAllowanceA && hasAllowanceB) {
-        console.log('addLiquidity VVV=', weiB, weiMinB);
-
         this.routerContract$.value.methods
           .addLiquidity(
             tokenAddressA,
@@ -452,11 +381,9 @@ export class UniswapService {
       tokenSymbol
     );
     const weiEthAmount = this.connectorService.toWei(ethAmount);
-    // const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
-    const slippagePer = new Percent('5', '100');
+    const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
     const amountTokenMin = this.getMinAmountFromSlippagePercent(amountTokenDesired, slippagePer);
     const amountETHMin = this.getMinAmountFromSlippagePercent(weiEthAmount, slippagePer);
-
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods
@@ -762,6 +689,7 @@ export class UniswapService {
           amount,
           tokenSymbol
         );
+        // TODO  looks like shared method can exist to get trade object (buyReef has similar functionality)
         const trade = new Trade(
           route,
           new TokenAmount(tokenB, tokenAmt),
