@@ -143,8 +143,9 @@ export class UniswapService {
       const slippageTolerance = await this.slippagePercent$
         .pipe(first())
         .toPromise();
-      const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
-      const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
+      const amountOutMin = trade
+        .minimumAmountOut(slippageTolerance)
+        .raw.toString();
       const path = [tokenB.address, REEF.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
