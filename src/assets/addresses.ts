@@ -39,7 +39,9 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.REEF_WETH_POOL]: '0x05aEb0ae4e5af3bAC40A2061C4B17fbDdD1a2F37', // TESTR pool
     [TokenSymbol.REEF_USDT_POOL]: '0x84392A8271473FEC9987e77D202E1B9466AD272e', // TESTR pool
     // reef token
-    [TokenSymbol.REEF]: '0x3F2D78c7F1A20BF14E1f4D249973968146Fb5Ee1', // '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab', // TESTR
+    [TokenSymbol.REEF]: '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab',
+    // local fork python '0x3F2D78c7F1A20BF14E1f4D249973968146Fb5Ee1',
+    // '0x894a180Cf0bdf32FF6b3268a1AE95d2fbC5500ab', // TESTR
     [TokenSymbol.USDT]: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     [TokenSymbol.WETH]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     [TokenSymbol.BNB]: '',

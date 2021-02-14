@@ -14,6 +14,8 @@ export const environment = {
   cmcReefPriceUrl: 'https://web-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest?slug=reef&start=1&limit=6&convert=USD',
   reefNodeApiUrl: 'https://node-api.reef.finance/api',
   // reefNodeApiUrl: 'http://localhost:3000/api',
+  alchemyApiKey: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
+  infuraApiKey: 'c80b6f5e0b554a59b295f7588eb958b7'
 };
 
 /*

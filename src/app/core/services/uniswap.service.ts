@@ -88,6 +88,7 @@ export class UniswapService {
   }
 
   public static tokenMinAmountCalc(
+    // tslint:disable-next-line:variable-name
     ppt_perOneToken: IReefPricePerToken,
     amount: number
   ): IReefPricePerToken {
@@ -146,6 +147,8 @@ export class UniswapService {
       const amountOutMin = trade
         .minimumAmountOut(slippageTolerance)
         .raw.toString();
+      console.log('buyReef VVV=', amountOutMin);
+
       const path = [tokenB.address, REEF.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
@@ -343,14 +346,17 @@ export class UniswapService {
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     const weiA = TokenUtil.toContractIntegerBalanceValue(amountA, tokenSymbolA);
     const weiB = TokenUtil.toContractIntegerBalanceValue(amountB, tokenSymbolB);
-    const weiMinA = TokenUtil.toContractIntegerBalanceValue(
-      amountA * 0.95,
+    const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
+    const weiMinA = this.getMinAmountFromSlippagePercent(weiA, slippagePer);
+    const weiMinB = this.getMinAmountFromSlippagePercent(weiB, slippagePer);
+    /*const weiMinA = TokenUtil.toContractIntegerBalanceValue(
+      amountA * 0.99,
       tokenSymbolA
-    );
-    const weiMinB = TokenUtil.toContractIntegerBalanceValue(
-      amountB * 0.95,
+    );*/
+    /*const weiMinB = TokenUtil.toContractIntegerBalanceValue(
+      amountB * 0.99,
       tokenSymbolB
-    );
+    );*/
 
     /*replaced
     const weiA = this.connectorService.toWei(amountA);
@@ -368,6 +374,8 @@ export class UniswapService {
       const hasAllowanceA = await this.approveTokenToRouter(contractA);
       const hasAllowanceB = await this.approveTokenToRouter(contractB);
       if (hasAllowanceA && hasAllowanceB) {
+        console.log('addLiquidity VVV=', weiB, weiMinB);
+
         this.routerContract$.value.methods
           .addLiquidity(
             tokenAddressA,
@@ -439,22 +447,24 @@ export class UniswapService {
     const to = info.address;
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
     // replaced const tokenAmount = this.connectorService.toWei(amount);
-    const tokenAmount = TokenUtil.toContractIntegerBalanceValue(
+    const amountTokenDesired = TokenUtil.toContractIntegerBalanceValue(
       amount,
       tokenSymbol
     );
     const weiEthAmount = this.connectorService.toWei(ethAmount);
-    const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
-    const tokenSlippage = this.getSlippageForAmount(tokenAmount, slippagePer);
-    const ethSlippage = this.getSlippageForAmount(weiEthAmount, slippagePer);
+    // const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
+    const slippagePer = new Percent('5', '100');
+    const amountTokenMin = this.getMinAmountFromSlippagePercent(amountTokenDesired, slippagePer);
+    const amountETHMin = this.getMinAmountFromSlippagePercent(weiEthAmount, slippagePer);
+
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods
         .addLiquidityETH(
           tokenAddress,
-          tokenAmount,
-          tokenSlippage,
-          ethSlippage,
+          amountTokenDesired,
+          amountTokenMin,
+          amountETHMin,
           to,
           deadline
         )
@@ -789,13 +799,14 @@ export class UniswapService {
     return await this.connectorService.web3$.pipe(first()).toPromise();
   }
 
-  private getSlippageForAmount(
+  private getMinAmountFromSlippagePercent(
     amount: string | number,
     slippagePercent: Percent
   ): string {
-    return new BigNumber(amount)
-      .multipliedBy(+slippagePercent.toFixed() / 100)
-      .toString();
+    const relAmt = (100 - +slippagePercent.toFixed()) / 100;
+    return (new BigNumber(amount))
+      .multipliedBy(relAmt)
+      .toFixed();
   }
 
   private goToReef(): void {

@@ -9,4 +9,6 @@ export const environment = {
   gasPriceUrl: 'https://www.etherchain.org/api/gasPriceOracle',
   cmcReefPriceUrl: 'https://web-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest?slug=reef&start=1&limit=6&convert=USD',
   reefNodeApiUrl: 'https://node-api.reef.finance/api',
+  infuraApiKey: '395d6f5d9a324c799a3becf85449122a',
+  alchemyApiKey: 'yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
 };
