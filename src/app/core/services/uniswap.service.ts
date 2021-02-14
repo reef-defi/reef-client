@@ -143,7 +143,9 @@ export class UniswapService {
       const slippageTolerance = await this.slippagePercent$
         .pipe(first())
         .toPromise();
-      const amountOutMin = trade.minimumAmountOut(slippageTolerance).toFixed(0);
+      const amountOutMin = trade
+        .minimumAmountOut(slippageTolerance)
+        .raw.toString();
       const amountIn = trade.maximumAmountIn(slippageTolerance).toFixed(0);
       const path = [tokenB.address, REEF.address];
       const to = info.address;
