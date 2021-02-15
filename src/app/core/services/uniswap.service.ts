@@ -127,7 +127,8 @@ export class UniswapService {
               );
               this.transactionService.addPendingTx(
                 hash,
-                TransactionType.BUY_REEF
+                TransactionType.BUY_REEF,
+                [payTokenSymbol, TokenSymbol.REEF]
               );
             })
             .on('receipt', async (receipt) => {
@@ -137,10 +138,6 @@ export class UniswapService {
                 'Okay',
                 'success'
               );
-              this.apiService.updateTokensInBalances.next([
-                payTokenSymbol,
-                TokenSymbol.REEF,
-              ]);
             })
             .on('error', (err) => {
               this.displayBuyReefTxError(dialogRef, err);
@@ -173,7 +170,11 @@ export class UniswapService {
                 );
                 this.transactionService.addPendingTx(
                   hash,
-                  TransactionType.BUY_REEF
+                  TransactionType.BUY_REEF,
+                  [
+                    payTokenSymbol,
+                    TokenSymbol.REEF,
+                  ]
                 );
               })
               .on('receipt', (receipt) => {
@@ -185,10 +186,6 @@ export class UniswapService {
                   'Okay',
                   'success'
                 );
-                this.apiService.updateTokensInBalances.next([
-                  payTokenSymbol,
-                  TokenSymbol.REEF,
-                ]);
               })
               .on('error', (err) => {
                 this.displayBuyReefTxError(dialogRef, err);
@@ -327,9 +324,18 @@ export class UniswapService {
               'Ok',
               'info'
             );
+            const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
+              tokenSymbolB,
+              info.availableSmartContractAddresses
+            );
             this.transactionService.addPendingTx(
               hash,
-              TransactionType.LIQUIDITY_USDT
+              TransactionType.LIQUIDITY_USDT,
+              [
+                tokenSymbolA,
+                tokenSymbolB,
+                poolSymbol,
+              ]
             );
           })
           .on('receipt', (receipt) => {
@@ -339,15 +345,6 @@ export class UniswapService {
               'Okay',
               'success'
             );
-            const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
-              tokenSymbolB,
-              info.availableSmartContractAddresses
-            );
-            this.apiService.updateTokensInBalances.next([
-              tokenSymbolA,
-              tokenSymbolB,
-              poolSymbol,
-            ]);
           })
           .on('error', (err) => {
             dialogRef.close();
@@ -407,9 +404,16 @@ export class UniswapService {
             'Ok',
             'info'
           );
+          const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
+            TokenSymbol.ETH,
+            info.availableSmartContractAddresses
+          );
           this.transactionService.addPendingTx(
             hash,
-            TransactionType.LIQUIDITY_ETH
+            TransactionType.LIQUIDITY_ETH,
+            [TokenSymbol[tokenSymbol],
+              TokenSymbol.ETH,
+              poolSymbol]
           );
         })
         .on('receipt', (receipt) => {
@@ -419,15 +423,6 @@ export class UniswapService {
             'Okay',
             'success'
           );
-          const poolSymbol = AddressUtils.getReefPoolByPairSymbol(
-            TokenSymbol.ETH,
-            info.availableSmartContractAddresses
-          );
-          this.apiService.updateTokensInBalances.next([
-            TokenSymbol[tokenSymbol],
-            TokenSymbol.ETH,
-            poolSymbol,
-          ]);
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -478,7 +473,9 @@ export class UniswapService {
               'Ok',
               'info'
             );
-            this.transactionService.addPendingTx(hash, transactionType);
+            this.transactionService.addPendingTx(hash, transactionType, [
+              poolSymbol
+            ]);
           })
           .on('receipt', (receipt) => {
             this.transactionService.removePendingTx(receipt.transactionHash);
@@ -487,8 +484,6 @@ export class UniswapService {
               'Okay',
               'success'
             );
-            // TODO refresh only tokens that changed balance
-            this.apiService.refreshBalancesForAddress.next(fromAddress);
           })
           .on('error', (err) => {
             dialogRef.close();
@@ -537,7 +532,9 @@ export class UniswapService {
             'Ok',
             'info'
           );
-          this.transactionService.addPendingTx(hash, transactionType);
+          this.transactionService.addPendingTx(hash, transactionType, [
+            poolSymbol
+          ]);
         })
         .on('receipt', (receipt) => {
           this.transactionService.removePendingTx(receipt.transactionHash);
@@ -546,8 +543,6 @@ export class UniswapService {
             'Okay',
             'success'
           );
-          // TODO refresh only tokens that changed balance
-          this.apiService.refreshBalancesForAddress.next(fromAddress);
         })
         .on('error', (err) => {
           dialogRef.close();
@@ -632,7 +627,8 @@ export class UniswapService {
         );
         this.transactionService.addPendingTx(
           hash,
-          TransactionType.APPROVE_TOKEN
+          TransactionType.APPROVE_TOKEN,
+          [TokenSymbol.ETH]
         );
       })
       .on('receipt', (receipt) => {
@@ -642,7 +638,6 @@ export class UniswapService {
           'Okay',
           'success'
         );
-        this.apiService.updateTokensInBalances.next([TokenSymbol.ETH]);
       })
       .on('error', (err) => {
         this.notificationService.showNotification(

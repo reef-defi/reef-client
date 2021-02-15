@@ -39,7 +39,8 @@ export enum TransactionType {
 
 export interface PendingTransaction {
   hash: string;
-  type?: TransactionType;
+  type: TransactionType;
+  tokens: TokenSymbol[];
 }
 
 export interface QuoteResponse {
