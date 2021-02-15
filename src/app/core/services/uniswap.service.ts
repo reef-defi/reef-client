@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
-import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType,} from '@uniswap/sdk';
+import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
 import {ConnectorService} from './connector.service';
-import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol, TransactionType,} from '../models/types';
+import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol, TransactionType} from '../models/types';
 import {NotificationService} from './notification.service';
 import {addMinutes, getUnixTime} from 'date-fns';
-import {combineLatest, merge, Observable, Subject, timer} from 'rxjs';
+import {combineLatest, EMPTY, merge, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
 import {MaxUint256} from '../utils/pools-utils';
 import {Router} from '@angular/router';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {filter, first, map, shareReplay, startWith, switchMap, take,} from 'rxjs/operators';
+import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
 import {ApiService} from './api.service';
 import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
 import {Contract} from 'web3-eth-contract';
@@ -22,6 +22,7 @@ import {ErrorUtils} from '../../shared/utils/error.utils';
 import {TransactionsService} from './transactions.service';
 import {tap} from 'rxjs/internal/operators/tap';
 import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import {of} from 'rxjs/internal/observable/of';
 
 @Injectable({
   providedIn: 'root',
@@ -243,33 +244,34 @@ export class UniswapService {
     return token.methods.allowance(info.address, spenderAddr).call();
   }
 
-  public getReefPriceInInterval$(
+  public getReefPriceInInterval(
     tokenSymbol: TokenSymbol,
   ): { refreshSub: Subject<void>, price$: Observable<IReefPricePerToken> } {
-    if (!this.reefPricesLive.has(tokenSymbol) && ) {
-      const refreshSub = new Subject<void>();
-      const refresh$ = merge([timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), refreshSub]);
+    if (!this.reefPricesLive.has(tokenSymbol)
+      && TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS.some(suppTS => suppTS.tokenSymbol === tokenSymbol)) {
+      const refreshSub = new Subject<any>();
+      const refresh$ = merge(timer(0, UniswapService.REFRESH_TOKEN_PRICE_RATE_MS), refreshSub.asObservable());
       const price$ = combineLatest([
         refresh$,
         this.slippagePercent$,
       ]).pipe(
-        switchMap(([_, slippageP]: [any, Percent]) =>
-          this.connectorService.providerUserInfo$.pipe(
-            filter(
-              (info) =>
-                !!AddressUtils.getTokenSymbolContractAddress(
-                  info.availableSmartContractAddresses,
-                  tokenSymbol
-                )
-            ),
-            switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
+        switchMap(([_, slippageP]: [any, Percent]) => this.connectorService.providerUserInfo$.pipe(
+          filter(
+            (info) =>
+              !!AddressUtils.getTokenSymbolContractAddress(
+                info.availableSmartContractAddresses,
+                tokenSymbol
+              )
+          ),
+          switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
           )
         ),
         shareReplay(1)
       );
       this.reefPricesLive.set(tokenSymbol, {price$, refreshSub});
     }
-    return this.reefPricesLive.get(tokenSymbol);
+    const cached$ = this.reefPricesLive.get(tokenSymbol);
+    return cached$;
   }
 
   /*public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {
@@ -771,7 +773,7 @@ export class UniswapService {
     );
     // price for each token symbol
     const tokenPrices$ = combineLatest(
-      supportedTokenSymbols.map((ts) => this.getReefPriceInInterval$(ts).price$)
+      supportedTokenSymbols.map((ts) => this.getReefPriceInInterval(ts).price$)
     ).pipe(tap(v => console.log('INIT PRICES', v)));
     return tokenPrices$.pipe(take(1), shareReplay(1));
   }

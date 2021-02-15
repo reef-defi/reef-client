@@ -1,32 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import {
-  IPendingTransactions,
-  IProviderUserInfo,
-  IReefPricePerToken,
-  PendingTransaction,
-  Token,
-  TokenSymbol,
-} from '../../../../core/models/types';
-import { ApiService } from '../../../../core/services/api.service';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  ReplaySubject,
-} from 'rxjs';
-import { PoolService } from '../../../../core/services/pool.service';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { NgDestroyableComponent } from '../../../../shared/ng-destroyable-component';
-import { TokenUtil } from '../../../../shared/utils/token.util';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output,} from '@angular/core';
+import {IProviderUserInfo, IReefPricePerToken, PendingTransaction, Token, TokenSymbol,} from '../../../../core/models/types';
+import {ApiService} from '../../../../core/services/api.service';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {filter, map, mapTo, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, ReplaySubject, Subject, timer,} from 'rxjs';
+import {PoolService} from '../../../../core/services/pool.service';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
+import {TokenUtil} from '../../../../shared/utils/token.util';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Component({
   selector: 'app-buy-reef',
@@ -55,9 +38,7 @@ export class BuyReefComponent extends NgDestroyableComponent {
   TokenSymbol = TokenSymbol;
   selectedTokenBalance$: Observable<Token>;
   selectedTokenPrice$: Observable<IReefPricePerToken>;
-  supportedTokensSub = new BehaviorSubject<
-    { tokenSymbol: TokenSymbol; src: string }[]
-  >([]);
+  supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol; src: string }[]>([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
   tokenAmountSub = new BehaviorSubject<number>(null);
   ethPrice$: Observable<number>;
@@ -95,37 +76,32 @@ export class BuyReefComponent extends NgDestroyableComponent {
       .subscribe(() => this.tokenAmountSub.next(null));
 
     // we get all supported token prices in advance
-    const tokenLivePrices$: Observable<
-      IReefPricePerToken[]
-    > = this.supportedTokensSub.pipe(
-      filter((v) => !!v.length),
-      switchMap((supportedTkns) => {
-        const supportedTokenSymbols = supportedTkns.map((st) => st.tokenSymbol);
-        // price for each token symbol
-        const supportedPrices$ = combineLatest(
-          supportedTokenSymbols.map((ts) =>
-            uniswapService.getReefPriceInInterval$(ts)
-          )
-        );
-        return supportedPrices$;
-      }),
+    const selectedTokenLivePrices$
+      : Observable<{ price$: Observable<IReefPricePerToken>, refreshSub: Subject<any> }> = this.selTokenSub.pipe(
+      map((selToken: TokenSymbol) => uniswapService.getReefPriceInInterval(selToken)),
       shareReplay(1)
     );
-
-    this.selectedTokenPrice$ = combineLatest([
-      this.selTokenSub,
-      this.tokenAmountSub,
-      tokenLivePrices$,
-    ]).pipe(
-      map((value) => {
-        const tokenSymbol: TokenSymbol = value[0];
-        const amount: number = value[1];
-        const tokenPrices: IReefPricePerToken[] = value[2];
-        const selectedPrice = tokenPrices.find(
-          (tp) => tp.tokenSymbol === tokenSymbol
+    selectedTokenLivePrices$.pipe(
+      map(v => v.refreshSub),
+      switchMap(v => {
+        return timer(0, 3000).pipe(
+          takeUntil(this.onDestroyed$),
+          mapTo(v)
         );
-        return UniswapService.tokenMinAmountCalc(selectedPrice, amount);
       }),
+      takeUntil(this.onDestroyed$)
+    ).subscribe(v => {
+      console.log('REMOVE SUBBBB');
+      v.next(null);
+    });
+
+    const selTokenPrices$ = selectedTokenLivePrices$.pipe(switchMap(v => v.price$));
+    this.selectedTokenPrice$ = combineLatest([
+      this.tokenAmountSub,
+      selTokenPrices$,
+    ]).pipe(
+      map(([amount, prices]) => UniswapService.tokenMinAmountCalc(prices, amount)),
+      tap(v => console.log('GOT PRICE')),
       shareReplay(1)
     );
   }

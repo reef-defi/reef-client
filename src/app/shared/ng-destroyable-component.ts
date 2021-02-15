@@ -1,9 +1,13 @@
-import { Subject } from 'rxjs';
+import {Subject} from 'rxjs';
+import {Component, OnDestroy} from '@angular/core';
 
-export class NgDestroyableComponent {
+@Component({
+  template:''
+})
+export class NgDestroyableComponent implements OnDestroy {
   onDestroyed$ = new Subject<void>();
 
-  onDestroy() {
+  ngOnDestroy(): void {
     this.onDestroyed$.next(null);
   }
 }

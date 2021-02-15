@@ -112,7 +112,7 @@ export class PoolPage {
 
     this.pricePerTokens$ = this.token$.pipe(
       switchMap(
-        (token) => this.uniswapService.getReefPriceInInterval$(token),
+        (token) => this.uniswapService.getReefPriceInInterval(token).price$,
         (tkn, prices) => [tkn, prices]
       ),
       tap(([tkn, prices]: [TokenSymbol, IReefPricePerToken]) => {
