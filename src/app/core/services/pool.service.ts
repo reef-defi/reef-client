@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { balancerPoolQuery, uniswapPoolQuery } from '../models/pool-queries';
-import { combineLatest, Observable, timer } from 'rxjs';
+import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import { shareReplay, switchMap } from 'rxjs/operators';
 
 @Injectable({
@@ -11,10 +11,12 @@ import { shareReplay, switchMap } from 'rxjs/operators';
 export class PoolService {
   private static ETH_PRICE_REFRESH_INTERVAL = 60000;
 
-  ethPrice$: Observable<any> = timer(
+  refreshEthPrice = new Subject();
+// TODO ethPrice$ should be moved to some other service
+  ethPrice$: Observable<any> = combineLatest([this.refreshEthPrice, timer(
     0,
     PoolService.ETH_PRICE_REFRESH_INTERVAL
-  ).pipe(
+  )]) .pipe(
     switchMap(() => this.http.get(environment.ethPriceUrl)),
     shareReplay(1)
   );
