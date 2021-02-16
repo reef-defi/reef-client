@@ -16,6 +16,7 @@ export class ReefHistoricPriceComponent {
       this.updateFlag = true;
     }
   }
+  @Input() priceError: boolean;
   @Output() dateSpanChange = new EventEmitter();
 
   onDateChange(val: number): void {

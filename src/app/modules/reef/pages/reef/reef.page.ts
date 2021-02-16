@@ -8,6 +8,8 @@ import { ApiService } from '../../../../core/services/api.service';
 import { format, subMonths } from 'date-fns';
 import { TokenSymbol, TransactionType } from '../../../../core/models/types';
 import { TransactionsService } from '../../../../core/services/transactions.service';
+import { BehaviorSubject, EMPTY, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reef',
@@ -24,6 +26,7 @@ export class ReefPage implements OnInit {
   buyLoading = false;
   reefPriceChartData = null;
   readonly TokenSymbol = TokenSymbol;
+  readonly priceError$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private contractService: ContractService,
@@ -39,9 +42,18 @@ export class ReefPage implements OnInit {
     this.getReefHistoricalPrice();
   }
 
-  async buyReef(tokenSymbol: TokenSymbol, tokenAmount: number, amountOutMin: number): Promise<any> {
+  async buyReef(
+    tokenSymbol: TokenSymbol,
+    tokenAmount: number,
+    amountOutMin: number
+  ): Promise<any> {
     this.buyLoading = true;
-    await this.uniswapService.buyReef(tokenSymbol, tokenAmount, amountOutMin, 10);
+    await this.uniswapService.buyReef(
+      tokenSymbol,
+      tokenAmount,
+      amountOutMin,
+      10
+    );
     this.buyLoading = false;
   }
 
@@ -58,11 +70,15 @@ export class ReefPage implements OnInit {
     if (!to) {
       to = format(new Date(), 'yyyy-MM-dd');
     }
-    this.apiService.getReefPricing(from, to).subscribe(({data}) => {
-      this.reefPriceChartData = this.chartService.composeHighChart(
-        data.prices.map((obj) => [new Date(obj.date).getTime(), obj.price]),
-        true
-      );
+    this.apiService.getReefPricing(from, to).subscribe(({ data }) => {
+      if (data) {
+        this.reefPriceChartData = this.chartService.composeHighChart(
+          data.prices.map((obj) => [new Date(obj.date).getTime(), obj.price]),
+          true
+        );
+      } else {
+        this.priceError$.next(true);
+      }
     });
   }
 }
