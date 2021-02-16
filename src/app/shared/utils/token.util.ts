@@ -1,6 +1,6 @@
-import {TokenSymbol, TransactionType} from '../../core/models/types';
+import { TokenSymbol, TransactionType } from '../../core/models/types';
 import BigNumber from 'bignumber.js';
-import {roundDownTo} from '../../core/utils/math-utils';
+import { roundDownTo } from '../../core/utils/math-utils';
 
 const symbolDisplayMaxDecimals = {
   [TokenSymbol.ETH]: 4,

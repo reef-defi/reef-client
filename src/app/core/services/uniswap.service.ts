@@ -1,25 +1,48 @@
-import {Injectable} from '@angular/core';
-import {ChainId, Fetcher, Percent, Route, Token, TokenAmount, Trade, TradeType} from '@uniswap/sdk';
-import {ConnectorService} from './connector.service';
-import {IProviderUserInfo, IReefPricePerToken, ProviderName, TokenSymbol, TransactionType} from '../models/types';
-import {NotificationService} from './notification.service';
-import {addMinutes, getUnixTime} from 'date-fns';
-import {combineLatest, Observable, Subject, timer} from 'rxjs';
+import { Injectable } from '@angular/core';
+import {
+  ChainId,
+  Fetcher,
+  Percent,
+  Route,
+  Token,
+  TokenAmount,
+  Trade,
+  TradeType,
+} from '@uniswap/sdk';
+import { ConnectorService } from './connector.service';
+import {
+  IProviderUserInfo,
+  IReefPricePerToken,
+  ProviderName,
+  TokenSymbol,
+  TransactionType,
+} from '../models/types';
+import { NotificationService } from './notification.service';
+import { addMinutes, getUnixTime } from 'date-fns';
+import { combineLatest, Observable, Subject, timer } from 'rxjs';
 import BigNumber from 'bignumber.js';
-import {MaxUint256} from '../utils/pools-utils';
-import {Router} from '@angular/router';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {filter, first, map, shareReplay, startWith, switchMap, take} from 'rxjs/operators';
-import {ApiService} from './api.service';
-import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
-import {Contract} from 'web3-eth-contract';
+import { MaxUint256 } from '../utils/pools-utils';
+import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TransactionConfirmationComponent } from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
+import {
+  filter,
+  first,
+  map,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+} from 'rxjs/operators';
+import { ApiService } from './api.service';
+import { BaseProvider, getDefaultProvider } from '@ethersproject/providers';
+import { Contract } from 'web3-eth-contract';
 import Web3 from 'web3';
-import {AddressUtils} from '../../shared/utils/address.utils';
-import {ProviderUtil} from '../../shared/utils/provider.util';
-import {TokenUtil} from '../../shared/utils/token.util';
-import {ErrorUtils} from '../../shared/utils/error.utils';
-import {TransactionsService} from './transactions.service';
+import { AddressUtils } from '../../shared/utils/address.utils';
+import { ProviderUtil } from '../../shared/utils/provider.util';
+import { TokenUtil } from '../../shared/utils/token.util';
+import { ErrorUtils } from '../../shared/utils/error.utils';
+import { TransactionsService } from './transactions.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,8 +55,10 @@ export class UniswapService {
 
   slippagePercent$: Observable<Percent>;
   readonly initPrices$: Observable<any>;
-  private reefPricesLive = new Map<TokenSymbol,
-    Observable<IReefPricePerToken>>();
+  private reefPricesLive = new Map<
+    TokenSymbol,
+    Observable<IReefPricePerToken>
+  >();
   private slippageValue$ = new Subject<string>();
   private ethersProvider$: Observable<BaseProvider>;
 
@@ -91,7 +116,9 @@ export class UniswapService {
     if (payTokenContractAddress) {
       let payWeiAmount;
       const web3 = await this.getWeb3();
-      const payTokenAddressChecksummed = web3.utils.toChecksumAddress(payTokenContractAddress);
+      const payTokenAddressChecksummed = web3.utils.toChecksumAddress(
+        payTokenContractAddress
+      );
       const REEFToken = new Token(
         info.chainInfo.chain_id as ChainId,
         web3.utils.toChecksumAddress(addresses.REEF),
@@ -103,8 +130,14 @@ export class UniswapService {
         payTokenAddressChecksummed,
         provider
       );
-      payWeiAmount = TokenUtil.toContractIntegerBalanceValue(payAmount, payTokenSymbol);
-      const amountOutMinWei = TokenUtil.toContractIntegerBalanceValue(amountOutMin, TokenSymbol.REEF);
+      payWeiAmount = TokenUtil.toContractIntegerBalanceValue(
+        payAmount,
+        payTokenSymbol
+      );
+      const amountOutMinWei = TokenUtil.toContractIntegerBalanceValue(
+        amountOutMin,
+        TokenSymbol.REEF
+      );
       const path = [payToken.address, REEFToken.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
@@ -171,10 +204,7 @@ export class UniswapService {
                 this.transactionService.addPendingTx(
                   hash,
                   TransactionType.BUY_REEF,
-                  [
-                    payTokenSymbol,
-                    TokenSymbol.REEF,
-                  ]
+                  [payTokenSymbol, TokenSymbol.REEF]
                 );
               })
               .on('receipt', (receipt) => {
@@ -211,16 +241,18 @@ export class UniswapService {
     if (err.message.indexOf('INSUFFICIENT_OUTPUT_AMOUNT') > 0) {
       message = `Price went above slippage tolerance. You can adjust slippage in settings and try again.`;
     }
-    this.notificationService.showNotification(
-      message,
-      'Close',
-      'error'
-    );
+    this.notificationService.showNotification(message, 'Close', 'error');
   }
 
   private boughtReefConfirmationMessage(amountOutMin: string): string {
-    const fixedVal = TokenUtil.toDisplayDecimalValue(amountOutMin, TokenSymbol.REEF);
-    const fixedDecimal = TokenUtil.toMaxDisplayDecimalPlaces(fixedVal, TokenSymbol.REEF);
+    const fixedVal = TokenUtil.toDisplayDecimalValue(
+      amountOutMin,
+      TokenSymbol.REEF
+    );
+    const fixedDecimal = TokenUtil.toMaxDisplayDecimalPlaces(
+      fixedVal,
+      TokenSymbol.REEF
+    );
     return `Successfully bought minimum of ${fixedDecimal} REEF!`;
   }
 
@@ -331,11 +363,7 @@ export class UniswapService {
             this.transactionService.addPendingTx(
               hash,
               TransactionType.LIQUIDITY_USDT,
-              [
-                tokenSymbolA,
-                tokenSymbolB,
-                poolSymbol,
-              ]
+              [tokenSymbolA, tokenSymbolB, poolSymbol]
             );
           })
           .on('receipt', (receipt) => {
@@ -379,8 +407,14 @@ export class UniswapService {
     );
     const weiEthAmount = this.connectorService.toWei(ethAmount);
     const slippagePer = await this.slippagePercent$.pipe(first()).toPromise();
-    const amountTokenMin = this.getMinAmountFromSlippagePercent(amountTokenDesired, slippagePer);
-    const amountETHMin = this.getMinAmountFromSlippagePercent(weiEthAmount, slippagePer);
+    const amountTokenMin = this.getMinAmountFromSlippagePercent(
+      amountTokenDesired,
+      slippagePer
+    );
+    const amountETHMin = this.getMinAmountFromSlippagePercent(
+      weiEthAmount,
+      slippagePer
+    );
     try {
       const dialogRef = this.dialog.open(TransactionConfirmationComponent);
       this.routerContract$.value.methods
@@ -411,9 +445,7 @@ export class UniswapService {
           this.transactionService.addPendingTx(
             hash,
             TransactionType.LIQUIDITY_ETH,
-            [TokenSymbol[tokenSymbol],
-              TokenSymbol.ETH,
-              poolSymbol]
+            [TokenSymbol[tokenSymbol], TokenSymbol.ETH, poolSymbol]
           );
         })
         .on('receipt', (receipt) => {
@@ -474,7 +506,7 @@ export class UniswapService {
               'info'
             );
             this.transactionService.addPendingTx(hash, transactionType, [
-              poolSymbol
+              poolSymbol,
             ]);
           })
           .on('receipt', (receipt) => {
@@ -533,7 +565,7 @@ export class UniswapService {
             'info'
           );
           this.transactionService.addPendingTx(hash, transactionType, [
-            poolSymbol
+            poolSymbol,
           ]);
         })
         .on('receipt', (receipt) => {
@@ -727,9 +759,7 @@ export class UniswapService {
     slippagePercent: Percent
   ): string {
     const relAmt = (100 - +slippagePercent.toFixed()) / 100;
-    return (new BigNumber(amount))
-      .multipliedBy(relAmt)
-      .toFixed();
+    return new BigNumber(amount).multipliedBy(relAmt).toFixed();
   }
 
   private goToReef(): void {

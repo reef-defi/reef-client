@@ -1,14 +1,27 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {PoolService} from '../../../../core/services/pool.service';
-import {catchError, distinctUntilChanged, filter, map, shareReplay, tap,} from 'rxjs/operators';
-import {IBasketHistoricRoi, Token, TokenBalance,} from '../../../../core/models/types';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {ApiService} from '../../../../core/services/api.service';
-import {ChartsService} from '../../../../core/services/charts.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {totalmem} from 'os';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { PoolService } from '../../../../core/services/pool.service';
+import {
+  catchError,
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+  tap,
+} from 'rxjs/operators';
+import {
+  IBasketHistoricRoi,
+  IPortfolio,
+  SupportedPortfolio,
+  Token,
+  TokenBalance,
+} from '../../../../core/models/types';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ApiService } from '../../../../core/services/api.service';
+import { ChartsService } from '../../../../core/services/charts.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { totalmem } from 'os';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +36,7 @@ export class DashboardPage implements AfterViewInit {
   public pieChartData$: Observable<any>;
   public portfolioError$ = new BehaviorSubject<boolean>(false);
   showTransactions: boolean;
-  portfolio$: Observable<unknown>;
+  portfolio$: Observable<SupportedPortfolio>;
   getPortfolio2$: Observable<any>;
   public roiData: number[][];
 
@@ -53,33 +66,16 @@ export class DashboardPage implements AfterViewInit {
       tap(() => this.portfolioError$.next(false)),
       switchMap(() => {
         return address$.pipe(
-          switchMap((address) => this.apiService.getPortfolio(address)),
+          switchMap((address: string) => this.apiService.getPortfolio(address)),
+          map((portfolio: IPortfolio) => ({
+            tokens: portfolio.tokens,
+            uniswapPositions: portfolio.uniswapPositions,
+          })),
           tap((data) => {
             console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
           })
         );
-      }),
-      map((providerPositions:any) => {
-        const onlySupportedPositions = {tokens:[], uniswapPositions:[]};
-        Object.keys(providerPositions).forEach((key) => {
-          const hasPositions = providerPositions[key].length;
-          if (hasPositions) {
-            if (key === 'tokens') {
-              onlySupportedPositions.tokens = providerPositions[key];
-            }else if(key === 'uniswapPositions' ){
-              onlySupportedPositions.uniswapPositions=providerPositions[key]
-              providerPositions[key].forEach((tkn) => {
-                // console.log('TKN VVV=', tkn);
-                if (tkn.pool_token) {
-                  onlySupportedPositions.uniswapPositions.push(tkn.pool_token);
-                }
-                // totBalance += tkn.quote //* tkn.quote_rate;
-              });
-            }
-          }
-        })
-        return providerPositions;
       }),
       catchError((err) => {
         this.portfolioError$.next(true);
@@ -89,29 +85,16 @@ export class DashboardPage implements AfterViewInit {
     );
 
     this.portfolioTotalBalance$ = this.portfolio$.pipe(
-      map((providerPositions: any) => {
-        console.log('PPOOORRR VVV=', providerPositions.tokens);
-        let totBalance = 0;
-        const includedTokens = [];
-        Object.keys(providerPositions).forEach((key) => {
-          const hasPositions = providerPositions[key].length;
-          if (hasPositions) {
-            if (key === 'tokens') {
-              providerPositions[key].forEach((tkn) => {
-                totBalance += tkn.quote; //* tkn.quote_rate;
-              });
-            } else if (key === 'uniswapPositions') {
-              providerPositions[key].forEach((tkn) => {
-                // console.log('TKN VVV=', tkn);
-                if (tkn.pool_token) {
-                  totBalance += tkn.pool_token.quote;
-                }
-                // totBalance += tkn.quote //* tkn.quote_rate;
-              });
+      map((portfolio: SupportedPortfolio) => {
+        const totalBalance = Object.keys(portfolio)
+          .map((key: string) => {
+            if (key === 'uniswapPositions') {
+              return portfolio[key].reduce((a, c) => a + c.pool_token.quote, 0);
             }
-          }
-        });
-        return {totalBalance: totBalance};
+            return portfolio[key].reduce((a, c) => a + c.quote, 0);
+          })
+          .reduce((a, c) => a + c);
+        return { totalBalance: totalBalance };
       })
     );
 
@@ -141,9 +124,10 @@ export class DashboardPage implements AfterViewInit {
           return null;
         }
         let other = 0;
+        console.log('TOkenBalance,', tokenBalance);
         const total = tokenBalance.totalBalance;
         const pairs = tokenBalance.tokens
-          .map(({contract_ticker_symbol, quote}) => [
+          .map(({ contract_ticker_symbol, quote }) => [
             contract_ticker_symbol,
             (quote / total) * 100,
           ])
@@ -158,6 +142,7 @@ export class DashboardPage implements AfterViewInit {
         if (other > 0) {
           unified = [...pairs, ['Other', other]];
         }
+        console.log(unified, 'UNIFIED');
         return this.chartsService.composePieChart(unified);
       }),
       shareReplay(1)
@@ -190,7 +175,7 @@ export class DashboardPage implements AfterViewInit {
             totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0),
           } as TokenBalance)
       ),
-      tap(v => console.log('BBBB===', v))
+      tap((v) => console.log('BBBB===', v))
     );
   }
 

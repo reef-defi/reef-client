@@ -15,17 +15,27 @@
           </mat-select>
         </div>
       </div>-->
-      <div *ngIf="options && options.chart; else loadingTemplate">
-        <highcharts-chart
-          [Highcharts]="HighCharts"
-          [options]="options"
-          [(update)]="updateFlag"
-          style="width: 100%; height: 400px; display: block"
-        ></highcharts-chart>
-      </div>
+      <ng-container *ngIf="!priceError; else errorTemplate">
+        <div *ngIf="options && options.chart; else loadingTemplate">
+          <highcharts-chart
+            [Highcharts]="HighCharts"
+            [options]="options"
+            [(update)]="updateFlag"
+            style="width: 100%; height: 400px; display: block"
+          ></highcharts-chart>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>
+
+<ng-template #errorTemplate>
+  <div class="d-flex justify-content-center align-items-center">
+    <span class="small mt-3"
+      >Something went wrong while calculating the REEF Historical Price.
+    </span>
+  </div>
+</ng-template>
 
 <ng-template #loadingTemplate>
   <app-skeleton-loading type="chart" count="4"></app-skeleton-loading>
