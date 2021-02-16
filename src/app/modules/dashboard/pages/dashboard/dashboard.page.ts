@@ -1,26 +1,14 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import {
-  catchError,
-  distinctUntilChanged,
-  filter,
-  map,
-  shareReplay,
-  tap,
-} from 'rxjs/operators';
-import {
-  IBasketHistoricRoi,
-  Token,
-  TokenBalance,
-} from '../../../../core/models/types';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { of } from 'rxjs/internal/observable/of';
+import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {PoolService} from '../../../../core/services/pool.service';
+import {catchError, distinctUntilChanged, filter, map, shareReplay, tap,} from 'rxjs/operators';
+import {IBasketHistoricRoi, Token, TokenBalance,} from '../../../../core/models/types';
+import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {totalmem} from 'os';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,10 +19,11 @@ export class DashboardPage implements AfterViewInit {
   Object = Object;
   public transactions$;
   public tokenBalance$: Observable<TokenBalance>;
+  public portfolioTotalBalance$: Observable<{ totalBalance: number }>;
   public pieChartData$: Observable<any>;
   public portfolioError$ = new BehaviorSubject<boolean>(false);
   showTransactions: boolean;
-  getPortfolio$: Observable<unknown>;
+  portfolio$: Observable<unknown>;
   getPortfolio2$: Observable<any>;
   public roiData: number[][];
 
@@ -59,27 +48,79 @@ export class DashboardPage implements AfterViewInit {
       shareReplay(1)
     );
 
-    this.getPortfolio$ = this.triggerPortfolio.pipe(
+    this.portfolio$ = this.triggerPortfolio.pipe(
       distinctUntilChanged(),
       tap(() => this.portfolioError$.next(false)),
       switchMap(() => {
         return address$.pipe(
           switchMap((address) => this.apiService.getPortfolio(address)),
           tap((data) => {
+            console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
           })
         );
       }),
+      map((providerPositions:any) => {
+        const onlySupportedPositions = {tokens:[], uniswapPositions:[]};
+        Object.keys(providerPositions).forEach((key) => {
+          const hasPositions = providerPositions[key].length;
+          if (hasPositions) {
+            if (key === 'tokens') {
+              onlySupportedPositions.tokens = providerPositions[key];
+            }else if(key === 'uniswapPositions' ){
+              onlySupportedPositions.uniswapPositions=providerPositions[key]
+              providerPositions[key].forEach((tkn) => {
+                // console.log('TKN VVV=', tkn);
+                if (tkn.pool_token) {
+                  onlySupportedPositions.uniswapPositions.push(tkn.pool_token);
+                }
+                // totBalance += tkn.quote //* tkn.quote_rate;
+              });
+            }
+          }
+        })
+        return providerPositions;
+      }),
       catchError((err) => {
         this.portfolioError$.next(true);
         return EMPTY;
+      }),
+      shareReplay(1)
+    );
+
+    this.portfolioTotalBalance$ = this.portfolio$.pipe(
+      map((providerPositions: any) => {
+        console.log('PPOOORRR VVV=', providerPositions.tokens);
+        let totBalance = 0;
+        const includedTokens = [];
+        Object.keys(providerPositions).forEach((key) => {
+          const hasPositions = providerPositions[key].length;
+          if (hasPositions) {
+            if (key === 'tokens') {
+              providerPositions[key].forEach((tkn) => {
+                totBalance += tkn.quote; //* tkn.quote_rate;
+              });
+            } else if (key === 'uniswapPositions') {
+              providerPositions[key].forEach((tkn) => {
+                // console.log('TKN VVV=', tkn);
+                if (tkn.pool_token) {
+                  totBalance += tkn.pool_token.quote;
+                }
+                // totBalance += tkn.quote //* tkn.quote_rate;
+              });
+            }
+          }
+        });
+        return {totalBalance: totBalance};
       })
     );
 
     this.tokenBalance$ = address$.pipe(
       switchMap((address) => this.getTokenBalances(address)),
       map((balance) => {
-        if (!balance || !balance.tokens.length) {
+        console.log('TBBB= VVV=', balance);
+
+        if (!balance) {
           return null;
         }
         balance.tokens = balance.tokens
@@ -102,7 +143,7 @@ export class DashboardPage implements AfterViewInit {
         let other = 0;
         const total = tokenBalance.totalBalance;
         const pairs = tokenBalance.tokens
-          .map(({ contract_ticker_symbol, quote }) => [
+          .map(({contract_ticker_symbol, quote}) => [
             contract_ticker_symbol,
             (quote / total) * 100,
           ])
@@ -148,7 +189,8 @@ export class DashboardPage implements AfterViewInit {
             tokens,
             totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0),
           } as TokenBalance)
-      )
+      ),
+      tap(v => console.log('BBBB===', v))
     );
   }
 
@@ -158,8 +200,9 @@ export class DashboardPage implements AfterViewInit {
       if (
         asset.contract_ticker_symbol !== 'DFIO' &&
         asset.contract_ticker_symbol !== 'REEF'
-      )
+      ) {
         payload[asset.contract_ticker_symbol] = 100 / assets.length;
+      }
     });
     return this.apiService
       .getHistoricRoi(payload, 1)

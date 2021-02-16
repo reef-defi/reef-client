@@ -48,8 +48,8 @@ export class ApiService {
   ];
 
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
-    ChainId.MAINNET,
-    ChainId.MATIC,
+    // ChainId.MAINNET,
+    // ChainId.MATIC,
   ];
 
   readonly COMPOSITION_LIMIT = 10;
@@ -363,13 +363,16 @@ export class ApiService {
         .get<any>(`${this.reefNodeApi}/covalent/${address}/balances`)
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
-      balances$ = this.getReefProtocolBalancesFromChain$(info, address);
+      balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
+        map(val => this.toCovalentDataStructure(val))
+      );
     }
 
     return balances$.pipe(
       map((tokens) =>
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
-      )
+      ),
+      tap(v => console.log('VVVV', v))
     );
   }
 
@@ -420,6 +423,12 @@ export class ApiService {
   getTransactions(address: string): any {
     return this.http.get<any>(
       `${this.reefNodeApi}/covalent/${address}/transactions`
+    ).pipe(
+      startWith([]),
+      catchError((err) => {
+        console.log('transactions', err);
+        return of([]);
+      })
     );
   }
 
@@ -430,7 +439,10 @@ export class ApiService {
   }
 
   getPortfolio(address: string): Observable<any> {
-    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`);
+    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
+      tap(v=>console.log('GET PORTFOLIO REQUEST')),
+      shareReplay(1)
+    );
   }
 
   checkIfAuth(code: string): Observable<any> {
@@ -549,5 +561,12 @@ export class ApiService {
         );
       })
     );
+  }
+
+  private toCovalentDataStructure(balancesFromChain: Token[]) {
+    return balancesFromChain.map(token=> {
+      token.quote = 1;
+      return token;
+    });
   }
 }
