@@ -43,6 +43,7 @@ import { ProviderUtil } from '../../shared/utils/provider.util';
 import { TokenUtil } from '../../shared/utils/token.util';
 import { ErrorUtils } from '../../shared/utils/error.utils';
 import { TransactionsService } from './transactions.service';
+import {TokenBalanceService} from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -776,7 +777,7 @@ export class UniswapService {
   }
 
   private getInitPriceForSupportedBuyTokens$(): Observable<any> {
-    const supportedTokenSymbols = ApiService.SUPPORTED_BUY_REEF_TOKENS.map(
+    const supportedTokenSymbols = TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS.map(
       (st) => st.tokenSymbol
     );
     // price for each token symbol

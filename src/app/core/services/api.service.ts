@@ -1,47 +1,22 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
 import {
-  BehaviorSubject,
-  EMPTY,
-  Observable,
-  Subject,
-  Subscription,
-  timer,
-} from 'rxjs';
-import {
-  ChainId,
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
   IPortfolio,
-  IProviderUserInfo,
-  QuotePayload,
-  Token,
-  TokenSymbol,
+  QuotePayload, Token, TokenSymbol,
   Vault,
   VaultAPY,
 } from '../models/types';
-import { subMonths } from 'date-fns';
-import {
-  catchError,
-  filter,
-  map,
-  mergeMap,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ConnectorService } from './connector.service';
-import Web3 from 'web3';
-import BigNumber from 'bignumber.js';
-import { of } from 'rxjs/internal/observable/of';
-import { TokenUtil } from '../../shared/utils/token.util';
+import {subMonths} from 'date-fns';
+import {catchError, map, shareReplay, startWith, take, tap} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {ConnectorService} from './connector.service';
+import {of} from 'rxjs/internal/observable/of';
 import {TokenBalanceService} from '../../shared/service/token-balance.service';
 
 const httpOptions = {
@@ -54,12 +29,6 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class ApiService {
-  public static SUPPORTED_BUY_REEF_TOKENS = [
-    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
-    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
-  ];
-
-
 
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
@@ -73,7 +42,7 @@ export class ApiService {
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
   private reefNodeApi = environment.reefNodeApiUrl;
   private coinGeckoApi = environment.coinGeckoApiUrl;
- //  private balancesByAddr = new Map<string, Observable<any>>();
+  //  private balancesByAddr = new Map<string, Observable<any>>();
 
   // private balancesByAddr = new Map<string, Observable<any>>();
 
@@ -154,7 +123,7 @@ export class ApiService {
               },
             }))
             .sort((a, b) => Object.values(b)[0].APY - Object.values(a)[0].APY)
-            .reduce((memo, curr) => ({ ...memo, ...curr }));
+            .reduce((memo, curr) => ({...memo, ...curr}));
         }),
         catchError(() => EMPTY)
       )
@@ -175,19 +144,19 @@ export class ApiService {
 
   registerBinanceUser(email: string, address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/register`, { email, address })
+      .post(`${this.binanceApiUrl}/register`, {email, address})
       .pipe(take(1));
   }
 
   bindBinanceUser(email: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/redirect`, { email })
+      .post(`${this.binanceApiUrl}/redirect`, {email})
       .pipe(take(1));
   }
 
   getBindingStatus(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/bindingStatus`, { address })
+      .post(`${this.binanceApiUrl}/bindingStatus`, {address})
       .pipe(take(1));
   }
 
@@ -226,7 +195,7 @@ export class ApiService {
 
   getBinanceTransactions(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/transactions`, { address })
+      .post(`${this.binanceApiUrl}/transactions`, {address})
       .pipe(take(1));
   }
 
@@ -246,7 +215,7 @@ export class ApiService {
 
   checkIfUserRegistered(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/registrationStatus`, { address })
+      .post(`${this.binanceApiUrl}/registrationStatus`, {address})
       .pipe(take(1));
   }
 
@@ -465,7 +434,7 @@ export class ApiService {
   checkIfAuth(code: string): Observable<any> {
     return this.http.post<{ [key: string]: boolean }>(
       `${this.reefNodeApi}/in`,
-      { code }
+      {code}
     );
   }
 

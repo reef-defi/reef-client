@@ -2,7 +2,6 @@ import {ChainId, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/
 import {Observable, Subject} from 'rxjs';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
-import {ApiService} from '../../core/services/api.service';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
 import {of} from 'rxjs/internal/observable/of';
@@ -15,16 +14,20 @@ import {environment} from '../../../environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class TokenBalanceService {
+  public static SUPPORTED_BUY_REEF_TOKENS = [
+    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
+    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
+  ];
 
   public static REEF_PROTOCOL_TOKENS = [
-    ...ApiService.SUPPORTED_BUY_REEF_TOKENS,
-    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
-    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
-    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
+    ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
+    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
+    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
-    // ChainId.MAINNET,
-    // ChainId.MATIC,
+    ChainId.MAINNET,
+    ChainId.MATIC,
   ];
   public refreshBalancesForAddress = new Subject<string>();
   public updateTokensInBalances = new Subject<TokenSymbol[]>();
@@ -33,7 +36,7 @@ export class TokenBalanceService {
 
   constructor(private connectorService: ConnectorService,
               private http: HttpClient,
-              ) {
+  ) {
   }
 
   getTokenBalances$(address: string): Observable<Token[]> {
