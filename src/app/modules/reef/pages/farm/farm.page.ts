@@ -18,6 +18,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { TokenUtil } from '../../../../shared/utils/token.util';
 import { TransactionsService } from '../../../../core/services/transactions.service';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-farm-page',
@@ -85,7 +86,7 @@ export class FarmPage implements OnInit {
     this.connectorSerivce.providerUserInfo$,
   ]).pipe(
     switchMap(([tokenSymbol, info]: [TokenSymbol, IProviderUserInfo]) =>
-      this.apiService.getTokenBalance$(info.address, tokenSymbol)
+      this.tokenBalanceService.getTokenBalance$(info.address, tokenSymbol)
     )
   );
   readonly loading$ = combineLatest([
@@ -100,6 +101,7 @@ export class FarmPage implements OnInit {
     public readonly connectorSerivce: ConnectorService,
     private readonly transactionService: TransactionsService,
     public apiService: ApiService,
+    public tokenBalanceService: TokenBalanceService,
     @Inject(LOCALE_ID) private locale: string
   ) {}
 

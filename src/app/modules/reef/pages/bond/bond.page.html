@@ -109,7 +109,7 @@
                         [value]="stakeTokenBalance.balance"
                         (valueChange)="stakeAmount=$event.toString()"
                         [tokenSymbol]="bond.stake"
-                        (refreshBalance)="apiService.refreshBalancesForAddress.next(stakeTokenBalance.address)"
+                        (refreshBalance)="tokenBalanceService.refreshBalancesForAddress.next(stakeTokenBalance.address)"
                       ></app-set-input-relative-amount>
                     </ng-container>
                   </div>
