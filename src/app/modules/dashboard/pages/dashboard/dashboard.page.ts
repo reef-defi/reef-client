@@ -22,6 +22,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { totalmem } from 'os';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 
 @Component({
   selector: 'app-dashboard',
@@ -118,33 +119,40 @@ export class DashboardPage implements AfterViewInit {
       shareReplay(1)
     );
 
-    this.pieChartData$ = this.tokenBalance$.pipe(
-      map((tokenBalance) => {
-        if (!tokenBalance.tokens || !tokenBalance.tokens.length) {
-          return null;
+    this.pieChartData$ = combineLatest(
+      this.portfolio$,
+      this.portfolioTotalBalance$
+    ).pipe(
+      map(
+        ([portfolio, { totalBalance }]: [
+          SupportedPortfolio,
+          { [key: string]: number }
+        ]) => {
+          if (!portfolio.tokens || !totalBalance) {
+            return null;
+          }
+          let other = 0;
+          const total = totalBalance;
+          const pairs = portfolio.tokens
+            .map(({ contract_ticker_symbol, quote }) => [
+              contract_ticker_symbol,
+              (quote / total) * 100,
+            ])
+            .map(([name, percent]: [string, number]) => {
+              if (percent < 1) {
+                other += percent;
+              }
+              return [name, percent];
+            })
+            .filter(([_, percent]) => percent >= 1);
+          let unified = pairs;
+          if (other > 0) {
+            unified = [...pairs, ['Other', other]];
+          }
+          console.log(unified, 'UNIFIED');
+          return this.chartsService.composePieChart(unified);
         }
-        let other = 0;
-        console.log('TOkenBalance,', tokenBalance);
-        const total = tokenBalance.totalBalance;
-        const pairs = tokenBalance.tokens
-          .map(({ contract_ticker_symbol, quote }) => [
-            contract_ticker_symbol,
-            (quote / total) * 100,
-          ])
-          .map(([name, percent]: [string, number]) => {
-            if (percent < 1) {
-              other += percent;
-            }
-            return [name, percent];
-          })
-          .filter(([_, percent]) => percent >= 1);
-        let unified = pairs;
-        if (other > 0) {
-          unified = [...pairs, ['Other', other]];
-        }
-        console.log(unified, 'UNIFIED');
-        return this.chartsService.composePieChart(unified);
-      }),
+      ),
       shareReplay(1)
     );
   }
