@@ -27,7 +27,7 @@ import { Contract } from 'web3-eth-contract';
 import { AddressUtils } from '../../../../shared/utils/address.utils';
 import { TokenUtil } from '../../../../shared/utils/token.util';
 import { TransactionsService } from '../../../../core/services/transactions.service';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-pool-page',
@@ -80,7 +80,10 @@ export class PoolPage {
     );
     this.tokenBalanceReef$ = this.providerUserInfo$.pipe(
       switchMap((uInfo: IProviderUserInfo) =>
-        this.tokenBalanceService.getTokenBalance$(uInfo.address, TokenSymbol.REEF)
+        this.tokenBalanceService.getTokenBalance$(
+          uInfo.address,
+          TokenSymbol.REEF
+        )
       ),
       shareReplay(1)
     );

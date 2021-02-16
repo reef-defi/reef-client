@@ -1,29 +1,44 @@
-import {ChainId, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
-import {Observable, Subject} from 'rxjs';
-import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
-import {Injectable} from '@angular/core';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {
+  ChainId,
+  IProviderUserInfo,
+  Token,
+  TokenSymbol,
+} from '../../core/models/types';
+import { Observable, Subject } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import {of} from 'rxjs/internal/observable/of';
-import {AddressUtils} from '../utils/address.utils';
+import { of } from 'rxjs/internal/observable/of';
+import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
-import {TokenUtil} from '../utils/token.util';
-import {ConnectorService} from '../../core/services/connector.service';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
+import { TokenUtil } from '../utils/token.util';
+import { ConnectorService } from '../../core/services/connector.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
-    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
+    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
+    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
-    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
-    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
+    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
+    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
+    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -34,10 +49,10 @@ export class TokenBalanceService {
   private balancesByAddr = new Map<string, Observable<any>>();
   private reefNodeApi = environment.reefNodeApiUrl;
 
-  constructor(private connectorService: ConnectorService,
-              private http: HttpClient,
-  ) {
-  }
+  constructor(
+    private connectorService: ConnectorService,
+    private http: HttpClient
+  ) {}
 
   getTokenBalances$(address: string): Observable<Token[]> {
     if (!address) {
@@ -141,7 +156,6 @@ export class TokenBalanceService {
     return this.balancesByAddr.get(address);
   }
 
-
   getTokenBalance$(
     addr: string,
     tokenSymbol?: TokenSymbol,
@@ -179,7 +193,9 @@ export class TokenBalanceService {
   ): Observable<Token[]> {
     const chainId: ChainId = info.chainInfo.chain_id;
     let balances$: Observable<Token[]>;
-    if (TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1) {
+    if (
+      TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1
+    ) {
       balances$ = this.http
         .get<any>(`${this.reefNodeApi}/covalent/${address}/balances`)
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
@@ -196,7 +212,6 @@ export class TokenBalanceService {
       tap((v) => console.log('VVVV', v))
     );
   }
-
 
   private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
@@ -324,5 +339,4 @@ export class TokenBalanceService {
       return false;
     });
   }
-
 }

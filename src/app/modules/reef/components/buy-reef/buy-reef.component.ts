@@ -26,7 +26,7 @@ import { PoolService } from '../../../../core/services/pool.service';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { NgDestroyableComponent } from '../../../../shared/ng-destroyable-component';
 import { TokenUtil } from '../../../../shared/utils/token.util';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-buy-reef',

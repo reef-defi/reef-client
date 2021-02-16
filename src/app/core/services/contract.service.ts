@@ -10,7 +10,7 @@ import {
 import { getBasketPoolNames } from '../utils/pools-utils';
 import { ApiService } from './api.service';
 import { take } from 'rxjs/operators';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',

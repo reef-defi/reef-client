@@ -18,7 +18,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { TokenUtil } from '../../../../shared/utils/token.util';
 import { TransactionsService } from '../../../../core/services/transactions.service';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-farm-page',

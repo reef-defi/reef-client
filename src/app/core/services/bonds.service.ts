@@ -24,7 +24,7 @@ import Web3 from 'web3';
 import { of } from 'rxjs/internal/observable/of';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { DateTimeUtil } from '../../shared/utils/date-time.util';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',

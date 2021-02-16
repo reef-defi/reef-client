@@ -19,7 +19,7 @@ import { TokenUtil } from '../../../../shared/utils/token.util';
 import { Observable, Subject, timer } from 'rxjs';
 import { BondUtil } from '../../../../shared/utils/bond.util';
 import { startWith } from 'rxjs/internal/operators/startWith';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 const timer$ = timer(0, 1000);
 

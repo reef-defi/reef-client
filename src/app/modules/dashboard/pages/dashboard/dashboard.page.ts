@@ -23,7 +23,7 @@ import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-dashboard',

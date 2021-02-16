@@ -10,7 +10,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ConnectorService } from './connector.service';
 import { first, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',

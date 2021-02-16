@@ -43,7 +43,7 @@ import { ProviderUtil } from '../../shared/utils/provider.util';
 import { TokenUtil } from '../../shared/utils/token.util';
 import { ErrorUtils } from '../../shared/utils/error.utils';
 import { TransactionsService } from './transactions.service';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',

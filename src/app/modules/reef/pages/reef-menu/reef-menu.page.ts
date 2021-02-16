@@ -4,7 +4,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { first } from 'rxjs/internal/operators/first';
 import { Token, TokenSymbol } from '../../../../core/models/types';
 import { Observable } from 'rxjs';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-reef-menu',

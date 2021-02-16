@@ -1,23 +1,32 @@
-import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import {
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
   IPortfolio,
-  QuotePayload, Token, TokenSymbol,
+  QuotePayload,
+  Token,
+  TokenSymbol,
   Vault,
   VaultAPY,
 } from '../models/types';
-import {subMonths} from 'date-fns';
-import {catchError, map, shareReplay, startWith, take, tap} from 'rxjs/operators';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {ConnectorService} from './connector.service';
-import {of} from 'rxjs/internal/observable/of';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import { subMonths } from 'date-fns';
+import {
+  catchError,
+  map,
+  shareReplay,
+  startWith,
+  take,
+  tap,
+} from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { ConnectorService } from './connector.service';
+import { of } from 'rxjs/internal/observable/of';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -29,7 +38,6 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class ApiService {
-
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
@@ -123,7 +131,7 @@ export class ApiService {
               },
             }))
             .sort((a, b) => Object.values(b)[0].APY - Object.values(a)[0].APY)
-            .reduce((memo, curr) => ({...memo, ...curr}));
+            .reduce((memo, curr) => ({ ...memo, ...curr }));
         }),
         catchError(() => EMPTY)
       )
@@ -144,19 +152,19 @@ export class ApiService {
 
   registerBinanceUser(email: string, address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/register`, {email, address})
+      .post(`${this.binanceApiUrl}/register`, { email, address })
       .pipe(take(1));
   }
 
   bindBinanceUser(email: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/redirect`, {email})
+      .post(`${this.binanceApiUrl}/redirect`, { email })
       .pipe(take(1));
   }
 
   getBindingStatus(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/bindingStatus`, {address})
+      .post(`${this.binanceApiUrl}/bindingStatus`, { address })
       .pipe(take(1));
   }
 
@@ -195,7 +203,7 @@ export class ApiService {
 
   getBinanceTransactions(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/transactions`, {address})
+      .post(`${this.binanceApiUrl}/transactions`, { address })
       .pipe(take(1));
   }
 
@@ -215,7 +223,7 @@ export class ApiService {
 
   checkIfUserRegistered(address: string): Observable<any> {
     return this.http
-      .post(`${this.binanceApiUrl}/registrationStatus`, {address})
+      .post(`${this.binanceApiUrl}/registrationStatus`, { address })
       .pipe(take(1));
   }
 
@@ -395,7 +403,6 @@ export class ApiService {
     );*!/
   }*/
 
-
   /*private findTokenBalance(balances: Token[], tokenSymbol: TokenSymbol): Token {
     return balances.find((tkn) => {
       if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
@@ -434,7 +441,7 @@ export class ApiService {
   checkIfAuth(code: string): Observable<any> {
     return this.http.post<{ [key: string]: boolean }>(
       `${this.reefNodeApi}/in`,
-      {code}
+      { code }
     );
   }
 
@@ -560,7 +567,7 @@ export class ApiService {
     );
   }
 
-  private getEthPrice() {
+  private getEthPrice(): Observable<any> {
     return this.http.get(environment.ethPriceUrl);
   }
 
