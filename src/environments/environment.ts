@@ -13,6 +13,7 @@ export const environment = {
   gasPriceUrl: 'https://www.etherchain.org/api/gasPriceOracle',
   cmcReefPriceUrl: 'https://web-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest?slug=reef&start=1&limit=6&convert=USD',
   reefNodeApiUrl: 'https://reef-node-api-jfwccyl2mq-nw.a.run.app/api',
+  coinGeckoApiUrl: 'https://api.coingecko.com/api/v3',
   // reefNodeApiUrl: 'http://localhost:3000/api',
   alchemyApiKey: 'bvO1UNMq6u7FCLBcW4uM9blROTOPd4_E',
   infuraApiKey: 'c80b6f5e0b554a59b295f7588eb958b7'

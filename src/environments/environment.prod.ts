@@ -11,4 +11,5 @@ export const environment = {
   reefNodeApiUrl: 'https://reef-node-api-jfwccyl2mq-nw.a.run.app/api',
   infuraApiKey: '395d6f5d9a324c799a3becf85449122a',
   alchemyApiKey: 'yxcjm59ypt3tMf4SBUa8-wbrMtgrtesF',
+  coinGeckoApiUrl: 'https://api.coingecko.com/api/v3',
 };
