@@ -138,6 +138,7 @@ export class UniswapService {
         amountOutMin,
         TokenSymbol.REEF
       );
+      console.log(amountOutMinWei, payWeiAmount, 'Hello');
       const path = [payToken.address, REEFToken.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
