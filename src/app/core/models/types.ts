@@ -245,6 +245,7 @@ export interface ProtocolAddresses {
   REEF_VAULT_BASKET: string;
   REEF_FARMING: string;
   REEF_STAKING: string;
+  ETH?: string;
   UNISWAP_ROUTER_V2: string;
   REEF_WETH_POOL: string;
   REEF_USDT_POOL: string;

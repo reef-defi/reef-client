@@ -7,6 +7,7 @@ import {
   Observable,
   Subject,
   Subscription,
+  timer,
 } from 'rxjs';
 import {
   ChainId,
@@ -82,6 +83,7 @@ export class ApiService {
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
   private reefNodeApi = environment.reefNodeApiUrl;
+  private coinGeckoApi = environment.coinGeckoApiUrl;
   private balancesByAddr = new Map<string, Observable<any>>();
 
   constructor(
@@ -384,7 +386,7 @@ export class ApiService {
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
       balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
-        map((val) => this.toCovalentDataStructure(val))
+        switchMap((val) => this.toCovalentDataStructure(val))
       );
     }
 
@@ -576,6 +578,7 @@ export class ApiService {
                 balance: +balance,
                 address,
                 contract_address: tokenAddress,
+                logo_url: `https://logos.covalenthq.com/tokens/${tokenAddress}.png`,
               } as Token)
           )
         );
@@ -583,10 +586,47 @@ export class ApiService {
     );
   }
 
-  private toCovalentDataStructure(balancesFromChain: Token[]) {
-    return balancesFromChain.map((token) => {
-      token.quote = 1;
-      return token;
-    });
+  private getPriceForAddresses(
+    tokenAddresses: string[],
+    againstCurrecny = 'usd'
+  ) {
+    const addresses = tokenAddresses.toString();
+    return this.http.get(
+      `${this.coinGeckoApi}/simple/token_price/ethereum?contract_addresses=${addresses}&vs_currencies=${againstCurrecny}`
+    );
+  }
+
+  private getEthPrice() {
+    return this.http.get(environment.ethPriceUrl);
+  }
+
+  private toCovalentDataStructure(
+    balancesFromChain: Token[]
+  ): Observable<Token[]> {
+    const addresses = balancesFromChain.map((token) => token.contract_address);
+    const tokensWithPrice$: Observable<Token[]> = this.getPriceForAddresses(
+      addresses
+    ).pipe(
+      map((prices: { [key: string]: { usd: number } }) => {
+        return balancesFromChain.map((token) => ({
+          ...token,
+          quote: prices[token.contract_address]?.usd || 0,
+        }));
+      })
+    );
+    return combineLatest(this.getEthPrice(), tokensWithPrice$).pipe(
+      map(([ethPrice, tokensWithPrice]: [any, Token[]]) => {
+        const eth = tokensWithPrice.find(
+          (token) => token.contract_ticker_symbol === TokenSymbol.ETH
+        );
+        eth.quote = ethPrice?.ethereum?.usd;
+        return [
+          ...tokensWithPrice.filter(
+            (token) => token.contract_ticker_symbol !== TokenSymbol.ETH
+          ),
+          eth,
+        ];
+      })
+    );
   }
 }
