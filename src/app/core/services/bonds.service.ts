@@ -24,6 +24,7 @@ import Web3 from 'web3';
 import { of } from 'rxjs/internal/observable/of';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { DateTimeUtil } from '../../shared/utils/date-time.util';
+import {TokenBalanceService} from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +67,8 @@ export class BondsService {
     private uniswapService: UniswapService,
     private notificationService: NotificationService,
     private apiService: ApiService,
-    private transactionsService: TransactionsService
+    private transactionsService: TransactionsService,
+    public tokenBalanceService: TokenBalanceService
   ) {}
 
   getStakedBalanceOf(
@@ -189,7 +191,7 @@ export class BondsService {
           'Okay',
           'success'
         );
-        this.apiService.updateTokensInBalances.next([
+        this.tokenBalanceService.updateTokensInBalances.next([
           TokenSymbol.ETH,
           bond.stake as TokenSymbol,
         ]);

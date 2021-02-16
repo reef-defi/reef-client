@@ -19,6 +19,7 @@ import { TokenUtil } from '../../../../shared/utils/token.util';
 import { Observable, Subject, timer } from 'rxjs';
 import { BondUtil } from '../../../../shared/utils/bond.util';
 import { startWith } from 'rxjs/internal/operators/startWith';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 
 const timer$ = timer(0, 1000);
 
@@ -65,7 +66,7 @@ export class BondPage {
     this.connectorService.providerUserInfo$,
   ]).pipe(
     switchMap(([bond, info]: [Bond, IProviderUserInfo]) =>
-      this.apiService.getTokenBalance$(
+      this.tokenBalanceService.getTokenBalance$(
         info.address,
         bond.stake as TokenSymbol,
         bond.stakeTokenAddress
@@ -126,7 +127,8 @@ export class BondPage {
     private route: ActivatedRoute,
     public bondsService: BondsService,
     public connectorService: ConnectorService,
-    public apiService: ApiService
+    public apiService: ApiService,
+    public tokenBalanceService: TokenBalanceService
   ) {}
 
   stake(bond: Bond, stakeAmount: string): void {

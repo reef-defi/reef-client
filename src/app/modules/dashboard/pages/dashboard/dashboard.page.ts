@@ -23,6 +23,7 @@ import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,7 +51,8 @@ export class DashboardPage implements AfterViewInit {
     private readonly chartsService: ChartsService,
     public readonly apiService: ApiService,
     private readonly charts: ChartsService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly tokenBalanceService: TokenBalanceService
   ) {
     const address$ = this.connectorService.providerUserInfo$.pipe(
       filter((v) => !!v),
@@ -174,7 +176,7 @@ export class DashboardPage implements AfterViewInit {
   }
 
   private getTokenBalances(address: string): Observable<TokenBalance> {
-    return this.apiService.getTokenBalances$(address).pipe(
+    return this.tokenBalanceService.getTokenBalances$(address).pipe(
       map(
         (tokens) =>
           ({

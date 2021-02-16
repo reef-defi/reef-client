@@ -26,6 +26,7 @@ import { PoolService } from '../../../../core/services/pool.service';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { NgDestroyableComponent } from '../../../../shared/ng-destroyable-component';
 import { TokenUtil } from '../../../../shared/utils/token.util';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-buy-reef',
@@ -66,7 +67,8 @@ export class BuyReefComponent extends NgDestroyableComponent {
     public connectorService: ConnectorService,
     public apiService: ApiService,
     public poolService: PoolService,
-    public uniswapService: UniswapService
+    public uniswapService: UniswapService,
+    public tokenBalanceService: TokenBalanceService
   ) {
     super();
     this.ethPrice$ = this.poolService.ethPrice$.pipe(
@@ -78,7 +80,7 @@ export class BuyReefComponent extends NgDestroyableComponent {
       this.connectorService.providerUserInfo$.pipe(filter((v) => !!v)),
     ]).pipe(
       switchMap(([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) =>
-        this.apiService.getTokenBalance$(uInfo.address, tokenSymbol)
+        this.tokenBalanceService.getTokenBalance$(uInfo.address, tokenSymbol)
       ),
       shareReplay(1)
     );

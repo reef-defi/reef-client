@@ -10,6 +10,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ConnectorService } from './connector.service';
 import { first, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import {TokenBalanceService} from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +40,8 @@ export class TransactionsService {
 
   constructor(
     private readonly connectorService: ConnectorService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    public tokenBalanceService: TokenBalanceService
   ) {}
 
   public getPendingTransactions(
@@ -88,7 +90,7 @@ export class TransactionsService {
   public removePendingTx(hash: string): void {
     const { transactions } = this.pendingTransactions$.value;
     const removeTx = transactions.find((tx) => tx.hash === hash);
-    this.apiService.updateTokensInBalances.next([
+    this.tokenBalanceService.updateTokensInBalances.next([
       ...removeTx.tokens,
       TokenSymbol.ETH,
     ]);
