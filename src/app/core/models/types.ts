@@ -17,6 +17,19 @@ export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
 };
 
+export interface IPortfolio {
+  aavePositions: any[];
+  balancerPositions: any[];
+  compoundPositions: any[];
+  tokens: any[];
+  uniswapPositions: any[];
+}
+
+export type SupportedPortfolio = Pick<
+  IPortfolio,
+  'tokens' | 'uniswapPositions'
+>;
+
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
   PARSE_ERROR = -32700,

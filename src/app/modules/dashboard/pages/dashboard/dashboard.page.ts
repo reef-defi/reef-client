@@ -11,6 +11,8 @@ import {
 } from 'rxjs/operators';
 import {
   IBasketHistoricRoi,
+  IPortfolio,
+  SupportedPortfolio,
   Token,
   TokenBalance,
 } from '../../../../core/models/types';
@@ -19,8 +21,8 @@ import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { of } from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,10 +33,11 @@ export class DashboardPage implements AfterViewInit {
   Object = Object;
   public transactions$;
   public tokenBalance$: Observable<TokenBalance>;
+  public portfolioTotalBalance$: Observable<{ totalBalance: number }>;
   public pieChartData$: Observable<any>;
   public portfolioError$ = new BehaviorSubject<boolean>(false);
   showTransactions: boolean;
-  getPortfolio$: Observable<unknown>;
+  portfolio$: Observable<SupportedPortfolio>;
   getPortfolio2$: Observable<any>;
   public roiData: number[][];
 
@@ -59,13 +62,18 @@ export class DashboardPage implements AfterViewInit {
       shareReplay(1)
     );
 
-    this.getPortfolio$ = this.triggerPortfolio.pipe(
+    this.portfolio$ = this.triggerPortfolio.pipe(
       distinctUntilChanged(),
       tap(() => this.portfolioError$.next(false)),
       switchMap(() => {
         return address$.pipe(
-          switchMap((address) => this.apiService.getPortfolio(address)),
+          switchMap((address: string) => this.apiService.getPortfolio(address)),
+          map((portfolio: IPortfolio) => ({
+            tokens: portfolio.tokens,
+            uniswapPositions: portfolio.uniswapPositions,
+          })),
           tap((data) => {
+            console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
           })
         );
@@ -73,13 +81,30 @@ export class DashboardPage implements AfterViewInit {
       catchError((err) => {
         this.portfolioError$.next(true);
         return EMPTY;
+      }),
+      shareReplay(1)
+    );
+
+    this.portfolioTotalBalance$ = this.portfolio$.pipe(
+      map((portfolio: SupportedPortfolio) => {
+        const totalBalance = Object.keys(portfolio)
+          .map((key: string) => {
+            if (key === 'uniswapPositions') {
+              return portfolio[key].reduce((a, c) => a + c.pool_token.quote, 0);
+            }
+            return portfolio[key].reduce((a, c) => a + c.quote, 0);
+          })
+          .reduce((a, c) => a + c);
+        return { totalBalance: totalBalance };
       })
     );
 
     this.tokenBalance$ = address$.pipe(
       switchMap((address) => this.getTokenBalances(address)),
       map((balance) => {
-        if (!balance || !balance.tokens.length) {
+        console.log('TBBB= VVV=', balance);
+
+        if (!balance) {
           return null;
         }
         balance.tokens = balance.tokens
@@ -94,31 +119,40 @@ export class DashboardPage implements AfterViewInit {
       shareReplay(1)
     );
 
-    this.pieChartData$ = this.tokenBalance$.pipe(
-      map((tokenBalance) => {
-        if (!tokenBalance.tokens || !tokenBalance.tokens.length) {
-          return null;
+    this.pieChartData$ = combineLatest(
+      this.portfolio$,
+      this.portfolioTotalBalance$
+    ).pipe(
+      map(
+        ([portfolio, { totalBalance }]: [
+          SupportedPortfolio,
+          { [key: string]: number }
+        ]) => {
+          if (!portfolio.tokens || !totalBalance) {
+            return null;
+          }
+          let other = 0;
+          const total = totalBalance;
+          const pairs = portfolio.tokens
+            .map(({ contract_ticker_symbol, quote }) => [
+              contract_ticker_symbol,
+              (quote / total) * 100,
+            ])
+            .map(([name, percent]: [string, number]) => {
+              if (percent < 1) {
+                other += percent;
+              }
+              return [name, percent];
+            })
+            .filter(([_, percent]) => percent >= 1);
+          let unified = pairs;
+          if (other > 0) {
+            unified = [...pairs, ['Other', other]];
+          }
+          console.log(unified, 'UNIFIED');
+          return this.chartsService.composePieChart(unified);
         }
-        let other = 0;
-        const total = tokenBalance.totalBalance;
-        const pairs = tokenBalance.tokens
-          .map(({ contract_ticker_symbol, quote }) => [
-            contract_ticker_symbol,
-            (quote / total) * 100,
-          ])
-          .map(([name, percent]: [string, number]) => {
-            if (percent < 1) {
-              other += percent;
-            }
-            return [name, percent];
-          })
-          .filter(([_, percent]) => percent >= 1);
-        let unified = pairs;
-        if (other > 0) {
-          unified = [...pairs, ['Other', other]];
-        }
-        return this.chartsService.composePieChart(unified);
-      }),
+      ),
       shareReplay(1)
     );
   }
@@ -148,7 +182,8 @@ export class DashboardPage implements AfterViewInit {
             tokens,
             totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0),
           } as TokenBalance)
-      )
+      ),
+      tap((v) => console.log('BBBB===', v))
     );
   }
 
@@ -158,8 +193,9 @@ export class DashboardPage implements AfterViewInit {
       if (
         asset.contract_ticker_symbol !== 'DFIO' &&
         asset.contract_ticker_symbol !== 'REEF'
-      )
+      ) {
         payload[asset.contract_ticker_symbol] = 100 / assets.length;
+      }
     });
     return this.apiService
       .getHistoricRoi(payload, 1)

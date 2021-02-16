@@ -18,9 +18,9 @@
             </div>
             <h3 class="text-center text-monospace">
               <ng-container
-                *ngIf="tokenBalance$|async as tokenBalance; else calc"
+                *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
               >
-                ${{(tokenBalance?.totalBalance| number:'1.0-0') || 0}}
+                ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
               </ng-container>
               <ng-template #calc> Calculating...</ng-template>
             </h3>
@@ -47,7 +47,7 @@
                   *ngIf="!(portfolioError$ | async); else portfolioErrorTemplate"
                 >
                   <ng-container
-                    *ngIf="getPortfolio$ | async as portfolio; else loadingTemplate"
+                    *ngIf="portfolio$ | async as portfolio; else loadingTemplate"
                   >
                     <app-holdings-table
                       [portfolio]="portfolio"

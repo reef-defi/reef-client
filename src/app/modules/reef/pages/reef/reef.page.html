@@ -24,6 +24,7 @@
       <app-reef-historic-price
         class="height-100 card"
         [chartData]="reefPriceChartData"
+        [priceError]="priceError$ | async"
         (dateSpanChange)="onDateChange($event)"
       ></app-reef-historic-price>
     </div>
