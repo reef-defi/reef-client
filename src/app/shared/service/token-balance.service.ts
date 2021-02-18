@@ -1,5 +1,5 @@
-import {ChainId, IPortfolio, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
-import {Observable, Subject} from 'rxjs';
+import {ChainId, ExchangeId, IPortfolio, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
+import {concat, Observable, Subject} from 'rxjs';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
@@ -29,6 +29,10 @@ export class TokenBalanceService {
     ChainId.MAINNET,
     ChainId.MATIC,
   ];
+  private static PORTFOLIO_SUPPORTED_EXCHANGE_IDS = [
+    ExchangeId.UNISWAP_V2,
+    ExchangeId.COMPOUND
+  ];
   public refreshBalancesForAddress = new Subject<string>();
   public updateTokensInBalances = new Subject<TokenSymbol[]>();
   private balancesByAddr = new Map<string, Observable<any>>();
@@ -40,10 +44,27 @@ export class TokenBalanceService {
   ) {}
 
   getPortfolio(address: string): Observable<IPortfolio> {
+    const uniPositions$ = this.getExchangePositions$(ExchangeId.UNISWAP_V2, address);
+
+    const compPositions$ = this.getExchangePositions$(ExchangeId.COMPOUND, address);
+
+    const positions$ = concat(uniPositions$(, compPositions$()));
     return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
       tap((v) => console.log('GET PORTFOLIO REQUEST')),
+      switchMap(portfolio=>{
+        return positions$.map((positions) => {
+          // attach positions to portfolio object
+          // we can do it like portfolio.uniswapPositions$= of(positions[0])
+          // and we'll solve later
+          return portfolio;
+        });
+      }),
       shareReplay(1)
     );
+  }
+
+  getExchangePositions$(exchangeId: ExchangeId, address: string) {
+    return this.http.get...
   }
 
   getTokenBalances$(address: string): Observable<Token[]> {

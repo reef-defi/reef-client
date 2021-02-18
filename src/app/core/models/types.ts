@@ -25,10 +25,8 @@ export interface IPortfolio {
   uniswapPositions: any[];
 }
 
-export type SupportedPortfolio = Pick<
-  IPortfolio,
-  'tokens' | 'uniswapPositions'
->;
+export type SupportedPortfolio = Pick<IPortfolio,
+  'tokens' | 'uniswapPositions'>;
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -159,11 +157,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -232,6 +230,13 @@ export enum ChainId {
   KOVAN = 42,
   LOCAL_FORK = 1337,
   BINANCE_SMART_CHAIN = 56,
+}
+
+export enum ExchangeId {
+  UNISWAP_V2 = 'uniswap_v2',
+  BALANCER = 'balancer',
+  COMPOUND = 'compound',
+  AAVE = 'aave'
 }
 
 export enum ProviderName {
