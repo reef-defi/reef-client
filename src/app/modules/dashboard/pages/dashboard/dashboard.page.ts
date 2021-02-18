@@ -69,7 +69,7 @@ export class DashboardPage implements AfterViewInit {
       tap(() => this.portfolioError$.next(false)),
       switchMap(() => {
         return address$.pipe(
-          switchMap((address: string) => this.apiService.getPortfolio(address)),
+          switchMap((address: string) => this.tokenBalanceService.getPortfolio(address)),
           map((portfolio: IPortfolio) => ({
             tokens: portfolio.tokens,
             uniswapPositions: portfolio.uniswapPositions,

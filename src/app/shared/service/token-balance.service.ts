@@ -1,31 +1,16 @@
-import {
-  ChainId,
-  IProviderUserInfo,
-  Token,
-  TokenSymbol,
-} from '../../core/models/types';
-import { Observable, Subject } from 'rxjs';
-import {
-  catchError,
-  filter,
-  map,
-  mergeMap,
-  shareReplay,
-  startWith,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {ChainId, IPortfolio, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
+import {Observable, Subject} from 'rxjs';
+import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import { of } from 'rxjs/internal/observable/of';
-import { AddressUtils } from '../utils/address.utils';
+import {of} from 'rxjs/internal/observable/of';
+import {AddressUtils} from '../utils/address.utils';
 import Web3 from 'web3';
-import { TokenUtil } from '../utils/token.util';
-import { ConnectorService } from '../../core/services/connector.service';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import {TokenUtil} from '../utils/token.util';
+import {ConnectorService} from '../../core/services/connector.service';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
@@ -53,6 +38,13 @@ export class TokenBalanceService {
     private connectorService: ConnectorService,
     private http: HttpClient
   ) {}
+
+  getPortfolio(address: string): Observable<IPortfolio> {
+    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
+      tap((v) => console.log('GET PORTFOLIO REQUEST')),
+      shareReplay(1)
+    );
+  }
 
   getTokenBalances$(address: string): Observable<Token[]> {
     if (!address) {

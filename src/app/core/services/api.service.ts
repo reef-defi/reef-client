@@ -431,13 +431,6 @@ export class ApiService {
     );
   }
 
-  getPortfolio(address: string): Observable<IPortfolio> {
-    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
-      tap((v) => console.log('GET PORTFOLIO REQUEST')),
-      shareReplay(1)
-    );
-  }
-
   checkIfAuth(code: string): Observable<any> {
     return this.http.post<{ [key: string]: boolean }>(
       `${this.reefNodeApi}/in`,
