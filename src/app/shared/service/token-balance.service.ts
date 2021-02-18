@@ -1,5 +1,5 @@
 import {ChainId, ExchangeId, IPortfolio, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
-import {concat, Observable, Subject} from 'rxjs';
+import {concat, merge, Observable, Subject} from 'rxjs';
 import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {combineLatest} from 'rxjs/internal/observable/combineLatest';
@@ -12,18 +12,18 @@ import {ConnectorService} from '../../core/services/connector.service';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
-    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
+    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
+    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
-    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
-    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
+    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
+    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -41,30 +41,34 @@ export class TokenBalanceService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {}
+  ) {
+  }
 
   getPortfolio(address: string): Observable<IPortfolio> {
-    const uniPositions$ = this.getExchangePositions$(ExchangeId.UNISWAP_V2, address);
-
-    const compPositions$ = this.getExchangePositions$(ExchangeId.COMPOUND, address);
-
-    const positions$ = concat(uniPositions$(, compPositions$()));
-    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
-      tap((v) => console.log('GET PORTFOLIO REQUEST')),
-      switchMap(portfolio=>{
-        return positions$.map((positions) => {
-          // attach positions to portfolio object
-          // we can do it like portfolio.uniswapPositions$= of(positions[0])
-          // and we'll solve later
-          return portfolio;
-        });
+    const portfolio$ = this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
+      switchMap((portfolio: IPortfolio) => {
+        const uniPositionsPortfolio$ = this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
+          map(uniPos => {
+            portfolio.uniswapPositions = uniPos;
+            return portfolio;
+          })
+        );
+        const portfolioWithCompPositions$ = uniPositionsPortfolio$.pipe(
+          switchMap(_ => this.getExchangePositions$(ExchangeId.COMPOUND, address)).pipe(
+            map(compPos => {
+              portfolio.compoundPositions = compPos;
+              return portfolio;
+            })
+          ));
+        return merge(uniPositionsPortfolio$, portfolioWithCompPositions$);
       }),
       shareReplay(1)
     );
+    return portfolio$;
   }
 
   getExchangePositions$(exchangeId: ExchangeId, address: string) {
-    return this.http.get...
+    return this.http.get();
   }
 
   getTokenBalances$(address: string): Observable<Token[]> {
