@@ -24,6 +24,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { first } from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-dashboard',
@@ -55,7 +56,7 @@ export class DashboardPage implements AfterViewInit {
     private readonly tokenBalanceService: TokenBalanceService
   ) {
     const address$ = this.connectorService.providerUserInfo$.pipe(
-      filter((v) => !!v),
+      first((v) => !!v),
       map((value) => value.address),
       shareReplay(1)
     );
@@ -65,15 +66,14 @@ export class DashboardPage implements AfterViewInit {
     );
 
     this.portfolio$ = this.triggerPortfolio.pipe(
-      distinctUntilChanged(),
-      tap(() => this.portfolioError$.next(false)),
+      tap(() => {
+        this.portfolioError$.next(false);
+      }),
       switchMap(() => {
         return address$.pipe(
-          switchMap((address: string) => this.tokenBalanceService.getPortfolio(address)),
-          map((portfolio: IPortfolio) => ({
-            tokens: portfolio.tokens,
-            uniswapPositions: portfolio.uniswapPositions,
-          })),
+          switchMap((address: string) =>
+            this.tokenBalanceService.getPortfolio(address)
+          ),
           tap((data) => {
             console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
@@ -97,7 +97,7 @@ export class DashboardPage implements AfterViewInit {
             return portfolio[key].reduce((a, c) => a + c.quote, 0);
           })
           .reduce((a, c) => a + c);
-        return { totalBalance: totalBalance };
+        return { totalBalance };
       })
     );
 
@@ -172,6 +172,7 @@ export class DashboardPage implements AfterViewInit {
   public getPortfolio() {
     this.portfolioError$.next(false);
     this.cdRef.detectChanges();
+    setTimeout(() => this.triggerPortfolio.next(), 1000);
     this.triggerPortfolio.next();
   }
 

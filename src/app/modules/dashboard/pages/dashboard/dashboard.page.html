@@ -7,6 +7,8 @@
   </div>
 </div>
 
+<button (click)="getPortfolio()">GET</button>
+
 <div class="page__wrapper row justify-content-between">
   <div class="col-12 col-md-10 offset-md-1">
     <div class="row">
@@ -18,11 +20,15 @@
             </div>
             <h3 class="text-center text-monospace">
               <ng-container
-                *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
+                *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
               >
-                ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
+                <ng-container
+                  *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
+                >
+                  ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
+                </ng-container>
+                <ng-template #calc> Calculating...</ng-template>
               </ng-container>
-              <ng-template #calc> Calculating...</ng-template>
             </h3>
           </div>
         </div>
@@ -160,6 +166,16 @@
                 </div>
               </ng-template>
               <ng-template #portfolioErrorTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2"
+                    >Something went wrong while fetching your tokens.
+                    <a href="" (click)="$event.preventDefault(); getPortfolio()"
+                      >Refresh?</a
+                    >
+                  </span>
+                </div>
+              </ng-template>
+              <ng-template #emptyBalanceTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2"
                     >Something went wrong while fetching your tokens.
