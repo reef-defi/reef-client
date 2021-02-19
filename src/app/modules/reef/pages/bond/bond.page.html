@@ -193,11 +193,11 @@
                           >
                         </ng-container>
                       </p>
-                      <div
-                        class="card bg-purple text-white text-center text-monospace m-4 p-2"
+                      <ng-container
+                        *ngIf="stakedBalanceReturn$|async as stakedReturn"
                       >
-                        <ng-container
-                          *ngIf="stakedBalanceReturn$|async as stakedReturn"
+                        <div
+                          class="card bg-purple text-white text-center text-monospace m-4 p-2"
                         >
                           <span class="bold"
                             >{{stakedReturn.staked}}
@@ -211,8 +211,8 @@
                             {{stakedReturn.bond.farm}}
                           </span>
                           interest profit.
-                        </ng-container>
-                      </div>
+                        </div>
+                      </ng-container>
                     </div>
                   </ng-container>
                   <ng-container *ngSwitchCase="BondSaleStatus.EARLY">

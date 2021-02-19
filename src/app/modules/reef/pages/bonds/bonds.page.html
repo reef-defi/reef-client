@@ -53,9 +53,13 @@
               </ng-container>
               <div class="mb-1">APY: {{bond.apy}}%</div>
             </div>
-
+            <ng-template #loading>
+              <app-provider-loading
+                >Loading blockchain data</app-provider-loading
+              >
+            </ng-template>
             <ng-container
-              *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes"
+              *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes else loading"
             >
               <div
                 *ngIf="true"
