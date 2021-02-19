@@ -1,7 +1,11 @@
-import {environment} from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 export class DevUtil {
-  static devLog(msg: string, value?: any, logLevel: LogLevel = LogLevel.STD): void {
+  static devLog(
+    msg: string,
+    value?: any,
+    logLevel: LogLevel = LogLevel.STD
+  ): void {
     const minLogLevel = environment.logLevel;
     if (minLogLevel >= logLevel) {
       if (logLevel > LogLevel.WARNING) {
@@ -18,5 +22,5 @@ export class DevUtil {
 export enum LogLevel {
   ERROR = -1,
   WARNING = 0,
-  STD = 1
+  STD = 1,
 }
