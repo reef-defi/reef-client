@@ -30,6 +30,7 @@ import { ConnectorService } from '../../core/services/connector.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { flatMap } from 'rxjs/internal/operators';
+import {DevUtil, LogLevel} from '../utils/dev-util';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
@@ -238,8 +239,8 @@ export class TokenBalanceService {
                       return tb;
                     });
                   }
-                )
-                // tap(v => console.log('UPDATED BALANCE', v))
+                ),
+                tap(v => DevUtil.devLog('UPDATED BALANCE=', v))
               );
             }
             return of(cachedBalances);
@@ -348,9 +349,9 @@ export class TokenBalanceService {
           tokenAddress
         );
       }),
-      // tap(v => console.log('NEW BALANCE for ', tokenSymbol, ' = ', v)),
+      tap(v => DevUtil.devLog('NEW BALANCE for ', tokenSymbol, ' = ', v)),
       catchError((e) => {
-        console.warn('ERROR GETTING BALANCE', e);
+        DevUtil.devLog('ERROR GETTING BALANCE', e, {logLevel: LogLevel.WARNING});
         return of('0');
       })
     );

@@ -2,8 +2,11 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import {DevUtil, LogLevel} from '../app/shared/utils/dev-util';
+
 export const environment = {
   production: false,
+  logLevel: LogLevel.STD,
   reefApiUrl: 'https://baskets.reef.finance/v1',
   reefBinanceApiUrl: 'http://localhost:3000/v1',
   balancerPoolUrl: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer',
