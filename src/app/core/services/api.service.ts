@@ -415,7 +415,7 @@ export class ApiService {
 
   getTransactions(address: string): any {
     return this.http
-      .get<any>(`${this.reefNodeApi}/covalent/${address}/transactions`)
+      .get<any>(`${this.reefNodeApi}/${address}/transactions`)
       .pipe(
         startWith([]),
         catchError((err) => {
@@ -427,7 +427,7 @@ export class ApiService {
 
   getReefPricing(fromAddr: string, to: string): any {
     return this.http.get<any>(
-      `${this.reefNodeApi}/covalent/reef-pricing?from=${fromAddr}&to=${to}`
+      `${this.reefNodeApi}/reef-pricing?from=${fromAddr}&to=${to}`
     );
   }
 
