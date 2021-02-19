@@ -34,9 +34,7 @@
           <div class="small font-weight-bold text-monospace text-muted">
             Allocations
           </div>
-          <ng-container
-            *ngIf="pieChartData$|async as pieChartData"
-          >
+          <ng-container *ngIf="pieChartData$|async as pieChartData">
             <app-asset-distribution-chart [chartData]="pieChartData">
             </app-asset-distribution-chart>
           </ng-container>

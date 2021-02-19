@@ -1,12 +1,13 @@
 import {
-  ChainId, ErrorDisplay,
+  ChainId,
+  ErrorDisplay,
   ExchangeId,
   IProviderUserInfo,
   SupportedPortfolio,
   Token,
   TokenSymbol,
 } from '../../core/models/types';
-import {merge, Observable, Subject} from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import {
   catchError,
   filter,
@@ -18,30 +19,30 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import {Injectable} from '@angular/core';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import { Injectable } from '@angular/core';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import {of} from 'rxjs/internal/observable/of';
-import {AddressUtils} from '../utils/address.utils';
+import { of } from 'rxjs/internal/observable/of';
+import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
-import {TokenUtil} from '../utils/token.util';
-import {ConnectorService} from '../../core/services/connector.service';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {flatMap} from 'rxjs/internal/operators';
+import { TokenUtil } from '../utils/token.util';
+import { ConnectorService } from '../../core/services/connector.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { flatMap } from 'rxjs/internal/operators';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
-    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
+    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
+    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
-    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
-    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
+    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
+    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
+    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -59,42 +60,58 @@ export class TokenBalanceService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {
-  }
+  ) {}
 
   getPortfolio(address: string): Observable<SupportedPortfolio> {
     const tokenPortfolio$ = this.getTokenBalances$(address).pipe(
-      map(tokens => ({tokens})),
+      map((tokens) => ({ tokens })),
       shareReplay(1)
     ) as Observable<SupportedPortfolio>;
 
     const uniPositionsPortfolio$ = tokenPortfolio$.pipe(
-      switchMap((tokens: SupportedPortfolio) => this.getUniswapPositions(address, tokens)),
+      switchMap((tokens: SupportedPortfolio) =>
+        this.getUniswapPositions(address, tokens)
+      ),
       shareReplay(1)
     );
 
     const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
-      switchMap(uniPortfolio => this.getCompoundPositions(address, uniPortfolio))
+      switchMap((uniPortfolio) =>
+        this.getCompoundPositions(address, uniPortfolio)
+      )
     );
-    return merge(tokenPortfolio$, uniPositionsPortfolio$, compPositionsPortfolio$);
+    return merge(
+      tokenPortfolio$,
+      uniPositionsPortfolio$,
+      compPositionsPortfolio$
+    );
   }
 
-  private getCompoundPositions(address: string, portfolio: SupportedPortfolio): Observable<SupportedPortfolio> {
+  private getCompoundPositions(
+    address: string,
+    portfolio: SupportedPortfolio
+  ): Observable<SupportedPortfolio> {
     return this.getExchangePositions$(ExchangeId.COMPOUND, address).pipe(
       map((cPos) => {
         const compoundPositions = cPos.compound.balances.map(
           (x) => x.supply_tokens
         );
-        return {...portfolio, compoundPositions};
+        return { ...portfolio, compoundPositions };
       }),
       shareReplay(1),
       catchError((e) => {
-        return of({...portfolio, compoundPositions: new ErrorDisplay('Error getting data')});
+        return of({
+          ...portfolio,
+          compoundPositions: new ErrorDisplay('Error getting data'),
+        });
       })
     );
   }
 
-  private getUniswapPositions(address: string, portfolio: SupportedPortfolio): Observable<SupportedPortfolio> {
+  private getUniswapPositions(
+    address: string,
+    portfolio: SupportedPortfolio
+  ): Observable<SupportedPortfolio> {
     return this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
       map((uPos) => {
         const uniswapPositions = uPos.uniswap_v2.balances
@@ -108,11 +125,14 @@ export class TokenBalanceService {
           .filter(
             (x) => x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
           );
-        return {...portfolio, uniswapPositions};
+        return { ...portfolio, uniswapPositions };
       }),
       shareReplay(1),
       catchError((e) => {
-        return of({...portfolio, uniswapPositions:  new ErrorDisplay('Error getting uniswap positions')});
+        return of({
+          ...portfolio,
+          uniswapPositions: new ErrorDisplay('Error getting uniswap positions'),
+        });
       })
     );
   }

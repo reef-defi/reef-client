@@ -1,6 +1,6 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {PoolService} from '../../../../core/services/pool.service';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { PoolService } from '../../../../core/services/pool.service';
 import {
   catchError,
   distinctUntilChanged,
@@ -16,15 +16,15 @@ import {
   Token,
   TokenBalance,
 } from '../../../../core/models/types';
-import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {ApiService} from '../../../../core/services/api.service';
-import {ChartsService} from '../../../../core/services/charts.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {totalmem} from 'os';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
-import {first} from 'rxjs/internal/operators/first';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ApiService } from '../../../../core/services/api.service';
+import { ChartsService } from '../../../../core/services/charts.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { totalmem } from 'os';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { first } from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-dashboard',
@@ -92,8 +92,14 @@ export class DashboardPage implements AfterViewInit {
         const totalBalance = Object.keys(portfolio)
           .map((key: string) => {
             const portfolioPositions = portfolio[key];
-            if (key === 'uniswapPositions' && Array.isArray(portfolioPositions)) {
-              return portfolioPositions.reduce((a, c) => a + c.pool_token.quote, 0);
+            if (
+              key === 'uniswapPositions' &&
+              Array.isArray(portfolioPositions)
+            ) {
+              return portfolioPositions.reduce(
+                (a, c) => a + c.pool_token.quote,
+                0
+              );
             }
             if (Array.isArray(portfolioPositions)) {
               return portfolioPositions.reduce((a, c) => a + c.quote, 0);
@@ -101,7 +107,7 @@ export class DashboardPage implements AfterViewInit {
             return 0;
           })
           .reduce((a, c) => a + c);
-        return {totalBalance};
+        return { totalBalance };
       })
     );
 
@@ -128,17 +134,21 @@ export class DashboardPage implements AfterViewInit {
       this.portfolioTotalBalance$
     ).pipe(
       map(
-        ([portfolio, {totalBalance}]: [
+        ([portfolio, { totalBalance }]: [
           SupportedPortfolio,
           { [key: string]: number }
         ]) => {
-          if (!portfolio.tokens || !Array.isArray(portfolio.tokens) || !totalBalance) {
+          if (
+            !portfolio.tokens ||
+            !Array.isArray(portfolio.tokens) ||
+            !totalBalance
+          ) {
             return null;
           }
           let other = 0;
           const total = totalBalance;
           const pairs = portfolio.tokens
-            .map(({contract_ticker_symbol, quote}) => [
+            .map(({ contract_ticker_symbol, quote }) => [
               contract_ticker_symbol,
               (quote / total) * 100,
             ])

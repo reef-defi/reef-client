@@ -25,8 +25,10 @@ export interface IPortfolio {
   uniswapPositions: any[] | ErrorDisplay;
 }
 
-export type SupportedPortfolio = Pick<IPortfolio,
-  'tokens' | 'uniswapPositions' | 'compoundPositions'>;
+export type SupportedPortfolio = Pick<
+  IPortfolio,
+  'tokens' | 'uniswapPositions' | 'compoundPositions'
+>;
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -157,11 +159,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-    transactionHash: string;
-    receipt: any;
-    confirmation: number;
-    error?: any;
-  }>
+        transactionHash: string;
+        receipt: any;
+        confirmation: number;
+        error?: any;
+      }>
     | any;
   estimateGas: (options?: {
     from?: string;
