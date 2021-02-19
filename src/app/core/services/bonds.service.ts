@@ -25,6 +25,8 @@ import { of } from 'rxjs/internal/observable/of';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { DateTimeUtil } from '../../shared/utils/date-time.util';
 import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import { tap } from 'rxjs/internal/operators/tap';
+import { DevUtil } from '../../shared/utils/dev-util';
 
 @Injectable({
   providedIn: 'root',
@@ -132,7 +134,6 @@ export class BondsService {
             })
           ) as Observable<Bond>;
         }),
-        delay(2000),
         shareReplay(1)
       );
       this.bondTimeValues.set(bond.id, bTimeValues$);
