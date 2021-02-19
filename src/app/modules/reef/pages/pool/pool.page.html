@@ -81,7 +81,7 @@
                         [value]="tokenBalanceReef.balance"
                         (valueChange)="reefAmount=$event;calcTokenAmount($event, price.TOKEN_PER_REEF, token)"
                         [tokenSymbol]="TokenSymbol.REEF"
-                        (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReef.address)"
+                        (refreshBalance)="tokenBalanceService.refreshBalancesForAddress.next(tokenBalanceReef.address)"
                       ></app-set-input-relative-amount>
                     </ng-container>
                   </div>
@@ -126,7 +126,7 @@
                         [value]="tokenBalanceReefOposite.balance"
                         (valueChange)="tokenAmount=$event;calcReefAmount($event, price.REEF_PER_TOKEN, token)"
                         [tokenSymbol]="TokenSymbol[tokenBalanceReefOposite.contract_ticker_symbol]"
-                        (refreshBalance)="apiService.refreshBalancesForAddress.next(tokenBalanceReefOposite.address)"
+                        (refreshBalance)="tokenBalanceService.refreshBalancesForAddress.next(tokenBalanceReefOposite.address)"
                       ></app-set-input-relative-amount>
                     </ng-container>
                   </div>

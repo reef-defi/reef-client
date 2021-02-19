@@ -85,7 +85,7 @@
                         [value]="tokenBalance.balance"
                         [tokenSymbol]="token"
                         (valueChange)="reefAmount=$event"
-                        (refreshBalance)="this.apiService.updateTokensInBalances.next([token])"
+                        (refreshBalance)="this.tokenBalanceService.updateTokensInBalances.next([token])"
                       ></app-set-input-relative-amount>
                     </ng-container>
                     <ng-template #noBalance>

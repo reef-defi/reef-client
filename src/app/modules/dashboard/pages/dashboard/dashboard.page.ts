@@ -23,6 +23,8 @@ import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { first } from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,10 +52,11 @@ export class DashboardPage implements AfterViewInit {
     private readonly chartsService: ChartsService,
     public readonly apiService: ApiService,
     private readonly charts: ChartsService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly tokenBalanceService: TokenBalanceService
   ) {
     const address$ = this.connectorService.providerUserInfo$.pipe(
-      filter((v) => !!v),
+      first((v) => !!v),
       map((value) => value.address),
       shareReplay(1)
     );
@@ -63,15 +66,14 @@ export class DashboardPage implements AfterViewInit {
     );
 
     this.portfolio$ = this.triggerPortfolio.pipe(
-      distinctUntilChanged(),
-      tap(() => this.portfolioError$.next(false)),
+      tap(() => {
+        this.portfolioError$.next(false);
+      }),
       switchMap(() => {
         return address$.pipe(
-          switchMap((address: string) => this.apiService.getPortfolio(address)),
-          map((portfolio: IPortfolio) => ({
-            tokens: portfolio.tokens,
-            uniswapPositions: portfolio.uniswapPositions,
-          })),
+          switchMap((address: string) =>
+            this.tokenBalanceService.getPortfolio(address)
+          ),
           tap((data) => {
             console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
@@ -89,21 +91,29 @@ export class DashboardPage implements AfterViewInit {
       map((portfolio: SupportedPortfolio) => {
         const totalBalance = Object.keys(portfolio)
           .map((key: string) => {
-            if (key === 'uniswapPositions') {
-              return portfolio[key].reduce((a, c) => a + c.pool_token.quote, 0);
+            const portfolioPositions = portfolio[key];
+            if (
+              key === 'uniswapPositions' &&
+              Array.isArray(portfolioPositions)
+            ) {
+              return portfolioPositions.reduce(
+                (a, c) => a + c.pool_token.quote,
+                0
+              );
             }
-            return portfolio[key].reduce((a, c) => a + c.quote, 0);
+            if (Array.isArray(portfolioPositions)) {
+              return portfolioPositions.reduce((a, c) => a + c.quote, 0);
+            }
+            return 0;
           })
           .reduce((a, c) => a + c);
-        return { totalBalance: totalBalance };
+        return { totalBalance };
       })
     );
 
     this.tokenBalance$ = address$.pipe(
       switchMap((address) => this.getTokenBalances(address)),
       map((balance) => {
-        console.log('TBBB= VVV=', balance);
-
         if (!balance) {
           return null;
         }
@@ -128,7 +138,11 @@ export class DashboardPage implements AfterViewInit {
           SupportedPortfolio,
           { [key: string]: number }
         ]) => {
-          if (!portfolio.tokens || !totalBalance) {
+          if (
+            !portfolio.tokens ||
+            !Array.isArray(portfolio.tokens) ||
+            !totalBalance
+          ) {
             return null;
           }
           let other = 0;
@@ -170,11 +184,12 @@ export class DashboardPage implements AfterViewInit {
   public getPortfolio() {
     this.portfolioError$.next(false);
     this.cdRef.detectChanges();
+    setTimeout(() => this.triggerPortfolio.next(), 1000);
     this.triggerPortfolio.next();
   }
 
   private getTokenBalances(address: string): Observable<TokenBalance> {
-    return this.apiService.getTokenBalances$(address).pipe(
+    return this.tokenBalanceService.getTokenBalances$(address).pipe(
       map(
         (tokens) =>
           ({

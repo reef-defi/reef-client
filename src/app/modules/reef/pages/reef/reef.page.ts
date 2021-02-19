@@ -10,6 +10,7 @@ import { TokenSymbol, TransactionType } from '../../../../core/models/types';
 import { TransactionsService } from '../../../../core/services/transactions.service';
 import { BehaviorSubject, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-reef',
@@ -21,7 +22,7 @@ export class ReefPage implements OnInit {
   readonly pendingTransactions = this.transactionService.getPendingTransactions(
     [TransactionType.BUY_REEF]
   );
-  supportedTokens = ApiService.SUPPORTED_BUY_REEF_TOKENS;
+  supportedTokens = TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS;
 
   buyLoading = false;
   reefPriceChartData = null;

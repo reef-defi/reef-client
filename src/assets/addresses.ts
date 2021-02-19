@@ -8,6 +8,7 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     REEF_FARMING: '0xbB59060F803A2DB8769Fe327cbF89230DDf42B62',
     REEF_STAKING: '0xcCB53c9429d32594F404d01fbe9E65ED1DCda8D9',
     UNISWAP_ROUTER_V2: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+    ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
     [TokenSymbol.REEF_WETH_POOL]: '0x7937619a9bd1234a303e4fe752b8d4f37d40e20c',
     [TokenSymbol.REEF_USDT_POOL]: '0xea02e0f8f470de1107cb336f827c4192117574bb',
     // reef token

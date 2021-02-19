@@ -4,6 +4,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { first } from 'rxjs/internal/operators/first';
 import { Token, TokenSymbol } from '../../../../core/models/types';
 import { Observable } from 'rxjs';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-reef-menu',
@@ -16,14 +17,15 @@ export class ReefMenuPage implements OnInit {
 
   constructor(
     private readonly connectorService: ConnectorService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly tokenBalanceService: TokenBalanceService
   ) {}
 
   ngOnInit(): void {
     this.connectorService.providerUserInfo$
       .pipe(first((ev) => !!ev))
       .subscribe(({ address }) => {
-        this.reefBalance$ = this.apiService.getTokenBalance$(
+        this.reefBalance$ = this.tokenBalanceService.getTokenBalance$(
           address,
           TokenSymbol.REEF
         );

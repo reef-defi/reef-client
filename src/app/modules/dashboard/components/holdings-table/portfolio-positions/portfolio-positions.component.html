@@ -1,0 +1,30 @@
+<div class="d-flex justify-content-between">
+  <div class="h5">{{ title }}</div>
+  <ng-template #loading>
+    <app-provider-loading>Loading positions</app-provider-loading>
+  </ng-template>
+  <div *ngIf="positions?.length">
+    <span class="hide-lg text-muted small-text"
+      ><mat-icon class="small-icon">multiple_stop</mat-icon
+      ><span class="align-to-icon">scroll data</span>
+    </span>
+  </div>
+</div>
+<div *ngIf="!!positions; else loading">
+  <ng-template #emptyPositions>
+    <div *ngIf="positions.errMessage; else noData">
+      <span class="small-text text-muted">{{ positions.errMessage }}</span>
+    </div>
+    <ng-template #noData
+      ><span class="small-text text-muted"
+        >No positions found.</span
+      ></ng-template
+    >
+  </ng-template>
+  <div
+    *ngIf="positions.length; else emptyPositions"
+    class="mb-4 table-responsive-lg"
+  >
+    <ng-content></ng-content>
+  </div>
+</div>
