@@ -75,7 +75,7 @@ export class DashboardPage implements AfterViewInit {
             this.tokenBalanceService.getPortfolio(address)
           ),
           tap((data) => {
-            console.log('PORTFOLIO DATA=', data);
+            // console.log('PORTFOLIO DATA=', data);
             this.getHistoricData(data.tokens);
           })
         );
@@ -163,7 +163,7 @@ export class DashboardPage implements AfterViewInit {
           if (other > 0) {
             unified = [...pairs, ['Other', other]];
           }
-          console.log(unified, 'UNIFIED');
+          // console.log(unified, 'UNIFIED');
           return this.chartsService.composePieChart(unified);
         }
       ),
