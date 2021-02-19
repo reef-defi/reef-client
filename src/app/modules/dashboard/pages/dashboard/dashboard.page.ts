@@ -124,9 +124,6 @@ export class DashboardPage implements AfterViewInit {
       this.portfolio$,
       this.portfolioTotalBalance$
     ).pipe(
-      tap(([p]) => {
-        console.log('PORT', p);
-      }),
       map(
         ([portfolio, { totalBalance }]: [
           SupportedPortfolio,
