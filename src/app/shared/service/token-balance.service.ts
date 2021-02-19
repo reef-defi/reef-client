@@ -305,7 +305,7 @@ export class TokenBalanceService {
       map((tokens) =>
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
       ),
-      tap((v) => console.log('VVVV', v))
+      // tap((v) => console.log('VVVV', v))
     );
   }
 
