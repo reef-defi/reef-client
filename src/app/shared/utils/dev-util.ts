@@ -1,9 +1,10 @@
 import {environment} from '../../../environments/environment';
 
 export class DevUtil {
-  static devLog(msg: string, value: any, logLevel: LogLevel): void {
-    if (environment.logLevel >= logLevel) {
-      if (logLevel > 0) {
+  static devLog(msg: string, value?: any, logLevel: LogLevel = LogLevel.STD): void {
+    const minLogLevel = environment.logLevel;
+    if (minLogLevel >= logLevel) {
+      if (logLevel > LogLevel.WARNING) {
         console.log(msg, value);
       } else if (logLevel === LogLevel.WARNING) {
         console.warn(msg, value);

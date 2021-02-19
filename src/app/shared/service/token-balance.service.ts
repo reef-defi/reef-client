@@ -349,9 +349,9 @@ export class TokenBalanceService {
           tokenAddress
         );
       }),
-      tap(v => DevUtil.devLog('NEW BALANCE for ', tokenSymbol, ' = ', v)),
+      tap(v => DevUtil.devLog(`NEW BALANCE for ${tokenSymbol}=`, v)),
       catchError((e) => {
-        DevUtil.devLog('ERROR GETTING BALANCE', e, {logLevel: LogLevel.WARNING});
+        DevUtil.devLog('ERROR GETTING BALANCE', e, LogLevel.WARNING);
         return of('0');
       })
     );
