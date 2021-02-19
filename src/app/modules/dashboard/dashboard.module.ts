@@ -7,6 +7,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { SettingsPage } from './pages/settings/settings.page';
 import { AssetDistributionChartComponent } from './components/asset-distribution-chart/asset-distribution-chart.component';
 import { HoldingsTableComponent } from './components/holdings-table/holdings-table.component';
+import { PortfolioPositionsComponent } from './components/holdings-table/portfolio-positions/portfolio-positions.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { HoldingsTableComponent } from './components/holdings-table/holdings-tab
     SettingsPage,
     AssetDistributionChartComponent,
     HoldingsTableComponent,
+    PortfolioPositionsComponent,
   ],
   imports: [CommonModule, DashboardRoutingModule, SharedModule],
 })

@@ -18,17 +18,15 @@ export type RpcErrorTypes = {
 };
 
 export interface IPortfolio {
-  aavePositions: any[];
-  balancerPositions: any[];
-  compoundPositions: any[];
-  tokens: any[];
-  uniswapPositions: any[];
+  aavePositions: any[] | ErrorDisplay;
+  balancerPositions: any[] | ErrorDisplay;
+  compoundPositions: any[] | ErrorDisplay;
+  tokens: any[] | ErrorDisplay;
+  uniswapPositions: any[] | ErrorDisplay;
 }
 
-export type SupportedPortfolio = Pick<
-  IPortfolio,
-  'tokens' | 'uniswapPositions' | 'compoundPositions'
->;
+export type SupportedPortfolio = Pick<IPortfolio,
+  'tokens' | 'uniswapPositions' | 'compoundPositions'>;
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -159,11 +157,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -463,4 +461,14 @@ export enum BondSaleStatus {
   OPEN,
   LATE,
   FILLED,
+}
+
+export class ErrorDisplay {
+  get length(): number {
+    return 0;
+  }
+
+  constructor(public errMessage: string, public errCode?: string) {
+    console.log('ERROR MSG=', errMessage, errCode);
+  }
 }

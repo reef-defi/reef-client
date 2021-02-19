@@ -1,12 +1,12 @@
 import {
-  ChainId,
+  ChainId, ErrorDisplay,
   ExchangeId,
   IProviderUserInfo,
   SupportedPortfolio,
   Token,
   TokenSymbol,
 } from '../../core/models/types';
-import { Observable, Subject } from 'rxjs';
+import {merge, Observable, Subject} from 'rxjs';
 import {
   catchError,
   filter,
@@ -18,30 +18,30 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {Injectable} from '@angular/core';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import { of } from 'rxjs/internal/observable/of';
-import { AddressUtils } from '../utils/address.utils';
+import {of} from 'rxjs/internal/observable/of';
+import {AddressUtils} from '../utils/address.utils';
 import Web3 from 'web3';
-import { TokenUtil } from '../utils/token.util';
-import { ConnectorService } from '../../core/services/connector.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { flatMap } from 'rxjs/internal/operators';
+import {TokenUtil} from '../utils/token.util';
+import {ConnectorService} from '../../core/services/connector.service';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
+import {flatMap} from 'rxjs/internal/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
-    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
+    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
+    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
-    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
-    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
+    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
+    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
+    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -59,66 +59,62 @@ export class TokenBalanceService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {}
+  ) {
+  }
 
   getPortfolio(address: string): Observable<SupportedPortfolio> {
-    return this.getTokenBalances$(address).pipe(
-      flatMap((tokens: any) => {
-        return this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
-          map((uPos) => {
-            const uniswapPositions = uPos.uniswap_v2.balances
-              .map((x) => {
-                ['pool_token', 'token_0', 'token_1'].forEach((t) => {
-                  x[t].balance = x[t].balance / +`1e${x[t].contract_decimals}`;
-                });
-                return x;
-              })
-              .filter(
-                (x) => x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
-              );
-            return { tokens, uniswapPositions };
-          }),
-          catchError((e) => {
-            return of({ tokens });
-          })
+    const tokenPortfolio$ = this.getTokenBalances$(address).pipe(
+      map(tokens => ({tokens})),
+      shareReplay(1)
+    ) as Observable<SupportedPortfolio>;
+
+    const uniPositionsPortfolio$ = tokenPortfolio$.pipe(
+      switchMap((tokens: SupportedPortfolio) => this.getUniswapPositions(address, tokens)),
+      shareReplay(1)
+    );
+
+    const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
+      switchMap(uniPortfolio => this.getCompoundPositions(address, uniPortfolio))
+    );
+    return merge(tokenPortfolio$, uniPositionsPortfolio$, compPositionsPortfolio$);
+  }
+
+  private getCompoundPositions(address: string, portfolio: SupportedPortfolio): Observable<SupportedPortfolio> {
+    return this.getExchangePositions$(ExchangeId.COMPOUND, address).pipe(
+      map((cPos) => {
+        const compoundPositions = cPos.compound.balances.map(
+          (x) => x.supply_tokens
         );
-      }),
-      flatMap((portfolio: SupportedPortfolio) => {
-        return this.getExchangePositions$(ExchangeId.COMPOUND, address).pipe(
-          map((cPos) => {
-            const compoundPositions = cPos.compound.balances.map(
-              (x) => x.supply_tokens
-            );
-            return { ...portfolio, compoundPositions };
-          }),
-          catchError((e) => {
-            return of(portfolio);
-          })
-        );
+        return {...portfolio, compoundPositions};
       }),
       shareReplay(1),
-      tap((p) => console.log('PORTFOLIO=', p))
+      catchError((e) => {
+        return of({...portfolio, compoundPositions: new ErrorDisplay('Error getting data')});
+      })
     );
-    // const portfolio$ = this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
-    //   switchMap((portfolio: IPortfolio) => {
-    //     const uniPositionsPortfolio$ = this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
-    //       map(uniPos => {
-    //         portfolio.uniswapPositions = uniPos;
-    //         return portfolio;
-    //       })
-    //     );
-    //     const portfolioWithCompPositions$ = uniPositionsPortfolio$.pipe(
-    //       switchMap(_ => this.getExchangePositions$(ExchangeId.COMPOUND, address)).pipe(
-    //         map(compPos => {
-    //           portfolio.compoundPositions = compPos;
-    //           return portfolio;
-    //         })
-    //       ));
-    //     return merge(uniPositionsPortfolio$, portfolioWithCompPositions$);
-    //   }),
-    //   shareReplay(1)
-    // );
-    // return portfolio$;
+  }
+
+  private getUniswapPositions(address: string, portfolio: SupportedPortfolio): Observable<SupportedPortfolio> {
+    return this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
+      map((uPos) => {
+        const uniswapPositions = uPos.uniswap_v2.balances
+          .map((x) => {
+            ['pool_token', 'token_0', 'token_1'].forEach((t) => {
+              // TODO use method for display decimals
+              x[t].balance = x[t].balance / +`1e${x[t].contract_decimals}`;
+            });
+            return x;
+          })
+          .filter(
+            (x) => x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
+          );
+        return {...portfolio, uniswapPositions};
+      }),
+      shareReplay(1),
+      catchError((e) => {
+        return of({...portfolio, uniswapPositions:  new ErrorDisplay('Error getting uniswap positions')});
+      })
+    );
   }
 
   getExchangePositions$(
