@@ -18,16 +18,16 @@ export type RpcErrorTypes = {
 };
 
 export interface IPortfolio {
-  aavePositions: any[];
-  balancerPositions: any[];
-  compoundPositions: any[];
-  tokens: any[];
-  uniswapPositions: any[];
+  aavePositions: any[] | ErrorDisplay;
+  balancerPositions: any[] | ErrorDisplay;
+  compoundPositions: any[] | ErrorDisplay;
+  tokens: any[] | ErrorDisplay;
+  uniswapPositions: any[] | ErrorDisplay;
 }
 
 export type SupportedPortfolio = Pick<
   IPortfolio,
-  'tokens' | 'uniswapPositions'
+  'tokens' | 'uniswapPositions' | 'compoundPositions'
 >;
 
 export enum EErrorTypes {
@@ -234,6 +234,13 @@ export enum ChainId {
   BINANCE_SMART_CHAIN = 56,
 }
 
+export enum ExchangeId {
+  UNISWAP_V2 = 'uniswap_v2',
+  BALANCER = 'balancer',
+  COMPOUND = 'compound',
+  AAVE = 'aave',
+}
+
 export enum ProviderName {
   INFURA = 'infura',
   ALCHEMY = 'alchemy',
@@ -245,6 +252,7 @@ export interface ProtocolAddresses {
   REEF_VAULT_BASKET: string;
   REEF_FARMING: string;
   REEF_STAKING: string;
+  ETH?: string;
   UNISWAP_ROUTER_V2: string;
   REEF_WETH_POOL: string;
   REEF_USDT_POOL: string;
@@ -455,4 +463,14 @@ export enum BondSaleStatus {
   OPEN,
   LATE,
   FILLED,
+}
+
+export class ErrorDisplay {
+  get length(): number {
+    return 0;
+  }
+
+  constructor(public errMessage: string, public errCode?: string) {
+    console.log('ERROR MSG=', errMessage, errCode);
+  }
 }

@@ -10,6 +10,7 @@ import {
 import { getBasketPoolNames } from '../utils/pools-utils';
 import { ApiService } from './api.service';
 import { take } from 'rxjs/operators';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,8 @@ export class ContractService {
   constructor(
     private readonly connectorService: ConnectorService,
     private readonly notificationService: NotificationService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly tokenBalanceService: TokenBalanceService
   ) {}
 
   async getAllBaskets(): Promise<any> {
@@ -236,7 +238,7 @@ export class ContractService {
       .pipe(take(1))
       .toPromise();
     //TODO refresh balance
-    this.apiService.refreshBalancesForAddress.next(info.address);
+    this.tokenBalanceService.refreshBalancesForAddress.next(info.address);
     // this is old way of refreshing balance - this.connectorService.getUserProviderInfo();
   }
 

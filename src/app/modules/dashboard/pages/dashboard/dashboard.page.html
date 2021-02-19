@@ -18,11 +18,15 @@
             </div>
             <h3 class="text-center text-monospace">
               <ng-container
-                *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
+                *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
               >
-                ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
+                <ng-container
+                  *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
+                >
+                  ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
+                </ng-container>
+                <ng-template #calc> Calculating...</ng-template>
               </ng-container>
-              <ng-template #calc> Calculating...</ng-template>
             </h3>
           </div>
         </div>
@@ -30,9 +34,7 @@
           <div class="small font-weight-bold text-monospace text-muted">
             Allocations
           </div>
-          <ng-container
-            *ngIf="pieChartData$|async as pieChartData; else emptyTokensTemplate"
-          >
+          <ng-container *ngIf="pieChartData$|async as pieChartData">
             <app-asset-distribution-chart [chartData]="pieChartData">
             </app-asset-distribution-chart>
           </ng-container>
@@ -154,12 +156,22 @@
                   >
                 </div>
               </ng-template>
-              <ng-template #emptyTokensTemplate>
+              <!--<ng-template #emptyTokensTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2">No tokens to display.</span>
                 </div>
-              </ng-template>
+              </ng-template>-->
               <ng-template #portfolioErrorTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2"
+                    >Something went wrong while fetching your tokens.
+                    <a href="" (click)="$event.preventDefault(); getPortfolio()"
+                      >Refresh?</a
+                    >
+                  </span>
+                </div>
+              </ng-template>
+              <ng-template #emptyBalanceTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2"
                     >Something went wrong while fetching your tokens.

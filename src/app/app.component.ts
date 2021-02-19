@@ -20,6 +20,7 @@ import { GoogleAnalyticsService } from './shared/service/google-analytics.servic
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationService } from './core/services/notification.service';
 import { TransactionsService } from './core/services/transactions.service';
+import { TokenBalanceService } from './shared/service/token-balance.service';
 // GoogleAnalytics - declare gtag as a function to access the JS code in TS
 declare let gtag: Function;
 
@@ -44,7 +45,8 @@ export class AppComponent implements OnInit {
     private readonly uniswapService: UniswapService,
     googleAnalyticsService: GoogleAnalyticsService,
     private readonly notification: NotificationService,
-    private readonly transactionService: TransactionsService
+    private readonly transactionService: TransactionsService,
+    private readonly tokenBalanceService: TokenBalanceService
   ) {
     const isWalletConnected$ = this.connectorService.currentProviderName$;
     isWalletConnected$.subscribe((v) => {
@@ -105,7 +107,9 @@ export class AppComponent implements OnInit {
   private initAddressBalances$(): Observable<any> {
     return this.connectorService.providerUserInfo$.pipe(
       filter((v) => !!v),
-      switchMap((uInfo) => this.apiService.getTokenBalances$(uInfo.address))
+      switchMap((uInfo) =>
+        this.tokenBalanceService.getTokenBalances$(uInfo.address)
+      )
     );
   }
 

@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import {
-  BehaviorSubject,
-  EMPTY,
-  Observable,
-  Subject,
-  Subscription,
-} from 'rxjs';
-import {
-  ChainId,
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
   IPortfolio,
-  IProviderUserInfo,
   QuotePayload,
   Token,
   TokenSymbol,
@@ -25,22 +17,16 @@ import {
 import { subMonths } from 'date-fns';
 import {
   catchError,
-  filter,
   map,
-  mergeMap,
   shareReplay,
   startWith,
-  switchMap,
   take,
   tap,
 } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { AddressUtils } from '../../shared/utils/address.utils';
 import { ConnectorService } from './connector.service';
-import Web3 from 'web3';
-import BigNumber from 'bignumber.js';
 import { of } from 'rxjs/internal/observable/of';
-import { TokenUtil } from '../../shared/utils/token.util';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -52,41 +38,26 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class ApiService {
-  public static SUPPORTED_BUY_REEF_TOKENS = [
-    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
-    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
-  ];
-
-  public static REEF_PROTOCOL_TOKENS = [
-    ...ApiService.SUPPORTED_BUY_REEF_TOKENS,
-    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
-    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
-    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
-  ];
-
-  private static COVALENT_SUPPORTED_NETWORK_IDS = [
-    // ChainId.MAINNET,
-    // ChainId.MATIC,
-  ];
-
   readonly COMPOSITION_LIMIT = 10;
   public pools$ = new BehaviorSubject(null);
   public tokens$ = new BehaviorSubject(null);
   public vaults$ = new BehaviorSubject(null);
   public gasPrices$ = new BehaviorSubject(null);
-  public refreshBalancesForAddress = new Subject<string>();
-  public updateTokensInBalances = new Subject<TokenSymbol[]>();
   private url = environment.reefApiUrl;
   private reefPriceUrl = environment.cmcReefPriceUrl;
   private binanceApiUrl = environment.reefBinanceApiUrl;
   private gasPricesUrl = environment.gasPriceUrl;
   private chartsUrl = `https://charts.hedgetrade.com/cmc_ticker`;
   private reefNodeApi = environment.reefNodeApiUrl;
-  private balancesByAddr = new Map<string, Observable<any>>();
+  private coinGeckoApi = environment.coinGeckoApiUrl;
+  //  private balancesByAddr = new Map<string, Observable<any>>();
+
+  // private balancesByAddr = new Map<string, Observable<any>>();
 
   constructor(
     private readonly http: HttpClient,
-    private connectorService: ConnectorService
+    private connectorService: ConnectorService,
+    private tokenBalanceService: TokenBalanceService
   ) {
     this.listPools();
     this.listTokens();
@@ -270,7 +241,7 @@ export class ApiService {
    * COVALENT
    */
 
-  getTokenBalances$(address: string): Observable<Token[]> {
+  /*getTokenBalances$(address: string): Observable<Token[]> {
     if (!address) {
       console.warn('getTokenBalances NO PARAMS');
       return null;
@@ -285,7 +256,7 @@ export class ApiService {
         this.connectorService.providerUserInfo$,
       ]).pipe(
         switchMap(([addr, info]: [string, IProviderUserInfo]) =>
-          this.getAddressTokenBalances$(addr, info)
+          this.toBa.getAddressTokenBalances$(addr, info)
         ),
         catchError((err) => {
           throw new Error(err);
@@ -370,9 +341,9 @@ export class ApiService {
       this.balancesByAddr.set(address, finalBalances$);
     }
     return this.balancesByAddr.get(address);
-  }
+  }*/
 
-  private getAddressTokenBalances$(
+  /*private getAddressTokenBalances$(
     address: string,
     info: IProviderUserInfo
   ): Observable<Token[]> {
@@ -384,7 +355,7 @@ export class ApiService {
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
       balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
-        map((val) => this.toCovalentDataStructure(val))
+        switchMap((val) => this.toCovalentDataStructure(val))
       );
     }
 
@@ -398,17 +369,18 @@ export class ApiService {
 
   private balancesForAddress(requested: Token[], address: string): boolean {
     return requested.length && requested[0].address === address;
-  }
+  }*/
 
-  getTokenBalance$(
+  /*getTokenBalance$(
     addr: string,
     tokenSymbol?: TokenSymbol,
     tokenAddress?: string
   ): Observable<Token> {
-    if (!tokenSymbol && !tokenAddress) {
+    return this.tokenBalanceService.getTokenBalance$(addr, tokenSymbol, tokenAddress);
+    /!*if (!tokenSymbol && !tokenAddress) {
       throw new Error('Token symbol or address is required.');
     }
-    return this.getTokenBalances$(addr).pipe(
+    return this.tokenBalanceService.getTokenBalances$(addr).pipe(
       switchMap((balances: Token[]) => {
         const tokenBalance = tokenSymbol
           ? this.findTokenBalance(balances, tokenSymbol)
@@ -428,10 +400,10 @@ export class ApiService {
         );
       }),
       shareReplay(1)
-    );
-  }
+    );*!/
+  }*/
 
-  private findTokenBalance(balances: Token[], tokenSymbol: TokenSymbol): Token {
+  /*private findTokenBalance(balances: Token[], tokenSymbol: TokenSymbol): Token {
     return balances.find((tkn) => {
       if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
         return true;
@@ -439,6 +411,7 @@ export class ApiService {
       return false;
     });
   }
+*/
 
   getTransactions(address: string): any {
     return this.http
@@ -458,13 +431,6 @@ export class ApiService {
     );
   }
 
-  getPortfolio(address: string): Observable<IPortfolio> {
-    return this.http.get<any>(`${this.reefNodeApi}/dashboard/${address}`).pipe(
-      tap((v) => console.log('GET PORTFOLIO REQUEST')),
-      shareReplay(1)
-    );
-  }
-
   checkIfAuth(code: string): Observable<any> {
     return this.http.post<{ [key: string]: boolean }>(
       `${this.reefNodeApi}/in`,
@@ -472,7 +438,7 @@ export class ApiService {
     );
   }
 
-  private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
+  /*private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {
     if (token.contract_ticker_symbol === 'UNI-V2') {
       const addressLabel = AddressUtils.getAddressLabel(
         info,
@@ -483,9 +449,9 @@ export class ApiService {
         'https://logos.covalenthq.com/tokens/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png';
     }
     return token;
-  }
+  }*/
 
-  private getBalanceOnChain$(
+  /*private getBalanceOnChain$(
     address: string,
     tokenSymbol?: TokenSymbol,
     tokenAddress?: string
@@ -517,9 +483,9 @@ export class ApiService {
         return of('0');
       })
     );
-  }
+  }*/
 
-  private getContractBalance$(
+  /*private getContractBalance$(
     info: IProviderUserInfo,
     address: string,
     tokenSymbol?: TokenSymbol,
@@ -550,9 +516,9 @@ export class ApiService {
       .then((balance) => {
         return TokenUtil.toDisplayDecimalValue(balance, tokenSymbol);
       }) as Promise<string>;
-  }
+  }*/
 
-  private getReefProtocolBalancesFromChain$(
+  /*private getReefProtocolBalancesFromChain$(
     info: IProviderUserInfo,
     address: string
   ): Observable<Token[]> {
@@ -576,17 +542,55 @@ export class ApiService {
                 balance: +balance,
                 address,
                 contract_address: tokenAddress,
+                logo_url: `https://logos.covalenthq.com/tokens/${tokenAddress}.png`,
               } as Token)
           )
         );
       })
     );
+  }*/
+
+  private getPriceForAddresses(
+    tokenAddresses: string[],
+    againstCurrecny = 'usd'
+  ) {
+    const addresses = tokenAddresses.toString();
+    return this.http.get(
+      `${this.coinGeckoApi}/simple/token_price/ethereum?contract_addresses=${addresses}&vs_currencies=${againstCurrecny}`
+    );
   }
 
-  private toCovalentDataStructure(balancesFromChain: Token[]) {
-    return balancesFromChain.map((token) => {
-      token.quote = 1;
-      return token;
-    });
+  private getEthPrice(): Observable<any> {
+    return this.http.get(environment.ethPriceUrl);
+  }
+
+  private toCovalentDataStructure(
+    balancesFromChain: Token[]
+  ): Observable<Token[]> {
+    const addresses = balancesFromChain.map((token) => token.contract_address);
+    const tokensWithPrice$: Observable<Token[]> = this.getPriceForAddresses(
+      addresses
+    ).pipe(
+      map((prices: { [key: string]: { usd: number } }) => {
+        return balancesFromChain.map((token) => ({
+          ...token,
+          quote: prices[token.contract_address]?.usd || 0,
+        }));
+      })
+    );
+    return combineLatest(this.getEthPrice(), tokensWithPrice$).pipe(
+      map(([ethPrice, tokensWithPrice]: [any, Token[]]) => {
+        const eth = tokensWithPrice.find(
+          (token) => token.contract_ticker_symbol === TokenSymbol.ETH
+        );
+        eth.quote = ethPrice?.ethereum?.usd;
+        return [
+          ...tokensWithPrice.filter(
+            (token) => token.contract_ticker_symbol !== TokenSymbol.ETH
+          ),
+          eth,
+        ];
+      })
+    );
   }
 }
