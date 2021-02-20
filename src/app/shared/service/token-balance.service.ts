@@ -293,7 +293,7 @@ export class TokenBalanceService {
       TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1
     ) {
       balances$ = this.http
-        .get<any>(`${this.reefNodeApi}/covalent/${address}/balances`)
+        .get<any>(`${this.reefNodeApi}/${address}/balances`)
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
       balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
