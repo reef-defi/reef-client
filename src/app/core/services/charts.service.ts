@@ -85,12 +85,13 @@ export class ChartsService {
       },
       legend: {
         enabled: true,
-        floating: true,
+        layout: 'horizontal',
+        floating: false,
         verticalAlign: 'bottom',
-        y: 15,
+        y: 20,
         itemStyle: {
           fontFamily: 'Roboto, "Helvetica Neue", sans-serif',
-          fontSize: '10px',
+          fontSize: '9px',
         },
         labelFormatter: function () {
           return this.name + ': ' + this.percentage.toFixed(1) + '%';
