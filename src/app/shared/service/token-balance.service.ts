@@ -29,8 +29,8 @@ import { TokenUtil } from '../utils/token.util';
 import { ConnectorService } from '../../core/services/connector.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { flatMap } from 'rxjs/internal/operators';
-import { DevUtil, LogLevel } from '../utils/dev-util';
+import { DevUtil } from '../utils/dev-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {

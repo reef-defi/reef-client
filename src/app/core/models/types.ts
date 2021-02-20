@@ -12,6 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
+import { Observable } from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -449,13 +450,24 @@ export interface Bond {
   farm: string;
   farmTokenAddress: string;
   farmTokenLogo: string;
-  farmStartTime: number;
-  farmEndTime: number;
+  /*farmStartTime: number;
+  farmEndTime: number;*/
   farmDecimals: number;
-  entryEndTime: number;
-  entryStartTime: number;
+  // entryEndTime: number;
+  entryStartTime?: number;
   apy: string;
   bondContractAddress: string;
+  farmDurationTimeDisplayStr$?: Observable<string>;
+  entryEndTime$?: Observable<number>;
+  status$?: Observable<BondSaleStatus>;
+  times$?: Observable<BondTimes>;
+}
+
+export interface BondTimes {
+  entryStartTime: number;
+  entryEndTime: number;
+  farmStartTime: number;
+  farmEndTime: number;
 }
 
 export enum BondSaleStatus {

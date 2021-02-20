@@ -11,86 +11,80 @@
 
 <div class="page__wrapper">
   <div class="row">
-    <div
-      class="col-12 col-md-6 col-lg-4 h-100"
-      *ngFor="let bond of bondsService.bondsList$|async"
-    >
-      <div class="card m-2 max-w-440 margin-auto">
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-center mb-3">
-            <img
-              *ngIf="bond.farm!==bond.stake"
-              class="img-size-top-65"
-              [src]="bond.stakeTokenLogo"
-            />
-            <img class="img-size-top-65" [src]="bond.farmTokenLogo" />
-          </div>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center"
-          >
-            <div class="h5">{{bond.bondName}}</div>
-            <p class="text-center">{{bond.bondDescription}}</p>
+    <div *ngIf="this.bondsService.bondsList$|async as bonds">
+      <div
+        class="col-12 col-md-6 col-lg-4 h-100"
+        *ngFor="let bond of bonds.list"
+      >
+        <div class="card m-2 max-w-440 margin-auto">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center mb-3">
+              <img
+                *ngIf="bond.farm!==bond.stake"
+                class="img-size-top-65"
+                [src]="bond.stakeTokenLogo"
+              />
+              <img class="img-size-top-65" [src]="bond.farmTokenLogo" />
+            </div>
             <div
-              class="card border-purple accent-text text-monospace small-text text-left p-2"
+              class="d-flex flex-column align-items-center justify-content-center"
             >
-              <div class="mb-1">Lock token: {{bond.stake}}</div>
-              <div class="mb-1" *ngIf="bond.stake!==bond.farm">
-                <span class="text-left">Rewards token: </span>
-                <b>{{bond.stake}}</b>
-              </div>
-              <ng-container
-                *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes"
+              <div class="h5">{{bond.bondName}}</div>
+              <p class="text-center">{{bond.bondDescription}}</p>
+              <div
+                class="card border-purple accent-text text-monospace small-text text-left p-2"
               >
-                <div class="mb-1">
-                  Lock duration:
-                  <ng-container
-                    *ngIf="UiUtils.toMinTimespanText(bondWithTimes.farmStartTime,
-                bond.farmEndTime) as timespanText"
-                  >
-                    {{timespanText}}</ng-container
-                  >
+                <div class="mb-1">Lock token: {{bond.stake}}</div>
+                <div class="mb-1" *ngIf="bond.stake!==bond.farm">
+                  <span class="text-left">Rewards token: </span>
+                  <b>{{bond.stake}}</b>
+                </div>
+                <ng-container
+                  *ngIf="bond.farmDurationTimeDisplayStr$|async as farmDuration"
+                >
+                  <div class="mb-1">Lock duration: {{farmDuration}}</div>
+                </ng-container>
+                <div class="mb-1">APY: {{bond.apy}}%</div>
+              </div>
+              <ng-template #loading>
+                <app-provider-loading
+                  >Loading blockchain data
+                </app-provider-loading>
+              </ng-template>
+              <ng-container
+                *ngIf="bond.times$|async as entryEndTime else loading"
+              >
+                <div
+                  *ngIf="true"
+                  class="text-center text-muted text-monospace mt-2"
+                >
+                  <app-countdown-timer
+                    [expiresDate]="entryEndTime.entryEndTime"
+                    accentColor="true"
+                    >Closes in
+                  </app-countdown-timer>
                 </div>
               </ng-container>
-              <div class="mb-1">APY: {{bond.apy}}%</div>
             </div>
-            <ng-template #loading>
-              <app-provider-loading
-                >Loading blockchain data</app-provider-loading
-              >
-            </ng-template>
-            <ng-container
-              *ngIf="bondsService.getBondTimeValues$(bond)|async as bondWithTimes else loading"
-            >
-              <div
-                *ngIf="true"
-                class="text-center text-muted text-monospace mt-2"
-              >
-                <app-countdown-timer
-                  [expiresDate]="bondWithTimes.entryEndTime"
-                  accentColor="true"
-                  >Closes in
-                </app-countdown-timer>
-              </div>
-            </ng-container>
           </div>
-        </div>
-        <div
-          class="d-flex align-items-center justify-content-center flex-column pb-3 m-2"
-        >
-          <div>
-            <ng-container *ngIf="getBondStatus$(bond)|async as bondStatus">
-              <button
-                [routerLink]="['/reef/bond', bond.id]"
-                class="btn btn-primary p-2 mb-2"
-              >
-                <span *ngIf="bondStatus === BondSaleStatus.OPEN;else seeMore"
-                  >Get rewards</span
+          <div
+            class="d-flex align-items-center justify-content-center flex-column pb-3 m-2"
+          >
+            <div>
+              <ng-container *ngIf="bond.status$|async as bondStatus">
+                <button
+                  [routerLink]="['/reef/bond', bond.id]"
+                  class="btn btn-primary p-2 mb-2"
                 >
-                <ng-template #seeMore>
-                  <span>Learn more</span>
-                </ng-template>
-              </button>
-            </ng-container>
+                  <span *ngIf="bondStatus === BondSaleStatus.OPEN;else seeMore"
+                    >Get rewards</span
+                  >
+                  <ng-template #seeMore>
+                    <span>Learn more</span>
+                  </ng-template>
+                </button>
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>
