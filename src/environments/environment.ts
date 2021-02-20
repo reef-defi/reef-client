@@ -1,8 +1,7 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-
-import {DevUtil, LogLevel} from '../app/shared/utils/dev-util';
+import {LogLevel} from '../app/shared/utils/dev-util-log-level';
 
 export const environment = {
   production: false,

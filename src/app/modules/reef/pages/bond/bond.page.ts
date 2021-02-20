@@ -1,27 +1,20 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BondsService } from '../../../../core/services/bonds.service';
-import { ActivatedRoute } from '@angular/router';
-import { filter, map, pluck, shareReplay } from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import {
-  Bond,
-  BondSaleStatus,
-  IProviderUserInfo,
-  TokenSymbol,
-  TransactionType,
-} from '../../../../core/models/types';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { UiUtils } from '../../../../shared/utils/ui.utils';
-import { ApiService } from '../../../../core/services/api.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { DateTimeUtil } from '../../../../shared/utils/date-time.util';
-import { TokenUtil } from '../../../../shared/utils/token.util';
-import { Observable, Subject, timer } from 'rxjs';
-import { BondUtil } from '../../../../shared/utils/bond.util';
-import { startWith } from 'rxjs/internal/operators/startWith';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
-
-const timer$ = timer(0, 1000);
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BondsService} from '../../../../core/services/bonds.service';
+import {ActivatedRoute} from '@angular/router';
+import {filter, map, pluck, shareReplay} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {Bond, BondSaleStatus, BondTimes, IProviderUserInfo, TokenSymbol, TransactionType} from '../../../../core/models/types';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {UiUtils} from '../../../../shared/utils/ui.utils';
+import {ApiService} from '../../../../core/services/api.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {DateTimeUtil} from '../../../../shared/utils/date-time.util';
+import {TokenUtil} from '../../../../shared/utils/token.util';
+import {Observable, Subject, timer} from 'rxjs';
+import {BondUtil} from '../../../../shared/utils/bond.util';
+import {startWith} from 'rxjs/internal/operators/startWith';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Component({
   selector: 'app-bond',
@@ -34,29 +27,32 @@ export class BondPage {
 
   TransactionType = TransactionType;
   UiUtils = UiUtils;
-  DateTimeUtil = DateTimeUtil;
   BondUtil = BondUtil;
   TokenUtil = TokenUtil;
   BondSaleStatus = BondSaleStatus;
+
+  timer$ = timer(0, 1000);
 
   bond$ = combineLatest([
     this.bondsService.bondsList$,
     this.route.params.pipe(pluck('id')),
   ]).pipe(
-    map(([bonds, id]: [Bond[], string]) =>
-      bonds.find((b) => b.id.toString() === id)
+    map(([bonds, id]: [{ list: Bond[], chainId: number }, string]) =>
+      bonds.list.find((b) => b.id.toString() === id)
     ),
     startWith({}),
     shareReplay(1)
   );
-  bondWithTimes$ = this.bond$.pipe(
-    filter((b: any) => !!b && !!b.id),
-    switchMap((b) => this.bondsService.getBondTimeValues$(b as Bond)),
+
+  bondTimes$ = this.bond$.pipe(
+    filter((b: Bond) => !!b && !!b.id),
+    switchMap((b: Bond) => b.times$),
     shareReplay(1)
   );
-  lockDurationString$ = this.bondWithTimes$.pipe(
-    map((bond) =>
-      UiUtils.toMinTimespanText(bond.farmStartTime, bond.farmEndTime)
+
+  lockDurationString$ = this.bondTimes$.pipe(
+    map((bondTimes) =>
+      UiUtils.toMinTimespanText(bondTimes.farmStartTime, bondTimes.farmEndTime)
     )
   );
 
@@ -76,29 +72,31 @@ export class BondPage {
   );
 
   private stakedBalance$ = combineLatest([
-    this.bondWithTimes$,
+    this.bond$,
+    this.bondTimes$,
     this.connectorService.providerUserInfo$,
     this.stakedBalanceUpdate.pipe(startWith(null)),
   ]).pipe(
     switchMap(
-      ([bond, info, _]: [Bond, IProviderUserInfo, any]) =>
+      ([bond, bondTimes, info, _]: [ Bond, BondTimes, IProviderUserInfo, any]) =>
         this.bondsService.getStakedBalanceOf(bond, info.address),
-      (bondInfo, balance) => ({ bond: bondInfo[0], info: bondInfo[1], balance })
+      (bondInfo, balance) => ({bond: bondInfo[0], bondTimes: bondInfo[1], info: bondInfo[2], balance})
     ),
     shareReplay(1)
   );
-  stakedBalanceReturn$ = combineLatest([this.stakedBalance$, timer$]).pipe(
+  stakedBalanceReturn$ = combineLatest([this.stakedBalance$, this.timer$]).pipe(
     map(
       // tslint:disable-next-line:variable-name
-      ([bond_info_balance, tmr]: [
-        { bond: Bond; info: IProviderUserInfo; balance: string },
+      ([bond_times_info_balance, _]: [
+        { bond: Bond, bondTimes: BondTimes, info: IProviderUserInfo; balance: string },
         any
       ]) => ({
-        bond: bond_info_balance.bond,
-        staked: parseFloat(bond_info_balance.balance),
+        bond: bond_times_info_balance.bond,
+        staked: parseFloat(bond_times_info_balance.balance),
         ...BondUtil.getBondReturn(
-          bond_info_balance.bond,
-          bond_info_balance.balance
+          bond_times_info_balance.bond,
+          bond_times_info_balance.bondTimes,
+          bond_times_info_balance.balance
         ),
         // totalInterestReturn: (parseFloat(bond_info_balance.bond.apy) / 100) * parseFloat(bond_info_balance.balance)
       })
@@ -110,7 +108,7 @@ export class BondPage {
     currentInterestReturn: number;
     totalInterestReturn: number;
   }>;
-  timeLeftToExpired$ = combineLatest([this.bondWithTimes$, timer$]).pipe(
+  timeLeftToExpired$ = combineLatest([this.bondTimes$, this.timer$]).pipe(
     map(([bond, _]) => {
       const now = new Date();
       if (
@@ -129,7 +127,8 @@ export class BondPage {
     public connectorService: ConnectorService,
     public apiService: ApiService,
     public tokenBalanceService: TokenBalanceService
-  ) {}
+  ) {
+  }
 
   stake(bond: Bond, stakeAmount: string): void {
     this.bondsService.stake(bond, stakeAmount).then(
