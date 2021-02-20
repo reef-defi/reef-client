@@ -12,7 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -461,6 +461,14 @@ export interface Bond {
   entryEndTime$?: Observable<number>;
   status$?: Observable<BondSaleStatus>;
   times$?: Observable<BondTimes>;
+  stakedBalanceUpdate?: Subject<void>;
+  stakedBalanceReturn$?: Observable<{
+    bond: Bond;
+    staked: number;
+    currentInterestReturn: number;
+    totalInterestReturn: number;
+  }>;
+  timeLeftToExpired$?: Observable<string>;
 }
 
 export interface BondTimes {
@@ -473,8 +481,9 @@ export interface BondTimes {
 export enum BondSaleStatus {
   EARLY,
   OPEN,
-  LATE,
   FILLED,
+  FARM,
+  COMPLETE
 }
 
 export class ErrorDisplay {
