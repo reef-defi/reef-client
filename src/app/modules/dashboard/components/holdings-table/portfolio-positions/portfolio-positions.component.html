@@ -14,6 +14,7 @@
   <ng-template #emptyPositions>
     <div *ngIf="positions.errMessage; else noData">
       <span class="small-text text-muted">{{ positions.errMessage }}</span>
+      <button class="btn btn-light ml-3" (click)="refresh.emit()">retry</button>
     </div>
     <ng-template #noData
       ><span class="small-text text-muted"

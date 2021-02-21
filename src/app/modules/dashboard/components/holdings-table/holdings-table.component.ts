@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenSymbol } from '../../../../core/models/types';
+import {ExchangeId, IPortfolio, TokenSymbol} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-holdings-table',
@@ -9,8 +9,9 @@ import { TokenSymbol } from '../../../../core/models/types';
 })
 export class HoldingsTableComponent {
   TokenSymbol = TokenSymbol;
+  ExchangeId = ExchangeId;
   constructor(private readonly router: Router) {}
-  @Input() portfolio;
+  @Input() portfolio: IPortfolio;
 
   goToReef() {
     this.router.navigate(['/reef/buy']);

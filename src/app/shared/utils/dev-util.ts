@@ -1,4 +1,3 @@
-import {environment} from '../../../environments/environment';
 
 export class DevUtil {
   static devLog(...args): void {
@@ -7,8 +6,8 @@ export class DevUtil {
       logAtLevel = args[args.length - 1].logLevel;
       args.splice(args.length - 1, 1);
     }
-    if (environment.logLevel >= logAtLevel) {
-      if (logAtLevel > 0) {
+    if (1 >= logAtLevel) {
+      if (1 > 0) {
         console.log.call(null, ...args);
       } else if (logAtLevel === LogLevel.WARNING) {
         console.warn.call(null, ...args);

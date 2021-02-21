@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, Output} from '@angular/core';
+import {EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'app-portfolio-positions',
@@ -10,4 +11,6 @@ export class PortfolioPositionsComponent {
   positions: any;
   @Input()
   title: string;
+  @Output()
+  refresh = new EventEmitter<void>();
 }

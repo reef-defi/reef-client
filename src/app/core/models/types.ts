@@ -12,6 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
+import {Subject} from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -23,6 +24,7 @@ export interface IPortfolio {
   compoundPositions: any[] | ErrorDisplay;
   tokens: any[] | ErrorDisplay;
   uniswapPositions: any[] | ErrorDisplay;
+  refreshSubject?: Subject<ExchangeId>;
 }
 
 export type SupportedPortfolio = Pick<
@@ -471,6 +473,6 @@ export class ErrorDisplay {
   }
 
   constructor(public errMessage: string, public errCode?: string) {
-    console.log('ERROR MSG=', errMessage, errCode);
+    console.log('ErrorDisplay ERROR MSG =', errMessage, errCode);
   }
 }
