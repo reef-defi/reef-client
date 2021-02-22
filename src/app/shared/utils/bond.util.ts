@@ -1,4 +1,4 @@
-import {Bond, BondTimes} from '../../core/models/types';
+import { Bond, BondTimes } from '../../core/models/types';
 import { DateTimeUtil } from './date-time.util';
 
 export class BondUtil {
@@ -27,7 +27,9 @@ export class BondUtil {
   }
 
   private static getBondFarmTime(bondTimes: BondTimes) {
-    const farmStartTime = DateTimeUtil.toDate(bondTimes.farmStartTime).getTime();
+    const farmStartTime = DateTimeUtil.toDate(
+      bondTimes.farmStartTime
+    ).getTime();
     const farmEndTime = DateTimeUtil.toDate(bondTimes.farmEndTime).getTime();
     const farmTimeSpan = farmEndTime - farmStartTime;
     return { farmStartTime, farmEndTime, farmTimeSpan };

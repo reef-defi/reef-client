@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {BondsService} from '../../../../core/services/bonds.service';
-import {UiUtils} from '../../../../shared/utils/ui.utils';
-import {BondSaleStatus, TransactionType,} from '../../../../core/models/types';
-import {ConnectorService} from '../../../../core/services/connector.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BondsService } from '../../../../core/services/bonds.service';
+import { UiUtils } from '../../../../shared/utils/ui.utils';
+import { BondSaleStatus, TransactionType } from '../../../../core/models/types';
+import { ConnectorService } from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-bonds',
@@ -18,7 +18,5 @@ export class BondsPage {
   constructor(
     public bondsService: BondsService,
     public readonly connectorService: ConnectorService
-  ) {
-  }
-
+  ) {}
 }

@@ -1,18 +1,36 @@
-import {ChainId, ErrorDisplay, ExchangeId, IProviderUserInfo, SupportedPortfolio, Token, TokenSymbol,} from '../../core/models/types';
-import {merge, Observable, Subject} from 'rxjs';
-import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap,} from 'rxjs/operators';
-import {Injectable} from '@angular/core';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {
+  ChainId,
+  ErrorDisplay,
+  ExchangeId,
+  IProviderUserInfo,
+  SupportedPortfolio,
+  Token,
+  TokenSymbol,
+} from '../../core/models/types';
+import { merge, Observable, Subject } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import {of} from 'rxjs/internal/observable/of';
-import {AddressUtils} from '../utils/address.utils';
+import { of } from 'rxjs/internal/observable/of';
+import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
-import {TokenUtil} from '../utils/token.util';
-import {ConnectorService} from '../../core/services/connector.service';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {DevUtil} from '../utils/dev-util';
-import {LogLevel} from '../utils/dev-util-log-level';
+import { TokenUtil } from '../utils/token.util';
+import { ConnectorService } from '../../core/services/connector.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { DevUtil } from '../utils/dev-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
@@ -289,7 +307,6 @@ export class TokenBalanceService {
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
       ),
       tap((v) => DevUtil.devLog('BALANCE=', v))
-      )
     );
   }
 

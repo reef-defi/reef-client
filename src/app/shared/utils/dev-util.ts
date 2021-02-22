@@ -1,5 +1,5 @@
 import { environment } from '../../../environments/environment';
-import {LogLevel} from './dev-util-log-level';
+import { LogLevel } from './dev-util-log-level';
 
 export class DevUtil {
   static devLog(
@@ -19,4 +19,3 @@ export class DevUtil {
     }
   }
 }
-
