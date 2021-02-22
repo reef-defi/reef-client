@@ -29,8 +29,8 @@ import { TokenUtil } from '../utils/token.util';
 import { ConnectorService } from '../../core/services/connector.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { flatMap } from 'rxjs/internal/operators';
-import {DevUtil, LogLevel} from '../utils/dev-util';
+import { DevUtil } from '../utils/dev-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
@@ -240,7 +240,7 @@ export class TokenBalanceService {
                     });
                   }
                 ),
-                tap(v => DevUtil.devLog('UPDATED BALANCE=', v))
+                tap((v) => DevUtil.devLog('UPDATED BALANCE=', v))
               );
             }
             return of(cachedBalances);
@@ -305,8 +305,8 @@ export class TokenBalanceService {
     return balances$.pipe(
       map((tokens) =>
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
-      )
-      // tap((v) => console.log('VVVV', v))
+      ),
+      tap((v) => DevUtil.devLog('BALANCE=', v))
     );
   }
 
@@ -349,9 +349,9 @@ export class TokenBalanceService {
           tokenAddress
         );
       }),
-      tap(v => DevUtil.devLog('NEW BALANCE for ', tokenSymbol, ' = ', v)),
+      tap((v) => DevUtil.devLog(`NEW BALANCE for ${tokenSymbol}=`, v)),
       catchError((e) => {
-        DevUtil.devLog('ERROR GETTING BALANCE', e, {logLevel: LogLevel.WARNING});
+        DevUtil.devLog('ERROR GETTING BALANCE', e, LogLevel.WARNING);
         return of('0');
       })
     );
