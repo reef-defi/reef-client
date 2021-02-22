@@ -1,17 +1,9 @@
 import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { PoolService } from '../../../../core/services/pool.service';
-import {
-  catchError,
-  distinctUntilChanged,
-  filter,
-  map,
-  shareReplay,
-  tap,
-} from 'rxjs/operators';
+import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import {
   IBasketHistoricRoi,
-  IPortfolio,
   SupportedPortfolio,
   Token,
   TokenBalance,
@@ -21,7 +13,6 @@ import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { totalmem } from 'os';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 import { first } from 'rxjs/internal/operators/first';
@@ -145,26 +136,7 @@ export class DashboardPage implements AfterViewInit {
           ) {
             return null;
           }
-          let other = 0;
-          const total = totalBalance;
-          const pairs = portfolio.tokens
-            .map(({ contract_ticker_symbol, quote }) => [
-              contract_ticker_symbol,
-              (quote / total) * 100,
-            ])
-            .map(([name, percent]: [string, number]) => {
-              if (percent < 1) {
-                other += percent;
-              }
-              return [name, percent];
-            })
-            .filter(([_, percent]) => percent >= 1);
-          let unified = pairs;
-          if (other > 0) {
-            unified = [...pairs, ['Other', other]];
-          }
-          // console.log(unified, 'UNIFIED');
-          return this.chartsService.composePieChart(unified);
+          return this.makeChart(portfolio, totalBalance);
         }
       ),
       shareReplay(1)
@@ -226,5 +198,42 @@ export class DashboardPage implements AfterViewInit {
       new Date(key).getTime(),
       +obj[key].weighted_roi.toFixed(2),
     ]);
+  }
+
+  private makeChart(portfolio: SupportedPortfolio, totalBalance: number) {
+    let defiPositions = [];
+    if (
+      Array.isArray(portfolio.uniswapPositions) &&
+      portfolio.uniswapPositions.length > 0
+    ) {
+      const poolTokens = portfolio.uniswapPositions.map((p) => p.pool_token);
+      defiPositions.push(...poolTokens);
+    }
+    if (
+      Array.isArray(portfolio.compoundPositions) &&
+      portfolio.compoundPositions.length > 0
+    ) {
+      defiPositions.push(...portfolio.compoundPositions);
+    }
+    let other = 0;
+    const total = totalBalance;
+    const all = [...(portfolio.tokens as Token[]), ...defiPositions];
+    const pairs = all
+      .map(({ contract_ticker_symbol, quote }) => [
+        contract_ticker_symbol,
+        (quote / total) * 100,
+      ])
+      .map(([name, percent]: [string, number]) => {
+        if (percent < 1) {
+          other += percent;
+        }
+        return [name, percent];
+      })
+      .filter(([_, percent]) => percent >= 1);
+    let unified = pairs;
+    if (other > 0) {
+      unified = [...pairs, ['Other', other]];
+    }
+    return this.chartsService.composePieChart(unified);
   }
 }
