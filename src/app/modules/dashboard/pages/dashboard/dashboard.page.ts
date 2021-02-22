@@ -1,23 +1,3 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import { catchError, map, shareReplay, tap } from 'rxjs/operators';
-import {
-  IBasketHistoricRoi,
-  IPortfolio,
-  SupportedPortfolio,
-  Token,
-  TokenBalance,
-} from '../../../../core/models/types';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
-import { first } from 'rxjs/internal/operators/first';
-import { scan } from 'rxjs/internal/operators/scan';
 import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {PoolService} from '../../../../core/services/pool.service';
@@ -39,7 +19,7 @@ import {DevUtil} from '../../../../shared/utils/dev-util';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage implements AfterViewInit {
+export class DashboardPage {
   Object = Object;
   public transactions$;
   public tokenBalance$: Observable<TokenBalance>;
@@ -74,23 +54,20 @@ export class DashboardPage implements AfterViewInit {
     );
 
     const portfolioPositions$ = address$.pipe(
-      map(addr => this.tokenBalanceService.getPortfolioObservables(addr),
-        shareReplay(1)
-      ));
+      map(addr => this.tokenBalanceService.getPortfolioObservables(addr)),
+      shareReplay(1)
+    );
 
     // Init portfolio positions
     portfolioPositions$.pipe(
       take(1),
-      switchMap((portfolio:{ refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> }) => {
-        portfolio.refreshSubject.next(ExchangeId.TOKENS);
-
-
+      switchMap((portfolio: { refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> }) => {
+        setTimeout(_ => portfolio.refreshSubject.next(ExchangeId.TOKENS));
         const uniPositionsPortfolio$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
           filter((v) => !!v),
           take(1),
           tap((_) => {
-            DevUtil.devLog('NEXT UNI ');
-            setTimeout(_=>portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2));
+              portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2);
             }
           )
         );
@@ -98,8 +75,6 @@ export class DashboardPage implements AfterViewInit {
           filter((v) => !!v),
           take(1),
           tap((_) => {
-
-            DevUtil.devLog('NEXT COMP ');
               portfolio.refreshSubject.next(ExchangeId.COMPOUND);
             }
           )
@@ -107,85 +82,37 @@ export class DashboardPage implements AfterViewInit {
 
         return merge(uniPositionsPortfolio$, compPositionsPortfolio$);
       }),
-      take(1)
-    ).subscribe((v) => {
-
-    });
+    ).subscribe();
 
     this.portfolio$ = portfolioPositions$.pipe(
       switchMap((portfolio: { refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> }) => {
         const tokens$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
           tap((data) => {
-            // console.log('PORTFOLIO DATA=', data);
-            this.getHistoricData(data);
+            if (data && data.length) {
+              this.getHistoricData(data);
+            }
           }),
           map(v => ({tokens: v}))
         );
         const uni$ = portfolio.positions.get(ExchangeId.UNISWAP_V2).pipe(
-          tap(v=>console.log('UNI VAL=',v)),
           map(v => ({uniswapPositions: v}))
         );
-        return merge(tokens$, uni$);
+        const comp$ = portfolio.positions.get(ExchangeId.COMPOUND).pipe(
+          map(v => ({compoundPositions: v}))
+        );
+        return merge(tokens$, uni$, comp$).pipe(
+          map(positionVal => ({...positionVal, refreshSubject: portfolio.refreshSubject} as IPortfolio))
+        );
       }),
       scan((combinedPortfolio, currVal: IPortfolio) => {
-        DevUtil.devLog('SCANNN VAL=', currVal);
-
         const currValExchanges = Object.keys(currVal);
         currValExchanges.forEach((exKey) => {
           combinedPortfolio[exKey] = currVal[exKey];
         });
         return combinedPortfolio;
       }, {} as IPortfolio),
-      tap(v=>console.log('PORTF=',v)),
-      // tap(() => {
-      //   this.portfolioError$.next(false);
-      // }),
-      // switchMap(() => {
-      //   return address$.pipe(
-      //     switchMap((address: string) =>
-      //       this.tokenBalanceService.getPortfolio(address)
-      //     ),
-      //     /*tap((data) => {
-      //       // console.log('PORTFOLIO DATA=', data);
-      //       this.getHistoricData(data.tokens);
-      //     })*/
-      //   );
-      // }),
-      // catchError((err) => {
-      //   this.portfolioError$.next(true);
-      //   return EMPTY;
-      // }),
       shareReplay(1)
     );
-
-    /*this.portfolio$ = this.triggerPortfolio.pipe(
-      tap(() => {
-        this.portfolioError$.next(false);
-      }),
-      switchMap(() => {
-        return address$.pipe(
-          switchMap((address: string) =>
-            this.tokenBalanceService.getPortfolio(address)
-          ),
-          scan((combinedPortfolio, currVal: IPortfolio) => {
-            const currValExchanges = Object.keys(currVal);
-            currValExchanges.forEach((exKey) => {
-              combinedPortfolio[exKey] = currVal[exKey];
-            });
-            return combinedPortfolio;
-          }, {}),
-          tap((data) => {
-            // console.log('PORTFOLIO DATA=', data);
-            this.getHistoricData(data.tokens);
-          })
-        );
-      }),
-      catchError((err) => {
-        this.portfolioError$.next(true);
-        return EMPTY;
-      }),
-      shareReplay(1)
-    );*/
 
     this.portfolioTotalBalance$ = this.portfolio$.pipe(
       map((portfolio: SupportedPortfolio) => {
@@ -207,7 +134,7 @@ export class DashboardPage implements AfterViewInit {
             return 0;
           })
           .reduce((a, c) => a + c);
-        return { totalBalance };
+        return {totalBalance};
       })
     );
 
@@ -234,7 +161,7 @@ export class DashboardPage implements AfterViewInit {
       this.portfolioTotalBalance$
     ).pipe(
       map(
-        ([portfolio, { totalBalance }]: [
+        ([portfolio, {totalBalance}]: [
           SupportedPortfolio,
           { [key: string]: number }
         ]) => {
@@ -250,10 +177,6 @@ export class DashboardPage implements AfterViewInit {
       ),
       shareReplay(1)
     );
-  }
-
-  ngAfterViewInit() {
-    this.triggerPortfolio.next();
   }
 
   public setDefaultImage(imgIdx: number) {
@@ -328,7 +251,7 @@ export class DashboardPage implements AfterViewInit {
     const total = totalBalance;
     const all = [...(portfolio.tokens as Token[]), ...defiPositions];
     const pairs = all
-      .map(({ contract_ticker_symbol, quote }) => [
+      .map(({contract_ticker_symbol, quote}) => [
         contract_ticker_symbol,
         (quote / total) * 100,
       ])

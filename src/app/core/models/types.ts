@@ -19,11 +19,11 @@ export type RpcErrorTypes = {
 };
 
 export interface IPortfolio {
-  aavePositions: any[] | ErrorDisplay;
-  balancerPositions: any[] | ErrorDisplay;
-  compoundPositions: any[] | ErrorDisplay;
-  tokens: any[] | ErrorDisplay;
-  uniswapPositions: any[] | ErrorDisplay;
+  aavePositions?: any[] | ErrorDisplay;
+  balancerPositions?: any[] | ErrorDisplay;
+  compoundPositions?: any[] | ErrorDisplay;
+  tokens?: any[] | ErrorDisplay;
+  uniswapPositions?: any[] | ErrorDisplay;
   refreshSubject?: Subject<ExchangeId>;
 }
 
