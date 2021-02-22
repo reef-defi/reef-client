@@ -1,25 +1,21 @@
+import { environment } from '../../../environments/environment';
+import { LogLevel } from './dev-util-log-level';
 
 export class DevUtil {
-  static devLog(...args): void {
-    let logAtLevel = LogLevel.STD;
-    if (args.length && args[args.length - 1].logLevel != null) {
-      logAtLevel = args[args.length - 1].logLevel;
-      args.splice(args.length - 1, 1);
-    }
-    if (1 >= logAtLevel) {
-      if (1 > 0) {
-        console.log.call(null, ...args);
-      } else if (logAtLevel === LogLevel.WARNING) {
-        console.warn.call(null, ...args);
-      } else if (logAtLevel === LogLevel.ERROR) {
-        console.error.call(null, ...args);
+  static devLog(
+    msg: string,
+    value?: any,
+    logLevel: LogLevel = LogLevel.STD
+  ): void {
+    const minLogLevel = environment.logLevel;
+    if (minLogLevel >= logLevel) {
+      if (logLevel > LogLevel.WARNING) {
+        console.log(msg, value);
+      } else if (logLevel === LogLevel.WARNING) {
+        console.warn(msg, value);
+      } else if (logLevel === LogLevel.ERROR) {
+        console.error(msg, value);
       }
     }
   }
-}
-
-export enum LogLevel {
-  ERROR = -1,
-  WARNING = 0,
-  STD = 1
 }

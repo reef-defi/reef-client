@@ -1,6 +1,8 @@
+import {LogLevel} from '../app/shared/utils/dev-util-log-level';
+
 export const environment = {
   production: true,
-  logLevel: 0,
+  logLevel: LogLevel.WARNING,
   reefApiUrl: 'https://baskets.reef.finance/v1',
   reefBinanceApiUrl: 'http://localhost:3000/v1',
   balancerPoolUrl: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer',
