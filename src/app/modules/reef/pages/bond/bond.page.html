@@ -57,7 +57,7 @@
             >
               <ng-container
                 *ngIf="(bondNoTimes.status$|async)===BondSaleStatus.OPEN; else closed"
-              ><!--<ng-container
+                ><!--<ng-container
                 *ngIf="(timeLeftToExpired$|async)!=null && bondsService.toBondSaleStatus(bondNoTimes, bondTimes)===BondSaleStatus.OPEN else closed"
               >-->
                 <div class="text-center">
@@ -171,9 +171,7 @@
               <ng-container
                 *ngIf="bondNoTimes.times$| async as bondTimes; else loading"
               >
-                <div
-                  [ngSwitch]="bondNoTimes.status$|async"
-                >
+                <div [ngSwitch]="bondNoTimes.status$|async">
                   <ng-container *ngSwitchCase="BondSaleStatus.FARM">
                     <div class="card">
                       <div class="h5 text-center">Bond sale closed.</div>
@@ -183,13 +181,16 @@
                         <ng-container
                           *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                         >
-                          <ng-container *ngIf="stakedReturn.currentInterestReturn>0">Your growing profit:<br
-                            *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
-                          />
+                          <ng-container
+                            *ngIf="stakedReturn.currentInterestReturn>0"
+                            >Your growing profit:<br
+                              *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
+                            />
                             <span class="accent-text"
-                            >{{stakedReturn.currentInterestReturn}}
+                              >{{stakedReturn.currentInterestReturn}}
                               {{stakedReturn.bond.farm}}</span
-                            ></ng-container><br />
+                            ></ng-container
+                          ><br />
                           Unlock date:
                           <span class="accent-text"
                             >{{bondTimes.farmEndTime|date}}</span
@@ -242,15 +243,15 @@
                           *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                         >
                           Your profit:<br
-                          *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
-                        />
+                            *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
+                          />
                           <span class="accent-text"
-                          >{{stakedReturn.currentInterestReturn}}
+                            >{{stakedReturn.currentInterestReturn}}
                             {{stakedReturn.bond.farm}}</span
                           ><br />
                           Unlock date:
                           <span class="accent-text"
-                          >{{bondTimes.farmEndTime|date}}</span
+                            >{{bondTimes.farmEndTime|date}}</span
                           >
                         </ng-container>
                       </p>
@@ -261,15 +262,15 @@
                           class="card bg-purple text-white text-center text-monospace m-4 p-2"
                         >
                           <span class="bold"
-                          >{{stakedReturn.staked}}
+                            >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
                           locked for<br />
                           <span class="bold"
-                          >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                            >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                             null, stakedReturn.totalInterestReturn > 100 ?
-                              bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
-                              + 1)}} {{stakedReturn.bond.farm}}
+                            bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
+                            + 1)}} {{stakedReturn.bond.farm}}
                           </span>
                           interest profit.
                         </div>

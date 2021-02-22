@@ -12,7 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -483,7 +483,7 @@ export enum BondSaleStatus {
   OPEN,
   FILLED,
   FARM,
-  COMPLETE
+  COMPLETE,
 }
 
 export class ErrorDisplay {

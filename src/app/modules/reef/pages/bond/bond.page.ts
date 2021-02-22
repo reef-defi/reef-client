@@ -1,17 +1,23 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {BondsService} from '../../../../core/services/bonds.service';
-import {ActivatedRoute} from '@angular/router';
-import {filter, map, pluck, shareReplay} from 'rxjs/operators';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {Bond, BondSaleStatus, IProviderUserInfo, TokenSymbol, TransactionType,} from '../../../../core/models/types';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {UiUtils} from '../../../../shared/utils/ui.utils';
-import {ApiService} from '../../../../core/services/api.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {TokenUtil} from '../../../../shared/utils/token.util';
-import {BondUtil} from '../../../../shared/utils/bond.util';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BondsService } from '../../../../core/services/bonds.service';
+import { ActivatedRoute } from '@angular/router';
+import { filter, map, pluck, shareReplay } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {
+  Bond,
+  BondSaleStatus,
+  IProviderUserInfo,
+  TokenSymbol,
+  TransactionType,
+} from '../../../../core/models/types';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { UiUtils } from '../../../../shared/utils/ui.utils';
+import { ApiService } from '../../../../core/services/api.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { TokenUtil } from '../../../../shared/utils/token.util';
+import { BondUtil } from '../../../../shared/utils/bond.util';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-bond',
@@ -71,8 +77,7 @@ export class BondPage {
     public connectorService: ConnectorService,
     public apiService: ApiService,
     public tokenBalanceService: TokenBalanceService
-  ) {
-  }
+  ) {}
 
   stake(bond: Bond, stakeAmount: string): void {
     this.bondsService.stake(bond, stakeAmount).then(

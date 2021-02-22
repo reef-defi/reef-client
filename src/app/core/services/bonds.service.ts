@@ -1,27 +1,35 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {from, Observable, Subject, timer} from 'rxjs';
-import {Bond, BondSaleStatus, BondTimes, IProviderUserInfo, ProtocolAddresses, TokenSymbol, TransactionType,} from '../models/types';
-import {TokenUtil} from '../../shared/utils/token.util';
-import {ConnectorService} from './connector.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {environment} from '../../../environments/environment';
-import {map, shareReplay, takeWhile} from 'rxjs/operators';
-import {getContractData} from '../../../assets/abi';
-import {UniswapService} from './uniswap.service';
-import {first} from 'rxjs/internal/operators/first';
-import {ErrorUtils} from '../../shared/utils/error.utils';
-import {NotificationService} from './notification.service';
-import {ApiService} from './api.service';
-import {TransactionsService} from './transactions.service';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { from, Observable, Subject, timer } from 'rxjs';
+import {
+  Bond,
+  BondSaleStatus,
+  BondTimes,
+  IProviderUserInfo,
+  ProtocolAddresses,
+  TokenSymbol,
+  TransactionType,
+} from '../models/types';
+import { TokenUtil } from '../../shared/utils/token.util';
+import { ConnectorService } from './connector.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { environment } from '../../../environments/environment';
+import { map, shareReplay, takeWhile } from 'rxjs/operators';
+import { getContractData } from '../../../assets/abi';
+import { UniswapService } from './uniswap.service';
+import { first } from 'rxjs/internal/operators/first';
+import { ErrorUtils } from '../../shared/utils/error.utils';
+import { NotificationService } from './notification.service';
+import { ApiService } from './api.service';
+import { TransactionsService } from './transactions.service';
 import Web3 from 'web3';
-import {of} from 'rxjs/internal/observable/of';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {DateTimeUtil} from '../../shared/utils/date-time.util';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
-import {UiUtils} from '../../shared/utils/ui.utils';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {BondUtil} from '../../shared/utils/bond.util';
+import { of } from 'rxjs/internal/observable/of';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { DateTimeUtil } from '../../shared/utils/date-time.util';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import { UiUtils } from '../../shared/utils/ui.utils';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { BondUtil } from '../../shared/utils/bond.util';
 
 @Injectable({
   providedIn: 'root',
@@ -34,9 +42,9 @@ export class BondsService {
     switchMap(
       (info) =>
         this.http.get(environment.reefNodeApiUrl + '/bonds', {
-          params: {chainId: info.chainInfo.chain_id.toString()},
+          params: { chainId: info.chainInfo.chain_id.toString() },
         }),
-      (info, res: any) => ({chainId: info.chainInfo.chain_id, list: res})
+      (info, res: any) => ({ chainId: info.chainInfo.chain_id, list: res })
     ),
     map((res) => ({
       chainId: res.chainId,
@@ -55,8 +63,7 @@ export class BondsService {
     private apiService: ApiService,
     private transactionsService: TransactionsService,
     public tokenBalanceService: TokenBalanceService
-  ) {
-  }
+  ) {}
 
   getStakedBalanceOf(
     bond: Bond,
@@ -228,7 +235,8 @@ export class BondsService {
     ) {
       return BondSaleStatus.OPEN;
     }
-    if (!!bondTimes.farmEndTime &&
+    if (
+      !!bondTimes.farmEndTime &&
       DateTimeUtil.toDate(bondTimes.farmEndTime) < now
     ) {
       return BondSaleStatus.COMPLETE;
@@ -255,8 +263,12 @@ export class BondsService {
       bond.stakedBalanceUpdate.pipe(startWith(null)),
     ]).pipe(
       switchMap(
-        ([bond, bondTimes, info, _]: [Bond, BondTimes, IProviderUserInfo, any]) =>
-          this.getStakedBalanceOf(bond, info.address),
+        ([bond, bondTimes, info, _]: [
+          Bond,
+          BondTimes,
+          IProviderUserInfo,
+          any
+        ]) => this.getStakedBalanceOf(bond, info.address),
         (bondInfo, balance) => ({
           bond: bondInfo[0],
           bondTimes: bondInfo[1],
@@ -266,7 +278,10 @@ export class BondsService {
       ),
       shareReplay(1)
     );
-    bond.stakedBalanceReturn$ = combineLatest([stakedBalance$, bond.status$]).pipe(
+    bond.stakedBalanceReturn$ = combineLatest([
+      stakedBalance$,
+      bond.status$,
+    ]).pipe(
       map(
         // tslint:disable-next-line:variable-name
         ([bond_times_info_balance, status]: [
@@ -288,7 +303,11 @@ export class BondsService {
           ),
         })
       ),
-      takeWhile((v) => (v.status !== BondSaleStatus.COMPLETE || v.totalInterestReturn === 0), true),
+      takeWhile(
+        (v) =>
+          v.status !== BondSaleStatus.COMPLETE || v.totalInterestReturn === 0,
+        true
+      ),
       shareReplay(1)
     ) as Observable<{
       bond: Bond;
