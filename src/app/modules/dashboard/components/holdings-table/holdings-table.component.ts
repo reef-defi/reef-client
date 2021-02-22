@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import {ExchangeId, IPortfolio, TokenSymbol} from '../../../../core/models/types';
+import {
+  ExchangeId,
+  IPortfolio,
+  TokenSymbol,
+} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-holdings-table',

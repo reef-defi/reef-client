@@ -237,6 +237,7 @@ export enum ChainId {
 }
 
 export enum ExchangeId {
+  TOKENS = 'tokens',
   UNISWAP_V2 = 'uniswap_v2',
   BALANCER = 'balancer',
   COMPOUND = 'compound',

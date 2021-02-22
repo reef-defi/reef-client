@@ -83,7 +83,9 @@
   [positions]="portfolio?.uniswapPositions"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
 >
-  <span (click)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)">RRRRR</span>
+  <span (click)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
+    >RRRRR</span
+  >
   <div class="table-min-w-up-to-lg">
     <div class="row asset-row">
       <div class="col col-xl-4 d-flex align-items-center x-wide-cell">
@@ -93,67 +95,67 @@
       <div class="col text-right m-wide-cell">Amount</div>
       <div class="col text-right m-wide-cell">Total</div>
     </div>
+    <div
+      *ngFor="let pool of portfolio.uniswapPositions; let i = index"
+      class="row d-flex align-items-center justify-content-between asset-row"
+    >
       <div
-        *ngFor="let pool of portfolio.uniswapPositions; let i = index"
-        class="row d-flex align-items-center justify-content-between asset-row"
+        class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell"
       >
-        <div
-          class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell"
-        >
-          <div class="d-flex align-items-center asset-icon">
-            <img
-              onerror="this.src='/assets/images/empty-token.png';"
-              class="img-fluid mr-1"
-              [src]="pool.token_0.logo_url"
-              height="25"
-              width="25"
-            />
-            <img
-              onerror="this.src='/assets/images/empty-token.png';"
-              class="img-fluid mr-1"
-              style="margin-left: -10px"
-              [src]="pool.token_1.logo_url"
-              height="25"
-              width="25"
-            />
-          </div>
-          <div style="line-height: normal">
-            <a
-              href="https://etherscan.io/token/{{
+        <div class="d-flex align-items-center asset-icon">
+          <img
+            onerror="this.src='/assets/images/empty-token.png';"
+            class="img-fluid mr-1"
+            [src]="pool.token_0.logo_url"
+            height="25"
+            width="25"
+          />
+          <img
+            onerror="this.src='/assets/images/empty-token.png';"
+            class="img-fluid mr-1"
+            style="margin-left: -10px"
+            [src]="pool.token_1.logo_url"
+            height="25"
+            width="25"
+          />
+        </div>
+        <div style="line-height: normal">
+          <a
+            href="https://etherscan.io/token/{{
               pool.pool_token.contract_address
             }}"
-              target="_blank"
-              class="small font-weight-bolder d-flex align-items-center"
-            >
-              {{ pool.token_0.contract_ticker_symbol }}/{{
+            target="_blank"
+            class="small font-weight-bolder d-flex align-items-center"
+          >
+            {{ pool.token_0.contract_ticker_symbol }}/{{
               pool.token_1.contract_ticker_symbol
-              }}
-            </a>
-          </div>
-        </div>
-        <div class="col text-right text-monospace small m-wide-cell">
-          {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{
-          pool.token_1.balance | decimal: pool.token_1.balance
-          }}
-        </div>
-        <div class="col text-right m-wide-cell">
-          <div
-            class="text-monospace small"
-            [title]="pool.pool_token.balance || 0"
-          >
-            {{ pool.pool_token.balance | decimal: pool.pool_token.balance }}
-          </div>
-        </div>
-
-        <div class="col text-right m-wide-cell">
-          <div
-            class="text-monospace small"
-            [title]="pool.quote_rate * pool.balance"
-          >
-            ${{ pool.pool_token.quote | number: '1.0-0' }}
-          </div>
+            }}
+          </a>
         </div>
       </div>
+      <div class="col text-right text-monospace small m-wide-cell">
+        {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{
+          pool.token_1.balance | decimal: pool.token_1.balance
+        }}
+      </div>
+      <div class="col text-right m-wide-cell">
+        <div
+          class="text-monospace small"
+          [title]="pool.pool_token.balance || 0"
+        >
+          {{ pool.pool_token.balance | decimal: pool.pool_token.balance }}
+        </div>
+      </div>
+
+      <div class="col text-right m-wide-cell">
+        <div
+          class="text-monospace small"
+          [title]="pool.quote_rate * pool.balance"
+        >
+          ${{ pool.pool_token.quote | number: '1.0-0' }}
+        </div>
+      </div>
+    </div>
   </div>
 </app-portfolio-positions>
 
@@ -231,69 +233,70 @@
     </div>
 </app-portfolio-positions>-->
 
-<app-portfolio-positions title="Compound"
-                         [positions]="portfolio?.compoundPositions"
-                         (refresh)="portfolio.refreshSubject.next(ExchangeId.COMPOUND)"
+<app-portfolio-positions
+  title="Compound"
+  [positions]="portfolio?.compoundPositions"
+  (refresh)="portfolio.refreshSubject.next(ExchangeId.COMPOUND)"
 >
-    <div class="table-min-w-up-to-lg">
-      <div class="row mb-2 asset-row">
-        <div class="col col-xl-4 d-flex align-items-center x-wide-cell">
-          Asset
-        </div>
-        <div class="col text-right m-wide-cell">Amount</div>
-        <div class="col text-right m-wide-cell">Price</div>
-        <div class="col text-right m-wide-cell">Total</div>
+  <div class="table-min-w-up-to-lg">
+    <div class="row mb-2 asset-row">
+      <div class="col col-xl-4 d-flex align-items-center x-wide-cell">
+        Asset
       </div>
+      <div class="col text-right m-wide-cell">Amount</div>
+      <div class="col text-right m-wide-cell">Price</div>
+      <div class="col text-right m-wide-cell">Total</div>
+    </div>
+    <div
+      *ngFor="let token of portfolio.compoundPositions; let i = index"
+      class="row d-flex align-items-center justify-content-between mb-2 asset-row"
+    >
       <div
-        *ngFor="let token of portfolio.compoundPositions; let i = index"
-        class="row d-flex align-items-center justify-content-between mb-2 asset-row"
+        class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell"
       >
-        <div
-          class="col col-xl-4 d-flex align-items-center text-monospace x-wide-cell"
+        <div class="d-flex align-items-center asset-icon">
+          <img
+            id="imgx-{{ i }}"
+            onerror="this.src='/assets/images/empty-token.png';"
+            alt="{{ token.contract_ticker_symbol }}"
+            class="img-fluid mr-1"
+            [src]="token.logo_url"
+            height="20"
+            width="20"
+          />
+        </div>
+        <a
+          style="width: 100%"
+          href="https://etherscan.io/token/{{ token.contract_address }}"
+          target="_blank"
+          class="small font-weight-bolder d-flex align-items-center"
         >
-          <div class="d-flex align-items-center asset-icon">
-            <img
-              id="imgx-{{ i }}"
-              onerror="this.src='/assets/images/empty-token.png';"
-              alt="{{ token.contract_ticker_symbol }}"
-              class="img-fluid mr-1"
-              [src]="token.logo_url"
-              height="20"
-              width="20"
-            />
-          </div>
-          <a
-            style="width: 100%"
-            href="https://etherscan.io/token/{{ token.contract_address }}"
-            target="_blank"
-            class="small font-weight-bolder d-flex align-items-center"
-          >
-            <span style="display: inline-block; width: 25%">{{
-              token.contract_ticker_symbol
-            }}</span>
-            <span>{{ token.contract_name }}</span>
-          </a>
+          <span style="display: inline-block; width: 25%">{{
+            token.contract_ticker_symbol
+          }}</span>
+          <span>{{ token.contract_name }}</span>
+        </a>
+      </div>
+      <div class="col text-right m-wide-cell">
+        <div class="text-monospace small" [title]="token.balance || 0">
+          {{ token.balance || 0 | decimal: token.quote_rate }}
         </div>
-        <div class="col text-right m-wide-cell">
-          <div class="text-monospace small" [title]="token.balance || 0">
-            {{ token.balance || 0 | decimal: token.quote_rate }}
-          </div>
+      </div>
+      <div class="col text-right m-wide-cell">
+        <div class="text-monospace small" [title]="token.balance || 0">
+          ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
-        <div class="col text-right m-wide-cell">
-          <div class="text-monospace small" [title]="token.balance || 0">
-            ${{ token.quote_rate | decimal: token.quote_rate }}
-          </div>
-        </div>
-        <div class="col text-right m-wide-cell">
-          <div
-            class="text-monospace small"
-            [title]="token.quote_rate * token.balance"
-          >
-            ${{ token.quote_rate * token.balance | number: '1.0-0' }}
-          </div>
+      </div>
+      <div class="col text-right m-wide-cell">
+        <div
+          class="text-monospace small"
+          [title]="token.quote_rate * token.balance"
+        >
+          ${{ token.quote_rate * token.balance | number: '1.0-0' }}
         </div>
       </div>
     </div>
+  </div>
 </app-portfolio-positions>
 
 <!--<app-portfolio-positions title="Aave" [positions]="portfolio?.aavePositions">
