@@ -1,5 +1,13 @@
 <div class="d-flex justify-content-between">
-  <div class="h5">{{ title }}</div>
+  <div class="h5">
+    {{ title }}
+    <mat-icon
+      *ngIf="!!positions"
+      class="text-muted small-text c-pointer"
+      (click)="refresh.emit()"
+      >refresh</mat-icon
+    >
+  </div>
   <ng-template #loading>
     <app-provider-loading>Loading positions</app-provider-loading>
   </ng-template>

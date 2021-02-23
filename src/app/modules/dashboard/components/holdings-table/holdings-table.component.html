@@ -2,6 +2,7 @@
   title="Tokens"
   [positions]="portfolio?.tokens"
   class="mb-4 table-responsive-lg"
+  (refresh)="portfolio.refreshSubject.next(ExchangeId.TOKENS)"
 >
   <div class="table-min-w-up-to-lg">
     <div class="row asset-row">
@@ -83,9 +84,6 @@
   [positions]="portfolio?.uniswapPositions"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
 >
-  <span (click)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
-    >RRRRR</span
-  >
   <div class="table-min-w-up-to-lg">
     <div class="row asset-row">
       <div class="col col-xl-4 d-flex align-items-center x-wide-cell">

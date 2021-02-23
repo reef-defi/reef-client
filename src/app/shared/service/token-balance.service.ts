@@ -1,32 +1,50 @@
-import {ChainId, ErrorDisplay, ExchangeId, IPortfolio, IProviderUserInfo, Token, TokenSymbol} from '../../core/models/types';
-import {Observable, Subject} from 'rxjs';
-import {catchError, filter, map, mergeMap, shareReplay, startWith, switchMap, take, tap} from 'rxjs/operators';
-import {Injectable} from '@angular/core';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {
+  ChainId,
+  ErrorDisplay,
+  ExchangeId,
+  IPortfolio,
+  IProviderUserInfo,
+  Token,
+  TokenSymbol,
+} from '../../core/models/types';
+import { Observable, Subject } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  shareReplay,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import {of} from 'rxjs/internal/observable/of';
-import {AddressUtils} from '../utils/address.utils';
+import { of } from 'rxjs/internal/observable/of';
+import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
-import {TokenUtil} from '../utils/token.util';
-import {ConnectorService} from '../../core/services/connector.service';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {DevUtil} from '../utils/dev-util';
-import {HttpUtil} from '../utils/http-util';
-import {LogLevel} from '../utils/dev-util-log-level';
+import { TokenUtil } from '../utils/token.util';
+import { ConnectorService } from '../../core/services/connector.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { DevUtil } from '../utils/dev-util';
+import { HttpUtil } from '../utils/http-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
-    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
+    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
+    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
-    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
-    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
+    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
+    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
+    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -45,18 +63,19 @@ export class TokenBalanceService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {
-  }
+  ) {}
 
-  getPortfolioObservables(address: string): { refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> } {
+  getPortfolioObservables(
+    address: string
+  ): {
+    refreshSubject: Subject<ExchangeId>;
+    positions: Map<ExchangeId, Observable<any>>;
+  } {
     const refreshSubject: Subject<ExchangeId> = new Subject();
     const tokenPositions$ = refreshSubject.pipe(
-      filter(v => v === ExchangeId.TOKENS),
-      tap(_ => this.refreshBalancesForAddress.next(address)),
-      switchMap(_ => this.getTokenBalances$(address)),
-      /*map(v => {
-        throw new Error('EEE22');
-      }),*/
+      filter((v) => v === ExchangeId.TOKENS),
+      tap((_) => this.refreshBalancesForAddress.next(address)),
+      switchMap((_) => this.getTokenBalances$(address)),
       catchError((e) => {
         return of(new ErrorDisplay('Error getting token positions.'));
       }),
@@ -69,7 +88,7 @@ export class TokenBalanceService {
     positions.set(ExchangeId.TOKENS, tokenPositions$);
     positions.set(ExchangeId.UNISWAP_V2, uniPositions$);
     positions.set(ExchangeId.COMPOUND, compPositions$);
-    return {refreshSubject, positions};
+    return { refreshSubject, positions };
   }
 
   private getCompoundPositions(
@@ -77,8 +96,10 @@ export class TokenBalanceService {
     refresh: Subject<ExchangeId>
   ): Observable<IPortfolio> {
     return refresh.asObservable().pipe(
-      filter(v => v === ExchangeId.COMPOUND),
-      switchMap(exId => this.getExchangePositions$(ExchangeId.COMPOUND, address)),
+      filter((v) => v === ExchangeId.COMPOUND),
+      switchMap((exId) =>
+        this.getExchangePositions$(ExchangeId.COMPOUND, address)
+      ),
       map((cPos) => {
         let compoundPositions;
         if (cPos && cPos.compound) {
@@ -86,7 +107,6 @@ export class TokenBalanceService {
             (x) => x.supply_tokens
           );
         }
-        console.log('CCCmmCC', compoundPositions);
         return compoundPositions;
       }),
       shareReplay(1),
@@ -101,32 +121,34 @@ export class TokenBalanceService {
     refresh: Subject<ExchangeId>
   ): Observable<any> {
     return refresh.asObservable().pipe(
-      filter(v => v === ExchangeId.UNISWAP_V2),
-      switchMap(exId => this.getExchangePositions$(exId, address).pipe(
-        map((uPos) => {
-
-          let uniswapPositions;
-          if (uPos && uPos.uniswap_v2) {
-            uniswapPositions = uPos.uniswap_v2.balances
-              .map((x) => {
-                ['pool_token', 'token_0', 'token_1'].forEach((t) => {
-                  // TODO use method for display decimals
-                  x[t].balance = x[t].balance / +`1e${x[t].contract_decimals}`;
-                });
-                return x;
-              })
-              .filter(
-                (x) => x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
-              );
-          }
-          return uniswapPositions;
-        }),
-        catchError((e) => {
-          console.log('EEEE', e);
-          return of(new ErrorDisplay('Error getting Uniswap positions.'));
-        }),
-        shareReplay(1),
-      ))
+      filter((v) => v === ExchangeId.UNISWAP_V2),
+      switchMap((exId) =>
+        this.getExchangePositions$(exId, address).pipe(
+          map((uPos) => {
+            let uniswapPositions;
+            if (uPos && uPos.uniswap_v2) {
+              uniswapPositions = uPos.uniswap_v2.balances
+                .map((x) => {
+                  ['pool_token', 'token_0', 'token_1'].forEach((t) => {
+                    // TODO use method for display decimals
+                    x[t].balance =
+                      x[t].balance / +`1e${x[t].contract_decimals}`;
+                  });
+                  return x;
+                })
+                .filter(
+                  (x) =>
+                    x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
+                );
+            }
+            return uniswapPositions;
+          }),
+          catchError((e) => {
+            return of(new ErrorDisplay('Error getting Uniswap positions.'));
+          }),
+          shareReplay(1)
+        )
+      )
     );
   }
 
@@ -138,7 +160,9 @@ export class TokenBalanceService {
       this.http.get(
         `${this.reefNodeApi}/dashboard/${address}/${exchangeId}`,
         // @ts-ignore
-        {...HttpUtil.REQ_LOADING_EVENT_OPTIONS}));
+        { ...HttpUtil.REQ_LOADING_EVENT_OPTIONS }
+      )
+    );
   }
 
   getTokenBalances$(address: string): Observable<Token[]> {
@@ -156,7 +180,7 @@ export class TokenBalanceService {
         this.connectorService.providerUserInfo$,
       ]).pipe(
         switchMap(([addr, info]: [string, IProviderUserInfo]) =>
-          this.getAddressTokenBalances$(addr, info)
+          this.getAddressTokenBalances$(addr, info).pipe(startWith(null))
         ),
         catchError((err) => {
           throw new Error(err);
@@ -230,7 +254,7 @@ export class TokenBalanceService {
                     });
                   }
                 ),
-                tap(v => DevUtil.devLog('UPDATED BALANCE=', v))
+                tap((v) => DevUtil.devLog('UPDATED BALANCE=', v))
               );
             }
             return of(cachedBalances);
@@ -296,7 +320,6 @@ export class TokenBalanceService {
       map((tokens) =>
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
       )
-      // tap((v) => console.log('VVVV', v))
     );
   }
 
@@ -339,7 +362,7 @@ export class TokenBalanceService {
           tokenAddress
         );
       }),
-      tap(v => DevUtil.devLog('NEW BALANCE for ' + tokenSymbol + ' = ', v)),
+      tap((v) => DevUtil.devLog('NEW BALANCE for ' + tokenSymbol + ' = ', v)),
       catchError((e) => {
         DevUtil.devLog('ERROR GETTING BALANCE', e, LogLevel.WARNING);
         return of('0');

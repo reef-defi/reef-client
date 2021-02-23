@@ -33,7 +33,6 @@ export class HttpUtil {
             throw new Error('Request error ' + v.status);
           }
         }
-        console.log('EEEE', v);
         return null;
       })
     );

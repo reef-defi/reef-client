@@ -1,18 +1,25 @@
-import {AfterViewInit, ChangeDetectorRef, Component} from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {PoolService} from '../../../../core/services/pool.service';
-import {filter, map, shareReplay, take, tap} from 'rxjs/operators';
-import {ExchangeId, IBasketHistoricRoi, IPortfolio, SupportedPortfolio, Token, TokenBalance,} from '../../../../core/models/types';
-import {BehaviorSubject, merge, Observable, Subject} from 'rxjs';
-import {UniswapService} from '../../../../core/services/uniswap.service';
-import {ApiService} from '../../../../core/services/api.service';
-import {ChartsService} from '../../../../core/services/charts.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
-import {first} from 'rxjs/internal/operators/first';
-import {scan} from 'rxjs/internal/operators/scan';
-import {DevUtil} from '../../../../shared/utils/dev-util';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { PoolService } from '../../../../core/services/pool.service';
+import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
+import {
+  ExchangeId,
+  IBasketHistoricRoi,
+  IPortfolio,
+  SupportedPortfolio,
+  Token,
+  TokenBalance,
+} from '../../../../core/models/types';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { UniswapService } from '../../../../core/services/uniswap.service';
+import { ApiService } from '../../../../core/services/api.service';
+import { ChartsService } from '../../../../core/services/charts.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { first } from 'rxjs/internal/operators/first';
+import { scan } from 'rxjs/internal/operators/scan';
+import { DevUtil } from '../../../../shared/utils/dev-util';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,56 +61,74 @@ export class DashboardPage {
     );
 
     const portfolioPositions$ = address$.pipe(
-      map(addr => this.tokenBalanceService.getPortfolioObservables(addr)),
+      map((addr) => this.tokenBalanceService.getPortfolioObservables(addr)),
       shareReplay(1)
     );
 
     // Init portfolio positions
-    portfolioPositions$.pipe(
-      take(1),
-      switchMap((portfolio: { refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> }) => {
-        setTimeout(_ => portfolio.refreshSubject.next(ExchangeId.TOKENS));
-        const uniPositionsPortfolio$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
-          filter((v) => !!v),
-          take(1),
-          tap((_) => {
-              portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2);
-            }
-          )
-        );
-        const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
-          filter((v) => !!v),
-          take(1),
-          tap((_) => {
-              portfolio.refreshSubject.next(ExchangeId.COMPOUND);
-            }
-          )
-        );
+    portfolioPositions$
+      .pipe(
+        take(1),
+        switchMap(
+          (portfolio: {
+            refreshSubject: Subject<ExchangeId>;
+            positions: Map<ExchangeId, Observable<any>>;
+          }) => {
+            setTimeout((_) => portfolio.refreshSubject.next(ExchangeId.TOKENS));
+            const uniPositionsPortfolio$ = portfolio.positions
+              .get(ExchangeId.TOKENS)
+              .pipe(
+                filter((v) => !!v),
+                take(1),
+                tap((_) => {
+                  portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2);
+                })
+              );
+            const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
+              filter((v) => !!v),
+              take(1),
+              tap((_) => {
+                portfolio.refreshSubject.next(ExchangeId.COMPOUND);
+              })
+            );
 
-        return merge(uniPositionsPortfolio$, compPositionsPortfolio$);
-      }),
-    ).subscribe();
+            return merge(uniPositionsPortfolio$, compPositionsPortfolio$);
+          }
+        )
+      )
+      .subscribe();
 
     this.portfolio$ = portfolioPositions$.pipe(
-      switchMap((portfolio: { refreshSubject: Subject<ExchangeId>, positions: Map<ExchangeId, Observable<any>> }) => {
-        const tokens$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
-          tap((data) => {
-            if (data && data.length) {
-              this.getHistoricData(data);
-            }
-          }),
-          map(v => ({tokens: v}))
-        );
-        const uni$ = portfolio.positions.get(ExchangeId.UNISWAP_V2).pipe(
-          map(v => ({uniswapPositions: v}))
-        );
-        const comp$ = portfolio.positions.get(ExchangeId.COMPOUND).pipe(
-          map(v => ({compoundPositions: v}))
-        );
-        return merge(tokens$, uni$, comp$).pipe(
-          map(positionVal => ({...positionVal, refreshSubject: portfolio.refreshSubject} as IPortfolio))
-        );
-      }),
+      switchMap(
+        (portfolio: {
+          refreshSubject: Subject<ExchangeId>;
+          positions: Map<ExchangeId, Observable<any>>;
+        }) => {
+          const tokens$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
+            tap((data) => {
+              if (data && data.length) {
+                this.getHistoricData(data);
+              }
+            }),
+            map((v) => ({ tokens: v }))
+          );
+          const uni$ = portfolio.positions
+            .get(ExchangeId.UNISWAP_V2)
+            .pipe(map((v) => ({ uniswapPositions: v })));
+          const comp$ = portfolio.positions
+            .get(ExchangeId.COMPOUND)
+            .pipe(map((v) => ({ compoundPositions: v })));
+          return merge(tokens$, uni$, comp$).pipe(
+            map(
+              (positionVal) =>
+                ({
+                  ...positionVal,
+                  refreshSubject: portfolio.refreshSubject,
+                } as IPortfolio)
+            )
+          );
+        }
+      ),
       scan((combinedPortfolio, currVal: IPortfolio) => {
         const currValExchanges = Object.keys(currVal);
         currValExchanges.forEach((exKey) => {
@@ -120,6 +145,7 @@ export class DashboardPage {
           .map((key: string) => {
             const portfolioPositions = portfolio[key];
             if (
+              // TODO remove string keywords - use enum like ExchangeId
               key === 'uniswapPositions' &&
               Array.isArray(portfolioPositions)
             ) {
@@ -134,7 +160,7 @@ export class DashboardPage {
             return 0;
           })
           .reduce((a, c) => a + c);
-        return {totalBalance};
+        return { totalBalance };
       })
     );
 
@@ -161,7 +187,7 @@ export class DashboardPage {
       this.portfolioTotalBalance$
     ).pipe(
       map(
-        ([portfolio, {totalBalance}]: [
+        ([portfolio, { totalBalance }]: [
           SupportedPortfolio,
           { [key: string]: number }
         ]) => {
@@ -185,12 +211,12 @@ export class DashboardPage {
       .setAttribute('src', 'assets/images/image-missing.png');
   }
 
-  public getPortfolio() {
+  /*public getPortfolio() {
     this.portfolioError$.next(false);
     this.cdRef.detectChanges();
     setTimeout(() => this.triggerPortfolio.next(), 1000);
     this.triggerPortfolio.next();
-  }
+  }*/
 
   private getTokenBalances(address: string): Observable<TokenBalance> {
     return this.tokenBalanceService.getTokenBalances$(address).pipe(
@@ -201,8 +227,7 @@ export class DashboardPage {
             tokens,
             totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0),
           } as TokenBalance)
-      ),
-      tap((v) => console.log('BBBB===', v))
+      )
     );
   }
 
@@ -251,7 +276,7 @@ export class DashboardPage {
     const total = totalBalance;
     const all = [...(portfolio.tokens as Token[]), ...defiPositions];
     const pairs = all
-      .map(({contract_ticker_symbol, quote}) => [
+      .map(({ contract_ticker_symbol, quote }) => [
         contract_ticker_symbol,
         (quote / total) * 100,
       ])
