@@ -1,14 +1,17 @@
-<div class="row">
-  <div class="col">
-    <app-page-title
-      title="Dashboard"
-      subtitle="View your transactions, analyze your portfolio, and much more"
-    ></app-page-title>
+<ng-container *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId">
+  <div class="row">
+    <div class="col">
+      <app-page-title
+        title="Dashboard"
+        subtitle="View your transactions, analyze your portfolio, and much more"
+      ></app-page-title>
   </div>
 </div>
 
-<div class="page__wrapper row justify-content-between">
   <div class="col-12 col-md-10 offset-md-1">
+    <app-unsupported-chain-msg [chainId]="chainId"
+                               [displayUnsupportedChainIdMessage]="!tokenBalanceService.chainSupportedPortfolio(chainId)"
+                               class="page__wrapper row justify-content-between">
     <div class="row">
       <div class="col-12 col-xl-4">
         <div class="card min-height-100px">
@@ -186,5 +189,6 @@
         </div>
       </div>
     </div>
+    </app-unsupported-chain-msg>
   </div>
-</div>
+</ng-container>

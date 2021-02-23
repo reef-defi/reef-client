@@ -3,14 +3,15 @@
     <app-page-title
       title="REEF Bonds"
       subtitle="Stake REEF and other DeFi tokens to earn APY"
-      [transactionType]="TransactionType.REEF_BOND"
-      [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
     ></app-page-title>
   </div>
 </div>
 
 <div class="page__wrapper">
-  <div class="row">
+  <app-unsupported-chain-msg
+    [transactionType]="TransactionType.REEF_BOND"
+    [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
+    class="row">
     <ng-container *ngIf="this.bondsService.bondsList$|async as bonds">
       <div
         class="col-12 col-md-6 col-lg-4 h-100"
@@ -91,5 +92,5 @@
         </div>
       </div>
     </ng-container>
-  </div>
+  </app-unsupported-chain-msg>
 </div>

@@ -3,14 +3,15 @@
     <app-page-title
       title="Farms"
       subtitle="Stake your LP Coins in our farms"
-      [transactionType]="TransactionType.REEF_FARM"
+    ></app-page-title><!--[transactionType]="TransactionType.REEF_FARM"
       [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
-    ></app-page-title>
+    ></app-page-title>-->
   </div>
 </div>
 
 <div class="page__wrapper">
   <div class="row">
+    <h1>TODO wrap with unsupported chain msg</h1>
     <div
       class="col-12 col-md-6 col-lg-4 h-100"
       *ngFor="let farm of farms$|async"

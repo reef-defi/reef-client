@@ -1,26 +1,22 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import { catchError, map, shareReplay, tap } from 'rxjs/operators';
-import {
-  IBasketHistoricRoi,
-  SupportedPortfolio,
-  Token,
-  TokenBalance,
-} from '../../../../core/models/types';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
-import { first } from 'rxjs/internal/operators/first';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {PoolService} from '../../../../core/services/pool.service';
+import {catchError, map, shareReplay, tap} from 'rxjs/operators';
+import {IBasketHistoricRoi, SupportedPortfolio, Token, TokenBalance,} from '../../../../core/models/types';
+import {BehaviorSubject, EMPTY, Observable, Subject} from 'rxjs';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import {first} from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardPage implements AfterViewInit {
   Object = Object;
@@ -37,7 +33,7 @@ export class DashboardPage implements AfterViewInit {
   private triggerPortfolio = new Subject();
 
   constructor(
-    private readonly connectorService: ConnectorService,
+    public readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly uniswapService: UniswapService,
     private readonly chartsService: ChartsService,
