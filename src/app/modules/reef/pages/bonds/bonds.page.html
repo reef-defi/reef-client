@@ -11,7 +11,7 @@
 
 <div class="page__wrapper">
   <div class="row">
-    <div *ngIf="this.bondsService.bondsList$|async as bonds">
+    <ng-container *ngIf="this.bondsService.bondsList$|async as bonds">
       <div
         class="col-12 col-md-6 col-lg-4 h-100"
         *ngFor="let bond of bonds.list"
@@ -37,14 +37,16 @@
                 <div class="mb-1">Lock token: {{bond.stake}}</div>
                 <div class="mb-1" *ngIf="bond.stake!==bond.farm">
                   <span class="text-left">Rewards token: </span>
-                  <b>{{bond.stake}}</b>
+                  <b>{{bond.farm}}</b>
                 </div>
                 <ng-container
                   *ngIf="bond.farmDurationTimeDisplayStr$|async as farmDuration"
                 >
                   <div class="mb-1">Lock duration: {{farmDuration}}</div>
                 </ng-container>
-                <div class="mb-1">APY: {{bond.apy}}%</div>
+                <div class="mb-1">
+                  APY: {{bond.apy ? bond.apy + '%' : 'TBD' }}
+                </div>
               </div>
               <ng-template #loading>
                 <app-provider-loading
@@ -88,6 +90,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 </div>
