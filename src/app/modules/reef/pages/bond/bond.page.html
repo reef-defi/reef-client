@@ -42,7 +42,7 @@
               >
                 <div class="mb-1">Lock token: {{bondNoTimes.stake}}</div>
                 <div class="mb-1" *ngIf="bondNoTimes.stake!==bondNoTimes.farm">
-                  Rewards token: {{bondNoTimes.stake}}
+                  Rewards token: {{bondNoTimes.farm}}
                 </div>
                 <ng-container
                   *ngIf="lockDurationString$| async as timespanText;"
