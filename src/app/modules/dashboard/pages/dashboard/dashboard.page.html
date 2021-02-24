@@ -16,7 +16,7 @@
       [displayUnsupportedChainIdMessage]="!tokenBalanceService.chainSupportedPortfolio(chainId)"
       class="page__wrapper row justify-content-between"
     >
-      <div class="row w-100">
+      <div class="row">
         <div class="col-12 col-xl-4">
           <div class="card min-height-100px">
             <div class="card-body p-4 accent-text">
@@ -26,16 +26,16 @@
                 USD Valuation
               </div>
               <h3 class="text-center text-monospace">
+                <!--<ng-container
+                *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
+              >-->
                 <ng-container
-                  *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
+                  *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
                 >
-                  <ng-container
-                    *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
-                  >
-                    ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
-                  </ng-container>
-                  <ng-template #calc> Calculating...</ng-template>
+                  ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
                 </ng-container>
+                <ng-template #calc> Calculating...</ng-template>
+                <!--              </ng-container>-->
               </h3>
             </div>
           </div>
@@ -54,17 +54,17 @@
             <div class="col-12">
               <div class="card mb-3">
                 <div class="card-body">
+                  <!--<ng-container
+                  *ngIf="!(portfolioError$ | async); else portfolioErrorTemplate"
+                >-->
                   <ng-container
-                    *ngIf="!(portfolioError$ | async); else portfolioErrorTemplate"
+                    *ngIf="portfolio$ | async as portfolio; else loadingTemplate"
                   >
-                    <ng-container
-                      *ngIf="portfolio$ | async as portfolio; else loadingTemplate"
-                    >
-                      <app-holdings-table
-                        [portfolio]="portfolio"
-                      ></app-holdings-table>
-                    </ng-container>
+                    <app-holdings-table
+                      [portfolio]="portfolio"
+                    ></app-holdings-table>
                   </ng-container>
+                  <!--                </ng-container>-->
                 </div>
               </div>
               <div class="row">
@@ -170,34 +170,30 @@
                   </div>
                 </ng-template>
                 <!--<ng-template #emptyTokensTemplate>
-                  <div class="d-flex justify-content-center align-items-center">
-                    <span class="small mt-2">No tokens to display.</span>
-                  </div>
-                </ng-template>-->
-                <ng-template #portfolioErrorTemplate>
-                  <div class="d-flex justify-content-center align-items-center">
-                    <span class="small mt-2"
-                      >Something went wrong while fetching your tokens.
-                      <a
-                        href=""
-                        (click)="$event.preventDefault(); getPortfolio()"
-                        >Refresh?</a
-                      >
-                    </span>
-                  </div>
-                </ng-template>
-                <ng-template #emptyBalanceTemplate>
-                  <div class="d-flex justify-content-center align-items-center">
-                    <span class="small mt-2"
-                      >Something went wrong while fetching your tokens.
-                      <a
-                        href=""
-                        (click)="$event.preventDefault(); getPortfolio()"
-                        >Refresh?</a
-                      >
-                    </span>
-                  </div>
-                </ng-template>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2">No tokens to display.</span>
+                </div>
+              </ng-template>-->
+                <!--<ng-template #portfolioErrorTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2"
+                    >Something went wrong while fetching your tokens.
+                    <a href="" (click)="$event.preventDefault(); getPortfolio()"
+                      >Refresh?</a
+                    >
+                  </span>
+                </div>
+              </ng-template>-->
+                <!--<ng-template #emptyBalanceTemplate>
+                <div class="d-flex justify-content-center align-items-center">
+                  <span class="small mt-2"
+                    >Something went wrong while fetching your tokens.
+                    <a href="" (click)="$event.preventDefault(); getPortfolio()"
+                      >Refresh?</a
+                    >
+                  </span>
+                </div>
+              </ng-template>-->
               </div>
             </div>
           </div>

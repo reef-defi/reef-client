@@ -6,14 +6,16 @@ import {
 } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { PoolService } from '../../../../core/services/pool.service';
-import { catchError, map, shareReplay, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
 import {
+  ExchangeId,
   IBasketHistoricRoi,
+  IPortfolio,
   SupportedPortfolio,
   Token,
   TokenBalance,
 } from '../../../../core/models/types';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
@@ -21,6 +23,8 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 import { first } from 'rxjs/internal/operators/first';
+import { scan } from 'rxjs/internal/operators/scan';
+import { DevUtil } from '../../../../shared/utils/dev-util';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +32,7 @@ import { first } from 'rxjs/internal/operators/first';
   styleUrls: ['./dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPage implements AfterViewInit {
+export class DashboardPage {
   Object = Object;
   public transactions$;
   public tokenBalance$: Observable<TokenBalance>;
@@ -36,7 +40,7 @@ export class DashboardPage implements AfterViewInit {
   public pieChartData$: Observable<any>;
   public portfolioError$ = new BehaviorSubject<boolean>(false);
   showTransactions: boolean;
-  portfolio$: Observable<SupportedPortfolio>;
+  portfolio$: Observable<IPortfolio>;
   getPortfolio2$: Observable<any>;
   public roiData: number[][];
 
@@ -62,25 +66,82 @@ export class DashboardPage implements AfterViewInit {
       shareReplay(1)
     );
 
-    this.portfolio$ = this.triggerPortfolio.pipe(
-      tap(() => {
-        this.portfolioError$.next(false);
-      }),
-      switchMap(() => {
-        return address$.pipe(
-          switchMap((address: string) =>
-            this.tokenBalanceService.getPortfolio(address)
-          ),
-          tap((data) => {
-            // console.log('PORTFOLIO DATA=', data);
-            this.getHistoricData(data.tokens);
-          })
-        );
-      }),
-      catchError((err) => {
-        this.portfolioError$.next(true);
-        return EMPTY;
-      }),
+    const portfolioPositions$ = address$.pipe(
+      map((addr) => this.tokenBalanceService.getPortfolioObservables(addr)),
+      shareReplay(1)
+    );
+
+    // Init portfolio positions
+    portfolioPositions$
+      .pipe(
+        take(1),
+        switchMap(
+          (portfolio: {
+            refreshSubject: Subject<ExchangeId>;
+            positions: Map<ExchangeId, Observable<any>>;
+          }) => {
+            setTimeout((_) => portfolio.refreshSubject.next(ExchangeId.TOKENS));
+            const uniPositionsPortfolio$ = portfolio.positions
+              .get(ExchangeId.TOKENS)
+              .pipe(
+                filter((v) => !!v),
+                take(1),
+                tap((_) => {
+                  portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2);
+                })
+              );
+            const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
+              filter((v) => !!v),
+              take(1),
+              tap((_) => {
+                portfolio.refreshSubject.next(ExchangeId.COMPOUND);
+              })
+            );
+
+            return merge(uniPositionsPortfolio$, compPositionsPortfolio$);
+          }
+        )
+      )
+      .subscribe();
+
+    this.portfolio$ = portfolioPositions$.pipe(
+      switchMap(
+        (portfolio: {
+          refreshSubject: Subject<ExchangeId>;
+          positions: Map<ExchangeId, Observable<any>>;
+        }) => {
+          const tokens$ = portfolio.positions.get(ExchangeId.TOKENS).pipe(
+            tap((data) => {
+              if (data && data.length) {
+                this.getHistoricData(data);
+              }
+            }),
+            map((v) => ({ tokens: v }))
+          );
+          const uni$ = portfolio.positions
+            .get(ExchangeId.UNISWAP_V2)
+            .pipe(map((v) => ({ uniswapPositions: v })));
+          const comp$ = portfolio.positions
+            .get(ExchangeId.COMPOUND)
+            .pipe(map((v) => ({ compoundPositions: v })));
+          return merge(tokens$, uni$, comp$).pipe(
+            map(
+              (positionVal) =>
+                ({
+                  ...positionVal,
+                  refreshSubject: portfolio.refreshSubject,
+                } as IPortfolio)
+            )
+          );
+        }
+      ),
+      scan((combinedPortfolio, currVal: IPortfolio) => {
+        const currValExchanges = Object.keys(currVal);
+        currValExchanges.forEach((exKey) => {
+          combinedPortfolio[exKey] = currVal[exKey];
+        });
+        return combinedPortfolio;
+      }, {} as IPortfolio),
       shareReplay(1)
     );
 
@@ -90,6 +151,7 @@ export class DashboardPage implements AfterViewInit {
           .map((key: string) => {
             const portfolioPositions = portfolio[key];
             if (
+              // TODO remove string keywords - use enum like ExchangeId
               key === 'uniswapPositions' &&
               Array.isArray(portfolioPositions)
             ) {
@@ -149,22 +211,18 @@ export class DashboardPage implements AfterViewInit {
     );
   }
 
-  ngAfterViewInit() {
-    this.triggerPortfolio.next();
-  }
-
   public setDefaultImage(imgIdx: number) {
     document
       .getElementById(`img-${imgIdx}`)
       .setAttribute('src', 'assets/images/image-missing.png');
   }
 
-  public getPortfolio() {
+  /*public getPortfolio() {
     this.portfolioError$.next(false);
     this.cdRef.detectChanges();
     setTimeout(() => this.triggerPortfolio.next(), 1000);
     this.triggerPortfolio.next();
-  }
+  }*/
 
   private getTokenBalances(address: string): Observable<TokenBalance> {
     return this.tokenBalanceService.getTokenBalances$(address).pipe(
@@ -175,8 +233,7 @@ export class DashboardPage implements AfterViewInit {
             tokens,
             totalBalance: tokens.reduce((acc, curr) => acc + curr.quote, 0),
           } as TokenBalance)
-      ),
-      tap((v) => console.log('BBBB===', v))
+      )
     );
   }
 
