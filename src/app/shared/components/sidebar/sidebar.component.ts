@@ -6,11 +6,15 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { IChainData, PendingTransaction } from '../../../core/models/types';
+import {
+  ChainId,
+  IChainData,
+  PendingTransaction,
+} from '../../../core/models/types';
 import { MatDialog } from '@angular/material/dialog';
 import { UniswapService } from '../../../core/services/uniswap.service';
-import { ConnectorService } from '../../../core/services/connector.service';
 import { TransactionsService } from '../../../core/services/transactions.service';
+import { ConnectorService } from '../../../core/services/connector.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -26,8 +30,10 @@ export class SidebarComponent {
   @Output() signOut = new EventEmitter();
   readonly pendingTxs$ = this.transactionService.pendingTransactions$;
   mobileNavShown: boolean;
+  ChainId = ChainId;
 
   constructor(
+    public connectorService: ConnectorService,
     private dialog: MatDialog,
     private readonly uniswapService: UniswapService,
     private readonly transactionService: TransactionsService

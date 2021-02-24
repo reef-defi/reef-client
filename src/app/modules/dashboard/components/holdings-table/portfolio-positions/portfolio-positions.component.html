@@ -1,10 +1,23 @@
 <div class="d-flex justify-content-between">
-  <div class="h5">{{ title }}</div>
+  <div class="d-flex align-items-center">
+    <div class="h5">{{ title }}</div>
+    <div class="ml-1">
+      <mat-icon
+        *ngIf="!!positions"
+        class="text-muted small-text c-pointer"
+        (click)="refresh.emit()"
+        >refresh
+      </mat-icon>
+    </div>
+  </div>
   <ng-template #loading>
-    <app-provider-loading>Loading positions</app-provider-loading>
+    <div class="d-flex flex-column justify-content-center align-content-center">
+      <div class="mb-1 small">Loading positions...</div>
+      <app-loading diameter="25"></app-loading>
+    </div>
   </ng-template>
   <div *ngIf="positions?.length">
-    <span class="hide-lg text-muted small-text"
+    <span class="d-xl-none d-lg-none text-muted small-text"
       ><mat-icon class="small-icon">multiple_stop</mat-icon
       ><span class="align-to-icon">scroll data</span>
     </span>
@@ -14,6 +27,7 @@
   <ng-template #emptyPositions>
     <div *ngIf="positions.errMessage; else noData">
       <span class="small-text text-muted">{{ positions.errMessage }}</span>
+      <button class="btn btn-light ml-3" (click)="refresh.emit()">retry</button>
     </div>
     <ng-template #noData
       ><span class="small-text text-muted"

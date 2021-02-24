@@ -14,8 +14,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run format-check && ng build --prod",
-      "pre-commit": "npm run format-check"
+      "pre-push": "npm run format-check",
+      "pre-commit": "npm run format"
     }
   },
   "private": true,

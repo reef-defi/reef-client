@@ -2,12 +2,12 @@ import {
   ChainId,
   ErrorDisplay,
   ExchangeId,
+  IPortfolio,
   IProviderUserInfo,
-  SupportedPortfolio,
   Token,
   TokenSymbol,
 } from '../../core/models/types';
-import { merge, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   catchError,
   filter,
@@ -27,9 +27,11 @@ import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
 import { TokenUtil } from '../utils/token.util';
 import { ConnectorService } from '../../core/services/connector.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { flatMap } from 'rxjs/internal/operators';
+import { DevUtil } from '../utils/dev-util';
+import { HttpUtil } from '../utils/http-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
 @Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
@@ -53,87 +55,109 @@ export class TokenBalanceService {
     ExchangeId.COMPOUND,
   ];
   public refreshBalancesForAddress = new Subject<string>();
+  // TODO remove local update
   public updateTokensInBalances = new Subject<TokenSymbol[]>();
   private balancesByAddr = new Map<string, Observable<any>>();
   private reefNodeApi = environment.reefNodeApiUrl;
+  public chainSupportedPortfolio(chainId: ChainId): boolean {
+    // atm we only support Covalent portfolio data
+    let indexOf = TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(
+      chainId
+    );
+    DevUtil.devLog('chainSupportedPortfolio VAL=', indexOf);
+
+    return indexOf > -1;
+  }
 
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
   ) {}
 
-  getPortfolio(address: string): Observable<SupportedPortfolio> {
-    const tokenPortfolio$ = this.getTokenBalances$(address).pipe(
-      map((tokens) => ({ tokens })),
+  getPortfolioObservables(
+    address: string
+  ): {
+    refreshSubject: Subject<ExchangeId>;
+    positions: Map<ExchangeId, Observable<any>>;
+  } {
+    const refreshSubject: Subject<ExchangeId> = new Subject();
+    const tokenPositions$ = refreshSubject.pipe(
+      filter((v) => v === ExchangeId.TOKENS),
+      tap((_) => this.refreshBalancesForAddress.next(address)),
+      switchMap((_) => this.getTokenBalances$(address)),
+      catchError((e) => {
+        return of(new ErrorDisplay('Error getting token positions.'));
+      }),
       shareReplay(1)
-    ) as Observable<SupportedPortfolio>;
-
-    const uniPositionsPortfolio$ = tokenPortfolio$.pipe(
-      switchMap((tokens: SupportedPortfolio) =>
-        this.getUniswapPositions(address, tokens)
-      ),
-      shareReplay(1)
     );
 
-    const compPositionsPortfolio$ = uniPositionsPortfolio$.pipe(
-      switchMap((uniPortfolio) =>
-        this.getCompoundPositions(address, uniPortfolio)
-      )
-    );
-    return merge(
-      tokenPortfolio$,
-      uniPositionsPortfolio$,
-      compPositionsPortfolio$
-    );
+    const uniPositions$ = this.getUniswapPositions(address, refreshSubject);
+    const compPositions$ = this.getCompoundPositions(address, refreshSubject);
+    const positions = new Map();
+    positions.set(ExchangeId.TOKENS, tokenPositions$);
+    positions.set(ExchangeId.UNISWAP_V2, uniPositions$);
+    // positions.set(ExchangeId.COMPOUND, compPositions$);
+    return { refreshSubject, positions };
   }
 
   private getCompoundPositions(
     address: string,
-    portfolio: SupportedPortfolio
-  ): Observable<SupportedPortfolio> {
-    return this.getExchangePositions$(ExchangeId.COMPOUND, address).pipe(
+    refresh: Subject<ExchangeId>
+  ): Observable<IPortfolio> {
+    return refresh.asObservable().pipe(
+      filter((v) => v === ExchangeId.COMPOUND),
+      switchMap((exId) =>
+        this.getExchangePositions$(ExchangeId.COMPOUND, address)
+      ),
       map((cPos) => {
-        const compoundPositions = cPos.compound.balances.map(
-          (x) => x.supply_tokens
-        );
-        return { ...portfolio, compoundPositions };
+        let compoundPositions;
+        if (cPos && cPos.compound) {
+          compoundPositions = cPos.compound.balances.map(
+            (x) => x.supply_tokens
+          );
+        }
+        return compoundPositions;
       }),
       shareReplay(1),
       catchError((e) => {
-        return of({
-          ...portfolio,
-          compoundPositions: new ErrorDisplay('Error getting data'),
-        });
+        return of(new ErrorDisplay('Error getting Compound positions.'));
       })
     );
   }
 
   private getUniswapPositions(
     address: string,
-    portfolio: SupportedPortfolio
-  ): Observable<SupportedPortfolio> {
-    return this.getExchangePositions$(ExchangeId.UNISWAP_V2, address).pipe(
-      map((uPos) => {
-        const uniswapPositions = uPos.uniswap_v2.balances
-          .map((x) => {
-            ['pool_token', 'token_0', 'token_1'].forEach((t) => {
-              // TODO use method for display decimals
-              x[t].balance = x[t].balance / +`1e${x[t].contract_decimals}`;
-            });
-            return x;
-          })
-          .filter(
-            (x) => x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
-          );
-        return { ...portfolio, uniswapPositions };
-      }),
-      shareReplay(1),
-      catchError((e) => {
-        return of({
-          ...portfolio,
-          uniswapPositions: new ErrorDisplay('Error getting uniswap positions'),
-        });
-      })
+    refresh: Subject<ExchangeId>
+  ): Observable<any> {
+    return refresh.asObservable().pipe(
+      filter((v) => v === ExchangeId.UNISWAP_V2),
+      switchMap((exId) =>
+        this.getExchangePositions$(exId, address).pipe(
+          map((uPos) => {
+            let uniswapPositions;
+            if (uPos && uPos.uniswap_v2) {
+              uniswapPositions = uPos.uniswap_v2.balances
+                .map((x) => {
+                  ['pool_token', 'token_0', 'token_1'].forEach((t) => {
+                    // TODO use method for display decimals
+                    x[t].balance =
+                      x[t].balance / +`1e${x[t].contract_decimals}`;
+                  });
+                  return x;
+                })
+                .filter(
+                  (x) =>
+                    x.pool_token.quote_rate !== 0 && x.pool_token.quote >= 2
+                );
+            }
+            return uniswapPositions;
+          }),
+          catchError((e) => {
+            return of(new ErrorDisplay('Error getting Uniswap positions.'));
+          }),
+          shareReplay(1)
+        )
+      )
     );
   }
 
@@ -141,13 +165,13 @@ export class TokenBalanceService {
     exchangeId: ExchangeId,
     address: string
   ): Observable<any> {
-    return this.http
-      .get(`${this.reefNodeApi}/dashboard/${address}/${exchangeId}`)
-      .pipe(
-        catchError((err: HttpErrorResponse) => {
-          return of([]);
-        })
-      );
+    return HttpUtil.withInitLoadingRequestValue(
+      this.http.get(
+        `${this.reefNodeApi}/dashboard/${address}/${exchangeId}`,
+        // @ts-ignore
+        { ...HttpUtil.REQ_LOADING_EVENT_OPTIONS }
+      )
+    );
   }
 
   getTokenBalances$(address: string): Observable<Token[]> {
@@ -165,7 +189,7 @@ export class TokenBalanceService {
         this.connectorService.providerUserInfo$,
       ]).pipe(
         switchMap(([addr, info]: [string, IProviderUserInfo]) =>
-          this.getAddressTokenBalances$(addr, info)
+          this.getAddressTokenBalances$(addr, info).pipe(startWith(null))
         ),
         catchError((err) => {
           throw new Error(err);
@@ -238,8 +262,8 @@ export class TokenBalanceService {
                       return tb;
                     });
                   }
-                )
-                // tap(v => console.log('UPDATED BALANCE', v))
+                ),
+                tap((v) => DevUtil.devLog('UPDATED BALANCE=', v))
               );
             }
             return of(cachedBalances);
@@ -296,6 +320,8 @@ export class TokenBalanceService {
         .get<any>(`${this.reefNodeApi}/${address}/balances`)
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
+      DevUtil.devLog('getAddressTokenBalances$ FROM CHAIN');
+
       balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
         map((val) => this.toCovalentDataStructure(val))
       );
@@ -305,7 +331,6 @@ export class TokenBalanceService {
       map((tokens) =>
         tokens.map((token) => this.removeTokenPlaceholders(info, token))
       )
-      // tap((v) => console.log('VVVV', v))
     );
   }
 
@@ -348,9 +373,9 @@ export class TokenBalanceService {
           tokenAddress
         );
       }),
-      // tap(v => console.log('NEW BALANCE for ', tokenSymbol, ' = ', v)),
+      tap((v) => DevUtil.devLog('NEW BALANCE for ' + tokenSymbol + ' = ', v)),
       catchError((e) => {
-        console.warn('ERROR GETTING BALANCE', e);
+        DevUtil.devLog('ERROR GETTING BALANCE', e, LogLevel.WARNING);
         return of('0');
       })
     );

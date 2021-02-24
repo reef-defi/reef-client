@@ -268,7 +268,10 @@ export class ConnectorService {
     localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
   }
 
-  public getGasPrice(): string {
+  public getGasPrice(chainId = ChainId.MAINNET): string {
+    if (chainId === ChainId.BINANCE_SMART_CHAIN) {
+      return this.toWei(20, 'Gwei');
+    }
     const gwei = this.toWei(
       Math.round(this.selectedGasPrice$.value.price),
       'Gwei'

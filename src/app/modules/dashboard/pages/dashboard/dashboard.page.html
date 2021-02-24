@@ -1,53 +1,62 @@
-<div class="row">
-  <div class="col">
-    <app-page-title
-      title="Dashboard"
-      subtitle="View your transactions, analyze your portfolio, and much more"
-    ></app-page-title>
+<ng-container
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+>
+  <div class="row">
+    <div class="col">
+      <app-page-title
+        title="Dashboard"
+        subtitle="View your transactions, analyze your portfolio, and much more"
+      ></app-page-title>
+    </div>
   </div>
-</div>
 
-<div class="page__wrapper row justify-content-between">
   <div class="col-12 col-md-10 offset-md-1">
-    <div class="row">
-      <div class="col-12 col-xl-4">
-        <div class="card min-height-100px">
-          <div class="card-body p-4 accent-text">
-            <div class="small font-weight-bold text-monospace mb-3 text-muted">
-              USD Valuation
-            </div>
-            <h3 class="text-center text-monospace">
-              <ng-container
-                *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
+    <app-unsupported-chain-msg
+      [chainId]="chainId"
+      [displayUnsupportedChainIdMessage]="!tokenBalanceService.chainSupportedPortfolio(chainId)"
+      class="page__wrapper row justify-content-between"
+    >
+      <div class="row w-100">
+        <div class="col-12 col-xl-4">
+          <div class="card min-height-100px">
+            <div class="card-body p-4 accent-text">
+              <div
+                class="small font-weight-bold text-monospace mb-3 text-muted"
               >
+                USD Valuation
+              </div>
+              <h3 class="text-center text-monospace">
+                <!--<ng-container
+                *ngIf="!(portfolioError$ | async) as balanceError; else portfolioErrorTemplate"
+              >-->
                 <ng-container
                   *ngIf="portfolioTotalBalance$|async as portfolioBalance; else calc"
                 >
                   ${{(portfolioBalance?.totalBalance| number:'1.0-0') || 0}}
                 </ng-container>
                 <ng-template #calc> Calculating...</ng-template>
-              </ng-container>
-            </h3>
+                <!--              </ng-container>-->
+              </h3>
+            </div>
+          </div>
+          <div class="card p-4 mt-3">
+            <div class="small font-weight-bold text-monospace text-muted">
+              Allocations
+            </div>
+            <ng-container *ngIf="pieChartData$|async as pieChartData">
+              <app-asset-distribution-chart [chartData]="pieChartData">
+              </app-asset-distribution-chart>
+            </ng-container>
           </div>
         </div>
-        <div class="card p-4 mt-3">
-          <div class="small font-weight-bold text-monospace text-muted">
-            Allocations
-          </div>
-          <ng-container *ngIf="pieChartData$|async as pieChartData">
-            <app-asset-distribution-chart [chartData]="pieChartData">
-            </app-asset-distribution-chart>
-          </ng-container>
-        </div>
-      </div>
-      <div class="col-12 col-xl-8">
-        <div class="row">
-          <div class="col-12">
-            <div class="card mb-3">
-              <div class="card-body">
-                <ng-container
+        <div class="col-12 col-xl-8">
+          <div class="row">
+            <div class="col-12">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <!--<ng-container
                   *ngIf="!(portfolioError$ | async); else portfolioErrorTemplate"
-                >
+                >-->
                   <ng-container
                     *ngIf="portfolio$ | async as portfolio; else loadingTemplate"
                   >
@@ -55,83 +64,88 @@
                       [portfolio]="portfolio"
                     ></app-holdings-table>
                   </ng-container>
-                </ng-container>
+                  <!--                </ng-container>-->
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <a
-                  href="#"
-                  (click)="$event.preventDefault(); showTransactions = !showTransactions"
-                  class="mb-3 float-right"
-                  >{{showTransactions ? 'Hide' : 'Show'}} Transactions
-                </a>
-              </div>
-              <div class="col-12">
-                <div class="card mb-3" [hidden]="!showTransactions">
-                  <div class="card-body">
-                    <div class="h6 mb-4">Transactions</div>
-                    <div class="row mb-2 d-flex justify-content-between">
-                      <div class="col-4">
-                        <div class="text-monospace small text-muted">Hash</div>
-                      </div>
-                      <div class="col-2">
-                        <div class="text-monospace small text-muted">Date</div>
-                      </div>
-                      <div class="col-3">
-                        <div class="text-monospace small text-muted">
-                          To Address
+              <div class="row">
+                <div class="col">
+                  <a
+                    href="#"
+                    (click)="$event.preventDefault(); showTransactions = !showTransactions"
+                    class="mb-3 float-right"
+                    >{{showTransactions ? 'Hide' : 'Show'}} Transactions
+                  </a>
+                </div>
+                <div class="col-12">
+                  <div class="card mb-3" [hidden]="!showTransactions">
+                    <div class="card-body">
+                      <div class="h6 mb-4">Transactions</div>
+                      <div class="row mb-2 d-flex justify-content-between">
+                        <div class="col-4">
+                          <div class="text-monospace small text-muted">
+                            Hash
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="text-monospace small text-muted">
+                            Date
+                          </div>
+                        </div>
+                        <div class="col-3">
+                          <div class="text-monospace small text-muted">
+                            To Address
+                          </div>
+                        </div>
+                        <div class="col-3 col-auto">
+                          <div class="text-monospace small text-muted">
+                            Tokens
+                          </div>
                         </div>
                       </div>
-                      <div class="col-3 col-auto">
-                        <div class="text-monospace small text-muted">
-                          Tokens
+                      <div class="row mb-2">
+                        <div class="col">
+                          <mat-divider></mat-divider>
                         </div>
                       </div>
-                    </div>
-                    <div class="row mb-2">
-                      <div class="col">
-                        <mat-divider></mat-divider>
-                      </div>
-                    </div>
-                    <div
-                      *ngIf="transactions$ | async as transactions; else loadingTemplate"
-                    >
                       <div
-                        *ngIf="transactions && transactions.length > 0; else emptyTransactions"
+                        *ngIf="transactions$ | async as transactions; else loadingTemplate"
                       >
                         <div
-                          class="row d-flex justify-content-between mb-1 align-items-center"
-                          *ngFor="let transaction of transactions"
+                          *ngIf="transactions && transactions.length > 0; else emptyTransactions"
                         >
-                          <div class="col-4">
-                            <app-address-shortener
-                              [standalone]="false"
-                              [address]="transaction.tx_hash"
-                            >
-                            </app-address-shortener>
-                          </div>
-                          <div class="col-2">
-                            <div class="small">
-                              {{ transaction.block_signed_at | date:'shortDate'
-                              }}
-                            </div>
-                          </div>
-                          <div class="col-3">
-                            <div>
+                          <div
+                            class="row d-flex justify-content-between mb-1 align-items-center"
+                            *ngFor="let transaction of transactions"
+                          >
+                            <div class="col-4">
                               <app-address-shortener
                                 [standalone]="false"
-                                [address]="transaction.to_address"
+                                [address]="transaction.tx_hash"
                               >
                               </app-address-shortener>
                             </div>
-                          </div>
-                          <div
-                            class="col-3 col-auto d-flex justify-content-between"
-                          >
-                            <span class="small font-weight-bold">
-                              {{ transaction.value }}
-                            </span>
+                            <div class="col-2">
+                              <div class="small">
+                                {{ transaction.block_signed_at |
+                                date:'shortDate' }}
+                              </div>
+                            </div>
+                            <div class="col-3">
+                              <div>
+                                <app-address-shortener
+                                  [standalone]="false"
+                                  [address]="transaction.to_address"
+                                >
+                                </app-address-shortener>
+                              </div>
+                            </div>
+                            <div
+                              class="col-3 col-auto d-flex justify-content-between"
+                            >
+                              <span class="small font-weight-bold">
+                                {{ transaction.value }}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -139,29 +153,28 @@
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="card">
-              <ng-template #loadingTemplate>
-                <app-skeleton-loading
-                  type="transactions"
-                  [count]="3"
-                ></app-skeleton-loading>
-              </ng-template>
-              <ng-template #emptyTransactions>
-                <div class="d-flex justify-content-center align-items-center">
-                  <span class="small mt-2"
-                    >You have not made any transactions in the recent
-                    past.</span
-                  >
-                </div>
-              </ng-template>
-              <!--<ng-template #emptyTokensTemplate>
+              <div class="card">
+                <ng-template #loadingTemplate>
+                  <app-skeleton-loading
+                    type="transactions"
+                    [count]="3"
+                  ></app-skeleton-loading>
+                </ng-template>
+                <ng-template #emptyTransactions>
+                  <div class="d-flex justify-content-center align-items-center">
+                    <span class="small mt-2"
+                      >You have not made any transactions in the recent
+                      past.</span
+                    >
+                  </div>
+                </ng-template>
+                <!--<ng-template #emptyTokensTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2">No tokens to display.</span>
                 </div>
               </ng-template>-->
-              <ng-template #portfolioErrorTemplate>
+                <!--<ng-template #portfolioErrorTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2"
                     >Something went wrong while fetching your tokens.
@@ -170,8 +183,8 @@
                     >
                   </span>
                 </div>
-              </ng-template>
-              <ng-template #emptyBalanceTemplate>
+              </ng-template>-->
+                <!--<ng-template #emptyBalanceTemplate>
                 <div class="d-flex justify-content-center align-items-center">
                   <span class="small mt-2"
                     >Something went wrong while fetching your tokens.
@@ -180,11 +193,12 @@
                     >
                   </span>
                 </div>
-              </ng-template>
+              </ng-template>-->
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </app-unsupported-chain-msg>
   </div>
-</div>
+</ng-container>

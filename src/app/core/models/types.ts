@@ -12,17 +12,19 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
+import { Observable, Subject } from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
 };
 
 export interface IPortfolio {
-  aavePositions: any[] | ErrorDisplay;
-  balancerPositions: any[] | ErrorDisplay;
-  compoundPositions: any[] | ErrorDisplay;
-  tokens: any[] | ErrorDisplay;
-  uniswapPositions: any[] | ErrorDisplay;
+  aavePositions?: any[] | ErrorDisplay;
+  balancerPositions?: any[] | ErrorDisplay;
+  compoundPositions?: any[] | ErrorDisplay;
+  tokens?: any[] | ErrorDisplay;
+  uniswapPositions?: any[] | ErrorDisplay;
+  refreshSubject?: Subject<ExchangeId>;
 }
 
 export type SupportedPortfolio = Pick<
@@ -54,6 +56,9 @@ export interface PendingTransaction {
   hash: string;
   type: TransactionType;
   tokens: TokenSymbol[];
+  txUrl: string;
+  scanner: string;
+  chainId: ChainId;
 }
 
 export interface QuoteResponse {
@@ -235,6 +240,7 @@ export enum ChainId {
 }
 
 export enum ExchangeId {
+  TOKENS = 'tokens',
   UNISWAP_V2 = 'uniswap_v2',
   BALANCER = 'balancer',
   COMPOUND = 'compound',
@@ -449,20 +455,40 @@ export interface Bond {
   farm: string;
   farmTokenAddress: string;
   farmTokenLogo: string;
-  farmStartTime: number;
-  farmEndTime: number;
+  /*farmStartTime: number;
+  farmEndTime: number;*/
   farmDecimals: number;
-  entryEndTime: number;
-  entryStartTime: number;
+  // entryEndTime: number;
+  entryStartTime?: number;
   apy: string;
   bondContractAddress: string;
+  farmDurationTimeDisplayStr$?: Observable<string>;
+  entryEndTime$?: Observable<number>;
+  status$?: Observable<BondSaleStatus>;
+  times$?: Observable<BondTimes>;
+  stakedBalanceUpdate?: Subject<void>;
+  stakedBalanceReturn$?: Observable<{
+    bond: Bond;
+    staked: number;
+    currentInterestReturn: number;
+    totalInterestReturn: number;
+  }>;
+  timeLeftToExpired$?: Observable<string>;
+}
+
+export interface BondTimes {
+  entryStartTime: number;
+  entryEndTime: number;
+  farmStartTime: number;
+  farmEndTime: number;
 }
 
 export enum BondSaleStatus {
   EARLY,
   OPEN,
-  LATE,
   FILLED,
+  FARM,
+  COMPLETE,
 }
 
 export class ErrorDisplay {
@@ -471,6 +497,6 @@ export class ErrorDisplay {
   }
 
   constructor(public errMessage: string, public errCode?: string) {
-    console.log('ERROR MSG=', errMessage, errCode);
+    console.log('ErrorDisplay ERROR MSG =', errMessage, errCode);
   }
 }

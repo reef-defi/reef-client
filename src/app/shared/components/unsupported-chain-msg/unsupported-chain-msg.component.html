@@ -1,0 +1,29 @@
+<div
+  *ngIf="
+    displayUnsupportedChainIdMessage ||
+      (transactionType &&
+        chainId &&
+        !TransactionsService.checkIfTransactionSupported(
+          transactionType,
+          chainId
+        ));
+    else supportedContent
+  "
+>
+  <div class="alert alert-white text-monospace d-flex align-items-center">
+    <!--<mat-icon>support</mat-icon>-->
+    <img class="img-size-top-25 mr-1" src="../../../../assets/images/bnb.png" />
+    <div class="ml-2">
+      This functionality is currently not supported on
+      <b>{{ getChainName(chainId) }}</b
+      >.
+      <span *ngIf="chainId === ChainId.BINANCE_SMART_CHAIN">
+        You can find {{ getChainName(chainId) }}
+        <a routerLink="/reef/bonds">bonds here</a>.
+      </span>
+    </div>
+  </div>
+</div>
+<ng-template #supportedContent>
+  <ng-content></ng-content>
+</ng-template>
