@@ -191,7 +191,8 @@ export class BondsService {
           bond.stake as TokenSymbol,
         ]);
       })
-      .on('error', (err) => {
+      .on('error', (err, receipt) => {
+        this.transactionsService.removePendingTx(receipt.transactionHash, true);
         if (
           err.message.indexOf('missed it') > 0 ||
           err.message.indexOf('expired') > 0

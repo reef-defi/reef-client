@@ -661,7 +661,7 @@ export class UniswapService {
       .approve(spenderAddr, MaxUint256.toString())
       .send({
         from: info.address, // hardcode
-        gasPrice: this.connectorService.getGasPrice(),
+        gasPrice: this.connectorService.getGasPrice(info.chainInfo.chain_id),
       })
       .on('transactionHash', (hash) => {
         this.notificationService.showNotification(

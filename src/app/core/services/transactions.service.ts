@@ -117,13 +117,15 @@ export class TransactionsService {
     });
   }
 
-  public removePendingTx(hash: string): void {
+  public removePendingTx(hash: string, isError = false): void {
     const { transactions } = this.pendingTransactions$.value;
     const removeTx = transactions.find((tx) => tx.hash === hash);
-    this.tokenBalanceService.updateTokensInBalances.next([
-      ...removeTx.tokens,
-      TokenSymbol.ETH,
-    ]);
+    if (!isError) {
+      this.tokenBalanceService.updateTokensInBalances.next([
+        ...removeTx.tokens,
+        TokenSymbol.ETH,
+      ]);
+    }
     const txs = {
       transactions: transactions.filter((tx) => tx.hash !== removeTx.hash),
     };
