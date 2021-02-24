@@ -170,10 +170,12 @@ export class BondsService {
           'Ok',
           'info'
         );
-        this.transactionsService.addPendingTx(hash, TransactionType.REEF_BOND, [
-          bond.stake as TokenSymbol,
-          bond.farm as TokenSymbol,
-        ], info.chainInfo.chain_id);
+        this.transactionsService.addPendingTx(
+          hash,
+          TransactionType.REEF_BOND,
+          [bond.stake as TokenSymbol, bond.farm as TokenSymbol],
+          info.chainInfo.chain_id
+        );
       })
       .on('receipt', (receipt) => {
         this.transactionsService.removePendingTx(receipt.transactionHash);

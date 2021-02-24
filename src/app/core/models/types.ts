@@ -57,6 +57,7 @@ export interface PendingTransaction {
   tokens: TokenSymbol[];
   txUrl: string;
   scanner: string;
+  chainId: ChainId;
 }
 
 export interface QuoteResponse {

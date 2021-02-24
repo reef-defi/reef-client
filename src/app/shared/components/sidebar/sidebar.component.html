@@ -284,11 +284,8 @@
 
 <ng-template #pendingTxDialog let-data>
   <div *ngFor="let tx of data">
-    <a
-      target="_blank"
-      [href]="tx.txUrl"
-      class="font-weight-bold"
-      >{{ tx.hash }}</a
-    >
+    <a target="_blank" [href]="tx.txUrl" class="font-weight-bold">{{
+      tx.hash
+    }}</a>
   </div>
 </ng-template>
