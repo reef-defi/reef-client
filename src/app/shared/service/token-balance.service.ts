@@ -304,6 +304,8 @@ export class TokenBalanceService {
         .get<any>(`${this.reefNodeApi}/${address}/balances`)
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
+      DevUtil.devLog('getAddressTokenBalances$ FROM CHAIN',);
+
       balances$ = this.getReefProtocolBalancesFromChain$(info, address).pipe(
         map((val) => this.toCovalentDataStructure(val))
       );
