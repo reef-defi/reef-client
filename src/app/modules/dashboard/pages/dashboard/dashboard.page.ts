@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+} from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
 import { PoolService } from '../../../../core/services/pool.service';
 import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
@@ -25,6 +30,7 @@ import { DevUtil } from '../../../../shared/utils/dev-util';
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage {
   Object = Object;
@@ -41,7 +47,7 @@ export class DashboardPage {
   private triggerPortfolio = new Subject();
 
   constructor(
-    private readonly connectorService: ConnectorService,
+    public readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly uniswapService: UniswapService,
     private readonly chartsService: ChartsService,

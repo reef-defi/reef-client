@@ -28,6 +28,7 @@ export class ReefPage implements OnInit {
   reefPriceChartData = null;
   readonly TokenSymbol = TokenSymbol;
   readonly priceError$ = new BehaviorSubject<boolean>(false);
+  readonly TransactionsService = TransactionsService;
 
   constructor(
     private contractService: ContractService,

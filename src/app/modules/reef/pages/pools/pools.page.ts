@@ -6,6 +6,7 @@ import {
   IProviderUserInfo,
   TransactionType,
 } from '../../../../core/models/types';
+import { TransactionsService } from 'src/app/core/services/transactions.service';
 
 @Component({
   selector: 'app-stake-reef-page',
@@ -37,4 +38,5 @@ export class PoolsPage {
       imgs: ['usdt.png', 'reef/reef-token.svg'],
     },
   ];
+  TransactionsService = TransactionsService;
 }

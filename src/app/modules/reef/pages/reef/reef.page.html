@@ -1,32 +1,38 @@
-<div class="row">
-  <div class="col">
-    <app-page-title
-      title="Buy REEF"
-      subtitle="Buy REEF tokens with just one click!"
-      [transactionType]="TransactionType.BUY_REEF"
-      [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
-    ></app-page-title>
+<ng-container
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+>
+  <div class="row">
+    <div class="col">
+      <app-page-title
+        title="Buy REEF"
+        subtitle="Buy REEF tokens with just one click!"
+      ></app-page-title>
+    </div>
   </div>
-</div>
 
-<div class="page__wrapper">
-  <div class="row justify-content-center">
-    <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
-      <app-buy-reef
-        class="height-100 card"
-        [pendingTransactions]="pendingTransactions"
-        [supportedTokens]="supportedTokens"
-        [loading]="buyLoading"
-        (buy)="buyReef($event.tokenSymbol, $event.tokenAmount, $event.amountOutMin)"
-      ></app-buy-reef>
-    </div>
-    <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
-      <app-reef-historic-price
-        class="height-100 card"
-        [chartData]="reefPriceChartData"
-        [priceError]="priceError$ | async"
-        (dateSpanChange)="onDateChange($event)"
-      ></app-reef-historic-price>
+  <div class="page__wrapper">
+    <div class="row justify-content-center">
+      <app-unsupported-chain-msg
+        [chainId]="chainId"
+        [transactionType]="TransactionType.BUY_REEF"
+        class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3"
+      >
+        <app-buy-reef
+          class="height-100 card"
+          [pendingTransactions]="pendingTransactions"
+          [supportedTokens]="supportedTokens"
+          [loading]="buyLoading"
+          (buy)="buyReef($event.tokenSymbol, $event.tokenAmount, $event.amountOutMin)"
+        ></app-buy-reef>
+      </app-unsupported-chain-msg>
+      <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+        <app-reef-historic-price
+          class="height-100 card"
+          [chartData]="reefPriceChartData"
+          [priceError]="priceError$ | async"
+          (dateSpanChange)="onDateChange($event)"
+        ></app-reef-historic-price>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>

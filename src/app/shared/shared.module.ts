@@ -54,6 +54,7 @@ import { CategorizePipe } from './pipes/categorize.pipe';
 import { NumbersOnlyInputDirective } from './directives/numbers-only-input.directive';
 import { PendingTransactionMsgComponent } from './components/pending-transaction-msg/pending-transaction-msg.component';
 import { CountdownTimerComponent } from './components/countdown-timer/countdown-timer.component';
+import { UnsupportedChainMsgComponent } from './components/unsupported-chain-msg/unsupported-chain-msg.component';
 
 const components = [
   FooterComponent,
@@ -115,6 +116,7 @@ const modules = [
     ...directives,
     ...pipes,
     CountdownTimerComponent,
+    UnsupportedChainMsgComponent,
   ],
   providers: [
     {
@@ -133,6 +135,7 @@ const modules = [
     ...pipes,
     ...modules,
     CountdownTimerComponent,
+    UnsupportedChainMsgComponent,
   ],
 })
 export class SharedModule {}
