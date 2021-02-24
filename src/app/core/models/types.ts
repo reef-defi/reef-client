@@ -19,11 +19,12 @@ export type RpcErrorTypes = {
 };
 
 export interface IPortfolio {
-  aavePositions: any[] | ErrorDisplay;
-  balancerPositions: any[] | ErrorDisplay;
-  compoundPositions: any[] | ErrorDisplay;
-  tokens: any[] | ErrorDisplay;
-  uniswapPositions: any[] | ErrorDisplay;
+  aavePositions?: any[] | ErrorDisplay;
+  balancerPositions?: any[] | ErrorDisplay;
+  compoundPositions?: any[] | ErrorDisplay;
+  tokens?: any[] | ErrorDisplay;
+  uniswapPositions?: any[] | ErrorDisplay;
+  refreshSubject?: Subject<ExchangeId>;
 }
 
 export type SupportedPortfolio = Pick<
@@ -236,6 +237,7 @@ export enum ChainId {
 }
 
 export enum ExchangeId {
+  TOKENS = 'tokens',
   UNISWAP_V2 = 'uniswap_v2',
   BALANCER = 'balancer',
   COMPOUND = 'compound',
@@ -492,6 +494,6 @@ export class ErrorDisplay {
   }
 
   constructor(public errMessage: string, public errCode?: string) {
-    console.log('ERROR MSG=', errMessage, errCode);
+    console.log('ErrorDisplay ERROR MSG =', errMessage, errCode);
   }
 }

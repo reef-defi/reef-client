@@ -1,16 +1,12 @@
-import { Injectable } from '@angular/core';
-import {
-  ChainId,
-  IPendingTransactions,
-  PendingTransaction,
-  TokenSymbol,
-  TransactionType,
-} from '../models/types';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ConnectorService } from './connector.service';
-import { first, map } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import {Injectable} from '@angular/core';
+import {ChainId, IPendingTransactions, PendingTransaction, TokenSymbol, TransactionType,} from '../models/types';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ConnectorService} from './connector.service';
+import {first, map} from 'rxjs/operators';
+import {ApiService} from './api.service';
+import {TokenBalanceService} from '../../shared/service/token-balance.service';
+import {DevUtil} from '../../shared/utils/dev-util';
+import {LogLevel} from '../../shared/utils/dev-util-log-level';
 
 @Injectable({
   providedIn: 'root',
@@ -73,9 +69,13 @@ export class TransactionsService {
   public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
     const web3 = await this.connectorService.web3$.pipe(first()).toPromise();
     for (const [i, tx] of txs.transactions.entries()) {
-      const { blockHash, blockNumber } = await web3.eth.getTransaction(tx.hash);
-      if (blockHash && blockNumber) {
-        txs.transactions.splice(i, 1);
+      try {
+        const {blockHash, blockNumber} = await web3.eth.getTransaction(tx.hash);
+        if (blockHash && blockNumber) {
+          txs.transactions.splice(i, 1);
+        }
+      }catch(e){
+        DevUtil.devLog('initPendingTxs ERROR=', e, LogLevel.ERROR);
       }
     }
     localStorage.setItem(
