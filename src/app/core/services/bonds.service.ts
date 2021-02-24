@@ -5,6 +5,7 @@ import {
   Bond,
   BondSaleStatus,
   BondTimes,
+  ChainId,
   IProviderUserInfo,
   ProtocolAddresses,
   TokenSymbol,
@@ -162,7 +163,7 @@ export class BondsService {
       .stake(amtWei)
       .send({
         from: info.address,
-        gasPrice: this.connectorService.getGasPrice(),
+        gasPrice: this.connectorService.getGasPrice(info.chainInfo.chain_id),
       })
       .on('transactionHash', (hash) => {
         this.notificationService.showNotification(
