@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   ChainId,
   Fetcher,
@@ -9,7 +9,7 @@ import {
   Trade,
   TradeType,
 } from '@uniswap/sdk';
-import { ConnectorService } from './connector.service';
+import {ConnectorService} from './connector.service';
 import {
   IProviderUserInfo,
   IReefPricePerToken,
@@ -17,14 +17,14 @@ import {
   TokenSymbol,
   TransactionType,
 } from '../models/types';
-import { NotificationService } from './notification.service';
-import { addMinutes, getUnixTime } from 'date-fns';
-import { combineLatest, Observable, Subject, timer } from 'rxjs';
+import {NotificationService} from './notification.service';
+import {addMinutes, getUnixTime} from 'date-fns';
+import {combineLatest, Observable, Subject, timer} from 'rxjs';
 import BigNumber from 'bignumber.js';
-import { MaxUint256 } from '../utils/pools-utils';
-import { Router } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { TransactionConfirmationComponent } from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
+import {MaxUint256} from '../utils/pools-utils';
+import {Router} from '@angular/router';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
 import {
   filter,
   first,
@@ -34,16 +34,16 @@ import {
   switchMap,
   take,
 } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { BaseProvider, getDefaultProvider } from '@ethersproject/providers';
-import { Contract } from 'web3-eth-contract';
+import {ApiService} from './api.service';
+import {BaseProvider, getDefaultProvider} from '@ethersproject/providers';
+import {Contract} from 'web3-eth-contract';
 import Web3 from 'web3';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
-import { TokenUtil } from '../../shared/utils/token.util';
-import { ErrorUtils } from '../../shared/utils/error.utils';
-import { TransactionsService } from './transactions.service';
-import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
+import {TokenUtil} from '../../shared/utils/token.util';
+import {ErrorUtils} from '../../shared/utils/error.utils';
+import {TransactionsService} from './transactions.service';
+import {TokenBalanceService} from '../../shared/service/token-balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -56,10 +56,8 @@ export class UniswapService {
 
   slippagePercent$: Observable<Percent>;
   readonly initPrices$: Observable<any>;
-  private reefPricesLive = new Map<
-    TokenSymbol,
-    Observable<IReefPricePerToken>
-  >();
+  private reefPricesLive = new Map<TokenSymbol,
+    Observable<IReefPricePerToken>>();
   private slippageValue$ = new Subject<string>();
   private ethersProvider$: Observable<BaseProvider>;
 
@@ -163,7 +161,8 @@ export class UniswapService {
               this.transactionService.addPendingTx(
                 hash,
                 TransactionType.BUY_REEF,
-                [payTokenSymbol, TokenSymbol.REEF]
+                [payTokenSymbol, TokenSymbol.REEF],
+                info.chainInfo.chain_id
               );
             })
             .on('receipt', async (receipt) => {
@@ -206,7 +205,8 @@ export class UniswapService {
                 this.transactionService.addPendingTx(
                   hash,
                   TransactionType.BUY_REEF,
-                  [payTokenSymbol, TokenSymbol.REEF]
+                  [payTokenSymbol, TokenSymbol.REEF],
+                  info.chainInfo.chain_id
                 );
               })
               .on('receipt', (receipt) => {
@@ -365,7 +365,8 @@ export class UniswapService {
             this.transactionService.addPendingTx(
               hash,
               TransactionType.LIQUIDITY_USDT,
-              [tokenSymbolA, tokenSymbolB, poolSymbol]
+              [tokenSymbolA, tokenSymbolB, poolSymbol],
+              info.chainInfo.chain_id
             );
           })
           .on('receipt', (receipt) => {
@@ -447,7 +448,8 @@ export class UniswapService {
           this.transactionService.addPendingTx(
             hash,
             TransactionType.LIQUIDITY_ETH,
-            [TokenSymbol[tokenSymbol], TokenSymbol.ETH, poolSymbol]
+            [TokenSymbol[tokenSymbol], TokenSymbol.ETH, poolSymbol],
+            info.chainInfo.chain_id
           );
         })
         .on('receipt', (receipt) => {
@@ -508,8 +510,10 @@ export class UniswapService {
               'info'
             );
             this.transactionService.addPendingTx(hash, transactionType, [
-              poolSymbol,
-            ]);
+                poolSymbol,
+              ],
+              info.chainInfo.chain_id
+            );
           })
           .on('receipt', (receipt) => {
             this.transactionService.removePendingTx(receipt.transactionHash);
@@ -568,7 +572,8 @@ export class UniswapService {
           );
           this.transactionService.addPendingTx(hash, transactionType, [
             poolSymbol,
-          ]);
+          ], info.chainInfo.chain_id
+          );
         })
         .on('receipt', (receipt) => {
           this.transactionService.removePendingTx(receipt.transactionHash);
@@ -662,7 +667,8 @@ export class UniswapService {
         this.transactionService.addPendingTx(
           hash,
           TransactionType.APPROVE_TOKEN,
-          [TokenSymbol.ETH]
+          [TokenSymbol.ETH],
+          info.chainInfo.chain_id
         );
       })
       .on('receipt', (receipt) => {

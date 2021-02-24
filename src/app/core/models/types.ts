@@ -55,6 +55,8 @@ export interface PendingTransaction {
   hash: string;
   type: TransactionType;
   tokens: TokenSymbol[];
+  txUrl: string;
+  scanner: string;
 }
 
 export interface QuoteResponse {

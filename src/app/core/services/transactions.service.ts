@@ -11,6 +11,7 @@ import { ConnectorService } from './connector.service';
 import { first, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import {getChainData} from "../utils/chains";
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,16 @@ export class TransactionsService {
     [TransactionType.REEF_ETH_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
   };
+  private static TRANSACTION_SCANNERS = {
+    [ChainId.MAINNET]: {
+      name: 'EtherScan',
+      url: 'https://etherscan.io/tx',
+    },
+    [ChainId.BINANCE_SMART_CHAIN]: {
+      name: 'BSCScan',
+      url: 'https://bscscan.com/tx',
+    }
+  }
 
   public pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({
     transactions: [],
@@ -57,11 +68,13 @@ export class TransactionsService {
   public addPendingTx(
     hash: string,
     type: TransactionType,
-    tokens: TokenSymbol[]
+    tokens: TokenSymbol[],
+    chainId: ChainId,
   ): void {
+    const txUrl = `${TransactionsService.TRANSACTION_SCANNERS[chainId].url}/${hash}`;
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
-      transactions: [...transactions, { hash, type, tokens }],
+      transactions: [...transactions, { hash, type, tokens, txUrl, scanner: TransactionsService.TRANSACTION_SCANNERS[chainId].name }],
     };
     this.pendingTransactions$.next(pendingTransactions);
     localStorage.setItem(
