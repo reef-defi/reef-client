@@ -57,6 +57,13 @@ export class TokenBalanceService {
   public updateTokensInBalances = new Subject<TokenSymbol[]>();
   private balancesByAddr = new Map<string, Observable<any>>();
   private reefNodeApi = environment.reefNodeApiUrl;
+  public chainSupportedPortfolio(chainId: ChainId): boolean{
+    // atm we only support Covalent portfolio data
+    let indexOf = TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId);
+    DevUtil.devLog('chainSupportedPortfolio VAL=', indexOf);
+
+    return indexOf > -1;
+  }
 
   constructor(
     private connectorService: ConnectorService,
