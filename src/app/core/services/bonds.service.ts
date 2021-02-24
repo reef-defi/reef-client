@@ -164,6 +164,7 @@ export class BondsService {
       .send({
         from: info.address,
         gasPrice: this.connectorService.getGasPrice(info.chainInfo.chain_id),
+        gas: 262524,
       })
       .on('transactionHash', (hash) => {
         this.notificationService.showNotification(
