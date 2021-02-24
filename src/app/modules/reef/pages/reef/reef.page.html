@@ -1,17 +1,22 @@
-<ng-container *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId">
+<ng-container
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+>
   <div class="row">
-  <div class="col">
-    <app-page-title
-      title="Buy REEF"
-      subtitle="Buy REEF tokens with just one click!"
-    ></app-page-title>
+    <div class="col">
+      <app-page-title
+        title="Buy REEF"
+        subtitle="Buy REEF tokens with just one click!"
+      ></app-page-title>
+    </div>
   </div>
-</div>
 
-<div class="page__wrapper">
-  <div class="row justify-content-center">
-    <app-unsupported-chain-msg [chainId]="chainId" [transactionType]="TransactionType.BUY_REEF"
-                               class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+  <div class="page__wrapper">
+    <div class="row justify-content-center">
+      <app-unsupported-chain-msg
+        [chainId]="chainId"
+        [transactionType]="TransactionType.BUY_REEF"
+        class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3"
+      >
         <app-buy-reef
           class="height-100 card"
           [pendingTransactions]="pendingTransactions"
@@ -28,6 +33,6 @@
           (dateSpanChange)="onDateChange($event)"
         ></app-reef-historic-price>
       </div>
+    </div>
   </div>
-</div>
 </ng-container>

@@ -9,7 +9,7 @@ export class BondUtil {
     bondTimes: BondTimes,
     amountInvested: string
   ): { currentInterestReturn: number; totalInterestReturn: number } {
-    if(!bond.apy){
+    if (!bond.apy) {
       return {
         currentInterestReturn: 0,
         totalInterestReturn: 0,

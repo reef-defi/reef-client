@@ -129,13 +129,13 @@ const modules = [
     },
   ],
   imports: [...modules],
-    exports: [
-        ...components,
-        ...directives,
-        ...pipes,
-        ...modules,
-        CountdownTimerComponent,
-        UnsupportedChainMsgComponent,
-    ],
+  exports: [
+    ...components,
+    ...directives,
+    ...pipes,
+    ...modules,
+    CountdownTimerComponent,
+    UnsupportedChainMsgComponent,
+  ],
 })
 export class SharedModule {}

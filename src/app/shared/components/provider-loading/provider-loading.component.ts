@@ -7,13 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProviderLoadingComponent implements OnInit {
   ngOnInit() {
-    /*const span = document.querySelector('.dots');
+    const span = document.querySelector('.dots');
     setInterval(() => {
       if (span.innerHTML.length > 2) {
         span.innerHTML = '';
       } else {
         span.innerHTML += '.';
       }
-    }, 500);*/
+    }, 500);
   }
 }

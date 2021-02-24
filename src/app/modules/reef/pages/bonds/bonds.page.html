@@ -11,7 +11,8 @@
   <app-unsupported-chain-msg
     [transactionType]="TransactionType.REEF_BOND"
     [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
-    class="row">
+    class="row"
+  >
     <ng-container *ngIf="this.bondsService.bondsList$|async as bonds">
       <div
         class="col-12 col-md-6 col-lg-4 h-100"

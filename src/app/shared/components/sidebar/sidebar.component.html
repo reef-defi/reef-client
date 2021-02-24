@@ -29,7 +29,7 @@
           target="_blank"
           href="https://etherscan.io/tx/{{ pendingTxs.transactions[0]?.hash }}"
           class="font-weight-bold"
-        >Etherscan</a
+          >Etherscan</a
         >
       </ng-container>
       <ng-template #multiplePending>
@@ -41,7 +41,7 @@
           (click)="
             $event.preventDefault(); openPendingTx(pendingTxs.transactions)
           "
-        >Click here to view them</a
+          >Click here to view them</a
         >
       </ng-template>
       <div class="mt-2">
@@ -106,13 +106,26 @@
       [matMenuTriggerFor]="addressMenu"
       class="d-flex align-items-center py-1 px-3 sidebar__address ml-md-4"
     >
-      <ng-container *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId">
-      <span [ngSwitch]="chainId">
-      <img *ngSwitchCase="ChainId.MAINNET" class="img-size-top-15 mr-1"
-           src="../../../../assets/images/eth.png">
-        <img *ngSwitchCase="ChainId.BINANCE_SMART_CHAIN" class="img-size-top-15 mr-1"
-           src="../../../../assets/images/bnb.png">
-        <mat-icon *ngSwitchDefault class="address__circle mr-1"> stop_circle</mat-icon>
+      <ng-container
+        *ngIf="
+          (connectorService.providerUserInfo$ | async)?.chainInfo
+            .chain_id as chainId
+        "
+      >
+        <span [ngSwitch]="chainId">
+          <img
+            *ngSwitchCase="ChainId.MAINNET"
+            class="img-size-top-15 mr-1"
+            src="../../../../assets/images/eth.png"
+          />
+          <img
+            *ngSwitchCase="ChainId.BINANCE_SMART_CHAIN"
+            class="img-size-top-15 mr-1"
+            src="../../../../assets/images/bnb.png"
+          />
+          <mat-icon *ngSwitchDefault class="address__circle mr-1">
+            stop_circle</mat-icon
+          >
         </span>
       </ng-container>
       <app-address-shortener
@@ -126,19 +139,29 @@
   </div>
   <mat-menu class="address__menu" xPosition="after" #addressMenu="matMenu">
     <div class="address__menu--item">
-      <ng-container *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo as chainInfo">
-      <div>
-        <span [ngSwitch]="chainInfo.chain_id">
-          <img *ngSwitchCase="ChainId.MAINNET" class="img-size-top-15 mr-1"
-           src="../../../../assets/images/eth.png">
-        <img *ngSwitchCase="ChainId.BINANCE_SMART_CHAIN" class="img-size-top-15 mr-1"
-             src="../../../../assets/images/bnb.png">
-        </span>
-        Connected {{chainInfo.name}}
+      <ng-container
+        *ngIf="
+          (connectorService.providerUserInfo$ | async)?.chainInfo as chainInfo
+        "
+      >
+        <div>
+          <span [ngSwitch]="chainInfo.chain_id">
+            <img
+              *ngSwitchCase="ChainId.MAINNET"
+              class="img-size-top-15 mr-1"
+              src="../../../../assets/images/eth.png"
+            />
+            <img
+              *ngSwitchCase="ChainId.BINANCE_SMART_CHAIN"
+              class="img-size-top-15 mr-1"
+              src="../../../../assets/images/bnb.png"
+            />
+          </span>
+          Connected {{ chainInfo.name }}
         </div>
       </ng-container>
     </div>
-   <div [routerLink]="['/dashboard/settings']" class="address__menu--item">
+    <div [routerLink]="['/dashboard/settings']" class="address__menu--item">
       <div class="la la-lg la-gear mr-2"></div>
       <div>Settings</div>
     </div>
@@ -265,7 +288,7 @@
       target="_blank"
       href="https://etherscan.io/tx/{{ tx.hash }}"
       class="font-weight-bold"
-    >{{ tx.hash }}</a
+      >{{ tx.hash }}</a
     >
   </div>
 </ng-template>

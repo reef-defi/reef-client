@@ -1,50 +1,57 @@
-<ng-container *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId">
+<ng-container
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+>
   <div class="row">
-  <div class="col">
-    <app-page-title
-      title="Get LP Tokens"
-      subtitle="Provide liquidity to ETH/REEF and USDT/REEF pools"
-    ></app-page-title>
+    <div class="col">
+      <app-page-title
+        title="Get LP Tokens"
+        subtitle="Provide liquidity to ETH/REEF and USDT/REEF pools"
+      ></app-page-title>
+    </div>
   </div>
-</div>
-<div class="page__wrapper">
-  <app-unsupported-chain-msg [chainId]="chainId" [transactionType]="TransactionType.LIQUIDITY_ETH">
-    <div class="col-12 col-lg-8 offset-lg-2">
-      <div class="row">
-        <div class="col h-100" *ngFor="let pool of pools;">
-          <div class="card m-2">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-center mb-5">
-                <img
-                  *ngFor="let img of pool.imgs"
-                  class="img-size-top-65"
-                  [src]="'assets/images/' + img"
-                />
+  <div class="page__wrapper">
+    <app-unsupported-chain-msg
+      [chainId]="chainId"
+      [transactionType]="TransactionType.LIQUIDITY_ETH"
+    >
+      <div class="col-12 col-lg-8 offset-lg-2">
+        <div class="row">
+          <div class="col h-100" *ngFor="let pool of pools;">
+            <div class="card m-2">
+              <div class="card-body">
+                <div
+                  class="d-flex align-items-center justify-content-center mb-5"
+                >
+                  <img
+                    *ngFor="let img of pool.imgs"
+                    class="img-size-top-65"
+                    [src]="'assets/images/' + img"
+                  />
+                </div>
+                <div
+                  class="d-flex flex-column align-items-center justify-content-center"
+                >
+                  <div class="h6">{{pool.name}}</div>
+                  <div
+                    class="text-monospace text-muted small text-center"
+                    [innerHTML]="pool.description"
+                  ></div>
+                </div>
               </div>
               <div
-                class="d-flex flex-column align-items-center justify-content-center"
+                class="d-flex align-items-center justify-content-center pb-3 m-2"
               >
-                <div class="h6">{{pool.name}}</div>
-                <div
-                  class="text-monospace text-muted small text-center"
-                  [innerHTML]="pool.description"
-                ></div>
+                <button
+                  [routerLink]="['/reef/pool', pool.link]"
+                  class="btn btn-primary white-space-normal m-1 p-2"
+                >
+                  {{pool.btnLabel}}
+                </button>
               </div>
-            </div>
-            <div
-              class="d-flex align-items-center justify-content-center pb-3 m-2"
-            >
-              <button
-                [routerLink]="['/reef/pool', pool.link]"
-                class="btn btn-primary white-space-normal m-1 p-2"
-              >
-                {{pool.btnLabel}}
-              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </app-unsupported-chain-msg>
-</div>
+    </app-unsupported-chain-msg>
+  </div>
 </ng-container>

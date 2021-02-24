@@ -1,21 +1,23 @@
 <ng-container *ngIf="token$ | async as token">
   <ng-container *ngIf="!(error$ | async); else errorTemplate">
-      <ng-container *ngIf="providerUserInfo$ | async as userInfo">
-        <div class="row">
-          <div class="col">
-            <app-page-title
-              title="Pool"
-              subtitle="Get UNI-V2 LP Tokens by adding liquidity to the {{token}}/REEF pool"
-            ></app-page-title>
-          </div>
+    <ng-container *ngIf="providerUserInfo$ | async as userInfo">
+      <div class="row">
+        <div class="col">
+          <app-page-title
+            title="Pool"
+            subtitle="Get UNI-V2 LP Tokens by adding liquidity to the {{token}}/REEF pool"
+          ></app-page-title>
         </div>
-        <div class="page__wrapper row">
-          <app-unsupported-chain-msg [transactionType]="token === TokenSymbol.ETH ? TransactionType.LIQUIDITY_USDT : TransactionType.LIQUIDITY_ETH"
-                                     [chainId]="userInfo.chainInfo.chain_id"
-                                     class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4">
-            <ng-container
-              *ngIf="pricePerTokens$ | async as price; else loadingTemplate"
-            >
+      </div>
+      <div class="page__wrapper row">
+        <app-unsupported-chain-msg
+          [transactionType]="token === TokenSymbol.ETH ? TransactionType.LIQUIDITY_USDT : TransactionType.LIQUIDITY_ETH"
+          [chainId]="userInfo.chainInfo.chain_id"
+          class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4"
+        >
+          <ng-container
+            *ngIf="pricePerTokens$ | async as price; else loadingTemplate"
+          >
             <div class="card max-w-350 margin-auto">
               <div class="card-body">
                 <div class="text-center">
@@ -40,7 +42,7 @@
                 <div class="h6 m-4 text-center">
                   Get
                   <ng-container *ngIf="token !== TokenSymbol.REEF"
-                  >{{ token }}–
+                    >{{ token }}–
                   </ng-container>
                   REEF LP token
                 </div>
@@ -196,11 +198,11 @@
                 </div>
               </div>
             </div>
-            </ng-container>
-          </app-unsupported-chain-msg>
-        </div>
-      </ng-container>
+          </ng-container>
+        </app-unsupported-chain-msg>
+      </div>
     </ng-container>
+  </ng-container>
   <ng-template #loadingTemplate>
     <div class="row mt-5">
       <div class="col-12 col-sm-8 offset-sm-2 offset-xl-4 col-xl-4">

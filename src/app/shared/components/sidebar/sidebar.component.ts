@@ -6,11 +6,15 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import {ChainId, IChainData, PendingTransaction} from '../../../core/models/types';
+import {
+  ChainId,
+  IChainData,
+  PendingTransaction,
+} from '../../../core/models/types';
 import { MatDialog } from '@angular/material/dialog';
 import { UniswapService } from '../../../core/services/uniswap.service';
 import { TransactionsService } from '../../../core/services/transactions.service';
-import {ConnectorService} from '../../../core/services/connector.service';
+import { ConnectorService } from '../../../core/services/connector.service';
 
 @Component({
   selector: 'app-sidebar',
