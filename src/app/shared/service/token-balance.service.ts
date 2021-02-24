@@ -96,7 +96,7 @@ export class TokenBalanceService {
     const positions = new Map();
     positions.set(ExchangeId.TOKENS, tokenPositions$);
     positions.set(ExchangeId.UNISWAP_V2, uniPositions$);
-    positions.set(ExchangeId.COMPOUND, compPositions$);
+    // positions.set(ExchangeId.COMPOUND, compPositions$);
     return { refreshSubject, positions };
   }
 
