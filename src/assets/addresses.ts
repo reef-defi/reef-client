@@ -26,7 +26,7 @@ export const addresses: { [chainId: number]: ProtocolAddresses } = {
     [TokenSymbol.REEF_WETH_POOL]: '',
     [TokenSymbol.REEF_USDT_POOL]: '',
     // reef token
-    [TokenSymbol.REEF]: '0x0618aaaef80d148f44c4d5ceca1e290713c6251f',
+    [TokenSymbol.REEF]: '0xf21768ccbc73ea5b6fd3c687208a7c2def2d966e',
     [TokenSymbol.USDT]: '',
     [TokenSymbol.WETH]: '',
     [TokenSymbol.BNB]: '',

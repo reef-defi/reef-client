@@ -9,6 +9,12 @@ export class BondUtil {
     bondTimes: BondTimes,
     amountInvested: string
   ): { currentInterestReturn: number; totalInterestReturn: number } {
+    if(!bond.apy){
+      return {
+        currentInterestReturn: 0,
+        totalInterestReturn: 0,
+      };
+    }
     const now = new Date().getTime();
     const { farmStartTime, farmEndTime, farmTimeSpan } = this.getBondFarmTime(
       bondTimes

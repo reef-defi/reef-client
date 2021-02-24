@@ -49,7 +49,10 @@
                 >
                   <div class="mb-1">Lock duration: {{timespanText}}</div>
                 </ng-container>
-                <div class="mb-1">APY: {{bondNoTimes.apy}}%</div>
+                <div class="mb-1">
+                  APY: <span *ngIf="!!bondNoTimes.apy; else tbd">{{bondNoTimes.apy}}%</span>
+                  <ng-template #tbd>TBD</ng-template>
+                </div>
               </div>
             </div>
             <ng-container
@@ -60,7 +63,7 @@
                 ><!--<ng-container
                 *ngIf="(timeLeftToExpired$|async)!=null && bondsService.toBondSaleStatus(bondNoTimes, bondTimes)===BondSaleStatus.OPEN else closed"
               >-->
-                <div class="text-center">
+                <div *ngIf="!!bondNoTimes.apy" class="text-center">
                   <ng-container
                     *ngIf="TokenUtil.toMaxDisplayDecimalPlaces(BondUtil.getBondReturn(bondNoTimes, bondTimes, stakeAmount).totalInterestReturn, null, bondNoTimes.farmDecimals) as stakeAmountInterest; else enterValue "
                   >
@@ -157,11 +160,11 @@
                   <p class="text-muted text-center text-monospace small-text">
                     You have locked {{stakedReturn.staked}}
                     {{stakedReturn.bond.stake}} <br />
-                    that will earn
+                    <span *ngIf="bondNoTimes.apy"> that will earn
                     {{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                     null, stakedReturn.totalInterestReturn > 100 ?
                     bondNoTimes.farmDecimals : bondNoTimes.farmDecimals + 1)}}
-                    {{stakedReturn.bond.farm}} in rewards.
+                      {{stakedReturn.bond.farm}} in rewards</span>.
                   </p>
                 </ng-container>
               </ng-container>
