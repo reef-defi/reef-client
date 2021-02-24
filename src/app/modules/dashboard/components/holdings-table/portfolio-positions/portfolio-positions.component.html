@@ -6,9 +6,8 @@
         *ngIf="!!positions"
         class="text-muted small-text c-pointer"
         (click)="refresh.emit()"
-      >refresh
-      </mat-icon
-      >
+        >refresh
+      </mat-icon>
     </div>
   </div>
   <ng-template #loading>
@@ -19,8 +18,8 @@
   </ng-template>
   <div *ngIf="positions?.length">
     <span class="d-xl-none d-lg-none text-muted small-text"
-    ><mat-icon class="small-icon">multiple_stop</mat-icon
-    ><span class="align-to-icon">scroll data</span>
+      ><mat-icon class="small-icon">multiple_stop</mat-icon
+      ><span class="align-to-icon">scroll data</span>
     </span>
   </div>
 </div>
@@ -31,9 +30,9 @@
       <button class="btn btn-light ml-3" (click)="refresh.emit()">retry</button>
     </div>
     <ng-template #noData
-    ><span class="small-text text-muted"
-    >No positions found.</span
-    ></ng-template
+      ><span class="small-text text-muted"
+        >No positions found.</span
+      ></ng-template
     >
   </ng-template>
   <div
