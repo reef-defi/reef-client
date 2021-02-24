@@ -27,9 +27,9 @@
         You have one transaction pending. Check it out on
         <a
           target="_blank"
-          href="https://etherscan.io/tx/{{ pendingTxs.transactions[0]?.hash }}"
+          [href]="pendingTxs.transactions[0].txUrl"
           class="font-weight-bold"
-          >Etherscan</a
+          >{{ pendingTxs.transactions[0].scanner }}</a
         >
       </ng-container>
       <ng-template #multiplePending>
@@ -284,11 +284,8 @@
 
 <ng-template #pendingTxDialog let-data>
   <div *ngFor="let tx of data">
-    <a
-      target="_blank"
-      href="https://etherscan.io/tx/{{ tx.hash }}"
-      class="font-weight-bold"
-      >{{ tx.hash }}</a
-    >
+    <a target="_blank" [href]="tx.txUrl" class="font-weight-bold">{{
+      tx.hash
+    }}</a>
   </div>
 </ng-template>

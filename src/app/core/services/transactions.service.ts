@@ -1,12 +1,17 @@
-import {Injectable} from '@angular/core';
-import {ChainId, IPendingTransactions, PendingTransaction, TokenSymbol, TransactionType,} from '../models/types';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {ConnectorService} from './connector.service';
-import {first, map} from 'rxjs/operators';
-import {ApiService} from './api.service';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
-import {DevUtil} from '../../shared/utils/dev-util';
-import {LogLevel} from '../../shared/utils/dev-util-log-level';
+import { Injectable } from '@angular/core';
+import {
+  ChainId,
+  IPendingTransactions,
+  PendingTransaction,
+  TokenSymbol,
+  TransactionType,
+} from '../models/types';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConnectorService } from './connector.service';
+import { first, map } from 'rxjs/operators';
+import { ApiService } from './api.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import { getChainData } from '../utils/chains';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +26,16 @@ export class TransactionsService {
     [TransactionType.REEF_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_ETH_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
+  };
+  private static TRANSACTION_SCANNERS = {
+    [ChainId.MAINNET]: {
+      name: 'EtherScan',
+      url: 'https://etherscan.io/tx',
+    },
+    [ChainId.BINANCE_SMART_CHAIN]: {
+      name: 'BSCScan',
+      url: 'https://bscscan.com/tx',
+    },
   };
 
   public pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({
@@ -53,11 +68,23 @@ export class TransactionsService {
   public addPendingTx(
     hash: string,
     type: TransactionType,
-    tokens: TokenSymbol[]
+    tokens: TokenSymbol[],
+    chainId: ChainId
   ): void {
+    const txUrl = `${TransactionsService.TRANSACTION_SCANNERS[chainId].url}/${hash}`;
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
-      transactions: [...transactions, { hash, type, tokens }],
+      transactions: [
+        ...transactions,
+        {
+          hash,
+          type,
+          tokens,
+          txUrl,
+          scanner: TransactionsService.TRANSACTION_SCANNERS[chainId].name,
+          chainId,
+        },
+      ],
     };
     this.pendingTransactions$.next(pendingTransactions);
     localStorage.setItem(
@@ -68,14 +95,17 @@ export class TransactionsService {
 
   public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
     const web3 = await this.connectorService.web3$.pipe(first()).toPromise();
+    const info = await this.connectorService.providerUserInfo$
+      .pipe(first())
+      .toPromise();
     for (const [i, tx] of txs.transactions.entries()) {
-      try {
-        const {blockHash, blockNumber} = await web3.eth.getTransaction(tx.hash);
+      if (tx.chainId === info.chainInfo.chain_id) {
+        const { blockHash, blockNumber } = await web3.eth.getTransaction(
+          tx.hash
+        );
         if (blockHash && blockNumber) {
           txs.transactions.splice(i, 1);
         }
-      }catch(e){
-        DevUtil.devLog('initPendingTxs ERROR=', e, LogLevel.ERROR);
       }
     }
     localStorage.setItem(

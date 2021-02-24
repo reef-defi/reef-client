@@ -163,7 +163,8 @@ export class UniswapService {
               this.transactionService.addPendingTx(
                 hash,
                 TransactionType.BUY_REEF,
-                [payTokenSymbol, TokenSymbol.REEF]
+                [payTokenSymbol, TokenSymbol.REEF],
+                info.chainInfo.chain_id
               );
             })
             .on('receipt', async (receipt) => {
@@ -206,7 +207,8 @@ export class UniswapService {
                 this.transactionService.addPendingTx(
                   hash,
                   TransactionType.BUY_REEF,
-                  [payTokenSymbol, TokenSymbol.REEF]
+                  [payTokenSymbol, TokenSymbol.REEF],
+                  info.chainInfo.chain_id
                 );
               })
               .on('receipt', (receipt) => {
@@ -365,7 +367,8 @@ export class UniswapService {
             this.transactionService.addPendingTx(
               hash,
               TransactionType.LIQUIDITY_USDT,
-              [tokenSymbolA, tokenSymbolB, poolSymbol]
+              [tokenSymbolA, tokenSymbolB, poolSymbol],
+              info.chainInfo.chain_id
             );
           })
           .on('receipt', (receipt) => {
@@ -447,7 +450,8 @@ export class UniswapService {
           this.transactionService.addPendingTx(
             hash,
             TransactionType.LIQUIDITY_ETH,
-            [TokenSymbol[tokenSymbol], TokenSymbol.ETH, poolSymbol]
+            [TokenSymbol[tokenSymbol], TokenSymbol.ETH, poolSymbol],
+            info.chainInfo.chain_id
           );
         })
         .on('receipt', (receipt) => {
@@ -507,9 +511,12 @@ export class UniswapService {
               'Ok',
               'info'
             );
-            this.transactionService.addPendingTx(hash, transactionType, [
-              poolSymbol,
-            ]);
+            this.transactionService.addPendingTx(
+              hash,
+              transactionType,
+              [poolSymbol],
+              info.chainInfo.chain_id
+            );
           })
           .on('receipt', (receipt) => {
             this.transactionService.removePendingTx(receipt.transactionHash);
@@ -566,9 +573,12 @@ export class UniswapService {
             'Ok',
             'info'
           );
-          this.transactionService.addPendingTx(hash, transactionType, [
-            poolSymbol,
-          ]);
+          this.transactionService.addPendingTx(
+            hash,
+            transactionType,
+            [poolSymbol],
+            info.chainInfo.chain_id
+          );
         })
         .on('receipt', (receipt) => {
           this.transactionService.removePendingTx(receipt.transactionHash);
@@ -662,7 +672,8 @@ export class UniswapService {
         this.transactionService.addPendingTx(
           hash,
           TransactionType.APPROVE_TOKEN,
-          [TokenSymbol.ETH]
+          [TokenSymbol.ETH],
+          info.chainInfo.chain_id
         );
       })
       .on('receipt', (receipt) => {
