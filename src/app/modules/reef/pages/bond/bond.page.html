@@ -215,7 +215,8 @@
                             >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          locked for<br />
+                          locked
+                          <span *ngIf="bondNoTimes.apy">for<br />
                           <span class="bold"
                             >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
                             null, stakedReturn.totalInterestReturn > 100 ?
@@ -223,6 +224,7 @@
                             + 1)}} {{stakedReturn.bond.farm}}
                           </span>
                           interest profit.
+                          </span>
                         </div>
                       </ng-container>
                     </div>
