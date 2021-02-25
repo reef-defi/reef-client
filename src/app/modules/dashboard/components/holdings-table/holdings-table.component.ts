@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  ChainId,
   ExchangeId,
   IPortfolio,
   TokenSymbol,
@@ -14,8 +15,9 @@ import {
 export class HoldingsTableComponent {
   TokenSymbol = TokenSymbol;
   ExchangeId = ExchangeId;
-  constructor(private readonly router: Router) {}
+  @Input() chainId: ChainId | undefined;
   @Input() portfolio: IPortfolio;
+  constructor(private readonly router: Router) {}
 
   goToReef() {
     this.router.navigate(['/reef/buy']);

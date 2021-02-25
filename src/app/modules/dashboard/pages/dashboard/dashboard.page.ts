@@ -61,13 +61,20 @@ export class DashboardPage {
       map((value) => value.address),
       shareReplay(1)
     );
-    this.transactions$ = address$.pipe(
-      switchMap((address) => this.apiService.getTransactions(address)),
+    this.transactions$ = this.connectorService.providerUserInfo$.pipe(
+      switchMap((info) =>
+        this.apiService.getTransactions(info.address, info.chainInfo.chain_id)
+      ),
       shareReplay(1)
     );
 
-    const portfolioPositions$ = address$.pipe(
-      map((addr) => this.tokenBalanceService.getPortfolioObservables(addr)),
+    const portfolioPositions$ = this.connectorService.providerUserInfo$.pipe(
+      map((info) =>
+        this.tokenBalanceService.getPortfolioObservables(
+          info.address,
+          info.chainInfo.chain_id
+        )
+      ),
       shareReplay(1)
     );
 
@@ -98,7 +105,7 @@ export class DashboardPage {
               })
             );
 
-            return merge(uniPositionsPortfolio$);//, compPositionsPortfolio$);
+            return merge(uniPositionsPortfolio$); //, compPositionsPortfolio$);
           }
         )
       )
@@ -124,7 +131,7 @@ export class DashboardPage {
           /*const comp$ = portfolio.positions
             .get(ExchangeId.COMPOUND)
             .pipe(map((v) => ({ compoundPositions: v })));*/
-          return merge(tokens$, uni$, /*comp$*/).pipe(
+          return merge(tokens$, uni$ /*comp$*/).pipe(
             map(
               (positionVal) =>
                 ({

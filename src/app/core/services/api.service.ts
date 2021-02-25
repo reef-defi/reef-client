@@ -413,9 +413,9 @@ export class ApiService {
   }
 */
 
-  getTransactions(address: string): any {
+  getTransactions(address: string, chainId: number): any {
     return this.http
-      .get<any>(`${this.reefNodeApi}/${address}/transactions`)
+      .get<any>(`${this.reefNodeApi}/${chainId}/${address}/transactions`)
       .pipe(
         startWith([]),
         catchError((err) => {

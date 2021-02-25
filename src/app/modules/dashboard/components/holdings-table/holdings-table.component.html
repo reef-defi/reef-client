@@ -80,6 +80,7 @@
 </app-portfolio-positions>
 
 <app-portfolio-positions
+  *ngIf="chainId === 1"
   title="Uniswap"
   [positions]="portfolio?.uniswapPositions"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
