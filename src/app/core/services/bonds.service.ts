@@ -217,22 +217,12 @@ export class BondsService {
       });
   }
 
-
   async withdraw(bond: Bond): Promise<void> {
-
     const info = await this.connectorService.providerUserInfo$
       .pipe(first())
       .toPromise();
     const web3 = await this.connectorService.web3$.pipe(first()).toPromise();
     const reefAbis = getContractData({} as ProtocolAddresses);
-    /* const stakeTokenContract = new web3.eth.Contract(
-      reefAbis.erc20Token.abi,
-      bond.stakeTokenAddress
-    );
-    await this.uniswapService.approveToken(
-      stakeTokenContract,
-      bond.bondContractAddress
-    ); */
 
     const bondContract = new web3.eth.Contract(
       reefAbis.reefBond.abi,
@@ -243,7 +233,6 @@ export class BondsService {
       .send({
         from: info.address,
         gasPrice: this.connectorService.getGasPrice(info.chainInfo.chain_id),
-        //TODO why is gas fixed
         gas: 262524,
       })
       .on('transactionHash', (hash) => {
@@ -278,9 +267,7 @@ export class BondsService {
             true
           );
         }
-        if (
-          err.message.indexOf('locked') > 0
-        ) {
+        if (err.message.indexOf('locked') > 0) {
           this.notificationService.showNotification(
             'Bond still locked.',
             'Close',

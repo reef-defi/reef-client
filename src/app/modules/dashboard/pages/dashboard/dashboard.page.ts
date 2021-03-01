@@ -98,7 +98,7 @@ export class DashboardPage {
               })
             );
 
-            return merge(uniPositionsPortfolio$);//, compPositionsPortfolio$);
+            return merge(uniPositionsPortfolio$); //, compPositionsPortfolio$);
           }
         )
       )
@@ -124,7 +124,7 @@ export class DashboardPage {
           /*const comp$ = portfolio.positions
             .get(ExchangeId.COMPOUND)
             .pipe(map((v) => ({ compoundPositions: v })));*/
-          return merge(tokens$, uni$, /*comp$*/).pipe(
+          return merge(tokens$, uni$ /*comp$*/).pipe(
             map(
               (positionVal) =>
                 ({

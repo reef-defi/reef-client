@@ -215,16 +215,20 @@
                             >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          <span class="small-text">locked <span *ngIf="!!bondNoTimes.apy">for</span></span>
+                          <span class="small-text"
+                            >locked
+                            <span *ngIf="!!bondNoTimes.apy">for</span></span
+                          >
                           <ng-container *ngIf="!!bondNoTimes.apy">
-                          <span  class="bold"
-                            >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                            null, stakedReturn.totalInterestReturn > 100 ?
-                            bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
-                            + 1)}} {{stakedReturn.bond.farm}}
-                          </span>
-                          <span class="small-text">interest profit.</span>
-                        </ng-container>
+                            <span class="bold"
+                              >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                              null, stakedReturn.totalInterestReturn > 100 ?
+                              bondNoTimes.farmDecimals :
+                              bondNoTimes.farmDecimals + 1)}}
+                              {{stakedReturn.bond.farm}}
+                            </span>
+                            <span class="small-text">interest profit.</span>
+                          </ng-container>
                         </div>
                       </ng-container>
                     </div>
@@ -245,23 +249,27 @@
                   </ng-container>
                   <ng-container *ngSwitchCase="BondSaleStatus.COMPLETE">
                     <div class="card">
-                      <div class="h5 text-center">
-                        Bond funds unlocked.
-                      </div>
+                      <div class="h5 text-center">Bond funds unlocked.</div>
                       <p
                         class="text-center text-muted text-monospace small-text"
                       >
                         <ng-container
                           *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                         >
-                        Unlock date:
-                          <div class="accent-text"
-                            >{{bondTimes.farmEndTime|date}}</div
+                          Unlock date:
+                          <div class="accent-text">
+                            {{bondTimes.farmEndTime|date}}
+                          </div>
+                          <ng-container
+                            *ngIf="stakedReturn.staked>0; else noAssets"
                           >
-                        <ng-container *ngIf="stakedReturn.staked>0; else noAssets">                          
-                          <button class="btn btn-primary mt-2"
-                          [disabled]="!!DateTimeUtil.isInFuture(bondTimes.farmEndTime) || stakedReturn.staked<=0"
-                           (click)="withdraw(stakedReturn.bond)">Withdraw</button>
+                            <button
+                              class="btn btn-primary mt-2"
+                              [disabled]="!!DateTimeUtil.isInFuture(bondTimes.farmEndTime) || stakedReturn.staked<=0"
+                              (click)="withdraw(stakedReturn.bond)"
+                            >
+                              Withdraw
+                            </button>
                           </ng-container>
                           <ng-template #noAssets>
                             You have no assets locked in this bond.
@@ -271,24 +279,28 @@
                       <ng-container
                         *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                       >
-                      <div
-                      class="card bg-purple text-white text-center text-monospace m-4 p-2"
-                    >
-                      <span class="bold"
-                        >{{stakedReturn.staked}}
-                        {{stakedReturn.bond.stake}}</span
-                      >
-                      <span class="small-text">locked <span *ngIf="!!bondNoTimes.apy">for</span></span>
-                      <ng-container *ngIf="!!bondNoTimes.apy">
-                      <span class="bold"
-                        >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                        null, stakedReturn.totalInterestReturn > 100 ?
-                        bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
-                        + 1)}} {{stakedReturn.bond.farm}}
-                      </span>
-                      <span class="small-text">interest profit.</span>
-                    </ng-container>
-                    </div>
+                        <div
+                          class="card bg-purple text-white text-center text-monospace m-4 p-2"
+                        >
+                          <span class="bold"
+                            >{{stakedReturn.staked}}
+                            {{stakedReturn.bond.stake}}</span
+                          >
+                          <span class="small-text"
+                            >locked
+                            <span *ngIf="!!bondNoTimes.apy">for</span></span
+                          >
+                          <ng-container *ngIf="!!bondNoTimes.apy">
+                            <span class="bold"
+                              >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                              null, stakedReturn.totalInterestReturn > 100 ?
+                              bondNoTimes.farmDecimals :
+                              bondNoTimes.farmDecimals + 1)}}
+                              {{stakedReturn.bond.farm}}
+                            </span>
+                            <span class="small-text">interest profit.</span>
+                          </ng-container>
+                        </div>
                       </ng-container>
                     </div>
                   </ng-container>
