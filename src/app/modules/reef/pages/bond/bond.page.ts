@@ -92,4 +92,18 @@ export class BondPage {
       }
     );
   }
+
+  withdraw(bond: Bond): void {
+    this.bondsService.withdraw(bond).then(
+      (res) => {
+        this.stakeAmount = null;
+        bond.stakedBalanceUpdate.next();
+      },
+      (err) => {
+        // if (err.message.indexOf('oversubscribed') > 0) {
+        //   bond.stakeMaxAmountReached = true;
+        // }
+      }
+    );
+  }
 }
