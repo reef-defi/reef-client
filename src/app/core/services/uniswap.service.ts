@@ -266,12 +266,12 @@ export class UniswapService {
           switchMap(() => this.getReefPricePer(tokenSymbol, 1, slippageP))
           )
         ),
+        tap(v=>console.log('THE PRICESSSS')),
         shareReplay(1)
       );
       this.reefPricesLive.set(tokenSymbol, {price$, refreshSub});
     }
-    const cached$ = this.reefPricesLive.get(tokenSymbol);
-    return cached$;
+    return this.reefPricesLive.get(tokenSymbol);
   }
 
   /*public getLiveReefPricePer$(tokenSymbol: TokenSymbol, amount: number): Observable<IReefPricePerToken> {

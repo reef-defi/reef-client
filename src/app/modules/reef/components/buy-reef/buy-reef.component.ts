@@ -90,12 +90,14 @@ tap(v=>console.log('SEL TTTT')),
           mapTo(v)
         );
       }),
+      tap(v=>console.log('TMRRRR')),
       takeUntil(this.onDestroyed$)
     ).subscribe(v => {
       console.log('REFRESH PRICE');
       v.next(null);
     });
 
+    selectedTokenLivePrices$.pipe(takeUntil(this.onDestroyed$), switchMap(v=>v.price$)).subscribe(v=>console.log('!!!!!SEL LIVE PRICE'))
     const selTokenPrices$ = selectedTokenLivePrices$.pipe(switchMap(v => v.price$),tap(v=>console.log('PRICCCEEE'),  shareReplay(1)));
     this.selectedTokenPrice$ = combineLatest([
       this.tokenAmountSub,
@@ -105,7 +107,7 @@ tap(v=>console.log('SEL TTTT')),
       map(([amount, prices]) => UniswapService.tokenMinAmountCalc(prices, amount)),
       shareReplay(1)
     );
-    this.tokenAmountSub.subscribe(v=>console.log('AMT CH'))
+    this.tokenAmountSub.subscribe(v=>console.log('AMT CH'));
   }
   hasBalanceForPayment(paymentValue: number, tokenBalance: Token): boolean {
     if (tokenBalance && tokenBalance.balance > 0) {
