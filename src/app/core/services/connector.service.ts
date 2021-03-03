@@ -59,11 +59,14 @@ export class ConnectorService {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
-        infuraId: ProviderUtil.getProviderApiKey(ProviderName.INFURA),
+        rpc: {
+          1: ProviderUtil.getProviderUrl(ProviderName.INFURA),
+          56: 'https://bsc-dataseed.binance.org/'
+        }
       },
     },
     torus: {
-      package: Torus,
+      package: Torus, 
     },
     'custom-walletlink': {
       display: {
@@ -108,7 +111,7 @@ export class ConnectorService {
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
     this.currentProvider$.next(provider);
-    this.currentProviderName$.next(getProviderName(web3));
+    this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(
       `${this.currentProviderName$.value} wallet connected.`,
       'Okay!',

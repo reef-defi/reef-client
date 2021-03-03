@@ -1,4 +1,4 @@
-export const getProviderName = (web3: any): string => {
+export const getProviderName = (web3: any, provider: any): string => {
   if (!web3) {
     return 'unknown';
   }
@@ -31,6 +31,13 @@ export const getProviderName = (web3: any): string => {
   }
 
   if (web3.currentProvider.constructor.name === 'WalletConnectProvider') {
+    return 'Wallet Connect';
+  }
+
+  if (
+    provider.bridge &&
+    provider.bridge === 'https://bridge.walletconnect.org'
+  ) {
     return 'Wallet Connect';
   }
 };
