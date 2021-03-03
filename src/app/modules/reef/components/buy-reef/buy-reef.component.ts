@@ -79,6 +79,7 @@ export class BuyReefComponent extends NgDestroyableComponent {
     const selectedTokenLivePrices$
       : Observable<{ price$: Observable<IReefPricePerToken>, refreshSub: Subject<any> }> = this.selTokenSub.pipe(
       map((selToken: TokenSymbol) => uniswapService.getReefPriceInInterval(selToken)),
+tap(v=>console.log('SEL TTTT')),
       shareReplay(1)
     );
     selectedTokenLivePrices$.pipe(
@@ -91,21 +92,21 @@ export class BuyReefComponent extends NgDestroyableComponent {
       }),
       takeUntil(this.onDestroyed$)
     ).subscribe(v => {
-      console.log('REMOVE SUBBBB');
+      console.log('REFRESH PRICE');
       v.next(null);
     });
 
-    const selTokenPrices$ = selectedTokenLivePrices$.pipe(switchMap(v => v.price$));
+    const selTokenPrices$ = selectedTokenLivePrices$.pipe(switchMap(v => v.price$),tap(v=>console.log('PRICCCEEE'),  shareReplay(1)));
     this.selectedTokenPrice$ = combineLatest([
       this.tokenAmountSub,
       selTokenPrices$,
     ]).pipe(
-      map(([amount, prices]) => UniswapService.tokenMinAmountCalc(prices, amount)),
       tap(v => console.log('GOT PRICE')),
+      map(([amount, prices]) => UniswapService.tokenMinAmountCalc(prices, amount)),
       shareReplay(1)
     );
+    this.tokenAmountSub.subscribe(v=>console.log('AMT CH'))
   }
-
   hasBalanceForPayment(paymentValue: number, tokenBalance: Token): boolean {
     if (tokenBalance && tokenBalance.balance > 0) {
       return tokenBalance.balance >= paymentValue;
