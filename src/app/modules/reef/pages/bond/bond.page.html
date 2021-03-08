@@ -9,8 +9,6 @@
         <app-page-title
           title="Bond"
           subtitle="Lock tokens long-term and get returns"
-          [chainId]="userInfo.chainInfo.chain_id"
-          [transactionType]="TransactionType.REEF_BOND"
         ></app-page-title>
       </div>
     </div>
@@ -198,11 +196,12 @@
                               >{{stakedReturn.currentInterestReturn}}
                               {{stakedReturn.bond.farm}}</span
                             ></ng-container
-                          ><br />
+                          ><!--<br />
                           Unlock date:
                           <span class="accent-text"
                             >{{bondTimes.farmEndTime|date}}</span
-                          >
+                          >-->
+                          <ng-container *ngTemplateOutlet="withdrawInfo"></ng-container>
                         </ng-container>
                       </p>
                       <ng-container
@@ -253,7 +252,7 @@
                       <p
                         class="text-center text-muted text-monospace small-text"
                       >
-                        <ng-container
+                        <!--<ng-container
                           *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                         >
                           Unlock date:
@@ -274,7 +273,8 @@
                           <ng-template #noAssets>
                             You have no assets locked in this bond.
                           </ng-template>
-                        </ng-container>
+                        </ng-container>-->
+                        <ng-container *ngTemplateOutlet="withdrawInfo"></ng-container>
                       </p>
                       <ng-container
                         *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
@@ -392,9 +392,38 @@
   <ng-template #loading>
     <app-provider-loading>Loading blockchain data</app-provider-loading>
   </ng-template>
+  <ng-template #withdrawInfo>
+    <ng-container
+      *ngIf="bondNoTimes.times$| async as bondTimes"
+    >
+    <ng-container
+      *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
+    >
+      Unlock date:
+      <div class="accent-text">
+        {{bondTimes.farmEndTime|date}}
+      </div>
+      <ng-container
+        *ngIf="stakedReturn.staked>0; else noAssets"
+      >
+        <button
+          class="btn btn-primary mt-2"
+          (click)="!DateTimeUtil.isInFuture(bondTimes.farmEndTime)?withdraw(stakedReturn.bond):beforeUnlockDateMessage(bondTimes.farmEndTime)"
+        >
+          Withdraw
+        </button>
+      </ng-container>
+      <ng-template #noAssets>
+        You have no assets locked in this bond.
+      </ng-template>
+    </ng-container>
+    </ng-container>
+  </ng-template>
 </ng-container>
 
 <ng-template #errorTemplate>
   <app-empty-state title="Bond not found" subtitle="Bond is not supported yet.">
   </app-empty-state>
 </ng-template>
+
+
