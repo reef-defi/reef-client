@@ -55,6 +55,7 @@ import { NumbersOnlyInputDirective } from './directives/numbers-only-input.direc
 import { PendingTransactionMsgComponent } from './components/pending-transaction-msg/pending-transaction-msg.component';
 import { CountdownTimerComponent } from './components/countdown-timer/countdown-timer.component';
 import { UnsupportedChainMsgComponent } from './components/unsupported-chain-msg/unsupported-chain-msg.component';
+import { InfoModalComponent } from './components/info-modal/info-modal.component';
 
 const components = [
   FooterComponent,
@@ -117,6 +118,7 @@ const modules = [
     ...pipes,
     CountdownTimerComponent,
     UnsupportedChainMsgComponent,
+    InfoModalComponent,
   ],
   providers: [
     {

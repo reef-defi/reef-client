@@ -32,4 +32,10 @@ export class DateTimeUtil {
   static toJSTimestamp(blockchainTimestamp: number) {
     return blockchainTimestamp * 1000;
   }
+
+  static isInFuture(time: number): boolean{
+    const now = new Date();
+    const compareTo = DateTimeUtil.toDate(time);
+    return compareTo.getTime() > now.getTime();
+  }
 }
