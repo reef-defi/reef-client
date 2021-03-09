@@ -39,6 +39,7 @@ export class BondPage {
   TokenUtil = TokenUtil;
   BondSaleStatus = BondSaleStatus;
   DateTimeUtil = DateTimeUtil;
+  lockEndDateFormat = 'MMM dd, y, hh:mm';
 
   bond$ = combineLatest([
     this.bondsService.bondsList$,
@@ -117,7 +118,7 @@ export class BondPage {
   }
 
   beforeUnlockDateMessage(unlockTime: number): void {
-    const unlockDateStr = this.datePipe.transform(unlockTime)
+    const unlockDateStr = this.datePipe.transform(unlockTime, this.lockEndDateFormat)
     this.dialog.open(InfoModalComponent, {
       data: {
         title: 'Deposited funds are making profits', message: 'You will be able to withdraw funds with rewards after ' + unlockDateStr
