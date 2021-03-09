@@ -401,7 +401,7 @@
     >
       Unlock date:
       <div class="accent-text">
-        {{bondTimes.farmEndTime|date}}
+        {{bondTimes.farmEndTime|date:lockEndDateFormat}}
       </div>
       <ng-container
         *ngIf="stakedReturn.staked>0; else noAssets"
