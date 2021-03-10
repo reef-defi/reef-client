@@ -39,7 +39,7 @@ export class BondPage {
   TokenUtil = TokenUtil;
   BondSaleStatus = BondSaleStatus;
   DateTimeUtil = DateTimeUtil;
-  lockEndDateFormat = 'MMM dd, y, hh:mm';
+  lockEndDateFormat = 'MMM dd, y, HH:mm';
 
   bond$ = combineLatest([
     this.bondsService.bondsList$,
