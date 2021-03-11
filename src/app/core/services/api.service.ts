@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import {
+  ChainId,
   IBasketHistoricRoi,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
@@ -413,9 +414,9 @@ export class ApiService {
   }
 */
 
-  getTransactions(address: string): any {
+  getTransactions(address: string, chainId: ChainId): any {
     return this.http
-      .get<any>(`${this.reefNodeApi}/${address}/transactions`)
+      .get<any>(`${this.reefNodeApi}/${chainId}/${address}/transactions`)
       .pipe(
         startWith([]),
         catchError((err) => {

@@ -33,7 +33,7 @@ export class DateTimeUtil {
     return blockchainTimestamp * 1000;
   }
 
-  static isInFuture(time: number): boolean{
+  static isInFuture(time: number): boolean {
     const now = new Date();
     const compareTo = DateTimeUtil.toDate(time);
     return compareTo.getTime() > now.getTime();
