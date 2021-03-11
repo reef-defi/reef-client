@@ -54,22 +54,22 @@
       </div>
       <div class="col text-right m-wide-cell">
         <div class="text-monospace small" [title]="token.balance || 0">
-          <span *ngIf="token.contract_ticker_symbol === 'ETH'">
+          <span *ngIf="token.contract_ticker_symbol === 'ETH'" class="text-nowrap">
             {{ token.balance || 0 | decimal: token.quote_rate:TokenSymbol.ETH }}
           </span>
-          <span *ngIf="token.contract_ticker_symbol !== 'ETH'">
+          <span *ngIf="token.contract_ticker_symbol !== 'ETH'" class="text-nowrap">
             {{ token.balance || 0 | decimal: token.quote_rate }}
           </span>
         </div>
       </div>
       <div class="col text-right m-wide-cell">
-        <div class="text-monospace small" [title]="token.balance || 0">
+        <div class="text-monospace small text-nowrap" [title]="token.balance || 0">
           ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
       </div>
       <div class="col text-right m-wide-cell">
         <div
-          class="text-monospace small"
+          class="text-monospace small text-nowrap"
           [title]="token.quote_rate * token.balance"
         >
           ${{ token.quote_rate * token.balance | number: '1.0-0' }}
@@ -126,20 +126,20 @@
             target="_blank"
             class="small font-weight-bolder d-flex align-items-center"
           >
-            {{ pool.token_0.contract_ticker_symbol }}/{{
+            <span class=" text-nowrap">{{ pool.token_0.contract_ticker_symbol }}</span>/<span class=" text-nowrap">{{
               pool.token_1.contract_ticker_symbol
-            }}
+            }}</span>
           </a>
         </div>
       </div>
       <div class="col text-right text-monospace small m-wide-cell">
-        {{ pool.token_0.balance | decimal: pool.token_0.balance }}/{{
+        <span class="text-nowrap">{{pool.token_0.balance | decimal: pool.token_0.balance }}</span>/<span class="text-nowrap">{{
           pool.token_1.balance | decimal: pool.token_1.balance
-        }}
+        }}</span>
       </div>
       <div class="col text-right m-wide-cell">
         <div
-          class="text-monospace small"
+          class="text-monospace small text-nowrap"
           [title]="pool.pool_token.balance || 0"
         >
           {{ pool.pool_token.balance | decimal: pool.pool_token.balance }}
@@ -148,7 +148,7 @@
 
       <div class="col text-right m-wide-cell">
         <div
-          class="text-monospace small"
+          class="text-monospace small text-nowrap"
           [title]="pool.quote_rate * pool.balance"
         >
           ${{ pool.pool_token.quote | number: '1.0-0' }}

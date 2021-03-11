@@ -217,6 +217,72 @@ export class BondsService {
       });
   }
 
+  async withdraw(bond: Bond): Promise<void> {
+    const info = await this.connectorService.providerUserInfo$
+      .pipe(first())
+      .toPromise();
+    const web3 = await this.connectorService.web3$.pipe(first()).toPromise();
+    const reefAbis = getContractData({} as ProtocolAddresses);
+
+    const bondContract = new web3.eth.Contract(
+      reefAbis.reefBond.abi,
+      bond.bondContractAddress
+    );
+    return bondContract.methods
+      .exit()
+      .send({
+        from: info.address,
+        gasPrice: this.connectorService.getGasPrice(info.chainInfo.chain_id),
+        gas: 262524,
+      })
+      .on('transactionHash', (hash) => {
+        this.notificationService.showNotification(
+          'The transaction is now pending. ',
+          'Ok',
+          'info'
+        );
+        this.transactionsService.addPendingTx(
+          hash,
+          TransactionType.REEF_BOND,
+          [bond.stake as TokenSymbol, bond.farm as TokenSymbol],
+          info.chainInfo.chain_id
+        );
+      })
+      .on('receipt', (receipt) => {
+        this.transactionsService.removePendingTx(receipt.transactionHash);
+        this.notificationService.showNotification(
+          `Your ${bond.stake} and ${bond.farm} have been transferred.`,
+          'Okay',
+          'success'
+        );
+        this.tokenBalanceService.updateTokensInBalances.next([
+          TokenSymbol.ETH,
+          bond.stake as TokenSymbol,
+        ]);
+      })
+      .on('error', (err, receipt) => {
+        if (receipt) {
+          this.transactionsService.removePendingTx(
+            receipt.transactionHash,
+            true
+          );
+        }
+        if (err.message.indexOf('locked') > 0) {
+          this.notificationService.showNotification(
+            'Bond still locked.',
+            'Close',
+            'error'
+          );
+        } else {
+          this.notificationService.showNotification(
+            ErrorUtils.parseError(err.code),
+            'Close',
+            'error'
+          );
+        }
+      });
+  }
+
   private getBondStatus$(bondWithTimeObs: Bond): Observable<BondSaleStatus> {
     const status$ = combineLatest([bondWithTimeObs.times$, this.timer$]).pipe(
       map(([bondTimes, _]) =>

@@ -9,8 +9,6 @@
         <app-page-title
           title="Bond"
           subtitle="Lock tokens long-term and get returns"
-          [chainId]="userInfo.chainInfo.chain_id"
-          [transactionType]="TransactionType.REEF_BOND"
         ></app-page-title>
       </div>
     </div>
@@ -198,11 +196,12 @@
                               >{{stakedReturn.currentInterestReturn}}
                               {{stakedReturn.bond.farm}}</span
                             ></ng-container
-                          ><br />
+                          ><!--<br />
                           Unlock date:
                           <span class="accent-text"
                             >{{bondTimes.farmEndTime|date}}</span
-                          >
+                          >-->
+                          <ng-container *ngTemplateOutlet="withdrawInfo"></ng-container>
                         </ng-container>
                       </p>
                       <ng-container
@@ -215,14 +214,20 @@
                             >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          locked for<br />
-                          <span class="bold"
-                            >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                            null, stakedReturn.totalInterestReturn > 100 ?
-                            bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
-                            + 1)}} {{stakedReturn.bond.farm}}
-                          </span>
-                          interest profit.
+                          <span class="small-text"
+                            >locked
+                            <span *ngIf="!!bondNoTimes.apy">for</span></span
+                          >
+                          <ng-container *ngIf="!!bondNoTimes.apy">
+                            <span class="bold"
+                              >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                              null, stakedReturn.totalInterestReturn > 100 ?
+                              bondNoTimes.farmDecimals :
+                              bondNoTimes.farmDecimals + 1)}}
+                              {{stakedReturn.bond.farm}}
+                            </span>
+                            <span class="small-text">interest profit.</span>
+                          </ng-container>
                         </div>
                       </ng-container>
                     </div>
@@ -247,21 +252,29 @@
                       <p
                         class="text-center text-muted text-monospace small-text"
                       >
-                        <ng-container
+                        <!--<ng-container
                           *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
                         >
-                          Your profit:<br
-                            *ngIf="stakedReturn.currentInterestReturn?.toString().length>5"
-                          />
-                          <span class="accent-text"
-                            >{{stakedReturn.currentInterestReturn}}
-                            {{stakedReturn.bond.farm}}</span
-                          ><br />
                           Unlock date:
-                          <span class="accent-text"
-                            >{{bondTimes.farmEndTime|date}}</span
+                          <div class="accent-text">
+                            {{bondTimes.farmEndTime|date}}
+                          </div>
+                          <ng-container
+                            *ngIf="stakedReturn.staked>0; else noAssets"
                           >
-                        </ng-container>
+                            <button
+                              class="btn btn-primary mt-2"
+                              [disabled]="!!DateTimeUtil.isInFuture(bondTimes.farmEndTime) || stakedReturn.staked<=0"
+                              (click)="withdraw(stakedReturn.bond)"
+                            >
+                              Withdraw
+                            </button>
+                          </ng-container>
+                          <ng-template #noAssets>
+                            You have no assets locked in this bond.
+                          </ng-template>
+                        </ng-container>-->
+                        <ng-container *ngTemplateOutlet="withdrawInfo"></ng-container>
                       </p>
                       <ng-container
                         *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
@@ -273,14 +286,20 @@
                             >{{stakedReturn.staked}}
                             {{stakedReturn.bond.stake}}</span
                           >
-                          locked for<br />
-                          <span class="bold"
-                            >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
-                            null, stakedReturn.totalInterestReturn > 100 ?
-                            bondNoTimes.farmDecimals : bondNoTimes.farmDecimals
-                            + 1)}} {{stakedReturn.bond.farm}}
-                          </span>
-                          interest profit.
+                          <span class="small-text"
+                            >locked
+                            <span *ngIf="!!bondNoTimes.apy">for</span></span
+                          >
+                          <ng-container *ngIf="!!bondNoTimes.apy">
+                            <span class="bold"
+                              >{{TokenUtil.toMaxDisplayDecimalPlaces(stakedReturn.totalInterestReturn,
+                              null, stakedReturn.totalInterestReturn > 100 ?
+                              bondNoTimes.farmDecimals :
+                              bondNoTimes.farmDecimals + 1)}}
+                              {{stakedReturn.bond.farm}}
+                            </span>
+                            <span class="small-text">interest profit.</span>
+                          </ng-container>
                         </div>
                       </ng-container>
                     </div>
@@ -373,9 +392,38 @@
   <ng-template #loading>
     <app-provider-loading>Loading blockchain data</app-provider-loading>
   </ng-template>
+  <ng-template #withdrawInfo>
+    <ng-container
+      *ngIf="bondNoTimes.times$| async as bondTimes"
+    >
+    <ng-container
+      *ngIf="bondNoTimes.stakedBalanceReturn$|async as stakedReturn"
+    >
+      Unlock date:
+      <div class="accent-text">
+        {{bondTimes.farmEndTime|date:lockEndDateFormat}}
+      </div>
+      <ng-container
+        *ngIf="stakedReturn.staked>0; else noAssets"
+      >
+        <button
+          class="btn btn-primary mt-2"
+          (click)="!DateTimeUtil.isInFuture(bondTimes.farmEndTime)?withdraw(stakedReturn.bond):beforeUnlockDateMessage(bondTimes.farmEndTime)"
+        >
+          Withdraw
+        </button>
+      </ng-container>
+      <ng-template #noAssets>
+        You have no assets locked in this bond.
+      </ng-template>
+    </ng-container>
+    </ng-container>
+  </ng-template>
 </ng-container>
 
 <ng-template #errorTemplate>
   <app-empty-state title="Bond not found" subtitle="Bond is not supported yet.">
   </app-empty-state>
 </ng-template>
+
+

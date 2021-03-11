@@ -1,0 +1,35 @@
+<div class="d-flex flex-column p-3">
+  <!--<div class="d-flex justify-content-center align-items-center mb-4">
+    <div #h2 class="h4 mr-3 mt-1">Welcome to Reef!</div>
+    <mat-divider
+      [vertical]="true"
+      [style.height.px]="h2.clientHeight"
+    ></mat-divider>
+    <img
+      class="ml-3"
+      src="../../../../../assets/images/reef/reef-v2.svg"
+      width="50"
+      height="50"
+      alt=""
+    />
+  </div>-->
+  <div class="d-flex flex-column justify-content-start mb-3">
+    <div class="h5">{{data?.title}}</div>
+    <p class="text-break font-light small">
+      {{data?.message}}
+    </p>
+  </div>
+  <div class="dialog__footer">
+    <!--<div>
+
+      <button mat-ripple (click)="action(false)" class="btn btn-light">
+        Decline
+      </button>
+    </div>-->
+    <div class="text-right">
+      <button mat-ripple (click)="action(true)" class="btn btn-primary">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
