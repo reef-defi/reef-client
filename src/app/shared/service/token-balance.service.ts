@@ -49,16 +49,24 @@ export class TokenBalanceService {
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
     ChainId.MATIC,
+    ChainId.BINANCE_SMART_CHAIN,
   ];
   private static PORTFOLIO_SUPPORTED_EXCHANGE_IDS = [
     ExchangeId.UNISWAP_V2,
     ExchangeId.COMPOUND,
   ];
+
+  private static CHAIN_SUPPORTED_EXCHANGES = {
+    [ChainId.BINANCE_SMART_CHAIN]: [ExchangeId.TOKENS],
+    [ChainId.MAINNET]: [ExchangeId.TOKENS, ExchangeId.UNISWAP_V2],
+  };
+
   public refreshBalancesForAddress = new Subject<string>();
   // TODO remove local update
   public updateTokensInBalances = new Subject<TokenSymbol[]>();
   private balancesByAddr = new Map<string, Observable<any>>();
   private reefNodeApi = environment.reefNodeApiUrl;
+
   public chainSupportedPortfolio(chainId: ChainId): boolean {
     // atm we only support Covalent portfolio data
     let indexOf = TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(
@@ -75,7 +83,8 @@ export class TokenBalanceService {
   ) {}
 
   getPortfolioObservables(
-    address: string
+    address: string,
+    chainId: ChainId
   ): {
     refreshSubject: Subject<ExchangeId>;
     positions: Map<ExchangeId, Observable<any>>;
@@ -90,11 +99,16 @@ export class TokenBalanceService {
       }),
       shareReplay(1)
     );
-
-    const uniPositions$ = this.getUniswapPositions(address, refreshSubject);
-    const compPositions$ = this.getCompoundPositions(address, refreshSubject);
     const positions = new Map();
     positions.set(ExchangeId.TOKENS, tokenPositions$);
+    let uniPositions$ = of([]);
+    if (
+      TokenBalanceService.CHAIN_SUPPORTED_EXCHANGES[chainId].includes(
+        ExchangeId.UNISWAP_V2
+      )
+    ) {
+      uniPositions$ = this.getUniswapPositions(address, refreshSubject);
+    }
     positions.set(ExchangeId.UNISWAP_V2, uniPositions$);
     // positions.set(ExchangeId.COMPOUND, compPositions$);
     return { refreshSubject, positions };
@@ -317,7 +331,9 @@ export class TokenBalanceService {
       TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId) > -1
     ) {
       balances$ = this.http
-        .get<any>(`${this.reefNodeApi}/${address}/balances`)
+        .get<any>(
+          `${this.reefNodeApi}/${info.chainInfo.chain_id}/${address}/balances`
+        )
         .pipe(tap((v: any[]) => v.forEach((itm) => (itm.address = address))));
     } else {
       DevUtil.devLog('getAddressTokenBalances$ FROM CHAIN');

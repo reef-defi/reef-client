@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {CommonModule, DatePipe} from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { ReefRoutingModule } from './reef-routing.module';
 import { ReefPage } from './pages/reef/reef.page';
@@ -39,6 +39,6 @@ const pages = [
 @NgModule({
   declarations: [...pages, ...components],
   imports: [CommonModule, ReefRoutingModule, SharedModule],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class ReefModule {}

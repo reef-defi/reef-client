@@ -61,12 +61,12 @@ export class ConnectorService {
       options: {
         rpc: {
           1: ProviderUtil.getProviderUrl(ProviderName.INFURA),
-          56: 'https://bsc-dataseed.binance.org/'
-        }
+          56: 'https://bsc-dataseed.binance.org/',
+        },
       },
     },
     torus: {
-      package: Torus, 
+      package: Torus,
     },
     'custom-walletlink': {
       display: {

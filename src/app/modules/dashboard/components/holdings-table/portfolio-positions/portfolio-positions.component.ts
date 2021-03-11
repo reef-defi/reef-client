@@ -1,5 +1,6 @@
 import { Component, Input, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
+import { ChainId } from '../../../../../core/models/types';
 
 @Component({
   selector: 'app-portfolio-positions',
