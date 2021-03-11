@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {BondsService} from '../../../../core/services/bonds.service';
-import {ActivatedRoute} from '@angular/router';
-import {filter, map, pluck, shareReplay} from 'rxjs/operators';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BondsService } from '../../../../core/services/bonds.service';
+import { ActivatedRoute } from '@angular/router';
+import { filter, map, pluck, shareReplay } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import {
   Bond,
   BondSaleStatus,
@@ -10,19 +10,19 @@ import {
   TokenSymbol,
   TransactionType,
 } from '../../../../core/models/types';
-import {ConnectorService} from '../../../../core/services/connector.service';
-import {UiUtils} from '../../../../shared/utils/ui.utils';
-import {ApiService} from '../../../../core/services/api.service';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {TokenUtil} from '../../../../shared/utils/token.util';
-import {BondUtil} from '../../../../shared/utils/bond.util';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
-import {DateTimeUtil} from '../../../../shared/utils/date-time.util';
-import {CustomInvestModalComponent} from '../../../baskets/components/custom-invest-modal/custom-invest-modal.component';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {InfoModalComponent} from '../../../../shared/components/info-modal/info-modal.component';
-import {DatePipe} from '@angular/common';
+import { ConnectorService } from '../../../../core/services/connector.service';
+import { UiUtils } from '../../../../shared/utils/ui.utils';
+import { ApiService } from '../../../../core/services/api.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { TokenUtil } from '../../../../shared/utils/token.util';
+import { BondUtil } from '../../../../shared/utils/bond.util';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { DateTimeUtil } from '../../../../shared/utils/date-time.util';
+import { CustomInvestModalComponent } from '../../../baskets/components/custom-invest-modal/custom-invest-modal.component';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { InfoModalComponent } from '../../../../shared/components/info-modal/info-modal.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-bond',
@@ -86,8 +86,7 @@ export class BondPage {
     public tokenBalanceService: TokenBalanceService,
     private dialog: MatDialog,
     private datePipe: DatePipe
-  ) {
-  }
+  ) {}
 
   stake(bond: Bond, stakeAmount: string): void {
     this.bondsService.stake(bond, stakeAmount).then(
@@ -118,11 +117,17 @@ export class BondPage {
   }
 
   beforeUnlockDateMessage(unlockTime: number): void {
-    const unlockDateStr = this.datePipe.transform(unlockTime, this.lockEndDateFormat)
+    const unlockDateStr = this.datePipe.transform(
+      unlockTime,
+      this.lockEndDateFormat
+    );
     this.dialog.open(InfoModalComponent, {
       data: {
-        title: 'Deposited funds are making profits', message: 'You will be able to withdraw funds with rewards after ' + unlockDateStr
-      }
+        title: 'Deposited funds are making profits',
+        message:
+          'You will be able to withdraw funds with rewards after ' +
+          unlockDateStr,
+      },
     });
   }
 }

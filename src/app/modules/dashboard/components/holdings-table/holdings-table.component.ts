@@ -13,6 +13,7 @@ import {
   styleUrls: ['./holdings-table.component.scss'],
 })
 export class HoldingsTableComponent {
+  ChainId = ChainId;
   TokenSymbol = TokenSymbol;
   ExchangeId = ExchangeId;
   @Input() chainId: ChainId | undefined;

@@ -84,7 +84,7 @@ export class TokenBalanceService {
 
   getPortfolioObservables(
     address: string,
-    chainId: number
+    chainId: ChainId
   ): {
     refreshSubject: Subject<ExchangeId>;
     positions: Map<ExchangeId, Observable<any>>;

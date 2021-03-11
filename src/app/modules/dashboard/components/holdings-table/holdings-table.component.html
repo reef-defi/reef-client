@@ -54,16 +54,25 @@
       </div>
       <div class="col text-right m-wide-cell">
         <div class="text-monospace small" [title]="token.balance || 0">
-          <span *ngIf="token.contract_ticker_symbol === 'ETH'" class="text-nowrap">
+          <span
+            *ngIf="token.contract_ticker_symbol === 'ETH'"
+            class="text-nowrap"
+          >
             {{ token.balance || 0 | decimal: token.quote_rate:TokenSymbol.ETH }}
           </span>
-          <span *ngIf="token.contract_ticker_symbol !== 'ETH'" class="text-nowrap">
+          <span
+            *ngIf="token.contract_ticker_symbol !== 'ETH'"
+            class="text-nowrap"
+          >
             {{ token.balance || 0 | decimal: token.quote_rate }}
           </span>
         </div>
       </div>
       <div class="col text-right m-wide-cell">
-        <div class="text-monospace small text-nowrap" [title]="token.balance || 0">
+        <div
+          class="text-monospace small text-nowrap"
+          [title]="token.balance || 0"
+        >
           ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
       </div>
@@ -80,7 +89,7 @@
 </app-portfolio-positions>
 
 <app-portfolio-positions
-  *ngIf="chainId === 1"
+  *ngIf="chainId === ChainId.MAINNET"
   title="Uniswap"
   [positions]="portfolio?.uniswapPositions"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
@@ -126,14 +135,20 @@
             target="_blank"
             class="small font-weight-bolder d-flex align-items-center"
           >
-            <span class=" text-nowrap">{{ pool.token_0.contract_ticker_symbol }}</span>/<span class=" text-nowrap">{{
+            <span class="text-nowrap">{{
+              pool.token_0.contract_ticker_symbol
+            }}</span
+            >/<span class="text-nowrap">{{
               pool.token_1.contract_ticker_symbol
             }}</span>
           </a>
         </div>
       </div>
       <div class="col text-right text-monospace small m-wide-cell">
-        <span class="text-nowrap">{{pool.token_0.balance | decimal: pool.token_0.balance }}</span>/<span class="text-nowrap">{{
+        <span class="text-nowrap">{{
+          pool.token_0.balance | decimal: pool.token_0.balance
+        }}</span
+        >/<span class="text-nowrap">{{
           pool.token_1.balance | decimal: pool.token_1.balance
         }}</span>
       </div>
