@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -8,9 +7,11 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 import { PoolService } from '../../../../core/services/pool.service';
 import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
 import {
+  ChainId,
   ExchangeId,
   IBasketHistoricRoi,
   IPortfolio,
+  IProviderUserInfo,
   SupportedPortfolio,
   Token,
   TokenBalance,
@@ -24,7 +25,6 @@ import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 import { first } from 'rxjs/internal/operators/first';
 import { scan } from 'rxjs/internal/operators/scan';
-import { DevUtil } from '../../../../shared/utils/dev-util';
 
 @Component({
   selector: 'app-dashboard',
@@ -196,16 +196,22 @@ export class DashboardPage {
     );
 
     this.pieChartData$ = combineLatest(
+      this.connectorService.providerUserInfo$,
       this.portfolio$,
       this.portfolioTotalBalance$
     ).pipe(
       map(
-        ([portfolio, { totalBalance }]: [
+        ([info, portfolio, { totalBalance }]: [
+          IProviderUserInfo,
           SupportedPortfolio,
           { [key: string]: number }
         ]) => {
           if (
-            !portfolio.tokens ||
+            (info.chainInfo.chain_id === ChainId.BINANCE_SMART_CHAIN &&
+              !portfolio.tokens) ||
+            (info.chainInfo.chain_id === ChainId.MAINNET &&
+              !portfolio.tokens &&
+              !portfolio.uniswapPositions) ||
             !Array.isArray(portfolio.tokens) ||
             !totalBalance
           ) {
