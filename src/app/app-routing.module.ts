@@ -22,16 +22,18 @@ const routes: Routes = [
       ),
     canActivate: [WalletGuard],
   },
-  // {
-  //   path: 'baskets',
-  //   loadChildren: () => import('./modules/baskets/baskets.module').then(m => m.BasketsModule),
-  //   canActivate: [WalletGuard],
-  // },
-  // {
-  //   path: 'vaults',
-  //   loadChildren: () => import('./modules/vaults/vaults.module').then(m => m.VaultsModule),
-  //   canActivate: [WalletGuard],
-  // },
+  {
+    path: 'baskets',
+    loadChildren: () =>
+      import('./modules/baskets/baskets.module').then((m) => m.BasketsModule),
+    canActivate: [WalletGuard],
+  },
+  {
+    path: 'vaults',
+    loadChildren: () =>
+      import('./modules/vaults/vaults.module').then((m) => m.VaultsModule),
+    canActivate: [WalletGuard],
+  },
   // {
   //   path: 'binance',
   //   loadChildren: () => import('./modules/binance/binance.module').then(m => m.BinanceModule),

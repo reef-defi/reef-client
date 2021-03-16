@@ -4,6 +4,7 @@ import { basketNameGenerator } from '../utils/pools-utils';
 import { NotificationService } from './notification.service';
 import { IVault, IVaultBasket } from '../models/types';
 import { ApiService } from './api.service';
+import { first } from 'rxjs/internal/operators/first';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class VaultsService {
   ) {}
 
   public async getBasketVaults(): Promise<IVaultBasket[]> {
+    const info = await this.userInfo.pipe(first()).toPromise();
     const basketCount = await this.getAvailableVaultsBasketsCount();
     if (basketCount === '0') {
       return [];
@@ -41,8 +43,7 @@ export class VaultsService {
     );
     return vaultBaskets.filter(
       (basket: IVaultBasket) =>
-        +basket.investedETH > 0 &&
-        basket.referrer === this.userInfo.value.address
+        +basket.investedETH > 0 && basket.referrer === info.address
     );
   }
 
@@ -52,6 +53,7 @@ export class VaultsService {
     vaultsTypes: number[],
     amount: number
   ): Promise<any> {
+    const info = await this.userInfo.pipe(first()).toPromise();
     const wei = this.connectorService.toWei(amount);
     const name = basketNameGenerator();
     const adjustedWeights = this.adjustWeights(vaultsWeights);
@@ -59,7 +61,7 @@ export class VaultsService {
       const res = await this.vaultsContract$.value.methods
         .createBasket(name, vaults, vaultsWeights, vaultsTypes)
         .send({
-          from: this.userInfo.value.address,
+          from: info.address,
           gas: 6721975,
           value: `${wei}`,
         });
@@ -87,11 +89,12 @@ export class VaultsService {
     yieldRatio: number,
     shouldRestake: boolean
   ): Promise<any> {
+    const info = await this.userInfo.pipe(first()).toPromise();
     try {
       const res = await this.vaultsContract$.value.methods
         .disinvest(basketIdx, percent, yieldRatio, shouldRestake)
         .send({
-          from: this.userInfo.value.address,
+          from: info.address,
           gas: 6721975,
         });
       this.transactionInterval = setInterval(
@@ -125,8 +128,9 @@ export class VaultsService {
   }
 
   private async getBalanceOfVaults(basketIdx: number): Promise<any> {
+    const info = await this.userInfo.pipe(first()).toPromise();
     const balance: string[] = await this.vaultsContract$.value.methods
-      .balanceOfVaults(this.userInfo.value.address, basketIdx)
+      .balanceOfVaults(info.address, basketIdx)
       .call();
     return balance.map((vaultBalance) =>
       this.connectorService.fromWei(vaultBalance)
@@ -134,8 +138,9 @@ export class VaultsService {
   }
 
   private async getInvestedAmountInBasket(basketIdx: number): Promise<string> {
+    const info = await this.userInfo.pipe(first()).toPromise();
     const invested: string = await this.vaultsContract$.value.methods
-      .investedAmountInBasket(this.userInfo.value.address, basketIdx)
+      .investedAmountInBasket(info.address, basketIdx)
       .call();
     return this.connectorService.fromWei(invested);
   }

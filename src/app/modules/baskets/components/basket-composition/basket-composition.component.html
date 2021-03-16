@@ -1,6 +1,6 @@
-<div id="createBasketComposition" class="content__container" *ngIf="!isList">
-  <div>
-    <div class="heading__lg mb-3">COMPOSITION</div>
+<div id="createBasketComposition" class="card" *ngIf="!isList">
+  <div class="card-body">
+    <div class="h6">Composition</div>
     <div
       *ngIf="
         !isList && basket && Object.keys(basket).length > 0;
@@ -8,8 +8,8 @@
       "
     >
       <div class="mb-2" *ngFor="let key of Object.keys(basket); let i = index">
-        <div class="label__md mb-1">{{ key }}</div>
-        <div class="heading__md mb-1">{{ basket[key] | number: '1.1-2' }}%</div>
+        <div class="small text-monospace mb-1">{{ key }}</div>
+        <div class="small mb-1">{{ basket[key] | number: '1.1-2' }}%</div>
         <mat-progress-bar
           [color]="colors[i]"
           mode="determinate"

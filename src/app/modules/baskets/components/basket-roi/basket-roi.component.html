@@ -1,11 +1,5 @@
-<div
-  id="roiChart"
-  class="d-flex flex-column"
-  [class.content__container]="!isList"
->
-  <div *ngIf="!isList" class="heading__lg mb-2">
-    HISTORIC SIMULATED PERFORMANCE
-  </div>
+<div id="roiChart" class="d-flex flex-column" [class.card]="!isList">
+  <div *ngIf="!isList" class="h6">HISTORIC SIMULATED PERFORMANCE</div>
   <div class="d-flex flex-column">
     <div class="row">
       <div class="col-2 offset-10">
