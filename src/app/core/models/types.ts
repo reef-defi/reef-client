@@ -268,6 +268,7 @@ export interface ProtocolAddresses {
   USDT: string;
   WETH: string;
   BNB: string;
+  LIT: string;
   // TESTR: string;
 }
 
