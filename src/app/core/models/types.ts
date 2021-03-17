@@ -106,6 +106,7 @@ export enum TokenSymbol {
   REEF = 'REEF',
   REEF_WETH_POOL = 'REEF_WETH_POOL',
   REEF_USDT_POOL = 'REEF_USDT_POOL',
+  LIT = 'LIT',
   // TESTR = 'TESTR'
 }
 
@@ -267,6 +268,7 @@ export interface ProtocolAddresses {
   USDT: string;
   WETH: string;
   BNB: string;
+  LIT: string;
   // TESTR: string;
 }
 
