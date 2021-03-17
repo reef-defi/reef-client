@@ -32,7 +32,7 @@
           />
         </div>
         <a
-          *ngIf="token.contract_ticker_symbol !== 'ETH'; else ethNoLink"
+          *ngIf="isPriceSupported(chainId) && token.contract_ticker_symbol !== 'ETH'; else ethNoLink"
           style="width: 100%"
           href="https://etherscan.io/token/{{ token.contract_address }}"
           target="_blank"
