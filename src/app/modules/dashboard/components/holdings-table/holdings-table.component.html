@@ -4,14 +4,14 @@
   class="mb-4 table-responsive-lg"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.TOKENS)"
 >
-  <div class="table-min-w-up-to-lg">
+  <div [class.table-min-w-up-to-lg]="isPriceSupported(chainId)">
     <div class="row asset-row">
       <div class="col col-xl-4 d-flex align-items-center x-wide-cell">
         Asset
       </div>
       <div class="col text-right m-wide-cell">Amount</div>
-      <div class="col text-right m-wide-cell">Price</div>
-      <div class="col text-right m-wide-cell">Total</div>
+      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">Price</div>
+      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">Total</div>
     </div>
     <div
       *ngFor="let token of portfolio.tokens; let i = index"
@@ -68,15 +68,15 @@
           </span>
         </div>
       </div>
-      <div class="col text-right m-wide-cell">
+      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">
         <div
           class="text-monospace small text-nowrap"
-          [title]="token.balance || 0"
+          [title]="token.quote_rate || 'Na.'"
         >
           ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
       </div>
-      <div class="col text-right m-wide-cell">
+      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">
         <div
           class="text-monospace small text-nowrap"
           [title]="token.quote_rate * token.balance"
