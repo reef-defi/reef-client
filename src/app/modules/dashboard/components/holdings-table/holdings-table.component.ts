@@ -1,6 +1,11 @@
-import {Component, Input} from '@angular/core';
-import {Router} from '@angular/router';
-import {ChainId, ExchangeId, IPortfolio, TokenSymbol,} from '../../../../core/models/types';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  ChainId,
+  ExchangeId,
+  IPortfolio,
+  TokenSymbol,
+} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-holdings-table',
@@ -19,7 +24,7 @@ export class HoldingsTableComponent {
     this.router.navigate(['/reef/buy']);
   }
 
-  isPriceSupported(chainId: ChainId){
+  isPriceSupported(chainId: ChainId) {
     return chainId === ChainId.MAINNET;
   }
 }
