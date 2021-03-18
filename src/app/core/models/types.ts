@@ -227,6 +227,7 @@ export interface IChainData {
   network_id: number;
   rpc_url: string;
   native_currency: IAssetData;
+  chain_scanner_base_url: string;
 }
 
 export enum ChainId {

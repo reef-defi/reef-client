@@ -1,5 +1,5 @@
 <ng-container
-  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo as chainInfo"
 >
   <div class="row">
     <div class="col">
@@ -12,8 +12,8 @@
 
   <div class="col-12 col-md-10 offset-md-1">
     <app-unsupported-chain-msg
-      [chainId]="chainId"
-      [displayUnsupportedChainIdMessage]="!tokenBalanceService.chainSupportedPortfolio(chainId)"
+      [chainId]="chainInfo.chain_id"
+      [displayUnsupportedChainIdMessage]="!tokenBalanceService.chainSupportedPortfolio(chainInfo.chain_id)"
       class="page__wrapper row justify-content-between"
     >
       <div class="row w-100">
@@ -61,7 +61,7 @@
                     *ngIf="portfolio$ | async as portfolio; else loadingTemplate"
                   >
                     <app-holdings-table
-                      [chainId]="chainId"
+                      [chainInfo]="chainInfo"
                       [portfolio]="portfolio"
                     ></app-holdings-table>
                   </ng-container>
