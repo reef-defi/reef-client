@@ -1,6 +1,12 @@
-import {Component, Input} from '@angular/core';
-import {Router} from '@angular/router';
-import {ChainId, ExchangeId, IPortfolio, TokenSymbol,} from '../../../../core/models/types';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  ChainId,
+  ExchangeId,
+  IPortfolio,
+  IProviderUserInfo,
+  TokenSymbol,
+} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-holdings-table',
@@ -11,7 +17,7 @@ export class HoldingsTableComponent {
   ChainId = ChainId;
   TokenSymbol = TokenSymbol;
   ExchangeId = ExchangeId;
-  @Input() chainId: ChainId | undefined;
+  @Input() chainInfo: IProviderUserInfo | undefined;
   @Input() portfolio: IPortfolio;
   constructor(private readonly router: Router) {}
 
@@ -19,7 +25,7 @@ export class HoldingsTableComponent {
     this.router.navigate(['/reef/buy']);
   }
 
-  isPriceSupported(chainId: ChainId){
-    return chainId === ChainId.MAINNET;
+  isPriceSupported(chainId: ChainId) {
+    return this.chainInfo.chain_id === ChainId.MAINNET;
   }
 }

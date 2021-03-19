@@ -26,6 +26,7 @@ export const supportedChains: IChainData[] = [
       contractAddress: '',
       balance: '',
     },
+    chain_scanner_base_url: 'https://etherscan.io',
   },
   {
     name: 'Binance Smart Chain',
@@ -42,6 +43,7 @@ export const supportedChains: IChainData[] = [
       contractAddress: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
       balance: '',
     },
+    chain_scanner_base_url: 'https://bscscan.com',
   },
   {
     name: 'Ethereum Ropsten',

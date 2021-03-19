@@ -4,14 +4,24 @@
   class="mb-4 table-responsive-lg"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.TOKENS)"
 >
-  <div [class.table-min-w-up-to-lg]="isPriceSupported(chainId)">
+  <div [class.table-min-w-up-to-lg]="isPriceSupported(chainInfo.chain_id)">
     <div class="row asset-row">
       <div class="col col-xl-4 d-flex align-items-center x-wide-cell">
         Asset
       </div>
       <div class="col text-right m-wide-cell">Amount</div>
-      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">Price</div>
-      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">Total</div>
+      <div
+        class="col text-right m-wide-cell"
+        *ngIf="isPriceSupported(chainInfo.chain_id)"
+      >
+        Price
+      </div>
+      <div
+        class="col text-right m-wide-cell"
+        *ngIf="isPriceSupported(chainInfo.chain_id)"
+      >
+        Total
+      </div>
     </div>
     <div
       *ngFor="let token of portfolio.tokens; let i = index"
@@ -32,9 +42,14 @@
           />
         </div>
         <a
-          *ngIf="isPriceSupported(chainId) && token.contract_ticker_symbol !== 'ETH'; else ethNoLink"
+          *ngIf="
+            token.contract_ticker_symbol !== chainInfo.native_currency.symbol;
+            else noScanSiteLink
+          "
           style="width: 100%"
-          href="https://etherscan.io/token/{{ token.contract_address }}"
+          href="{{ chainInfo.chain_scanner_base_url }}/token/{{
+            token.contract_address
+          }}"
           target="_blank"
           class="small font-weight-bolder d-flex align-items-center"
         >
@@ -43,7 +58,7 @@
           }}</span>
           <span>{{ token.contract_name }}</span>
         </a>
-        <ng-template #ethNoLink>
+        <ng-template #noScanSiteLink>
           <div style="width: 100%" class="small font-weight-bolder">
             <span style="display: inline-block; width: 25%">{{
               token.contract_ticker_symbol
@@ -55,20 +70,23 @@
       <div class="col text-right m-wide-cell">
         <div class="text-monospace small" [title]="token.balance || 0">
           <span
-            *ngIf="token.contract_ticker_symbol === 'ETH'"
+            *ngIf="token.contract_ticker_symbol === TokenSymbol.ETH"
             class="text-nowrap"
           >
             {{ token.balance || 0 | decimal: token.quote_rate:TokenSymbol.ETH }}
           </span>
           <span
-            *ngIf="token.contract_ticker_symbol !== 'ETH'"
+            *ngIf="token.contract_ticker_symbol !== TokenSymbol.ETH"
             class="text-nowrap"
           >
             {{ token.balance || 0 | decimal: token.quote_rate }}
           </span>
         </div>
       </div>
-      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">
+      <div
+        class="col text-right m-wide-cell"
+        *ngIf="isPriceSupported(chainInfo.chain_id)"
+      >
         <div
           class="text-monospace small text-nowrap"
           [title]="token.quote_rate || 'Na.'"
@@ -76,7 +94,10 @@
           ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
       </div>
-      <div class="col text-right m-wide-cell" *ngIf="isPriceSupported(chainId)">
+      <div
+        class="col text-right m-wide-cell"
+        *ngIf="isPriceSupported(chainInfo.chain_id)"
+      >
         <div
           class="text-monospace small text-nowrap"
           [title]="token.quote_rate * token.balance"
@@ -89,7 +110,7 @@
 </app-portfolio-positions>
 
 <app-portfolio-positions
-  *ngIf="chainId === ChainId.MAINNET"
+  *ngIf="chainInfo.chain_id === ChainId.MAINNET"
   title="Uniswap"
   [positions]="portfolio?.uniswapPositions"
   (refresh)="portfolio.refreshSubject.next(ExchangeId.UNISWAP_V2)"
