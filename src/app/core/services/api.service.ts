@@ -551,7 +551,7 @@ export class ApiService {
     );
   }*/
 
-  private getPriceForAddresses(
+  getPriceForAddresses(
     tokenAddresses: string[],
     againstCurrecny = 'usd'
   ) {
