@@ -287,8 +287,7 @@ export class BondsService {
   private getBondStatus$(bondWithTimeObs: Bond): Observable<BondSaleStatus> {
     const status$ = combineLatest([bondWithTimeObs.times$, this.timer$]).pipe(
       map(([bondTimes, _]) =>
-        this.toBondSaleStatus(bondWithTimeObs, bondTimes),
-        tap(v=>console.log('STATTTT',v))
+        this.toBondSaleStatus(bondWithTimeObs, bondTimes)
       ),
       takeWhile((v) => v !== BondSaleStatus.COMPLETE, true),
       shareReplay(1)
@@ -333,7 +332,6 @@ export class BondsService {
       shareReplay(1)
     );
     bond.status$ = this.getBondStatus$(bond);
-    bond.status$.subscribe(v=>console.log('SUUU',v))
     bond.stakedBalanceUpdate = new Subject();
     const stakedBalance$ = combineLatest([
       of(bond),
