@@ -10,16 +10,8 @@
         Asset
       </div>
       <div class="col text-right m-wide-cell">Amount</div>
-      <div
-        class="col text-right m-wide-cell"
-      >
-        Price
-      </div>
-      <div
-        class="col text-right m-wide-cell"
-      >
-        Total
-      </div>
+      <div class="col text-right m-wide-cell">Price</div>
+      <div class="col text-right m-wide-cell">Total</div>
     </div>
     <div
       *ngFor="let token of portfolio.tokens; let i = index"
@@ -68,30 +60,34 @@
       <div class="col text-right m-wide-cell amount-col">
         <div class="text-monospace small" [title]="token.balance || 0">
           <span
-            *ngIf="token.contract_ticker_symbol === chainInfo.native_currency.symbol"
+            *ngIf="
+              token.contract_ticker_symbol === chainInfo.native_currency.symbol
+            "
             class="text-nowrap"
           >
             {{ token.balance || 0 | decimal: token.quote_rate:TokenSymbol.ETH }}
           </span>
           <span
-            *ngIf="token.contract_ticker_symbol !== chainInfo.native_currency.symbol"
+            *ngIf="
+              token.contract_ticker_symbol !== chainInfo.native_currency.symbol
+            "
             class="text-nowrap"
           >
             {{ token.balance || 0 | decimal: token.quote_rate }}
           </span>
         </div>
       </div>
-      <div
-        class="col text-right m-wide-cell price-col"
-      >
-        <div *ngIf="!!token.quote_rate; else noPrice"
+      <div class="col text-right m-wide-cell price-col">
+        <div
+          *ngIf="!!token.quote_rate; else noPrice"
           class="text-monospace small text-nowrap"
           [title]="token.quote_rate"
         >
           ${{ token.quote_rate | decimal: token.quote_rate }}
         </div>
       </div>
-      <div *ngIf="!!token.quote_rate; else noPrice"
+      <div
+        *ngIf="!!token.quote_rate; else noPrice"
         class="col text-right m-wide-cell total-col"
       >
         <div
@@ -106,12 +102,16 @@
 </app-portfolio-positions>
 <ng-template #noPrice>
   <div class="col text-right m-wide-cell total-col">
-  <div
-    class="text-monospace small text-nowrap"
-    title="Price is not supported yet on this blockchain."
-  >
-    <mat-icon class="no-price-icon text-muted c-pointer" (click)="noPriceDialog()">help</mat-icon>
-  </div>
+    <div
+      class="text-monospace small text-nowrap"
+      title="Price is not supported yet on this blockchain."
+    >
+      <mat-icon
+        class="no-price-icon text-muted c-pointer"
+        (click)="noPriceDialog()"
+        >help</mat-icon
+      >
+    </div>
   </div>
 </ng-template>
 <app-portfolio-positions

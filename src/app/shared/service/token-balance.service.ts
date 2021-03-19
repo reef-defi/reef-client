@@ -377,7 +377,7 @@ export class TokenBalanceService {
     ]).pipe(
       take(1),
       switchMap(([info, web3]: [IProviderUserInfo, Web3]) => {
-        if (tokenSymbol === TokenSymbol.ETH) {
+        if (tokenSymbol === info.chainInfo.native_currency.symbol) {
           return web3.eth
             .getBalance(address)
             .then((b) => web3.utils.fromWei(b));
@@ -414,7 +414,9 @@ export class TokenBalanceService {
       );
     }
     if (!contract && tokenAddress) {
-      this.connectorService.createErc20TokenContractFromAddress(tokenAddress);
+      contract = this.connectorService.createErc20TokenContractFromAddress(
+        tokenAddress
+      );
     }
 
     if (!contract) {

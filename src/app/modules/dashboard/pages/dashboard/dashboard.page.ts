@@ -27,7 +27,7 @@ import { TokenBalanceService } from '../../../../shared/service/token-balance.se
 import { first } from 'rxjs/internal/operators/first';
 import { scan } from 'rxjs/internal/operators/scan';
 import { addresses } from 'src/assets/addresses';
-import {startWith} from 'rxjs/internal/operators/startWith';
+import { startWith } from 'rxjs/internal/operators/startWith';
 
 @Component({
   selector: 'app-dashboard',
@@ -127,19 +127,23 @@ export class DashboardPage {
               }
             }),
             switchMap((tokens) => {
-              const reefVal=tokens?tokens.find(tkn=>tkn.contract_ticker_symbol===TokenSymbol.REEF):null;
-              if(!!reefVal && !reefVal.quote_rate){
+              const reefVal = tokens
+                ? tokens.find(
+                    (tkn) => tkn.contract_ticker_symbol === TokenSymbol.REEF
+                  )
+                : null;
+              if (!!reefVal && !reefVal.quote_rate) {
                 const reefAddr = addresses[ChainId.MAINNET][TokenSymbol.REEF];
                 return this.apiService.getPriceForAddresses([reefAddr]).pipe(
-                  map(priceRes=>{
-                    reefVal.quote_rate = priceRes[reefAddr].usd
+                  map((priceRes) => {
+                    reefVal.quote_rate = priceRes[reefAddr].usd;
                     return { tokens };
                   }),
-                  startWith({tokens})
+                  startWith({ tokens })
                 );
               }
-              return of({tokens});
-             })
+              return of({ tokens });
+            })
           );
           const uni$ = portfolio.positions
             .get(ExchangeId.UNISWAP_V2)

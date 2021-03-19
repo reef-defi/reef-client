@@ -551,10 +551,7 @@ export class ApiService {
     );
   }*/
 
-  getPriceForAddresses(
-    tokenAddresses: string[],
-    againstCurrecny = 'usd'
-  ) {
+  getPriceForAddresses(tokenAddresses: string[], againstCurrecny = 'usd') {
     const addresses = tokenAddresses.toString();
     return this.http.get(
       `${this.coinGeckoApi}/simple/token_price/ethereum?contract_addresses=${addresses}&vs_currencies=${againstCurrecny}`

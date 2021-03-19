@@ -1,19 +1,20 @@
-import {Component, Input} from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   ChainId,
-  ExchangeId, IChainData,
+  ExchangeId,
+  IChainData,
   IPortfolio,
   IProviderUserInfo,
   TokenSymbol,
 } from '../../../../core/models/types';
-import {MatDialog} from '@angular/material/dialog';
-import {PriceNotSupportedDialogComponent} from '../price-not-supported-dialog/price-not-supported-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PriceNotSupportedDialogComponent } from '../price-not-supported-dialog/price-not-supported-dialog.component';
 
 @Component({
   selector: 'app-holdings-table',
   templateUrl: './holdings-table.component.html',
-  styleUrls: ['./holdings-table.component.scss']
+  styleUrls: ['./holdings-table.component.scss'],
 })
 export class HoldingsTableComponent {
   ChainId = ChainId;
@@ -22,8 +23,7 @@ export class HoldingsTableComponent {
   @Input() chainInfo: IChainData | undefined;
   @Input() portfolio: IPortfolio;
 
-  constructor(private readonly router: Router, private  dialog: MatDialog) {
-  }
+  constructor(private readonly router: Router, private dialog: MatDialog) {}
 
   goToReef() {
     this.router.navigate(['/reef/buy']);
@@ -35,6 +35,5 @@ export class HoldingsTableComponent {
 
   noPriceDialog() {
     const dialogRef = this.dialog.open(PriceNotSupportedDialogComponent);
-
   }
 }
