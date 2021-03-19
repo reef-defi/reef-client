@@ -31,6 +31,7 @@ import { TokenBalanceService } from '../../shared/service/token-balance.service'
 import { UiUtils } from '../../shared/utils/ui.utils';
 import { startWith } from 'rxjs/internal/operators/startWith';
 import { BondUtil } from '../../shared/utils/bond.util';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Injectable({
   providedIn: 'root',
@@ -286,7 +287,8 @@ export class BondsService {
   private getBondStatus$(bondWithTimeObs: Bond): Observable<BondSaleStatus> {
     const status$ = combineLatest([bondWithTimeObs.times$, this.timer$]).pipe(
       map(([bondTimes, _]) =>
-        this.toBondSaleStatus(bondWithTimeObs, bondTimes)
+        this.toBondSaleStatus(bondWithTimeObs, bondTimes),
+        tap(v=>console.log('STATTTT',v))
       ),
       takeWhile((v) => v !== BondSaleStatus.COMPLETE, true),
       shareReplay(1)
@@ -331,6 +333,7 @@ export class BondsService {
       shareReplay(1)
     );
     bond.status$ = this.getBondStatus$(bond);
+    bond.status$.subscribe(v=>console.log('SUUU',v))
     bond.stakedBalanceUpdate = new Subject();
     const stakedBalance$ = combineLatest([
       of(bond),

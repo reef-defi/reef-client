@@ -12,7 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
-import { Observable, Subject } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -27,10 +27,8 @@ export interface IPortfolio {
   refreshSubject?: Subject<ExchangeId>;
 }
 
-export type SupportedPortfolio = Pick<
-  IPortfolio,
-  'tokens' | 'uniswapPositions' | 'compoundPositions'
->;
+export type SupportedPortfolio = Pick<IPortfolio,
+  'tokens' | 'uniswapPositions' | 'compoundPositions'>;
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -165,11 +163,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -487,11 +485,11 @@ export interface BondTimes {
 }
 
 export enum BondSaleStatus {
-  EARLY,
-  OPEN,
-  FILLED,
-  FARM,
-  COMPLETE,
+  EARLY = 'EARLY',
+  OPEN = 'OPEN',
+  FILLED = 'FILLED',
+  FARM = 'FARM',
+  COMPLETE = 'COMPLETE',
 }
 
 export class ErrorDisplay {
