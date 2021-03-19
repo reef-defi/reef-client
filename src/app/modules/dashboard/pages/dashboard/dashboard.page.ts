@@ -15,8 +15,9 @@ import {
   SupportedPortfolio,
   Token,
   TokenBalance,
+  TokenSymbol,
 } from '../../../../core/models/types';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
 import { UniswapService } from '../../../../core/services/uniswap.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
@@ -25,6 +26,8 @@ import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
 import { first } from 'rxjs/internal/operators/first';
 import { scan } from 'rxjs/internal/operators/scan';
+import { addresses } from 'src/assets/addresses';
+import { startWith } from 'rxjs/internal/operators/startWith';
 
 @Component({
   selector: 'app-dashboard',
@@ -123,7 +126,24 @@ export class DashboardPage {
                 this.getHistoricData(data);
               }
             }),
-            map((v) => ({ tokens: v }))
+            switchMap((tokens) => {
+              const reefVal = tokens
+                ? tokens.find(
+                    (tkn) => tkn.contract_ticker_symbol === TokenSymbol.REEF
+                  )
+                : null;
+              if (!!reefVal && !reefVal.quote_rate) {
+                const reefAddr = addresses[ChainId.MAINNET][TokenSymbol.REEF];
+                return this.apiService.getPriceForAddresses([reefAddr]).pipe(
+                  map((priceRes) => {
+                    reefVal.quote_rate = priceRes[reefAddr].usd;
+                    return { tokens };
+                  }),
+                  startWith({ tokens })
+                );
+              }
+              return of({ tokens });
+            })
           );
           const uni$ = portfolio.positions
             .get(ExchangeId.UNISWAP_V2)
