@@ -3,9 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
 } from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {PoolService} from '../../../../core/services/pool.service';
+import {filter, map, shareReplay, take, tap} from 'rxjs/operators';
 import {
   ChainId,
   ExchangeId,
@@ -17,17 +17,17 @@ import {
   TokenBalance,
   TokenSymbol,
 } from '../../../../core/models/types';
-import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
-import { first } from 'rxjs/internal/operators/first';
-import { scan } from 'rxjs/internal/operators/scan';
-import { addresses } from 'src/assets/addresses';
-import { startWith } from 'rxjs/internal/operators/startWith';
+import {BehaviorSubject, merge, Observable, of, Subject} from 'rxjs';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import {first} from 'rxjs/internal/operators/first';
+import {scan} from 'rxjs/internal/operators/scan';
+import {addresses} from 'src/assets/addresses';
+import {startWith} from 'rxjs/internal/operators/startWith';
 
 @Component({
   selector: 'app-dashboard',
@@ -129,25 +129,26 @@ export class DashboardPage {
             switchMap((tokens) => {
               const reefVal = tokens
                 ? tokens.find(
-                    (tkn) => tkn.contract_ticker_symbol === TokenSymbol.REEF
-                  )
+                  (tkn) => tkn.contract_ticker_symbol === TokenSymbol.REEF
+                )
                 : null;
               if (!!reefVal && !reefVal.quote_rate) {
                 const reefAddr = addresses[ChainId.MAINNET][TokenSymbol.REEF];
                 return this.apiService.getPriceForAddresses([reefAddr]).pipe(
                   map((priceRes) => {
                     reefVal.quote_rate = priceRes[reefAddr].usd;
-                    return { tokens };
+                    reefVal.logo_url = 'https://etherscan.io/token/images/reeffinance_32.png';
+                    return {tokens};
                   }),
-                  startWith({ tokens })
+                  startWith({tokens})
                 );
               }
-              return of({ tokens });
+              return of({tokens});
             })
           );
           const uni$ = portfolio.positions
             .get(ExchangeId.UNISWAP_V2)
-            .pipe(map((v) => ({ uniswapPositions: v })));
+            .pipe(map((v) => ({uniswapPositions: v})));
           /*const comp$ = portfolio.positions
             .get(ExchangeId.COMPOUND)
             .pipe(map((v) => ({ compoundPositions: v })));*/
@@ -193,7 +194,7 @@ export class DashboardPage {
             return 0;
           })
           .reduce((a, c) => a + c);
-        return { totalBalance };
+        return {totalBalance};
       })
     );
 
@@ -221,7 +222,7 @@ export class DashboardPage {
       this.portfolioTotalBalance$
     ).pipe(
       map(
-        ([info, portfolio, { totalBalance }]: [
+        ([info, portfolio, {totalBalance}]: [
           IProviderUserInfo,
           SupportedPortfolio,
           { [key: string]: number }
@@ -315,7 +316,7 @@ export class DashboardPage {
     const total = totalBalance;
     const all = [...(portfolio.tokens as Token[]), ...defiPositions];
     const pairs = all
-      .map(({ contract_ticker_symbol, quote }) => [
+      .map(({contract_ticker_symbol, quote}) => [
         contract_ticker_symbol,
         (quote / total) * 100,
       ])
