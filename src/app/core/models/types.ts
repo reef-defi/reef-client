@@ -106,8 +106,6 @@ export enum TokenSymbol {
   REEF = 'REEF',
   REEF_WETH_POOL = 'REEF_WETH_POOL',
   REEF_USDT_POOL = 'REEF_USDT_POOL',
-  LIT = 'LIT',
-  // TESTR = 'TESTR'
 }
 
 export interface IReefPricePerToken {
@@ -227,7 +225,7 @@ export interface IChainData {
   network_id: number;
   rpc_url: string;
   native_currency: IAssetData;
-  chain_scanner_base_url: string;
+  chain_scanner_base_url?: string;
 }
 
 export enum ChainId {
@@ -269,8 +267,6 @@ export interface ProtocolAddresses {
   USDT: string;
   WETH: string;
   BNB: string;
-  LIT: string;
-  // TESTR: string;
 }
 
 export interface IAssetData {

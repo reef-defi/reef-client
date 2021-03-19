@@ -1,12 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import {
-  ChainId,
-  ExchangeId,
-  IPortfolio,
-  IProviderUserInfo,
-  TokenSymbol,
-} from '../../../../core/models/types';
+import {Component, Input} from '@angular/core';
+import {Router} from '@angular/router';
+import {ChainId, ExchangeId, IChainData, IPortfolio, IProviderUserInfo, TokenSymbol,} from '../../../../core/models/types';
 
 @Component({
   selector: 'app-holdings-table',
@@ -17,7 +11,7 @@ export class HoldingsTableComponent {
   ChainId = ChainId;
   TokenSymbol = TokenSymbol;
   ExchangeId = ExchangeId;
-  @Input() chainInfo: IProviderUserInfo | undefined;
+  @Input() chainInfo: IChainData | undefined;
   @Input() portfolio: IPortfolio;
   constructor(private readonly router: Router) {}
 
