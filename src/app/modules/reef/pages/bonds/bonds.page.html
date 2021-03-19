@@ -58,16 +58,28 @@
               <ng-container
                 *ngIf="bond.times$|async as entryEndTime else loading"
               >
-                <div
-                  *ngIf="true"
-                  class="text-center text-muted text-monospace mt-2"
-                >
-                  <app-countdown-timer
-                    [expiresDate]="entryEndTime.entryEndTime"
-                    accentColor="true"
+                <ng-container *ngIf="bond.status$|async as bondStatus">
+                  <div
+                    *ngIf="bondStatus === BondSaleStatus.OPEN"
+                    class="text-center text-muted text-monospace mt-2"
+                  >
+                    <app-countdown-timer
+                      [expiresDate]="entryEndTime.entryEndTime"
+                      accentColor="true"
                     >Closes in
-                  </app-countdown-timer>
-                </div>
+                    </app-countdown-timer>
+                  </div>
+                  <div
+                    *ngIf="bondStatus === BondSaleStatus.EARLY"
+                    class="text-center text-muted text-monospace mt-2"
+                  >
+                    <app-countdown-timer
+                      [expiresDate]="entryEndTime.entryStartTime"
+                      accentColor="true"
+                    >Starts in
+                    </app-countdown-timer>
+                  </div>
+                </ng-container>
               </ng-container>
             </div>
           </div>

@@ -7,7 +7,7 @@ import {
   Token,
   TokenSymbol,
 } from '../../core/models/types';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   catchError,
   filter,
@@ -19,32 +19,32 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import {Injectable} from '@angular/core';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import { Injectable } from '@angular/core';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import BigNumber from 'bignumber.js';
-import {of} from 'rxjs/internal/observable/of';
-import {AddressUtils} from '../utils/address.utils';
+import { of } from 'rxjs/internal/observable/of';
+import { AddressUtils } from '../utils/address.utils';
 import Web3 from 'web3';
-import {TokenUtil} from '../utils/token.util';
-import {ConnectorService} from '../../core/services/connector.service';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {DevUtil} from '../utils/dev-util';
-import {HttpUtil} from '../utils/http-util';
-import {LogLevel} from '../utils/dev-util-log-level';
+import { TokenUtil } from '../utils/token.util';
+import { ConnectorService } from '../../core/services/connector.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { DevUtil } from '../utils/dev-util';
+import { HttpUtil } from '../utils/http-util';
+import { LogLevel } from '../utils/dev-util-log-level';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TokenBalanceService {
   public static SUPPORTED_BUY_REEF_TOKENS = [
-    {tokenSymbol: TokenSymbol.ETH, src: 'eth.png'},
-    {tokenSymbol: TokenSymbol.USDT, src: 'usdt.png'},
+    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
+    { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
   ];
 
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
-    {tokenSymbol: TokenSymbol.REEF, src: 'reef.png'},
-    {tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png'},
-    {tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png'},
+    { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
+    { tokenSymbol: TokenSymbol.REEF_WETH_POOL, src: 'reef_weth.png' },
+    { tokenSymbol: TokenSymbol.REEF_USDT_POOL, src: 'reef_usdt.png' },
   ];
   private static COVALENT_SUPPORTED_NETWORK_IDS = [
     ChainId.MAINNET,
@@ -80,8 +80,7 @@ export class TokenBalanceService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {
-  }
+  ) {}
 
   getPortfolioObservables(
     address: string,
@@ -112,7 +111,7 @@ export class TokenBalanceService {
     }
     positions.set(ExchangeId.UNISWAP_V2, uniPositions$);
     // positions.set(ExchangeId.COMPOUND, compPositions$);
-    return {refreshSubject, positions};
+    return { refreshSubject, positions };
   }
 
   private getCompoundPositions(
@@ -184,7 +183,7 @@ export class TokenBalanceService {
       this.http.get(
         `${this.reefNodeApi}/dashboard/${address}/${exchangeId}`,
         // @ts-ignore
-        {...HttpUtil.REQ_LOADING_EVENT_OPTIONS}
+        { ...HttpUtil.REQ_LOADING_EVENT_OPTIONS }
       )
     );
   }
@@ -378,7 +377,7 @@ export class TokenBalanceService {
     ]).pipe(
       take(1),
       switchMap(([info, web3]: [IProviderUserInfo, Web3]) => {
-        if (tokenSymbol === TokenSymbol.ETH) {
+        if (tokenSymbol === info.chainInfo.native_currency.symbol) {
           return web3.eth
             .getBalance(address)
             .then((b) => web3.utils.fromWei(b));
@@ -415,7 +414,9 @@ export class TokenBalanceService {
       );
     }
     if (!contract && tokenAddress) {
-      this.connectorService.createErc20TokenContractFromAddress(tokenAddress);
+      contract = this.connectorService.createErc20TokenContractFromAddress(
+        tokenAddress
+      );
     }
 
     if (!contract) {
@@ -470,11 +471,13 @@ export class TokenBalanceService {
   }
 
   private findTokenBalance(balances: Token[], tokenSymbol: TokenSymbol): Token {
-    return balances && balances.length ? balances.find((tkn) => {
-      if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
-        return true;
-      }
-      return false;
-    }) : null;
+    return balances && balances.length
+      ? balances.find((tkn) => {
+          if (TokenSymbol[tkn.contract_ticker_symbol] === tokenSymbol) {
+            return true;
+          }
+          return false;
+        })
+      : null;
   }
 }

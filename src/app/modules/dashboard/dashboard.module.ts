@@ -8,6 +8,7 @@ import { SettingsPage } from './pages/settings/settings.page';
 import { AssetDistributionChartComponent } from './components/asset-distribution-chart/asset-distribution-chart.component';
 import { HoldingsTableComponent } from './components/holdings-table/holdings-table.component';
 import { PortfolioPositionsComponent } from './components/holdings-table/portfolio-positions/portfolio-positions.component';
+import { PriceNotSupportedDialogComponent } from './components/price-not-supported-dialog/price-not-supported-dialog.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { PortfolioPositionsComponent } from './components/holdings-table/portfol
     AssetDistributionChartComponent,
     HoldingsTableComponent,
     PortfolioPositionsComponent,
+    PriceNotSupportedDialogComponent,
   ],
   imports: [CommonModule, DashboardRoutingModule, SharedModule],
 })

@@ -31,6 +31,7 @@ import { TokenBalanceService } from '../../shared/service/token-balance.service'
 import { UiUtils } from '../../shared/utils/ui.utils';
 import { startWith } from 'rxjs/internal/operators/startWith';
 import { BondUtil } from '../../shared/utils/bond.util';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Injectable({
   providedIn: 'root',
