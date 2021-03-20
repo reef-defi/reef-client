@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Web3 from 'web3';
-import { Contract } from 'web3-eth-contract';
+import {Contract} from 'web3-eth-contract';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
-import { getProviderName } from '../utils/provider-name';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import {getProviderName} from '../utils/provider-name';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
   ChainId,
   IChainData,
@@ -16,13 +16,13 @@ import {
   ProviderName,
   TokenSymbol,
 } from '../models/types';
-import { getChainData } from '../utils/chains';
-import { NotificationService } from './notification.service';
-import { getContractData } from '../../../assets/abi';
-import { take } from 'rxjs/operators';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
-import { first } from 'rxjs/internal/operators/first';
+import {getChainData} from '../utils/chains';
+import {NotificationService} from './notification.service';
+import {getContractData} from '../../../assets/abi';
+import {take} from 'rxjs/operators';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
+import {first} from 'rxjs/internal/operators/first';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -267,8 +267,8 @@ export class ConnectorService {
   }
 
   public setSelectedGas(type: string, price: number): void {
-    this.selectedGasPrice$.next({ type, price });
-    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+    this.selectedGasPrice$.next({type, price});
+    localStorage.setItem('reef_gas_price', JSON.stringify({type, price}));
   }
 
   public getGasPrice(chainId = ChainId.MAINNET): string {
@@ -367,7 +367,8 @@ export class ConnectorService {
     if (!this.currentProvider$.value.on) {
       return;
     }
-    this.currentProvider$.value.on('connect', () => {});
+    this.currentProvider$.value.on('connect', () => {
+    });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on(
       'accountsChanged',
@@ -395,8 +396,26 @@ export class ConnectorService {
   }
 
   private async getChainInfo(web3: Web3): Promise<IChainData> {
-    const chainId = window.ethereum ? window.ethereum.chainId : await web3.eth.getChainId();
-    return getChainData(parseInt(chainId));
+    let chainId: number;
+    let chIdWindow;
+    let chIdW3;
+    if (!!window.ethereum && !!window.ethereum.chainId) {
+      chIdWindow = window.ethereum.chainId.toString();
+      chainId = parseInt(chIdWindow, 10);
+      if (isNaN(chainId) && chIdWindow.startsWith('0x')) {
+        chainId = parseInt(chIdWindow, 16);
+      }
+    }
+    if (!chainId || isNaN(chainId)) {
+      chIdW3 = await web3.eth.getChainId();
+      chainId = parseInt(chIdW3, 10);
+    }
+    if (!chainId || isNaN(chainId)) {
+      let message = `Chain id ${chIdWindow}/${chIdW3}/${chainId} unknown.`;
+      alert(message);
+      throw new Error(message);
+    }
+    return getChainData(chainId);
   }
 
   private async getTxAction(
