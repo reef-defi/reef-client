@@ -5,6 +5,7 @@ export const getChainData = (chainId: number): IChainData => {
     (chain: IChainData) => chain.chain_id === chainId
   );
   if (!chainData) {
+    alert(`Chain id ${chainId} not supported`);
     throw new Error('Chain id not supported' + chainId);
   }
   return { ...chainData };

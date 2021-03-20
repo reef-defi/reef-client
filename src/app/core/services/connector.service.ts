@@ -395,8 +395,8 @@ export class ConnectorService {
   }
 
   private async getChainInfo(web3: Web3): Promise<IChainData> {
-    const chainId = await web3.eth.getChainId();
-    return getChainData(chainId);
+    const chainId = window.ethereum ? window.ethereum.chainId : await web3.eth.getChainId();
+    return getChainData(parseInt(chainId));
   }
 
   private async getTxAction(
