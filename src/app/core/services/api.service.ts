@@ -5,6 +5,7 @@ import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import {
   ChainId,
   IBasketHistoricRoi,
+  ICreateBasketEntry,
   IGenerateBasketRequest,
   IGenerateBasketResponse,
   IPoolsMetadata,
@@ -62,7 +63,7 @@ export class ApiService {
   ) {
     this.listPools();
     this.listTokens();
-    this.getVaults();
+    // this.getVaults();
   }
 
   listPools(): Subscription {
@@ -100,9 +101,10 @@ export class ApiService {
 
   getHistoricRoi(
     payload: IGenerateBasketResponse,
-    subtractMonths: number = 1
+    subtractMonths: number = 1,
+    investedInDate: Date | null = null
   ): Observable<IBasketHistoricRoi> {
-    const date = new Date();
+    const date = investedInDate || new Date();
     const startDate = subMonths(date, subtractMonths);
     const body = {
       start_date: startDate,
@@ -437,6 +439,19 @@ export class ApiService {
       `${this.reefNodeApi}/in`,
       { code }
     );
+  }
+
+  createBasketEntry(params: ICreateBasketEntry) {
+    return this.http.post<ICreateBasketEntry>(
+      `${this.reefNodeApi}/basket-invest`,
+      { ...params }
+    );
+  }
+
+  getBasketsForUser(address: string) {
+    return this.http
+      .get<any>(`${this.reefNodeApi}/baskets?address=${address}`)
+      .pipe(map(({ data }) => data));
   }
 
   /*private removeTokenPlaceholders(info: IProviderUserInfo, token: any): Token {

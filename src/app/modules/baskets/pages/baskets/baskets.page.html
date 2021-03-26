@@ -1,3 +1,13 @@
+<div class="row">
+  <div class="col">
+    <app-page-title
+      title="My Baskets"
+      subtitle="A list of the baskets you're invested in"
+    >
+    </app-page-title>
+  </div>
+</div>
+
 <ng-container *ngIf="contract$ | async as contract">
   <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
     <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
@@ -9,10 +19,9 @@
             *ngIf="allBaskets.length || vaultsBaskets.length; else emptyStateTemplate"
           >
             <div class="d-flex justify-content-between mt-3 mb-3">
-              <div class="heading__lg">MY BASKETS</div>
               <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
                 <mat-slide-toggle [formControl]="isList">
-                  <div class="subheading__md">
+                  <div class="small text-monospace">
                     {{ isList.value ? 'List' : 'Grid' }} view
                   </div>
                 </mat-slide-toggle>

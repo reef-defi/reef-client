@@ -62,7 +62,7 @@ export class ConnectorService {
         rpc: {
           1: ProviderUtil.getProviderUrl(ProviderName.INFURA),
           56: 'https://bsc-dataseed.binance.org/',
-          '0x38': 'https://bsc-dataseed.binance.org/'
+          '0x38': 'https://bsc-dataseed.binance.org/',
         },
       },
     },

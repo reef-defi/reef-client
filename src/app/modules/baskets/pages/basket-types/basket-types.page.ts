@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
 
 @Component({
   selector: 'app-basket-types',
@@ -8,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class BasketTypesPage implements OnInit {
   public stableCoins = ['dai', 'usdc', 'usdt'];
   public erc20Coins = ['bal', 'comp', 'uni'];
-  constructor() {}
+  constructor(public readonly connectorService: ConnectorService) {}
 
   ngOnInit(): void {}
 }
