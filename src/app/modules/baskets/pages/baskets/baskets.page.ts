@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
 import { VaultsService } from '../../../../core/services/vaults.service';
 import { BehaviorSubject } from 'rxjs';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { IVaultBasket } from '../../../../core/models/types';
+import {IVaultBasket, TransactionType} from '../../../../core/models/types';
 import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
@@ -25,6 +25,7 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
   readonly basketsError$ = this.contractService.basketsError$;
   readonly loading$ = this.contractService.loading$;
   public isList = new FormControl(true);
+  TransactionType=TransactionType;
 
   constructor(
     private readonly contractService: ContractService,
