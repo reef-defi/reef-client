@@ -8,7 +8,8 @@ import { ConnectorService } from '../../../../core/services/connector.service';
 })
 export class BasketTypesPage implements OnInit {
   public stableCoins = ['dai', 'usdc', 'usdt'];
-  public erc20Coins = ['bal', 'comp', 'uni'];
+  public erc20Coins = ['bal', 'uni'];
+  // public erc20Coins = ['bal', 'comp', 'uni'];
   constructor(public readonly connectorService: ConnectorService) {}
 
   ngOnInit(): void {}
