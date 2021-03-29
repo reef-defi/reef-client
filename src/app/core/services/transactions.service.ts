@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   ChainId,
   IPendingTransactions,
@@ -6,12 +6,12 @@ import {
   TokenSymbol,
   TransactionType,
 } from '../models/types';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {ConnectorService} from './connector.service';
-import {first, map} from 'rxjs/operators';
-import {ApiService} from './api.service';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
-import {getChainData} from '../utils/chains';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConnectorService } from './connector.service';
+import { first, map } from 'rxjs/operators';
+import { ApiService } from './api.service';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import { getChainData } from '../utils/chains';
 
 @Injectable({
   providedIn: 'root',
@@ -54,14 +54,13 @@ export class TransactionsService {
     private readonly connectorService: ConnectorService,
     private apiService: ApiService,
     public tokenBalanceService: TokenBalanceService
-  ) {
-  }
+  ) {}
 
   public getPendingTransactions(
     types: TransactionType[]
   ): Observable<PendingTransaction[]> {
     return this.pendingTransactions$.pipe(
-      map(({transactions}: IPendingTransactions) =>
+      map(({ transactions }: IPendingTransactions) =>
         transactions.filter((tx) => types.includes(tx.type))
       )
     );
@@ -103,7 +102,7 @@ export class TransactionsService {
       .toPromise();
     for (const [i, tx] of txs.transactions.entries()) {
       if (tx.chainId === info.chainInfo.chain_id) {
-        const {blockHash, blockNumber} = await web3.eth.getTransaction(
+        const { blockHash, blockNumber } = await web3.eth.getTransaction(
           tx.hash
         );
         if (blockHash && blockNumber) {
@@ -121,7 +120,7 @@ export class TransactionsService {
   }
 
   public removePendingTx(hash: string, isError = false): void {
-    const {transactions} = this.pendingTransactions$.value;
+    const { transactions } = this.pendingTransactions$.value;
     const removeTx = transactions.find((tx) => tx.hash === hash);
     if (!isError) {
       this.tokenBalanceService.updateTokensInBalances.next([
