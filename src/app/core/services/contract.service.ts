@@ -265,6 +265,8 @@ export class ContractService {
           );
         })
         .on('receipt', async (receipt) => {
+          this.updateUserDetails();
+          this.getAllBaskets();
           this.transactionService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(
             `Successfully disinvested!`,
