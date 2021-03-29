@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConnectorService } from '../../../../core/services/connector.service';
-import {TransactionType} from '../../../../core/models/types';
+import { TransactionType } from '../../../../core/models/types';
 
 @Component({
   selector: 'app-basket-types',
