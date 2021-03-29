@@ -2,58 +2,38 @@
   <div class="col">
     <app-page-title
       title="My Baskets"
-      subtitle="A list of the baskets you're invested in"
+      subtitle="A list of the baskets you are invested in"
     >
     </app-page-title>
   </div>
 </div>
-
-<ng-container *ngIf="contract$ | async as contract">
-  <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
-    <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
-      <ng-container
-        *ngIf="baskets$ | async as allBaskets; else loadingTemplate"
-      >
-        <ng-container *ngIf="vaults$ | async as vaultsBaskets">
-          <ng-container
-            *ngIf="allBaskets.length || vaultsBaskets.length; else emptyStateTemplate"
-          >
-            <div class="d-flex justify-content-between mt-3 mb-3">
-              <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
-                <mat-slide-toggle [formControl]="isList">
-                  <div class="small text-monospace">
-                    {{ isList.value ? 'List' : 'Grid' }} view
-                  </div>
-                </mat-slide-toggle>
+<app-unsupported-chain-msg
+  [transactionType]="TransactionType.REEF_BASKET"
+  [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
+  class="row"
+>
+  <ng-container *ngIf="contract$ | async as contract">
+    <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
+      <ng-container *ngIf="!(basketsError$ | async); else errorTemplate">
+        <ng-container
+          *ngIf="baskets$ | async as allBaskets; else loadingTemplate"
+        >
+          <ng-container *ngIf="vaults$ | async as vaultsBaskets">
+            <ng-container
+              *ngIf="allBaskets.length || vaultsBaskets.length; else emptyStateTemplate"
+            >
+              <div class="d-flex justify-content-between mt-3 mb-3">
+                <div class="d-lg-flex d-xl-flex d-sm-none d-md-none d-none">
+                  <mat-slide-toggle [formControl]="isList">
+                    <div class="small text-monospace">
+                      {{ isList.value ? 'List' : 'Grid' }} view
+                    </div>
+                  </mat-slide-toggle>
+                </div>
               </div>
-            </div>
-            <div *ngIf="isList.value">
-              <div
-                class="mb-3"
-                *ngFor="let basket of allBaskets; let i = index;"
-              >
-                <app-basket
-                  [isListView]="isList.value"
-                  [basket]="basket"
-                  [basketIndex]="basket.index"
-                  (disinvest)="onDisinvest($event, 'pool')"
-                >
-                </app-basket>
-              </div>
-              <div class="mb-3" *ngFor="let vaultBasket of vaultsBaskets">
-                <app-vault
-                  [vault]="vaultBasket"
-                  [isListView]="isList.value"
-                  [vaultIndex]="vaultBasket.index"
-                  (disinvest)="onDisinvest($event, 'vault')"
-                >
-                </app-vault>
-              </div>
-            </div>
-            <div *ngIf="!isList.value">
-              <div class="d-flex row">
+              <div *ngIf="isList.value">
                 <div
-                  class="col-6 mb-3"
+                  class="mb-3"
                   *ngFor="let basket of allBaskets; let i = index;"
                 >
                   <app-basket
@@ -64,27 +44,51 @@
                   >
                   </app-basket>
                 </div>
-                <div
-                  class="col-6 mb-3"
-                  *ngFor="let vaultBasket of vaultsBaskets; let i = index;"
-                >
+                <div class="mb-3" *ngFor="let vaultBasket of vaultsBaskets">
                   <app-vault
                     [vault]="vaultBasket"
-                    [vaultIndex]="vaultBasket.index"
                     [isListView]="isList.value"
+                    [vaultIndex]="vaultBasket.index"
                     (disinvest)="onDisinvest($event, 'vault')"
                   >
                   </app-vault>
                 </div>
               </div>
-            </div>
+              <div *ngIf="!isList.value">
+                <div class="d-flex row">
+                  <div
+                    class="col-6 mb-3"
+                    *ngFor="let basket of allBaskets; let i = index;"
+                  >
+                    <app-basket
+                      [isListView]="isList.value"
+                      [basket]="basket"
+                      [basketIndex]="basket.index"
+                      (disinvest)="onDisinvest($event, 'pool')"
+                    >
+                    </app-basket>
+                  </div>
+                  <div
+                    class="col-6 mb-3"
+                    *ngFor="let vaultBasket of vaultsBaskets; let i = index;"
+                  >
+                    <app-vault
+                      [vault]="vaultBasket"
+                      [vaultIndex]="vaultBasket.index"
+                      [isListView]="isList.value"
+                      (disinvest)="onDisinvest($event, 'vault')"
+                    >
+                    </app-vault>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </ng-container>
         </ng-container>
       </ng-container>
     </ng-container>
   </ng-container>
-</ng-container>
-
+</app-unsupported-chain-msg>
 <ng-template #loadingTemplate>
   <div class="content__container w-100 mt-3">
     <app-skeleton-loading

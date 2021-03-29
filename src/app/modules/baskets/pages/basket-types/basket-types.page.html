@@ -7,6 +7,12 @@
     ></app-page-title>
   </div>
 </div>
+
+<app-unsupported-chain-msg
+  [transactionType]="TransactionType.REEF_BASKET"
+  [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
+  class="row"
+>
 <div class="row">
   <div class="col">
     <div
@@ -124,6 +130,7 @@
     </div>
   </div>
 </div>
+</app-unsupported-chain-msg>
 <!--<div class="row d-flex justify-content-around page__wrapper">-->
 <!--  <div-->
 <!--    class="col-5 content__container d-flex flex-column align-items-center justify-content-around"-->
