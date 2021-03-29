@@ -146,6 +146,17 @@ export class ContractService {
         mooniswapPools,
         mooniswapWeights,
       } = basketPoolTokenInfo;
+      console.log('Params=, ', {
+        name,
+        uniswapPools,
+        uniSwapWeights,
+        tokenPools,
+        tokenWeights,
+        balancerPools,
+        balancerWeights,
+        mooniswapPools,
+        mooniswapWeights
+      })
       await this.eventService.subToInvestEvent(this.basketContract$.value);
       this.basketContract$.value.methods
         .createBasket(
@@ -181,7 +192,7 @@ export class ContractService {
         .on('receipt', async (receipt) => {
           this.transactionService.removePendingTx(receipt.transactionHash);
           this.notificationService.showNotification(
-            `Success! ${amountToInvest} invested in ${name} Basket`,
+            `Success! ${amountToInvest} ETH invested in ${name} Basket`,
             'Okay',
             'success'
           );

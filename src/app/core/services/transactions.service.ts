@@ -26,7 +26,7 @@ export class TransactionsService {
     [TransactionType.REEF_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_ETH_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
-    [TransactionType.REEF_BASKET]: [ChainId.MAINNET],
+    [TransactionType.REEF_BASKET]: [ChainId.MAINNET, ChainId.LOCAL_FORK],
   };
   private static TRANSACTION_SCANNERS = {
     [ChainId.MAINNET]: {

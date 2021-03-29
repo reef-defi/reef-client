@@ -36,7 +36,7 @@ export class EventsService {
     event: string,
     cb: (ev: any, timeStamp: number) => any
   ) {
-    return contract.events[event]({}, async (err, ev) => {
+    return contract.once(event, {}, async (err, ev) => {
       const timeStamp = await this.getEventTimestamp(ev);
       cb(ev, timeStamp);
     });
