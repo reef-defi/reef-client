@@ -62,6 +62,7 @@ export class ConnectorService {
         rpc: {
           1: ProviderUtil.getProviderUrl(ProviderName.INFURA),
           56: 'https://bsc-dataseed.binance.org/',
+          '0x38': 'https://bsc-dataseed.binance.org/',
         },
       },
     },
@@ -110,6 +111,7 @@ export class ConnectorService {
     this.providerLoading$.next(true);
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
+    console.log(window.ethereum.chainId, 'CHAINID');
     this.currentProvider$.next(provider);
     this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(

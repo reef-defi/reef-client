@@ -2,7 +2,7 @@
   *ngIf="poolsAndTokens$ | async as poolsAndTokens; else loadingTemplate"
 >
   <div class="row page__wrapper">
-    <div class="col-6">
+    <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
       <app-custom-basket-pools
         [poolsAndTokens]="poolsAndTokens"
         [canAddPools]="Object.keys(chartPoolData).length < COMPOSITION_LIMIT"
@@ -11,7 +11,7 @@
       >
       </app-custom-basket-pools>
     </div>
-    <div class="col-6">
+    <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
       <app-custom-basket-composition
         [basket]="chartPoolData"
         [disabledSlider]="Object.keys(chartPoolData).length === 1"

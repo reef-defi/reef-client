@@ -1,5 +1,5 @@
 <div class="row page__wrapper justify-content-between">
-  <div class="col">
+  <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
     <app-diversify-vaults
       [ethBalance]="(userInfo | async)?.balance"
       [ethAmount]="ethAmount"
@@ -8,7 +8,7 @@
       (invest)="onInvest()"
     ></app-diversify-vaults>
   </div>
-  <div class="col">
+  <div class="justify-content-xl-right col-xl-6 col-md-12">
     <app-vaults-list
       (vaultAllocChanged)="editVaultAlloc($event)"
       [vaults]="currentVaults"

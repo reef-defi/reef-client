@@ -9,6 +9,7 @@ import {
 import { ChartsService } from '../../../../core/services/charts.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-basket',
@@ -28,6 +29,7 @@ export class BasketComponent {
       Object.values(this.pureBasket)
     );
     this.getHistoricRoi(this.pureBasket, 1);
+    this.calcBasketRoi(value.timeStamp, value.investedETH, this.pureBasket);
   }
   get basket(): IBasket {
     return this.mBasket;
@@ -37,6 +39,8 @@ export class BasketComponent {
   public roiData: number[][];
   public disinvestPercentage = 100;
   public activeTimeSpan = 1;
+  public basketRoi = 0;
+  public totalAccrued = 0;
 
   constructor(
     private readonly charts: ChartsService,
@@ -76,10 +80,12 @@ export class BasketComponent {
     this.activeTimeSpan = subtractMonths;
     return this.apiService
       .getHistoricRoi(basket, subtractMonths)
+      .pipe(take(1))
       .subscribe((historicRoi: IBasketHistoricRoi) => {
         this.roiData = this.charts.composeHighChart(
           this.extractRoi(historicRoi)
         );
+        console.log(this.extractRoi(historicRoi));
       });
   }
 
@@ -88,5 +94,22 @@ export class BasketComponent {
       new Date(key).getTime(),
       +obj[key].weighted_roi.toFixed(2),
     ]);
+  }
+
+  private calcBasketRoi(
+    timestamp: number,
+    investedEth: string,
+    basket: IGenerateBasketResponse
+  ) {
+    return this.apiService
+      .getHistoricRoi(basket, 0, new Date(timestamp))
+      .pipe(take(1))
+      .subscribe((historicRoi: IBasketHistoricRoi) => {
+        console.log('ROIIII=', historicRoi);
+        const extracted = this.extractRoi(historicRoi);
+        this.basketRoi = extracted[extracted.length - 1][1] - extracted[0][1];
+        this.totalAccrued = parseFloat(investedEth) * (this.basketRoi / 100);
+        console.log('Calcd basket ROI =', this.basketRoi);
+      });
   }
 }

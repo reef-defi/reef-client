@@ -30,6 +30,13 @@ export interface IPortfolio {
 export type SupportedPortfolio = Pick<IPortfolio,
   'tokens' | 'uniswapPositions' | 'compoundPositions'>;
 
+export interface ICreateBasketEntry {
+  address: string;
+  timeStamp: number;
+  amount: number;
+  basketIdx: number;
+}
+
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
   PARSE_ERROR = -32700,
@@ -48,6 +55,7 @@ export enum TransactionType {
   REEF_ETH_FARM = 'REEF_ETH_FARM',
   APPROVE_TOKEN = 'APPROVE_TOKEN',
   REEF_BOND = 'REEF_BOND',
+  REEF_BASKET = 'REEF_BASKET',
 }
 
 export interface PendingTransaction {
@@ -327,7 +335,7 @@ export interface IVaultInfo {
 
 export interface IBasket {
   name: string;
-  investedETH: string[];
+  investedETH: string;
   index: number;
   BalancerPools: {
     pools: any;
@@ -347,6 +355,7 @@ export interface IBasket {
   };
   referrer: string;
   isVault: boolean;
+  timeStamp: number;
 }
 
 export interface IGenerateBasketRequest {

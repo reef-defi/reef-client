@@ -57,6 +57,7 @@ export class BasketsPage implements OnInit, OnDestroy, AfterViewInit {
       .pipe(take(1))
       .subscribe((result) => {
         if (result) {
+          console.log(result);
           type === 'vault'
             ? this.disinvestVaultBasket(result)
             : this.disinvestBasket(result);

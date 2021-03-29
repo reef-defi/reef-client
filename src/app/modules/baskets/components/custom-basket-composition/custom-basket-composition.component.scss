@@ -1,3 +1,35 @@
 .slider {
   margin-top: -25px;
 }
+
+::ng-deep {
+  .mat-slider {
+    padding: 0px !important;
+  }
+
+  .mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+    height: 3px;
+    border-radius: 3px;
+  }
+
+  .mat-slider.mat-slider-horizontal .mat-slider-track-background,
+  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+    height: 25px;
+  }
+
+  .mat-accent .mat-slider-thumb {
+    height: 20px;
+    width: 20px;
+    background-color: #6610f2 !important;
+    bottom: -10px;
+    right: -9px;
+  }
+
+  .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+    background-color: #6610f2;
+  }
+
+  .mat-slider-track-background {
+    background: #f3f3f3 !important;
+  }
+}
