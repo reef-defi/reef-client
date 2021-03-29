@@ -10,7 +10,6 @@
 <app-unsupported-chain-msg
   [transactionType]="TransactionType.REEF_BASKET"
   [chainId]="(connectorService.providerUserInfo$ | async)?.chainInfo.chain_id"
-  class="row"
 >
   <ng-container *ngIf="contract$ | async as contract">
     <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
