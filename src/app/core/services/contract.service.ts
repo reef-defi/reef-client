@@ -155,8 +155,8 @@ export class ContractService {
         balancerPools,
         balancerWeights,
         mooniswapPools,
-        mooniswapWeights
-      })
+        mooniswapWeights,
+      });
       await this.eventService.subToInvestEvent(this.basketContract$.value);
       this.basketContract$.value.methods
         .createBasket(
@@ -322,6 +322,21 @@ export class ContractService {
     const investment = await this.basketContract$.value.methods
       .minimalInvestment()
       .call();
+    return this.connectorService.fromWei(investment as string);
+  }
+
+  async getMaximumInvestment(): Promise<string> {
+    const investment = await this.basketContract$.value.methods
+      .maxInvestedFunds()
+      .call();
+    return this.connectorService.fromWei(investment as string);
+  }
+
+  async getCurrentInvestedFunds(): Promise<string> {
+    const investment = await this.basketContract$.value.methods
+      .currentInvestedFunds()
+      .call();
+    console.log(investment);
     return this.connectorService.fromWei(investment as string);
   }
 

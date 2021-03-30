@@ -13,12 +13,15 @@
       </div>
       <div class="d-flex align-items-center mb-3">
         <input
+          (keyup)="onNumberInput()"
           appNumbersOnlyInput
           class="w-75 form-control mr-2 accent-text"
           id="ethAmount"
           [formControl]="ethAmount"
           placeholder="Amount of ETH"
           type="number"
+          [min]="minimalInvestment"
+          [max]="maximumInvestment || '100'"
         />
         <img
           width="40"
