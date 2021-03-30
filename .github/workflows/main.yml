@@ -1,0 +1,23 @@
+name: Reef Client
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+    - name: Install
+      run: npm install
+    - name: Build
+      run: npm run build
+    # Source code doesn't meet the linter requirements.
+    # Once it will be resolved, we could uncomment the 'lint' step.
+    # - name: Lint
+    #   run: npm run lint
