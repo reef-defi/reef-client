@@ -58,6 +58,7 @@ export class CustomBasketPage implements OnInit {
     const basketRef = history.state?.data;
     if (basketRef) {
       this.chartPoolData = basketRef;
+      this.getHistoricRoi();
     }
   }
 
