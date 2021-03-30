@@ -2,7 +2,6 @@ FROM node:14 as builder
 
 ADD . /app
 WORKDIR /app
-RUN rm -rf node_modules
 
 RUN npm install --loglevel=error
 RUN npm install -g @angular/cli@10.1.7 --loglevel=error
@@ -12,9 +11,6 @@ RUN npm run ng -- build --prod --aot --outputHashing=all
 ENV PATH /app/node_modules/.bin:$PATH
 
 FROM nginx:alpine
-
-#!/bin/sh
-
 
 ## Remove default nginx index page
 RUN rm -rf /usr/share/nginx/html/*
