@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import {
+  IBasketHistoricRoi,
   IBasketPoolsAndCoinInfo,
   IPoolsMetadata,
   PoolsChartOptions,
@@ -43,6 +44,8 @@ export class CustomBasketPage implements OnInit {
   public chartOptions: Partial<PoolsChartOptions>;
   public chartPoolData: { [key: string]: number } = {};
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
+  public currentRoiTimespan = 1;
+  public roiData: number[][];
 
   constructor(
     private readonly contractService: ContractService,
@@ -60,11 +63,12 @@ export class CustomBasketPage implements OnInit {
 
   addPool(poolName: string): void {
     if (!(Object.keys(this.chartPoolData).length < this.COMPOSITION_LIMIT)) {
-      console.error(`Can't have more than 10 compositions.`);
+      alert(`Can't have more than 10 compositions.`);
     } else {
       this.chartPoolData[poolName] = this.calculatePoolAllocation();
       this.balancePoolAllocation();
       this.setChart();
+      this.getHistoricRoi();
     }
   }
 
@@ -72,6 +76,9 @@ export class CustomBasketPage implements OnInit {
     delete this.chartPoolData[poolName];
     this.balancePoolAllocation();
     this.setChart();
+    if (Object.keys(this.chartPoolData).length > 0) {
+      this.getHistoricRoi();
+    }
   }
 
   editBasketAllocation(config: any[]): void {
@@ -88,7 +95,7 @@ export class CustomBasketPage implements OnInit {
         );
       }
     }
-    this.setChart();
+    this.getHistoricRoi();
   }
 
   onInvest(): void {
@@ -116,6 +123,18 @@ export class CustomBasketPage implements OnInit {
       basketPoolAndCoinInfo,
       ethAmount
     );
+  }
+
+  getHistoricRoi(subtractMonths = 1): void {
+    const basket = makeBasket(this.chartPoolData);
+    this.currentRoiTimespan = subtractMonths;
+    this.basketService
+      .getHistoricRoi(basket, subtractMonths)
+      .subscribe((hRoi: IBasketHistoricRoi) => {
+        this.roiData = this.chartsService.composeHighChart(
+          this.extractRoi(hRoi)
+        );
+      });
   }
 
   private calculatePoolAllocation(): number {
@@ -147,5 +166,12 @@ export class CustomBasketPage implements OnInit {
 
   private openDialog(): MatDialogRef<CustomInvestModalComponent> {
     return this.dialog.open(CustomInvestModalComponent);
+  }
+
+  private extractRoi(obj: IBasketHistoricRoi): number[][] {
+    return Object.keys(obj).map((key) => [
+      new Date(key).getTime(),
+      +obj[key].weighted_roi.toFixed(2),
+    ]);
   }
 }
