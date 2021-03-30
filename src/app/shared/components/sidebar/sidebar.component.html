@@ -229,6 +229,9 @@
       <app-svg-icon icon="currency"></app-svg-icon>
       Reef Bonds
     </a>
+    <div class="w-100 mb-3">
+      <mat-divider></mat-divider>
+    </div>
     <a
       id="myBaskets"
       [routerLink]="['/baskets']"
@@ -244,11 +247,14 @@
       [routerLink]="['/baskets/basket-types']"
       [routerLinkActiveOptions]="{ exact: true }"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-5"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
     >
       <i class="la la-lg la-shopping-basket mr-1"></i>
       Create Basket
     </a>
+    <div class="w-100 mb-3">
+      <mat-divider></mat-divider>
+    </div>
     <!--<a
       id="farmReef"
       [routerLink]="['/reef/farms']"
