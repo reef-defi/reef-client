@@ -276,6 +276,7 @@ export interface ProtocolAddresses {
   USDT: string;
   WETH: string;
   BNB: string;
+  REEF_ESTIMATE_GAS?: string;
 }
 
 export interface IAssetData {
