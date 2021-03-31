@@ -1,3 +1,10 @@
+<div class="row justify-content-center">
+  <div class="mx-3 alert alert-warning small text-monospace m-0">
+    Be advised that this is the very first version of our baskets engine, thus
+    there are some programmatic limits to it. We recommend investing smaller
+    amounts.
+  </div>
+</div>
 <div class="row page__wrapper justify-content-between">
   <div
     class="parameters__wrapper col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3"
@@ -7,12 +14,13 @@
       [riskAmount]="risk"
       [ethBalance]="(userInfo | async)?.balance"
       [minimalInvestment]="minimalInvestment"
+      [maximumInvestment]="maximumInvestment"
       (selectPercentage)="onPercentageChange($event)"
       (invest)="createBasket()"
     >
     </app-create-basket>
   </div>
-  <div class="justify-content-xl-right col-xl-6 col-md-12">
+  <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
     <app-basket-composition [basket]="basket"> </app-basket-composition>
   </div>
 </div>

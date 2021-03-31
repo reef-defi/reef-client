@@ -35,6 +35,7 @@ export class CreateBasketPage implements OnInit {
   public basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo | {} = {};
   public currentRoiTimespan = 1;
   public minimalInvestment: string | undefined;
+  public maximumInvestment = 100;
   ethAmount = new FormControl(1);
   risk = new FormControl('low');
 

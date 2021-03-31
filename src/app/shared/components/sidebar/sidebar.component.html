@@ -223,12 +223,38 @@
       id="bonds"
       [routerLink]="['/reef/bonds']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
       (click)="mobileNavShown = false"
     >
       <app-svg-icon icon="currency"></app-svg-icon>
       Reef Bonds
     </a>
+    <div class="w-100 mb-3">
+      <mat-divider></mat-divider>
+    </div>
+    <a
+      id="myBaskets"
+      [routerLink]="['/baskets']"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
+    >
+      <i class="la la-lg la-balance-scale mr-1"></i>
+      My Baskets
+    </a>
+    <a
+      id="createBasket"
+      [routerLink]="['/baskets/basket-types']"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
+    >
+      <i class="la la-lg la-shopping-basket mr-1"></i>
+      Create Basket
+    </a>
+    <div class="w-100 mb-3">
+      <mat-divider></mat-divider>
+    </div>
     <!--<a
       id="farmReef"
       [routerLink]="['/reef/farms']"
@@ -243,7 +269,7 @@
       id="reefCard"
       [routerLink]="['/reef/card']"
       routerLinkActive="active"
-      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-4"
+      class="d-flex align-items-center h6 text-decoration-none w-100 text-body mb-3"
       (click)="mobileNavShown = false"
     >
       <app-svg-icon icon="credit-card"></app-svg-icon>
@@ -259,26 +285,6 @@
       <app-svg-icon icon="info"></app-svg-icon>
       About Reef
     </a>
-    <!--    <div-->
-    <!--      id="myBaskets"-->
-    <!--      [routerLink]="['/baskets']"-->
-    <!--      [routerLinkActiveOptions]="{exact: true}"-->
-    <!--      routerLinkActive="active"-->
-    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-    <!--      <div-->
-    <!--        class="la la-lg la-balance-scale mr-2 pl-3"></div>-->
-    <!--      <div class="sidebar__label">MY BASKETS</div>-->
-    <!--    </div>-->
-    <!--    <div-->
-    <!--      id="createBasket"-->
-    <!--      [routerLink]="['/baskets/basket-types']"-->
-    <!--      [routerLinkActiveOptions]="{exact: true}"-->
-    <!--      routerLinkActive="active"-->
-    <!--      class="d-flex justify-content-start align-items-center text-center menu-item w-100 py-1 mb-3">-->
-    <!--      <div-->
-    <!--        class="la la-lg la-shopping-basket mr-2 pl-3"></div>-->
-    <!--      <div class="sidebar__label">CREATE BASKET</div>-->
-    <!--    </div>-->
   </div>
 </ng-template>
 

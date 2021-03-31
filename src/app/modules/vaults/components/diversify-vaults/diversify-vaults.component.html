@@ -1,71 +1,77 @@
-<div class="content__container">
-  <div class="heading__lg">DIVERSIFY VAULTS</div>
-  <div class="subheading__lg mb-3">
-    Specify how much you want to diversify your funds, and we'll provide the
-    vaults with the highest APY %.
-  </div>
-  <div class="mb-3">
-    <label class="label__lg mb-3" for="ethAmount">Enter your amount</label>
-    <div class="d-flex align-items-center mb-3">
-      <input
-        appNumbersOnlyInput
-        class="create-basket__input form-control mr-2"
-        id="ethAmount"
-        [formControl]="ethAmount"
-        placeholder="Amount of ETH"
-        type="number"
-      />
-      <img width="40" height="40" src="../../../../../assets/images/eth.png" />
+<div class="card">
+  <div class="card-body">
+    <div class="h6">Diversify your StableCoin Basket</div>
+    <div class="small text-monospace mb-2">
+      Specify how much you want to diversify your funds, and we'll provide the
+      vaults with the highest APY %.
     </div>
-    <div class="my-1">
-      <div *ngIf="ethAmount.value > +ethBalance">
-        <p class="font-danger">
-          You can invest a maximum of
-          <strong>{{ ethBalance }}</strong>
-        </p>
+    <div class="mb-3">
+      <label class="small text-monospace mb-1" for="ethAmount"
+        >Enter your amount</label
+      >
+      <div class="d-flex align-items-center mb-1">
+        <input
+          appNumbersOnlyInput
+          class="w-75 form-control mr-2 accent-text"
+          id="ethAmount"
+          [formControl]="ethAmount"
+          placeholder="Amount of ETH"
+          type="number"
+        />
+        <img
+          width="40"
+          height="40"
+          src="../../../../../assets/images/eth.png"
+        />
+      </div>
+      <div class="my-1">
+        <div *ngIf="ethAmount.value > +ethBalance">
+          <p class="small font-danger">
+            You can invest a maximum of
+            <strong>{{ ethBalance }}</strong>
+          </p>
+        </div>
+      </div>
+      <div *ngIf="ethBalance">
+        <app-percentage-buttons
+          (selectPercentage)="onPercentageChange($event)"
+          [value]="+ethBalance"
+        >
+        </app-percentage-buttons>
       </div>
     </div>
-    <div *ngIf="ethBalance">
-      <app-percentage-buttons
-        (selectPercentage)="onPercentageChange($event)"
-        [value]="+ethBalance"
-      >
-      </app-percentage-buttons>
+    <div class="mb-3">
+      <div>
+        <label class="h6" for="nDiversify">Diversification Ratio</label>
+      </div>
+      <div>
+        <mat-slider
+          id="nDiversify"
+          [tickInterval]="1"
+          thumbLabel
+          class="w-100"
+          min="3"
+          max="10"
+          step="1"
+          (valueChange)="onDiversifyChange($event)"
+        ></mat-slider>
+      </div>
     </div>
-  </div>
-  <div class="mb-3">
-    <div>
-      <label class="label__lg mb-2" for="nDiversify"
-        >Diversification Ratio</label
-      >
-    </div>
-    <div>
-      <mat-slider
-        id="nDiversify"
-        [tickInterval]="1"
-        thumbLabel
-        class="w-100"
-        min="3"
-        max="10"
-        step="1"
-        (valueChange)="onDiversifyChange($event)"
-      ></mat-slider>
-    </div>
-  </div>
-  <div
-    class="d-flex flex-column justify-content-center align-items-center mt-auto"
-  >
-    <button
-      [disabled]="
-        !ethAmount.value ||
-        ethAmount.value <= 0 ||
-        ethAmount.value > +ethBalance
-      "
-      mat-ripple
-      (click)="onInvest()"
-      class="button-large regular mb-3 w-100"
+    <div
+      class="d-flex flex-column justify-content-center align-items-center mt-auto"
     >
-      INVEST
-    </button>
+      <button
+        [disabled]="
+          !ethAmount.value ||
+          ethAmount.value <= 0 ||
+          ethAmount.value > +ethBalance
+        "
+        mat-ripple
+        (click)="onInvest()"
+        class="btn btn-primary mb-3 w-100"
+      >
+        Invest
+      </button>
+    </div>
   </div>
 </div>

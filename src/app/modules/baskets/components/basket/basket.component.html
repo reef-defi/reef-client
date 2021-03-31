@@ -1,76 +1,80 @@
-<div *ngIf="isListView" class="content__container w-100">
-  <div class="row justify-content-between align-items-center">
-    <div
-      class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center"
-    >
-      <div class="heading__lg font-weight-bold mb-3">
-        {{ basket.name }}
+<div *ngIf="isListView" class="card w-100">
+  <div class="card-body">
+    <div class="row justify-content-between align-items-center">
+      <div
+        class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center"
+      >
+        <div class="h5">
+          {{ basket.name }}
+        </div>
+        <div class="text-monospace text-muted">INVESTED</div>
+        <div class="h6">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+        <div class="text-monospace text-muted">TYPE</div>
+        <div class="h6">DeFi</div>
+        <div class="text-monospace text-muted">ROI</div>
+        <div *ngIf="basketRoi" class="h6 text-primary">
+          {{ basketRoi | number: '1.1-2' }}%
+        </div>
+        <div class="text-monospace text-muted">TOTAL ACCRUED</div>
+        <div *ngIf="totalAccrued" class="h6 text-primary mb-3">
+          {{ totalAccrued | number: '1.2-2' }} ETH
+        </div>
+        <div>
+          <button
+            mat-ripple
+            (click)="onDisinvest()"
+            class="btn btn-danger w-100"
+          >
+            Liquidate
+          </button>
+        </div>
       </div>
-      <div class="heading__lg font-weight-bold">
-        {{ basket.investedETH | number: '1.2-2' }} ETH
+      <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
+        <ng-container *ngIf="poolChartOptions; else loadingTemplate">
+          <app-basket-composition
+            [canCustomize]="false"
+            [basket]="pureBasket"
+            [isList]="true"
+          >
+          </app-basket-composition>
+        </ng-container>
       </div>
-      <div class="subheading__lg mb-3">INVESTED</div>
-      <div class="heading__lg font-weight-bold">Pool Basket</div>
-      <div class="subheading__lg mb-3">TYPE</div>
-      <div class="heading__lg font-weight-bold roi__percent">+51% ROI</div>
-      <div class="subheading__lg mb-3">+ 5.61 ETH</div>
-      <div class="mb-3">
-        <button
-          mat-ripple
-          (click)="onDisinvest()"
-          class="button-large danger w-100"
-        >
-          Liquidate
-        </button>
+      <div class="col-lg-6 col-xl-6 col-sm-12 col-md-12">
+        <ng-container *ngIf="roiData; else loadingTemplate">
+          <app-basket-roi
+            [roiData]="roiData"
+            [isList]="true"
+            [activeTimeSpan]="activeTimeSpan"
+            (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
+          ></app-basket-roi>
+        </ng-container>
       </div>
-    </div>
-    <div class="col-lg-3 col-xl-3 col-sm-12 col-md-12">
-      <ng-container *ngIf="poolChartOptions; else loadingTemplate">
-        <app-basket-composition
-          [canCustomize]="false"
-          [basket]="pureBasket"
-          [isList]="true"
-        >
-        </app-basket-composition>
-      </ng-container>
-    </div>
-    <div class="col-lg-6 col-xl-6 col-sm-12 col-md-12">
-      <ng-container *ngIf="roiData; else loadingTemplate">
-        <app-basket-roi
-          [roiData]="roiData"
-          [isList]="true"
-          [activeTimeSpan]="activeTimeSpan"
-          (dateSpanChange)="getHistoricRoi(pureBasket, $event)"
-        ></app-basket-roi>
-      </ng-container>
     </div>
   </div>
 </div>
 
 <div *ngIf="!isListView" class="content__container">
   <div class="row d-flex justify-content-between align-items-center mt-3 mb-4">
-    <div class="col-7 heading__lg font-weight-bold">
+    <div class="col-7 h6">
       {{ basket.name }}
     </div>
-    <div class="col-4 heading__lg font-weight-bold">Pool Basket</div>
+    <div class="col-4 heading__lg font-weight-bold">DeFi</div>
   </div>
   <div class="row mb-2">
     <div class="col-3">
-      <div class="heading__lg font-weight-bold mb-1">
-        {{ basket.investedETH | number: '1.2-2' }} ETH
-      </div>
-      <div class="subheading__lg mb-3">INVESTED</div>
+      <div class="h6">{{ basket.investedETH | number: '1.2-2' }} ETH</div>
+      <div class="text-monospace text-muted">INVESTED</div>
     </div>
     <div class="col-3">
-      <div class="heading__lg font-weight-bold mb-1 roi__percent">+51% ROI</div>
-      <div class="subheading__lg mb-3">+ 5.61 ETH</div>
+      <div *ngIf="basketRoi" class="h6 text-primary">
+        {{ basketRoi | number: '1.1-2' }}%
+      </div>
+      <div *ngIf="totalAccrued" class="h6 text-primary mb-3">
+        {{ totalAccrued | number: '1.2-2' }} ETH
+      </div>
     </div>
     <div class="col-6">
-      <button
-        mat-ripple
-        (click)="onDisinvest()"
-        class="button-large danger w-100"
-      >
+      <button mat-ripple (click)="onDisinvest()" class="btn btn-danger w-100">
         Liquidate
       </button>
     </div>

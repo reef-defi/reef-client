@@ -12,7 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -27,8 +27,17 @@ export interface IPortfolio {
   refreshSubject?: Subject<ExchangeId>;
 }
 
-export type SupportedPortfolio = Pick<IPortfolio,
-  'tokens' | 'uniswapPositions' | 'compoundPositions'>;
+export type SupportedPortfolio = Pick<
+  IPortfolio,
+  'tokens' | 'uniswapPositions' | 'compoundPositions'
+>;
+
+export interface ICreateBasketEntry {
+  address: string;
+  timeStamp: number;
+  amount: number;
+  basketIdx: number;
+}
 
 export enum EErrorTypes {
   USER_CANCELLED = 4001,
@@ -37,6 +46,7 @@ export enum EErrorTypes {
   METHOD_NOT_FOUND = -32601,
   INVALID_PARAMS = -32602,
   INTERNAL_ERROR = -32603,
+  BASKET_POSITION_INVEST_ERROR = 845737,
 }
 
 export enum TransactionType {
@@ -48,6 +58,7 @@ export enum TransactionType {
   REEF_ETH_FARM = 'REEF_ETH_FARM',
   APPROVE_TOKEN = 'APPROVE_TOKEN',
   REEF_BOND = 'REEF_BOND',
+  REEF_BASKET = 'REEF_BASKET',
 }
 
 export interface PendingTransaction {
@@ -161,11 +172,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-    transactionHash: string;
-    receipt: any;
-    confirmation: number;
-    error?: any;
-  }>
+        transactionHash: string;
+        receipt: any;
+        confirmation: number;
+        error?: any;
+      }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -327,7 +338,7 @@ export interface IVaultInfo {
 
 export interface IBasket {
   name: string;
-  investedETH: string[];
+  investedETH: string;
   index: number;
   BalancerPools: {
     pools: any;
@@ -347,6 +358,7 @@ export interface IBasket {
   };
   referrer: string;
   isVault: boolean;
+  timeStamp: number;
 }
 
 export interface IGenerateBasketRequest {
