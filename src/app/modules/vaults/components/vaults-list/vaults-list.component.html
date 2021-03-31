@@ -1,30 +1,32 @@
-<div class="content__container">
-  <div class="heading__lg">VAULTS</div>
-  <div class="subheading__lg mb-3">
-    You can modify the allocated amount using the sliders
-  </div>
-  <div *ngIf="Object.keys(vaults).length > 0; else loadingTemplate">
-    <div *ngFor="let key of Object.keys(vaults); let i = index">
-      <div class="label__md mb-1 ml-2">{{ key }}</div>
-      <div
-        class="d-flex justify-content-between align-items-center mb-1 mr-2 ml-2"
-      >
-        <div class="label__md">
-          <strong> APY: {{ vaults[key].APY | number }}% </strong>
+<div class="card">
+  <div class="card-body">
+    <div class="h6">Vaults</div>
+    <div class="small text-monospace mb-2">
+      You can modify the allocated amount using the sliders
+    </div>
+    <div *ngIf="Object.keys(vaults).length > 0; else loadingTemplate">
+      <div *ngFor="let key of Object.keys(vaults); let i = index">
+        <div class="small text-monospace mb-1 ml-2">{{ key }}</div>
+        <div
+          class="d-flex justify-content-between align-items-center mb-1 mr-2 ml-2"
+        >
+          <div class="small">
+            <strong> APY: {{ vaults[key].APY | number }}% </strong>
+          </div>
+          <div class="small">
+            <strong>{{ vaults[key].percentage }}%</strong>
+          </div>
         </div>
-        <div class="heading__md">
-          <strong>{{ vaults[key].percentage }}%</strong>
-        </div>
+        <mat-slider
+          class="w-100 slider mt-n4"
+          min="1"
+          [max]="100 - Object.keys(vaults).length"
+          step="1"
+          thumbLabel
+          (valueChange)="onVaultAllocChanged($event, key)"
+          [value]="vaults[key].percentage"
+        ></mat-slider>
       </div>
-      <mat-slider
-        class="w-100 slider mt-n4"
-        min="1"
-        [max]="100 - Object.keys(vaults).length"
-        step="1"
-        thumbLabel
-        (valueChange)="onVaultAllocChanged($event, key)"
-        [value]="vaults[key].percentage"
-      ></mat-slider>
     </div>
   </div>
 </div>

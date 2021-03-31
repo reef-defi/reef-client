@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import Web3 from 'web3';
-import {Contract} from 'web3-eth-contract';
+import { Contract } from 'web3-eth-contract';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
-import {getProviderName} from '../utils/provider-name';
-import {BehaviorSubject, ReplaySubject} from 'rxjs';
+import { getProviderName } from '../utils/provider-name';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import {
   ChainId,
   IChainData,
@@ -16,13 +16,14 @@ import {
   ProviderName,
   TokenSymbol,
 } from '../models/types';
-import {getChainData} from '../utils/chains';
-import {NotificationService} from './notification.service';
-import {getContractData} from '../../../assets/abi';
-import {take} from 'rxjs/operators';
-import {AddressUtils} from '../../shared/utils/address.utils';
-import {ProviderUtil} from '../../shared/utils/provider.util';
-import {first} from 'rxjs/internal/operators/first';
+import { getChainData } from '../utils/chains';
+import { NotificationService } from './notification.service';
+import { getContractData } from '../../../assets/abi';
+import { take } from 'rxjs/operators';
+import { AddressUtils } from '../../shared/utils/address.utils';
+import { ProviderUtil } from '../../shared/utils/provider.util';
+import { first } from 'rxjs/internal/operators/first';
+import { DevUtil } from '../../shared/utils/dev-util';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -62,6 +63,7 @@ export class ConnectorService {
         rpc: {
           1: ProviderUtil.getProviderUrl(ProviderName.INFURA),
           56: 'https://bsc-dataseed.binance.org/',
+          '0x38': 'https://bsc-dataseed.binance.org/',
         },
       },
     },
@@ -110,6 +112,7 @@ export class ConnectorService {
     this.providerLoading$.next(true);
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
+    DevUtil.devLog('CHAINID', window.ethereum.chainId);
     this.currentProvider$.next(provider);
     this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(
@@ -267,8 +270,8 @@ export class ConnectorService {
   }
 
   public setSelectedGas(type: string, price: number): void {
-    this.selectedGasPrice$.next({type, price});
-    localStorage.setItem('reef_gas_price', JSON.stringify({type, price}));
+    this.selectedGasPrice$.next({ type, price });
+    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
   }
 
   public getGasPrice(chainId = ChainId.MAINNET): string {
@@ -367,8 +370,7 @@ export class ConnectorService {
     if (!this.currentProvider$.value.on) {
       return;
     }
-    this.currentProvider$.value.on('connect', () => {
-    });
+    this.currentProvider$.value.on('connect', () => {});
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on(
       'accountsChanged',

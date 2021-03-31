@@ -2,7 +2,7 @@
   *ngIf="poolsAndTokens$ | async as poolsAndTokens; else loadingTemplate"
 >
   <div class="row page__wrapper">
-    <div class="col-6">
+    <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
       <app-custom-basket-pools
         [poolsAndTokens]="poolsAndTokens"
         [canAddPools]="Object.keys(chartPoolData).length < COMPOSITION_LIMIT"
@@ -11,7 +11,7 @@
       >
       </app-custom-basket-pools>
     </div>
-    <div class="col-6">
+    <div class="col-xl-6 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-xs-3 mb-3">
       <app-custom-basket-composition
         [basket]="chartPoolData"
         [disabledSlider]="Object.keys(chartPoolData).length === 1"
@@ -22,8 +22,28 @@
       </app-custom-basket-composition>
     </div>
   </div>
+  <div
+    *ngIf="Object.keys(chartPoolData).length > 0; else emptyChart"
+    class="row"
+  >
+    <div class="col-12">
+      <app-basket-roi
+        [activeTimeSpan]="currentRoiTimespan"
+        [roiData]="roiData"
+        (dateSpanChange)="getHistoricRoi($event)"
+      ></app-basket-roi>
+    </div>
+  </div>
 </ng-container>
 
 <ng-template #loadingTemplate>
   <app-loading [isWholePage]="true"></app-loading>
+</ng-template>
+
+<ng-template #emptyChart>
+  <div class="row align-items-center justify-content-center mt-3">
+    <div class="alert alert-primary small text-monospace w-75 text-center">
+      Add some pools or tokens to see the historical performance of that basket.
+    </div>
+  </div>
 </ng-template>

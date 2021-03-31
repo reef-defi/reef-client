@@ -22,4 +22,13 @@ export class CustomInvestModalComponent {
   onInvest(): number {
     return this.ethAmount.value;
   }
+
+  onNumberInput() {
+    if (this.ethAmount.value > 100) {
+      this.ethAmount.patchValue(100);
+    }
+    if (this.ethAmount.value && this.ethAmount.value < 1) {
+      this.ethAmount.patchValue(1);
+    }
+  }
 }

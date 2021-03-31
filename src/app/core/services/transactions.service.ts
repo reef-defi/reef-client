@@ -26,6 +26,7 @@ export class TransactionsService {
     [TransactionType.REEF_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_ETH_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
+    [TransactionType.REEF_BASKET]: [ChainId.MAINNET, ChainId.LOCAL_FORK],
   };
   private static TRANSACTION_SCANNERS = {
     [ChainId.MAINNET]: {
@@ -71,7 +72,8 @@ export class TransactionsService {
     tokens: TokenSymbol[],
     chainId: ChainId
   ): void {
-    const txUrl = `${TransactionsService.TRANSACTION_SCANNERS[chainId].url}/${hash}`;
+    let transactionScanner = TransactionsService.TRANSACTION_SCANNERS[chainId];
+    const txUrl = transactionScanner ? `${transactionScanner.url}/${hash}` : '';
     const transactions = this.pendingTransactions$.value.transactions || [];
     const pendingTransactions: IPendingTransactions = {
       transactions: [
@@ -81,7 +83,7 @@ export class TransactionsService {
           type,
           tokens,
           txUrl,
-          scanner: TransactionsService.TRANSACTION_SCANNERS[chainId].name,
+          scanner: transactionScanner ? transactionScanner.name : '',
           chainId,
         },
       ],

@@ -1,84 +1,97 @@
-<div class="content__container">
-  <div>
-    <div class="heading__lg">Create your own custom basket</div>
-    <div class="subheading__lg text-break mb-2">
-      Search <strong>pools</strong> or <strong>tokens</strong>, add them to your
-      basket, and allocate your funds
-      <strong>to your own liking!</strong>
+<div class="card">
+  <div class="card-body">
+    <div>
+      <div class="h6">Create your own custom basket</div>
+      <div class="small text-muted text-break mb-3">
+        Search <strong>pools</strong> or <strong>tokens</strong>, add them to
+        your basket, and allocate your funds
+        <strong>to your own liking!</strong>
+      </div>
+      <label class="h6" for="searchPools">Search Pools or Tokens</label>
+      <input
+        #poolSearch
+        id="searchPools"
+        (keyup)="search($event)"
+        type="text"
+        placeholder="Search by name or exchange"
+        class="w-75 small form-control mb-3 accent-text"
+      />
     </div>
-    <label class="label__lg" for="searchPools">Search Pools or Tokens</label>
-    <input
-      #poolSearch
-      appNumbersOnlyInput
-      id="searchPools"
-      (keyup)="search($event)"
-      type="text"
-      placeholder="Name, Exchange..."
-      class="form-control w-50 mb-4"
-    />
-  </div>
-  <div class="d-flex justify-content-start align-items-center mb-2 ml-2">
-    <mat-radio-group>
-      <mat-radio-button class="mr-3" value="" (change)="filterBy($event)">
-        <span class="subheading__lg ml-n1">Show all</span>
-      </mat-radio-button>
-      <mat-radio-button value="Token" class="mr-3" (change)="filterBy($event)">
-        <span class="subheading__lg ml-n1">Show only Tokens</span>
-      </mat-radio-button>
-      <mat-radio-button value="Pool" (change)="filterBy($event)">
-        <span class="subheading__lg ml-n1">Show only Pools</span>
-      </mat-radio-button>
-    </mat-radio-group>
-  </div>
-  <table mat-table [dataSource]="poolsDataSource" class="w-100">
-    <ng-container matColumnDef="Type">
-      <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
-      <mat-cell *matCellDef="let pool">
-        <span class="subheading__lg">
-          {{ pool.type }}
-        </span>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Name">
-      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-      <mat-cell *matCellDef="let pool">
-        <span class="subheading__lg">
-          {{ pool.Symbol }}
-        </span>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Exchange">
-      <mat-header-cell *matHeaderCellDef>Exchange</mat-header-cell>
-      <mat-cell *matCellDef="let pool">
-        <span class="subheading__lg">
-          {{ pool.ExchangeName || 'N/A' }}
-        </span>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Add">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let pool">
-        <button
-          *ngIf="canAddPools && !chartPoolData[pool.Symbol]"
-          (click)="onAddPool(pool.Symbol)"
-          matTooltip="Add {{ pool.Symbol }}"
-          mat-ripple
-          mat-icon-button
+    <div class="d-flex justify-content-start align-items-center mb-2 ml-2">
+      <mat-radio-group>
+        <mat-radio-button
+          class="small mr-3"
+          value=""
+          (change)="filterBy($event)"
         >
-          <mat-icon class="icon-button"> add </mat-icon>
-        </button>
-      </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedPoolsColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedPoolsColumns"></mat-row>
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">
-        No pools found for "{{ poolSearch.value }}"
-      </td>
-    </tr>
-  </table>
-  <mat-paginator
-    #poolPaginator
-    [pageSizeOptions]="[5, 10, 25, 100]"
-  ></mat-paginator>
+          Show all
+        </mat-radio-button>
+        <mat-radio-button
+          value="Token"
+          class="small mr-3"
+          (change)="filterBy($event)"
+        >
+          Show only Tokens
+        </mat-radio-button>
+        <mat-radio-button
+          value="Pool"
+          class="small"
+          (change)="filterBy($event)"
+        >
+          Show only Pools
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <table mat-table [dataSource]="poolsDataSource" class="w-100">
+      <ng-container matColumnDef="Type">
+        <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+        <mat-cell *matCellDef="let pool">
+          <span class="text-monospace">
+            {{ pool.type }}
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let pool">
+          <span class="text-monospace font-weight-bold">
+            {{ pool.Symbol }}
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Exchange">
+        <mat-header-cell *matHeaderCellDef>Exchange</mat-header-cell>
+        <mat-cell *matCellDef="let pool">
+          <span class="text-monospace">
+            {{ pool.ExchangeName || 'N/A' }}
+          </span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Add">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let pool">
+          <button
+            *ngIf="canAddPools && !chartPoolData[pool.Symbol]"
+            (click)="onAddPool(pool.Symbol)"
+            matTooltip="Add {{ pool.Symbol }}"
+            mat-ripple
+            mat-icon-button
+          >
+            <mat-icon class="icon-button">add</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedPoolsColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedPoolsColumns"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No pools found for "{{ poolSearch.value }}"
+        </td>
+      </tr>
+    </table>
+    <mat-paginator
+      #poolPaginator
+      [pageSizeOptions]="[5, 10, 25, 100]"
+    ></mat-paginator>
+  </div>
 </div>

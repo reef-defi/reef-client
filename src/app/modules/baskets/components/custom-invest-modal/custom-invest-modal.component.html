@@ -1,25 +1,31 @@
-<!--
 <div class="d-flex flex-column p-2">
-  <div class="heading__md mb-2">Satisfied with your basket?</div>
-  <label class="label__lg mb-2" for="customEthAmount">Enter your amount</label>
-  <div class="d-flex align-items-center mb-3">
+  <div class="h6">Satisfied with your basket?</div>
+  <label class="small text-muted mb-2" for="customEthAmount"
+    >Enter your amount</label
+  >
+  <div class="d-flex align-items-center mb-1">
     <input
-      class="create-basket__input form-control mr-2"
+      (keyup)="onNumberInput()"
+      class="w-75 form-control mr-2 accent-text"
       id="customEthAmount"
       appNumbersOnlyInput
       [formControl]="ethAmount"
       placeholder="Amount of ETH"
+      min="1"
+      max="100"
       type="number"
     />
-    <img width="50" height="50" src="../../../../../assets/images/eth.png" />
+    <img class="img-size-top-25" src="../../../../../assets/images/eth.png" />
   </div>
-  <div class="d-flex" mat-dialog-actions>
-    <button class="button-large inverse mr-3" (click)="onClose()">
-      Cancel
-    </button>
-    <button class="button-large regular" [mat-dialog-close]="onInvest()">
+  <div class="mb-3">
+    <span class="text-muted small text-monospace">
+      Minimum 1 ETH, up to 100ETH.
+    </span>
+  </div>
+  <div class="d-flex justify-content-between" mat-dialog-actions>
+    <button class="btn btn-danger" (click)="onClose()">Cancel</button>
+    <button class="btn btn-primary" [mat-dialog-close]="onInvest()">
       Invest
     </button>
   </div>
 </div>
--->

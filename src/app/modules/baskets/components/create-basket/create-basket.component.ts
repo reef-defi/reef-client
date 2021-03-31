@@ -11,6 +11,7 @@ export class CreateBasketComponent {
   @Input() riskAmount: FormControl | undefined;
   @Input() ethBalance: string;
   @Input() minimalInvestment: string | undefined;
+  @Input() maximumInvestment: string | undefined;
   @Output() invest = new EventEmitter<void>();
   @Output() selectPercentage = new EventEmitter<number>();
 
@@ -20,5 +21,14 @@ export class CreateBasketComponent {
 
   onPercentageChange(val: number): void {
     this.selectPercentage.emit(val);
+  }
+
+  onNumberInput() {
+    if (this.ethAmount.value > 100) {
+      this.ethAmount.patchValue(100);
+    }
+    if (this.ethAmount.value && this.ethAmount.value < 1) {
+      this.ethAmount.patchValue(1);
+    }
   }
 }

@@ -9,6 +9,7 @@ import {
 import { ChartsService } from '../../../../core/services/charts.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-basket',
@@ -20,6 +21,7 @@ export class BasketComponent {
   private pureBasket: IGenerateBasketResponse | undefined;
   @Input() isListView: boolean;
   @Input() basketIndex: number | undefined;
+
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
     this.pureBasket = this.getChartLabels(this.mBasket);
@@ -28,15 +30,20 @@ export class BasketComponent {
       Object.values(this.pureBasket)
     );
     this.getHistoricRoi(this.pureBasket, 1);
+    this.calcBasketRoi(value.timeStamp, value.investedETH, this.pureBasket);
   }
+
   get basket(): IBasket {
     return this.mBasket;
   }
+
   @Output() disinvest = new EventEmitter();
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiData: number[][];
   public disinvestPercentage = 100;
   public activeTimeSpan = 1;
+  public basketRoi = null;
+  public totalAccrued = null;
 
   constructor(
     private readonly charts: ChartsService,
@@ -76,6 +83,7 @@ export class BasketComponent {
     this.activeTimeSpan = subtractMonths;
     return this.apiService
       .getHistoricRoi(basket, subtractMonths)
+      .pipe(take(1))
       .subscribe((historicRoi: IBasketHistoricRoi) => {
         this.roiData = this.charts.composeHighChart(
           this.extractRoi(historicRoi)
@@ -88,5 +96,22 @@ export class BasketComponent {
       new Date(key).getTime(),
       +obj[key].weighted_roi.toFixed(2),
     ]);
+  }
+
+  private calcBasketRoi(
+    timestamp: number,
+    investedEth: string,
+    basket: IGenerateBasketResponse
+  ) {
+    return this.apiService
+      .getHistoricRoi(basket, 0, new Date(timestamp))
+      .pipe(take(1))
+      .subscribe((historicRoi: IBasketHistoricRoi) => {
+        const extracted = this.extractRoi(historicRoi);
+        if (extracted.length) {
+          this.basketRoi = extracted[extracted.length - 1][1] - extracted[0][1];
+          this.totalAccrued = parseFloat(investedEth) * (this.basketRoi / 100);
+        }
+      });
   }
 }
