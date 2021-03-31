@@ -88,7 +88,6 @@ export class BasketComponent {
         this.roiData = this.charts.composeHighChart(
           this.extractRoi(historicRoi)
         );
-        console.log(this.extractRoi(historicRoi));
       });
   }
 
@@ -108,16 +107,11 @@ export class BasketComponent {
       .getHistoricRoi(basket, 0, new Date(timestamp))
       .pipe(take(1))
       .subscribe((historicRoi: IBasketHistoricRoi) => {
-        console.log(timestamp);
-        console.log(new Date(timestamp));
-        console.log('ROIIII=', historicRoi);
         const extracted = this.extractRoi(historicRoi);
         if (extracted.length) {
           this.basketRoi = extracted[extracted.length - 1][1] - extracted[0][1];
           this.totalAccrued = parseFloat(investedEth) * (this.basketRoi / 100);
         }
-        console.log('extracted=', extracted);
-        console.log('Calcd basket ROI =', this.basketRoi);
       });
   }
 }
