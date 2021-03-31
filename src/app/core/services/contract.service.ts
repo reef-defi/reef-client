@@ -22,6 +22,7 @@ import { ErrorUtils } from '../../shared/utils/error.utils';
 import { EventsService } from './events.service';
 import { DevUtil } from '../../shared/utils/dev-util';
 import { LogLevel } from '../../shared/utils/dev-util-log-level';
+import { addresses } from '../../../assets/addresses';
 
 @Injectable({
   providedIn: 'root',
@@ -136,6 +137,7 @@ export class ContractService {
         .pipe(take(1))
         .toPromise();
       const wei = this.connectorService.toWei(amountToInvest);
+
       const {
         uniswapPools,
         tokenPools,
@@ -146,18 +148,6 @@ export class ContractService {
         mooniswapPools,
         mooniswapWeights,
       } = basketPoolTokenInfo;
-      DevUtil.devLog('Params= ', {
-        name,
-        uniswapPools,
-        uniSwapWeights,
-        tokenPools,
-        tokenWeights,
-        balancerPools,
-        balancerWeights,
-        mooniswapPools,
-        mooniswapWeights,
-      });
-      await this.eventService.subToInvestEvent(this.basketContract$.value);
       this.basketContract$.value.methods
         .createBasket(
           name,
@@ -170,44 +160,89 @@ export class ContractService {
           mooniswapPools,
           mooniswapWeights
         )
-        .send({
-          from: info.address,
-          value: `${wei}`,
-          gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
-        })
-        .on('transactionHash', (hash) => {
-          dialogRef.close();
-          this.notificationService.showNotification(
-            'The transaction is now pending.',
-            'Ok',
-            'info'
-          );
-          this.transactionService.addPendingTx(
-            hash,
-            TransactionType.REEF_BASKET,
-            [TokenSymbol.ETH],
-            info.chainInfo.chain_id
-          );
-        })
-        .on('receipt', async (receipt) => {
-          this.transactionService.removePendingTx(receipt.transactionHash);
-          this.notificationService.showNotification(
-            `Success! ${amountToInvest} ETH invested in ${name} Basket`,
-            'Okay',
-            'success'
-          );
-        })
-        .on('error', (err) => {
-          dialogRef.close();
-          if (err.code === EErrorTypes.INTERNAL_ERROR) {
-            err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+        .estimateGas(
+          {
+            from: addresses[ChainId.MAINNET].REEF_ESTIMATE_GAS,
+            value: `${wei}`,
+          },
+          async (err, gas) => {
+            if (!err && gas) {
+              await this.eventService.subToInvestEvent(
+                this.basketContract$.value
+              );
+              this.basketContract$.value.methods
+                .createBasket(
+                  name,
+                  uniswapPools,
+                  uniSwapWeights,
+                  tokenPools,
+                  tokenWeights,
+                  balancerPools,
+                  balancerWeights,
+                  mooniswapPools,
+                  mooniswapWeights
+                )
+                .send({
+                  from: info.address,
+                  value: `${wei}`,
+                  gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
+                  gas,
+                })
+                .on('transactionHash', (hash) => {
+                  dialogRef.close();
+                  this.notificationService.showNotification(
+                    'The transaction is now pending.',
+                    'Ok',
+                    'info'
+                  );
+                  this.transactionService.addPendingTx(
+                    hash,
+                    TransactionType.REEF_BASKET,
+                    [TokenSymbol.ETH],
+                    info.chainInfo.chain_id
+                  );
+                })
+                .on('receipt', async (receipt) => {
+                  this.transactionService.removePendingTx(
+                    receipt.transactionHash
+                  );
+                  this.notificationService.showNotification(
+                    `Success! ${amountToInvest} ETH invested in ${name} Basket`,
+                    'Okay',
+                    'success'
+                  );
+                })
+                .on('error', (err) => {
+                  dialogRef.close();
+                  if (err.code === EErrorTypes.INTERNAL_ERROR) {
+                    err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+                  }
+                  this.notificationService.showNotification(
+                    ErrorUtils.parseError(err.code, err.message),
+                    'Close',
+                    'error'
+                  );
+                });
+            } else {
+              this.notificationService.showNotification(
+                err.message,
+                'Close',
+                'error'
+              );
+            }
           }
-          this.notificationService.showNotification(
-            ErrorUtils.parseError(err.code, err.message),
-            'Close',
-            'error'
-          );
-        });
+        );
+      DevUtil.devLog('Params= ', {
+        name,
+        uniswapPools,
+        uniSwapWeights,
+        tokenPools,
+        tokenWeights,
+        balancerPools,
+        balancerWeights,
+        mooniswapPools,
+        mooniswapWeights,
+      });
     } catch (e) {
       DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
       this.notificationService.showNotification(e.message, 'Close', 'error');
