@@ -114,13 +114,6 @@
     </div>
   </div>
 </ng-template>
-<div>
-  <div class="h5">Reef Bonds</div>
-  <div>
-    Learn more about locked token numbers by opening each bond item in
-    <a routerLink="/reef/bonds">bonds list</a>.
-  </div>
-</div>
 <app-portfolio-positions
   *ngIf="chainInfo.chain_id === ChainId.MAINNET"
   title="Uniswap"
@@ -205,6 +198,14 @@
     </div>
   </div>
 </app-portfolio-positions>
+
+<div>
+  <div class="h5">Reef Bonds</div>
+  <div class="text-muted small text-monospace mb-2">
+    Learn more about locked tokens by opening each bond in the
+    <a routerLink="/reef/bonds">bonds list</a>.
+  </div>
+</div>
 
 <!--<app-portfolio-positions title="Balancer" [positions]="portfolio?.balancerPositions">
     <div class="table-min-w-up-to-lg">
