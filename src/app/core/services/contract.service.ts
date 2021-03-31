@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { NotificationService } from './notification.service';
 import {
   ChainId,
+  EErrorTypes,
   IBasket,
   IBasketPoolsAndCoinInfo,
   IProviderUserInfo,
@@ -19,6 +20,8 @@ import { TransactionConfirmationComponent } from '../../shared/components/transa
 import { TransactionsService } from './transactions.service';
 import { ErrorUtils } from '../../shared/utils/error.utils';
 import { EventsService } from './events.service';
+import { DevUtil } from '../../shared/utils/dev-util';
+import { LogLevel } from '../../shared/utils/dev-util-log-level';
 
 @Injectable({
   providedIn: 'root',
@@ -53,14 +56,12 @@ export class ContractService {
         .getBasketsForUser(info.address)
         .pipe(take(1))
         .subscribe(async (data) => {
-          console.log(data, 'data');
           const basketCount = await this.getAvailableBasketsCount();
           const basketProms = [];
           for (let i = 0; i <= basketCount; i++) {
             basketProms.push(this.getAvailableBasket(i));
           }
           const resolvedBaskets = await Promise.all(basketProms);
-          console.log(resolvedBaskets);
           let baskets: IBasket[] = await Promise.all(
             resolvedBaskets.map(async (basket, idx) => ({
               ...basket,
@@ -90,7 +91,6 @@ export class ContractService {
               );
               return { ...basket, timeStamp };
             });
-          console.log(baskets, 'hmm');
           this.baskets$.next(baskets);
           this.basketsError$.next(false);
           this.loading$.next(false);
@@ -146,7 +146,7 @@ export class ContractService {
         mooniswapPools,
         mooniswapWeights,
       } = basketPoolTokenInfo;
-      console.log('Params=, ', {
+      DevUtil.devLog('Params= ', {
         name,
         uniswapPools,
         uniSwapWeights,
@@ -199,14 +199,17 @@ export class ContractService {
         })
         .on('error', (err) => {
           dialogRef.close();
+          if (err.code === EErrorTypes.INTERNAL_ERROR) {
+            err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+          }
           this.notificationService.showNotification(
-            ErrorUtils.parseError(err.code),
+            ErrorUtils.parseError(err.code, err.message),
             'Close',
             'error'
           );
         });
     } catch (e) {
-      console.error(e);
+      DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }
@@ -336,7 +339,6 @@ export class ContractService {
     const investment = await this.basketContract$.value.methods
       .currentInvestedFunds()
       .call();
-    console.log(investment);
     return this.connectorService.fromWei(investment as string);
   }
 

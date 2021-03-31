@@ -46,6 +46,7 @@ export enum EErrorTypes {
   METHOD_NOT_FOUND = -32601,
   INVALID_PARAMS = -32602,
   INTERNAL_ERROR = -32603,
+  BASKET_POSITION_INVEST_ERROR = 845737,
 }
 
 export enum TransactionType {
