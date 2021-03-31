@@ -5,11 +5,14 @@
   >
   <div class="d-flex align-items-center mb-3">
     <input
+      (keyup)="onNumberInput()"
       class="w-75 form-control mr-2 accent-text"
       id="customEthAmount"
       appNumbersOnlyInput
       [formControl]="ethAmount"
       placeholder="Amount of ETH"
+      min="1"
+      max="100"
       type="number"
     />
     <img class="img-size-top-25" src="../../../../../assets/images/eth.png" />
