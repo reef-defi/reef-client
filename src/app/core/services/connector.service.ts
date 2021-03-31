@@ -23,7 +23,7 @@ import { take } from 'rxjs/operators';
 import { AddressUtils } from '../../shared/utils/address.utils';
 import { ProviderUtil } from '../../shared/utils/provider.util';
 import { first } from 'rxjs/internal/operators/first';
-import {DevUtil} from '../../shared/utils/dev-util';
+import { DevUtil } from '../../shared/utils/dev-util';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -112,7 +112,7 @@ export class ConnectorService {
     this.providerLoading$.next(true);
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
-    DevUtil.devLog( 'CHAINID',window.ethereum.chainId);
+    DevUtil.devLog('CHAINID', window.ethereum.chainId);
     this.currentProvider$.next(provider);
     this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(

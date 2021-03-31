@@ -1,19 +1,27 @@
-import {Injectable} from '@angular/core';
-import {ConnectorService} from './connector.service';
-import {BehaviorSubject} from 'rxjs';
-import {NotificationService} from './notification.service';
-import {ChainId, EErrorTypes, IBasket, IBasketPoolsAndCoinInfo, IProviderUserInfo, TokenSymbol, TransactionType,} from '../models/types';
-import {getBasketPoolNames} from '../utils/pools-utils';
-import {ApiService} from './api.service';
-import {take} from 'rxjs/operators';
-import {TokenBalanceService} from '../../shared/service/token-balance.service';
-import {MatDialog} from '@angular/material/dialog';
-import {TransactionConfirmationComponent} from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
-import {TransactionsService} from './transactions.service';
-import {ErrorUtils} from '../../shared/utils/error.utils';
-import {EventsService} from './events.service';
-import {DevUtil} from '../../shared/utils/dev-util';
-import {LogLevel} from '../../shared/utils/dev-util-log-level';
+import { Injectable } from '@angular/core';
+import { ConnectorService } from './connector.service';
+import { BehaviorSubject } from 'rxjs';
+import { NotificationService } from './notification.service';
+import {
+  ChainId,
+  EErrorTypes,
+  IBasket,
+  IBasketPoolsAndCoinInfo,
+  IProviderUserInfo,
+  TokenSymbol,
+  TransactionType,
+} from '../models/types';
+import { getBasketPoolNames } from '../utils/pools-utils';
+import { ApiService } from './api.service';
+import { take } from 'rxjs/operators';
+import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TransactionConfirmationComponent } from '../../shared/components/transaction-confirmation/transaction-confirmation.component';
+import { TransactionsService } from './transactions.service';
+import { ErrorUtils } from '../../shared/utils/error.utils';
+import { EventsService } from './events.service';
+import { DevUtil } from '../../shared/utils/dev-util';
+import { LogLevel } from '../../shared/utils/dev-util-log-level';
 
 @Injectable({
   providedIn: 'root',
@@ -201,7 +209,7 @@ export class ContractService {
           );
         });
     } catch (e) {
-      DevUtil.devLog('Create basket err=',e, LogLevel.ERROR);
+      DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
       this.notificationService.showNotification(e.message, 'Close', 'error');
     }
   }

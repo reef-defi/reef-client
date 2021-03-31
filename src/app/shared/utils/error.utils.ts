@@ -1,4 +1,4 @@
-import {EErrorTypes, RpcErrorTypes} from '../../core/models/types';
+import { EErrorTypes, RpcErrorTypes } from '../../core/models/types';
 
 export class ErrorUtils {
   private static JSON_RPC_ERROR_TYPES: any = {
@@ -20,15 +20,19 @@ export class ErrorUtils {
       const maxRatio = message.indexOf('ERR_MAX_IN_RATIO') > -1;
       const minRatio = message.indexOf('ERR_MIN_IN_RATIO') > -1;
       if (maxRatio || minRatio) {
-        return `Investment value(s) of Balancer pool position(s) in basket are ${maxRatio ? 'too big' : 'too small'}.`;
+        return `Investment value(s) of Balancer pool position(s) in basket are ${
+          maxRatio ? 'too big' : 'too small'
+        }.`;
       }
     }
     if (!!this.JSON_RPC_ERROR_TYPES[errorCode]) {
       return this.JSON_RPC_ERROR_TYPES[errorCode];
     }
     if (errorCode === EErrorTypes.BASKET_POSITION_INVEST_ERROR) {
-      return 'Some basket position(s) experienced error investing. ' +
-        'None of your funds were invested. Please update positions and try again.';
+      return (
+        'Some basket position(s) experienced error investing. ' +
+        'None of your funds were invested. Please update positions and try again.'
+      );
     }
     return 'Something went wrong. The transaction has been cancelled.';
   }
