@@ -112,7 +112,6 @@ export class ConnectorService {
     this.providerLoading$.next(true);
     const provider = await this.web3Modal.connect();
     const web3 = this.initWeb3(provider);
-    DevUtil.devLog('CHAINID', window.ethereum.chainId);
     this.currentProvider$.next(provider);
     this.currentProviderName$.next(getProviderName(web3, provider));
     this.notificationService.showNotification(
