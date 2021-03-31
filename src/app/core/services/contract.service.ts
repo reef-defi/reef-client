@@ -224,6 +224,7 @@ export class ContractService {
                   );
                 });
             } else {
+              dialogRef.close();
               this.notificationService.showNotification(
                 err.message,
                 'Close',
