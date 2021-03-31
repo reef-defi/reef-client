@@ -31,5 +31,4 @@ export class CustomInvestModalComponent {
       this.ethAmount.patchValue(1);
     }
   }
-
 }
