@@ -5,6 +5,7 @@ import { first } from 'rxjs/internal/operators/first';
 import { Contract } from 'web3-eth-contract';
 import { ApiService } from './api.service';
 import { take } from 'rxjs/operators';
+import { DateTimeUtil } from '../../shared/utils/date-time.util';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +47,6 @@ export class EventsService {
     const web3 = await this.connectorService.getWeb3();
     const { blockNumber } = event;
     const blockData = await web3.eth.getBlock(blockNumber);
-    return blockData.timestamp;
+    return DateTimeUtil.toJSTimestamp(blockData.timestamp);
   }
 }

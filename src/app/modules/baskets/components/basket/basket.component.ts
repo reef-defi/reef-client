@@ -21,6 +21,7 @@ export class BasketComponent {
   private pureBasket: IGenerateBasketResponse | undefined;
   @Input() isListView: boolean;
   @Input() basketIndex: number | undefined;
+
   @Input() set basket(value: IBasket) {
     this.mBasket = value;
     this.pureBasket = this.getChartLabels(this.mBasket);
@@ -31,16 +32,18 @@ export class BasketComponent {
     this.getHistoricRoi(this.pureBasket, 1);
     this.calcBasketRoi(value.timeStamp, value.investedETH, this.pureBasket);
   }
+
   get basket(): IBasket {
     return this.mBasket;
   }
+
   @Output() disinvest = new EventEmitter();
   public poolChartOptions: Partial<PoolsChartOptions>;
   public roiData: number[][];
   public disinvestPercentage = 100;
   public activeTimeSpan = 1;
-  public basketRoi = 0;
-  public totalAccrued = 0;
+  public basketRoi = null;
+  public totalAccrued = null;
 
   constructor(
     private readonly charts: ChartsService,
@@ -105,10 +108,15 @@ export class BasketComponent {
       .getHistoricRoi(basket, 0, new Date(timestamp))
       .pipe(take(1))
       .subscribe((historicRoi: IBasketHistoricRoi) => {
+        console.log(timestamp);
+        console.log(new Date(timestamp));
         console.log('ROIIII=', historicRoi);
         const extracted = this.extractRoi(historicRoi);
-        this.basketRoi = extracted[extracted.length - 1][1] - extracted[0][1];
-        this.totalAccrued = parseFloat(investedEth) * (this.basketRoi / 100);
+        if (extracted.length) {
+          this.basketRoi = extracted[extracted.length - 1][1] - extracted[0][1];
+          this.totalAccrued = parseFloat(investedEth) * (this.basketRoi / 100);
+        }
+        console.log('extracted=', extracted);
         console.log('Calcd basket ROI =', this.basketRoi);
       });
   }
