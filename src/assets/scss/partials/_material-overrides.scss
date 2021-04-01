@@ -87,11 +87,15 @@
   color: #ffffff !important;
 }
 
-.mat-select-value-text {
-  color: map-get($font-colors, dark);
+.mat-select-value-text, .mat-select-placeholder {
+  color: map-get($theme-colors, dark) !important;
   font-family: 'Poppins', 'Roboto', sans-serif;
   font-size: 14px;
   font-weight: 500;
+}
+
+.mat-select-value {
+  //display: table !important;
 }
 
 .mat-progress-bar-buffer {

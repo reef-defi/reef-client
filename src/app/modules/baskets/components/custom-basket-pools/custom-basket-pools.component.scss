@@ -1,23 +1,23 @@
 @import '~src/assets/scss/partials/variables';
 
 ::ng-deep {
-  .mat-column-Add {
-    justify-content: flex-end;
-    flex: 0 0 15%;
-  }
-
-  .mat-column-Name {
-    flex: 0 0 50%;
-    justify-content: center;
-  }
-
-  .mat-column-Exchange {
-    flex: 0 0 20%;
-  }
-
-  .mat-column-Type {
-    flex: 0 0 15%;
-  }
+  //.mat-column-Add {
+  //  justify-content: flex-end;
+  //  flex: 0 0 15%;
+  //}
+  //
+  //.mat-column-Name {
+  //  flex: 0 0 50%;
+  //  justify-content: center;
+  //}
+  //
+  //.mat-column-Exchange {
+  //  flex: 0 0 20%;
+  //}
+  //
+  //.mat-column-Type {
+  //  flex: 0 0 15%;
+  //}
 }
 
 .app-custom-basket-pools .mat-slider-track-background {
