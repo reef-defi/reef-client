@@ -42,7 +42,7 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <table mat-table [dataSource]="poolsDataSource" class="w-100">
+    <mat-table [dataSource]="poolsDataSource" class="w-100">
       <ng-container matColumnDef="Type">
         <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
         <mat-cell *matCellDef="let pool">
@@ -88,7 +88,7 @@
           No pools found for "{{ poolSearch.value }}"
         </td>
       </tr>
-    </table>
+    </mat-table>
     <mat-paginator
       #poolPaginator
       [pageSizeOptions]="[5, 10, 25, 100]"
