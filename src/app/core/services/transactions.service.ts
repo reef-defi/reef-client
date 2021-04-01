@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   ChainId,
+  IChainData,
   IPendingTransactions,
   PendingTransaction,
   TokenSymbol,
@@ -8,10 +9,13 @@ import {
 } from '../models/types';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ConnectorService } from './connector.service';
-import { first, map } from 'rxjs/operators';
+import { catchError, first, map, take } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { TokenBalanceService } from '../../shared/service/token-balance.service';
 import { getChainData } from '../utils/chains';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs/internal/observable/of';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -28,16 +32,6 @@ export class TransactionsService {
     [TransactionType.REEF_USDT_FARM]: [ChainId.MAINNET],
     [TransactionType.REEF_BASKET]: [ChainId.MAINNET, ChainId.LOCAL_FORK],
   };
-  private static TRANSACTION_SCANNERS = {
-    [ChainId.MAINNET]: {
-      name: 'EtherScan',
-      url: 'https://etherscan.io/tx',
-    },
-    [ChainId.BINANCE_SMART_CHAIN]: {
-      name: 'BSCScan',
-      url: 'https://bscscan.com/tx',
-    },
-  };
 
   public pendingTransactions$ = new BehaviorSubject<IPendingTransactions>({
     transactions: [],
@@ -53,6 +47,7 @@ export class TransactionsService {
   constructor(
     private readonly connectorService: ConnectorService,
     private apiService: ApiService,
+    private http: HttpClient,
     public tokenBalanceService: TokenBalanceService
   ) {}
 
@@ -72,27 +67,35 @@ export class TransactionsService {
     tokens: TokenSymbol[],
     chainId: ChainId
   ): void {
-    let transactionScanner = TransactionsService.TRANSACTION_SCANNERS[chainId];
-    const txUrl = transactionScanner ? `${transactionScanner.url}/${hash}` : '';
     const transactions = this.pendingTransactions$.value.transactions || [];
-    const pendingTransactions: IPendingTransactions = {
-      transactions: [
-        ...transactions,
-        {
-          hash,
-          type,
-          tokens,
-          txUrl,
-          scanner: transactionScanner ? transactionScanner.name : '',
-          chainId,
-        },
-      ],
-    };
-    this.pendingTransactions$.next(pendingTransactions);
-    localStorage.setItem(
-      TransactionsService.PENDING_TX_KEY,
-      JSON.stringify(pendingTransactions)
-    );
+    if (!hash || transactions.find((tx) => tx.hash === hash)) {
+      return;
+    }
+    this.connectorService.providerUserInfo$.pipe(take(1)).subscribe((info) => {
+      const txUrl = info.chainInfo.chain_scanner_base_url
+        ? `${info.chainInfo.chain_scanner_base_url}/tx/${hash}`
+        : '';
+      const pendingTransactions: IPendingTransactions = {
+        transactions: [
+          ...transactions,
+          {
+            hash,
+            type,
+            tokens,
+            txUrl,
+            scanner: info.chainInfo.chain_scanner_name
+              ? info.chainInfo.chain_scanner_name
+              : info.chainInfo.name,
+            chainId,
+          },
+        ],
+      };
+      this.pendingTransactions$.next(pendingTransactions);
+      localStorage.setItem(
+        TransactionsService.PENDING_TX_KEY,
+        JSON.stringify(pendingTransactions)
+      );
+    });
   }
 
   public async initPendingTxs(txs: IPendingTransactions): Promise<void> {
@@ -101,10 +104,22 @@ export class TransactionsService {
       .pipe(first())
       .toPromise();
     for (const [i, tx] of txs.transactions.entries()) {
-      if (tx.chainId === info.chainInfo.chain_id) {
-        const { blockHash, blockNumber } = await web3.eth.getTransaction(
-          tx.hash
-        );
+      if (tx.chainId === info.chainInfo.chain_id && !!tx.hash) {
+        const trx = await web3.eth.getTransaction(tx.hash);
+        if (!trx) {
+          const replacedByTxHash = await this.getReplacedTx$(
+            tx.hash,
+            info.chainInfo
+          )
+            .pipe(first())
+            .toPromise();
+          if (!!replacedByTxHash) {
+            this.addPendingTx(replacedByTxHash, tx.type, tx.tokens, tx.chainId);
+          }
+          this.removePendingTx(tx.hash, false);
+          continue;
+        }
+        const { blockHash, blockNumber } = trx;
         if (blockHash && blockNumber) {
           txs.transactions.splice(i, 1);
         }
@@ -122,7 +137,7 @@ export class TransactionsService {
   public removePendingTx(hash: string, isError = false): void {
     const { transactions } = this.pendingTransactions$.value;
     const removeTx = transactions.find((tx) => tx.hash === hash);
-    if (!isError) {
+    if (!isError && removeTx) {
       this.tokenBalanceService.updateTokensInBalances.next([
         ...removeTx.tokens,
         TokenSymbol.ETH,
@@ -136,5 +151,22 @@ export class TransactionsService {
       JSON.stringify(txs)
     );
     this.pendingTransactions$.next(txs);
+  }
+
+  private getReplacedTx$(
+    hash: string,
+    chainData: IChainData
+  ): Observable<string> {
+    return this.http
+      .post(environment.reefNodeApiUrl + '/replaced-tx', {
+        chainId: chainData.chain_id,
+        txHash: hash,
+      })
+      .pipe(
+        map((res: { success: boolean; replacedTx: string }) => {
+          return res && res.success ? res.replacedTx : null;
+        }),
+        catchError((err) => of(null))
+      );
   }
 }

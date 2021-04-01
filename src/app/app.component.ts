@@ -4,20 +4,17 @@ import { PoolService } from './core/services/pool.service';
 import { ApiService } from './core/services/api.service';
 import { ContractService } from './core/services/contract.service';
 import { NavigationEnd, Router } from '@angular/router';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  take,
-} from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { UniswapService } from './core/services/uniswap.service';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
-import { IPendingTransactions } from './core/models/types';
+import {
+  ChainId,
+  IPendingTransactions,
+  TransactionType,
+} from './core/models/types';
 import { GoogleAnalyticsService } from './shared/service/google-analytics.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { NotificationService } from './core/services/notification.service';
 import { TransactionsService } from './core/services/transactions.service';
 import { TokenBalanceService } from './shared/service/token-balance.service';
