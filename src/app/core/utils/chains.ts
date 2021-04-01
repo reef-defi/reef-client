@@ -28,6 +28,7 @@ export const supportedChains: IChainData[] = [
       balance: '',
     },
     chain_scanner_base_url: 'https://etherscan.io',
+    chain_scanner_name: 'Etherscan',
   },
   {
     name: 'Binance Smart Chain',
@@ -45,6 +46,7 @@ export const supportedChains: IChainData[] = [
       balance: '',
     },
     chain_scanner_base_url: 'https://bscscan.com',
+    chain_scanner_name: 'BSCScan',
   },
   {
     name: 'Ethereum Ropsten',
