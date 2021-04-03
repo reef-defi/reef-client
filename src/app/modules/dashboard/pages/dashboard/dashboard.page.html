@@ -79,9 +79,11 @@
                 </div>
                 <div class="col-12">
                   <div class="card mb-3" [hidden]="!showTransactions">
-                    <div class="card-body">
+                    <div class="card-body transactions">
                       <div class="h6 mb-4">Transactions</div>
-                      <div class="row mb-2 d-flex justify-content-between">
+                      <div
+                        class="row mb-2 d-flex justify-content-between transaction-header"
+                      >
                         <div class="col-4">
                           <div class="text-monospace small text-muted">
                             Hash
@@ -115,7 +117,7 @@
                           *ngIf="transactions && transactions.length > 0; else emptyTransactions"
                         >
                           <div
-                            class="row d-flex justify-content-between mb-1 align-items-center"
+                            class="row d-flex justify-content-between mb-1 align-items-center transaction-item"
                             *ngFor="let transaction of transactions"
                           >
                             <div class="col-4">
@@ -143,7 +145,7 @@
                             <div
                               class="col-3 col-auto d-flex justify-content-between"
                             >
-                              <span class="small font-weight-bold">
+                              <span class="small font-weight-bold ellipsis">
                                 {{ transaction.value }}
                               </span>
                             </div>

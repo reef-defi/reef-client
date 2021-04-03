@@ -1,3 +1,5 @@
+$min-width: 500px;
+
 .gas-price__item {
   &:hover {
     background-color: #6f42c1;
@@ -14,4 +16,25 @@
 
 .min-height-100px {
   min-height: 100px;
+}
+
+.ellipsis {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .transactions {
+    overflow-x: auto;
+  }
+
+  .transaction-header,
+  .transaction-item {
+    min-width: $min-width;
+  }
+
+  .mat-divider {
+    min-width: calc(#{$min-width} - 1.25rem);
+  }
 }
