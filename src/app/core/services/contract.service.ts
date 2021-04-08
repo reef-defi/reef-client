@@ -134,23 +134,123 @@ export class ContractService {
     amountToInvest: number
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
+<<<<<<< HEAD
     try {
       const info: IProviderUserInfo =
         await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const wei = this.connectorService.toWei(amountToInvest);
+=======
+    return new Promise(async (resolve, reject) => {
+      try {
+        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
+          .pipe(take(1))
+          .toPromise();
+        const wei = this.connectorService.toWei(amountToInvest);
+>>>>>>> a0aecc8 (Display basket position where error occured)
 
-      const {
-        uniswapPools,
-        tokenPools,
-        balancerPools,
-        balancerWeights,
-        tokenWeights,
-        uniSwapWeights,
-        mooniswapPools,
-        mooniswapWeights,
-      } = basketPoolTokenInfo;
-      this.basketContract$.value.methods
-        .createBasket(
+        const {
+          uniswapPools,
+          tokenPools,
+          balancerPools,
+          balancerWeights,
+          tokenWeights,
+          uniSwapWeights,
+          mooniswapPools,
+          mooniswapWeights,
+        } = basketPoolTokenInfo;
+
+        this.basketContract$.value.methods
+          .createBasket(
+            name,
+            uniswapPools,
+            uniSwapWeights,
+            tokenPools,
+            tokenWeights,
+            balancerPools,
+            balancerWeights,
+            mooniswapPools,
+            mooniswapWeights
+          )
+          .estimateGas(
+            {
+              from: addresses[ChainId.MAINNET].REEF_ESTIMATE_GAS,
+              value: `${wei}`,
+            },
+            async (error, gas) => {
+              if (!error && gas) {
+                await this.eventService.subToInvestEvent(
+                  this.basketContract$.value
+                );
+                this.basketContract$.value.methods
+                  .createBasket(
+                    name,
+                    uniswapPools,
+                    uniSwapWeights,
+                    tokenPools,
+                    tokenWeights,
+                    balancerPools,
+                    balancerWeights,
+                    mooniswapPools,
+                    mooniswapWeights
+                  )
+                  .send({
+                    from: info.address,
+                    value: `${wei}`,
+                    gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
+                    gas,
+                  })
+                  .on('transactionHash', (hash) => {
+                    dialogRef.close();
+                    this.notificationService.showNotification(
+                      'The transaction is now pending.',
+                      'Ok',
+                      'info'
+                    );
+                    this.transactionService.addPendingTx(
+                      hash,
+                      TransactionType.REEF_BASKET,
+                      [TokenSymbol.ETH],
+                      info.chainInfo.chain_id
+                    );
+                  })
+                  .on('receipt', async (receipt) => {
+                    this.transactionService.removePendingTx(
+                      receipt.transactionHash
+                    );
+                    this.notificationService.showNotification(
+                      `Success! ${amountToInvest} ETH invested in ${name} Basket`,
+                      'Okay',
+                      'success'
+                    );
+                    resolve();
+                  })
+                  .on('error', (err) => {
+                    dialogRef.close();
+                    if (err.code === EErrorTypes.INTERNAL_ERROR) {
+                      err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+                    }
+                    this.notificationService.showNotification(
+                      ErrorUtils.parseError(err.code, err.message),
+                      'Close',
+                      'error'
+                    );
+                    reject(err);
+                  });
+              } else {
+                if (error.code === EErrorTypes.INTERNAL_ERROR) {
+                  error.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+                }
+                dialogRef.close();
+                this.notificationService.showNotification(
+                  ErrorUtils.parseError(error.code, error.message),
+                  'Close',
+                  'error'
+                );
+                reject(error.message);
+              }
+            }
+          );
+        DevUtil.devLog('Params= ', {
           name,
           uniswapPools,
           uniSwapWeights,
@@ -159,96 +259,14 @@ export class ContractService {
           balancerPools,
           balancerWeights,
           mooniswapPools,
-          mooniswapWeights
-        )
-        .estimateGas(
-          {
-            from: addresses[ChainId.MAINNET].REEF_ESTIMATE_GAS,
-            value: `${wei}`,
-          },
-          async (err, gas) => {
-            if (!err && gas) {
-              await this.eventService.subToInvestEvent(
-                this.basketContract$.value
-              );
-              this.basketContract$.value.methods
-                .createBasket(
-                  name,
-                  uniswapPools,
-                  uniSwapWeights,
-                  tokenPools,
-                  tokenWeights,
-                  balancerPools,
-                  balancerWeights,
-                  mooniswapPools,
-                  mooniswapWeights
-                )
-                .send({
-                  from: info.address,
-                  value: `${wei}`,
-                  gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
-                  gas,
-                })
-                .on('transactionHash', (hash) => {
-                  dialogRef.close();
-                  this.notificationService.showNotification(
-                    'The transaction is now pending.',
-                    'Ok',
-                    'info'
-                  );
-                  this.transactionService.addPendingTx(
-                    hash,
-                    TransactionType.REEF_BASKET,
-                    [TokenSymbol.ETH],
-                    info.chainInfo.chain_id
-                  );
-                })
-                .on('receipt', async (receipt) => {
-                  this.transactionService.removePendingTx(
-                    receipt.transactionHash
-                  );
-                  this.notificationService.showNotification(
-                    `Success! ${amountToInvest} ETH invested in ${name} Basket`,
-                    'Okay',
-                    'success'
-                  );
-                })
-                .on('error', (err) => {
-                  dialogRef.close();
-                  if (err.code === EErrorTypes.INTERNAL_ERROR) {
-                    err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
-                  }
-                  this.notificationService.showNotification(
-                    ErrorUtils.parseError(err.code, err.message),
-                    'Close',
-                    'error'
-                  );
-                });
-            } else {
-              dialogRef.close();
-              this.notificationService.showNotification(
-                err.message,
-                'Close',
-                'error'
-              );
-            }
-          }
-        );
-      DevUtil.devLog('Params= ', {
-        name,
-        uniswapPools,
-        uniSwapWeights,
-        tokenPools,
-        tokenWeights,
-        balancerPools,
-        balancerWeights,
-        mooniswapPools,
-        mooniswapWeights,
-      });
-    } catch (e) {
-      DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
-      this.notificationService.showNotification(e.message, 'Close', 'error');
-    }
+          mooniswapWeights,
+        });
+      } catch (e) {
+        DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
+        this.notificationService.showNotification(e.message, 'Close', 'error');
+        reject(null);
+      }
+    });
   }
 
   async getBalanceOf(basketIdx): Promise<any> {

@@ -11,6 +11,7 @@ export class CustomBasketCompositionComponent {
   Object = Object;
   @Input() basket: IGenerateBasketResponse | undefined;
   @Input() disabledSlider: boolean | undefined;
+  @Input() errorSymbol: string;
   @Output() removePool = new EventEmitter<string>();
   @Output() invest = new EventEmitter();
   @Output() changeAllocation = new EventEmitter();
