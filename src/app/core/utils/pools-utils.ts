@@ -1,11 +1,24 @@
 import {
+  BASKET_POS_ERR_TYPES,
+  BasketPositionError,
   IBasket,
   IBasketPoolsAndCoinInfo,
   IGenerateBasketResponse,
   IPoolsMetadata,
 } from '../models/types';
-import { adjectives, animals } from './basket-name-data';
-import { BigNumber } from '@ethersproject/bignumber';
+import {adjectives, animals} from './basket-name-data';
+import {BigNumber} from '@ethersproject/bignumber';
+
+export const getBasketErrorSymbol = (
+  error: BasketPositionError,
+  allPools: IPoolsMetadata[],
+  allCoins: any
+): string => {
+  if (error.type === BASKET_POS_ERR_TYPES.TOKEN) {
+    return Object.keys(allCoins).find(coinName => allCoins[coinName] === error.positionIdent);
+  }
+  return allPools.find(p => p.ExchangeAddress === error.positionIdent)?.Symbol;
+};
 
 export const getBasketPoolsAndCoins = (
   basket: IGenerateBasketResponse,
@@ -155,7 +168,7 @@ export const getBasketPoolNames = (
               poolPair[1].toLocaleLowerCase() === addr1)
         );
         if (pair) {
-          up.push({ name: pools[i].Symbol, pair: [...pair] });
+          up.push({name: pools[i].Symbol, pair: [...pair]});
         }
       }
       if (pools[i].ExchangeName === 'Balancer') {
@@ -163,7 +176,7 @@ export const getBasketPoolNames = (
           (addr) => addr === pools[i].ExchangeAddress
         );
         if (address) {
-          bp.push({ name: pools[i].Symbol, address });
+          bp.push({name: pools[i].Symbol, address});
         }
       }
       if (pools[i].ExchangeName === 'Mooniswap') {
@@ -171,7 +184,7 @@ export const getBasketPoolNames = (
           (addr) => addr === pools[i].ExchangeAddress
         );
         if (address) {
-          mp.push({ name: pools[i].Symbol, address });
+          mp.push({name: pools[i].Symbol, address});
         }
       }
     }
@@ -197,7 +210,7 @@ export const getBasketPoolNames = (
     Object.keys(tokens).forEach((key) => {
       const addr = basket.Tokens.pools.find((token) => token === tokens[key]);
       if (addr) {
-        temp.push({ name: key, address: tokens[key] });
+        temp.push({name: key, address: tokens[key]});
       }
     });
     return {
@@ -220,9 +233,9 @@ const getCorrectPool = (arr: string[], mapped: any, poolName = '') => {
     return [...mapped];
   } else {
     if (poolName === 'uniswap') {
-      return arr.map((x) => ({ name: `${poolName} Pool`, pair: [...x] }));
+      return arr.map((x) => ({name: `${poolName} Pool`, pair: [...x]}));
     } else {
-      return arr.map((x) => ({ name: `${poolName} Pool`, address: x }));
+      return arr.map((x) => ({name: `${poolName} Pool`, address: x}));
     }
   }
 };
@@ -231,8 +244,8 @@ export const makeBasket = (
   basket: IGenerateBasketResponse
 ): IGenerateBasketResponse => {
   const b: IGenerateBasketResponse = Object.keys(basket)
-    .map((key) => ({ [key]: convertToInt(basket[key]) }))
-    .reduce((memo, curr) => ({ ...memo, ...curr }));
+    .map((key) => ({[key]: convertToInt(basket[key])}))
+    .reduce((memo, curr) => ({...memo, ...curr}));
   const weights = Object.values(b);
   const sum = weights.reduce((memo, curr) => memo + curr);
   if (sum === 100) {
