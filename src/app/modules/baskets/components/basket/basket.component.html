@@ -12,11 +12,11 @@
         <div class="text-monospace text-muted">TYPE</div>
         <div class="h6">DeFi</div>
         <div class="text-monospace text-muted">ROI</div>
-        <div *ngIf="basketRoi > 0; else noRoi" class="h6 text-primary">
+        <div *ngIf="basketRoi != null; else noRoi" class="h6 text-primary">
           {{ basketRoi | number: '1.1-2' }}%
         </div>
         <div class="text-monospace text-muted">TOTAL ACCRUED</div>
-        <div *ngIf="totalAccrued > 0; else noRoi" class="h6 text-primary mb-3">
+        <div *ngIf="totalAccrued != null; else noRoi" class="h6 text-primary mb-3">
           {{ totalAccrued | number: '1.2-2' }} ETH
         </div>
         <div>
@@ -66,10 +66,10 @@
       <div class="text-monospace text-muted">INVESTED</div>
     </div>
     <div class="col-3">
-      <div *ngIf="basketRoi > 0; else noRoi" class="h6 text-primary">
+      <div *ngIf="basketRoi != null; else noRoi" class="h6 text-primary">
         {{ basketRoi | number: '1.1-2' }}%
       </div>
-      <div *ngIf="totalAccrued > 0; else noRoi" class="h6 text-primary mb-3">
+      <div *ngIf="totalAccrued != null; else noRoi" class="h6 text-primary mb-3">
         {{ totalAccrued | number: '1.2-2' }} ETH
       </div>
     </div>
