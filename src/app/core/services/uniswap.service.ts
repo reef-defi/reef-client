@@ -44,6 +44,7 @@ import { TokenUtil } from '../../shared/utils/token.util';
 import { ErrorUtils } from '../../shared/utils/error.utils';
 import { TransactionsService } from './transactions.service';
 import { TokenBalanceService } from '../../shared/service/token-balance.service';
+import {addresses} from '../../../assets/addresses';
 
 @Injectable({
   providedIn: 'root',
@@ -139,7 +140,6 @@ export class UniswapService {
         amountOutMin,
         TokenSymbol.REEF
       );
-      console.log(amountOutMinWei, payWeiAmount, 'Hello');
       const path = [payToken.address, REEFToken.address];
       const to = info.address;
       const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
@@ -148,36 +148,49 @@ export class UniswapService {
         if (payTokenSymbol === TokenSymbol.ETH) {
           this.routerContract$.value.methods
             .swapExactETHForTokens(amountOutMinWei, path, to, deadline)
-            .send({
-              from: to,
-              value: payWeiAmount,
-              gasPrice: this.connectorService.getGasPrice(),
-            })
-            .on('transactionHash', (hash) => {
-              dialogRef.close();
-              this.notificationService.showNotification(
-                'The transaction is now pending.',
-                'Ok',
-                'info'
-              );
-              this.transactionService.addPendingTx(
-                hash,
-                TransactionType.BUY_REEF,
-                [payTokenSymbol, TokenSymbol.REEF],
-                info.chainInfo.chain_id
-              );
-            })
-            .on('receipt', async (receipt) => {
-              this.transactionService.removePendingTx(receipt.transactionHash);
-              this.notificationService.showNotification(
-                this.boughtReefConfirmationMessage(amountOutMinWei.toString()),
-                'Okay',
-                'success'
-              );
-            })
-            .on('error', (err) => {
-              this.displayBuyReefTxError(dialogRef, err);
-            });
+            .estimateGas(
+              {
+                from: addresses.REEF_ESTIMATE_GAS,
+                value: payWeiAmount,
+              },
+              async (error, gas) => {
+                if (!error && gas) {
+                  this.routerContract$.value.methods
+                    .swapExactETHForTokens(amountOutMinWei, path, to, deadline)
+                    .send({
+                      from: to,
+                      value: payWeiAmount,
+                      gasPrice: gas,
+                    })
+                    .on('transactionHash', (hash) => {
+                      dialogRef.close();
+                      this.notificationService.showNotification(
+                        'The transaction is now pending.',
+                        'Ok',
+                        'info'
+                      );
+                      this.transactionService.addPendingTx(
+                        hash,
+                        TransactionType.BUY_REEF,
+                        [payTokenSymbol, TokenSymbol.REEF],
+                        info.chainInfo.chain_id
+                      );
+                    })
+                    .on('receipt', async (receipt) => {
+                      this.transactionService.removePendingTx(receipt.transactionHash);
+                      this.notificationService.showNotification(
+                        this.boughtReefConfirmationMessage(amountOutMinWei.toString()),
+                        'Okay',
+                        'success'
+                      );
+                    })
+                    .on('error', (err) => {
+                      this.displayBuyReefTxError(dialogRef, err);
+                    });
+                } else {
+                  this.displayBuyReefTxError(dialogRef, error);
+                }
+              });
         } else {
           const contract = this.connectorService.createErc20TokenContract(
             payTokenSymbol,
@@ -185,45 +198,64 @@ export class UniswapService {
           );
           const hasAllowance = await this.approveTokenToRouter(contract);
           if (hasAllowance) {
-            this.routerContract$.value.methods
+            /*this.routerContract$.value.methods
               .swapExactTokensForTokens(
                 payWeiAmount,
                 amountOutMinWei,
                 path,
                 to,
                 deadline
-              )
-              .send({
-                from: to,
-                gasPrice: this.connectorService.getGasPrice(),
-              })
-              .on('transactionHash', (hash) => {
-                dialogRef.close();
-                this.notificationService.showNotification(
-                  'The transaction is now pending.',
-                  'Ok',
-                  'info'
-                );
-                this.transactionService.addPendingTx(
-                  hash,
-                  TransactionType.BUY_REEF,
-                  [payTokenSymbol, TokenSymbol.REEF],
-                  info.chainInfo.chain_id
-                );
-              })
-              .on('receipt', (receipt) => {
-                this.transactionService.removePendingTx(
-                  receipt.transactionHash
-                );
-                this.notificationService.showNotification(
-                  this.boughtReefConfirmationMessage(amountOutMinWei),
-                  'Okay',
-                  'success'
-                );
-              })
-              .on('error', (err) => {
-                this.displayBuyReefTxError(dialogRef, err);
-              });
+              ).estimateGas(
+              {
+                from: addresses.REEF_ESTIMATE_GAS,
+                value: payWeiAmount,
+              },
+              async (error, gas) => {
+                if (!error && gas) {*/
+                  this.routerContract$.value.methods
+                    .swapExactTokensForTokens(
+                      payWeiAmount,
+                      amountOutMinWei,
+                      path,
+                      to,
+                      deadline
+                    )
+                    .send({
+                      from: to,
+                      gasPrice: this.connectorService.getGasPrice(),
+                      // gasPrice: gas,
+                    })
+                    .on('transactionHash', (hash) => {
+                      dialogRef.close();
+                      this.notificationService.showNotification(
+                        'The transaction is now pending.',
+                        'Ok',
+                        'info'
+                      );
+                      this.transactionService.addPendingTx(
+                        hash,
+                        TransactionType.BUY_REEF,
+                        [payTokenSymbol, TokenSymbol.REEF],
+                        info.chainInfo.chain_id
+                      );
+                    })
+                    .on('receipt', (receipt) => {
+                      this.transactionService.removePendingTx(
+                        receipt.transactionHash
+                      );
+                      this.notificationService.showNotification(
+                        this.boughtReefConfirmationMessage(amountOutMinWei),
+                        'Okay',
+                        'success'
+                      );
+                    })
+                    .on('error', (err) => {
+                      this.displayBuyReefTxError(dialogRef, err);
+                    });
+                /*}else{
+                  this.displayBuyReefTxError(dialogRef, error);
+                }
+              });*/
           }
         }
       } catch (e) {
