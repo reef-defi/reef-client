@@ -12,7 +12,7 @@ import {
   ApexXAxis,
   ApexYAxis,
 } from 'ng-apexcharts';
-import { Observable, Subject } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
@@ -27,10 +27,8 @@ export interface IPortfolio {
   refreshSubject?: Subject<ExchangeId>;
 }
 
-export type SupportedPortfolio = Pick<
-  IPortfolio,
-  'tokens' | 'uniswapPositions' | 'compoundPositions'
->;
+export type SupportedPortfolio = Pick<IPortfolio,
+  'tokens' | 'uniswapPositions' | 'compoundPositions'>;
 
 export interface ICreateBasketEntry {
   address: string;
@@ -172,11 +170,11 @@ type ContractMethod = (
     callback?: () => any
   ) =>
     | Promise<{
-        transactionHash: string;
-        receipt: any;
-        confirmation: number;
-        error?: any;
-      }>
+    transactionHash: string;
+    receipt: any;
+    confirmation: number;
+    error?: any;
+  }>
     | any;
   estimateGas: (options?: {
     from?: string;
@@ -511,3 +509,16 @@ export class ErrorDisplay {
     console.log('ErrorDisplay ERROR MSG =', errMessage, errCode);
   }
 }
+
+export enum BASKET_POS_ERR_TYPES {
+  BAL_POOL = 'BAL_POOL',
+  UNI_POOL_v2 = 'UNI_POOL_v2',
+  TOKEN = 'TOKEN',
+  MOONI_POOL = 'MOONI_POOL'
+}
+
+export interface BasketPositionError {
+  type: string;
+  positionIdent: string;
+}
+
