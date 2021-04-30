@@ -28,6 +28,7 @@ import { first } from 'rxjs/internal/operators/first';
 import { scan } from 'rxjs/internal/operators/scan';
 import { addresses } from 'src/assets/addresses';
 import { startWith } from 'rxjs/internal/operators/startWith';
+import {EthAuthService} from '../../../../core/services/eth-auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,6 +51,7 @@ export class DashboardPage {
   private triggerPortfolio = new Subject();
 
   constructor(
+    public ethAuthService: EthAuthService,
     public readonly connectorService: ConnectorService,
     private readonly poolService: PoolService,
     private readonly uniswapService: UniswapService,

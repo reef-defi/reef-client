@@ -9,7 +9,7 @@
       ></app-page-title>
     </div>
   </div>
-
+<span class="btn" (click)="ethAuthService.login$().subscribe()">llll</span>
   <div class="col-12 col-md-10 offset-md-1">
     <app-unsupported-chain-msg
       [chainId]="chainInfo.chain_id"

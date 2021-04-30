@@ -46,6 +46,8 @@
     "bignumber.js": "^9.0.0",
     "bootstrap": "^4.5.2",
     "date-fns": "^2.16.1",
+    "eth-crypto": "^1.9.0",
+    "eth-sig-util": "^3.0.1",
     "highcharts": "^8.2.0",
     "highcharts-angular": "^2.8.0",
     "ng-apexcharts": "^1.5.1",
