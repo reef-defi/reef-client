@@ -134,20 +134,13 @@ export class ContractService {
     amountToInvest: number
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-<<<<<<< HEAD
-    try {
-      const info: IProviderUserInfo =
-        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
-      const wei = this.connectorService.toWei(amountToInvest);
-=======
     return new Promise(async (resolve, reject) => {
       try {
-        const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-          .pipe(take(1))
-          .toPromise();
+        const info: IProviderUserInfo =
+          await this.connectorService.providerUserInfo$
+            .pipe(take(1))
+            .toPromise();
         const wei = this.connectorService.toWei(amountToInvest);
->>>>>>> a0aecc8 (Display basket position where error occured)
-
         const {
           uniswapPools,
           tokenPools,
@@ -196,7 +189,9 @@ export class ContractService {
                   .send({
                     from: info.address,
                     value: `${wei}`,
-                    gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
+                    gasPrice: this.connectorService.getGasPrice(
+                      ChainId.MAINNET
+                    ),
                     gas,
                   })
                   .on('transactionHash', (hash) => {

@@ -114,8 +114,8 @@ export class CreateBasketPage implements OnInit {
         basketPoolAndCoinInfo,
         this.ethAmount.value
       );
-    } catch (err){
-      console.log('create basket error=',err)
+    } catch (err) {
+      console.log('create basket error=', err);
     }
   }
 

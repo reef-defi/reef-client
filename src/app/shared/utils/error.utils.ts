@@ -1,4 +1,9 @@
-import {BASKET_POS_ERR_TYPES, BasketPositionError, EErrorTypes, RpcErrorTypes} from '../../core/models/types';
+import {
+  BASKET_POS_ERR_TYPES,
+  BasketPositionError,
+  EErrorTypes,
+  RpcErrorTypes,
+} from '../../core/models/types';
 
 export class ErrorUtils {
   private static JSON_RPC_ERROR_TYPES: any = {
@@ -42,27 +47,39 @@ export class ErrorUtils {
 
     const reefErrorsIdent = '///R_ERRORS';
     if (message.indexOf(reefErrorsIdent) > -1) {
-      const openErrIndex = message.indexOf(reefErrorsIdent, 0) + reefErrorsIdent.length;
+      const openErrIndex =
+        message.indexOf(reefErrorsIdent, 0) + reefErrorsIdent.length;
       const closeErrIndex = message.indexOf(reefErrorsIdent, openErrIndex);
       const reefErrStr = message.substring(openErrIndex, closeErrIndex);
       if (reefErrStr) {
-        const errorVals = reefErrStr.split('|')
-          .map(eStr => eStr.split('='));
-        const posType = errorVals.find(eArr => eArr[0] === 'POS_TYPE');
+        const errorVals = reefErrStr.split('|').map((eStr) => eStr.split('='));
+        const posType = errorVals.find((eArr) => eArr[0] === 'POS_TYPE');
         if (posType) {
           const posTypeVal = posType[1].trim();
           switch (posTypeVal) {
             case BASKET_POS_ERR_TYPES.BAL_POOL:
-              return {type: posTypeVal, positionIdent: ErrorUtils.getIdentValue(errorVals, 1)};
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
             case BASKET_POS_ERR_TYPES.TOKEN:
-              return {type: posTypeVal, positionIdent: ErrorUtils.getIdentValue(errorVals, 1)};
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
             case BASKET_POS_ERR_TYPES.UNI_POOL_v2:
               return {
                 type: posTypeVal,
-                positionIdent: ErrorUtils.getIdentValue(errorVals, 1) + '_' + ErrorUtils.getIdentValue(errorVals, 2)
+                positionIdent:
+                  ErrorUtils.getIdentValue(errorVals, 1) +
+                  '_' +
+                  ErrorUtils.getIdentValue(errorVals, 2),
               };
             case BASKET_POS_ERR_TYPES.MOONI_POOL:
-              return {type: posTypeVal, positionIdent: ErrorUtils.getIdentValue(errorVals, 1)};
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
           }
         }
       }
@@ -71,8 +88,7 @@ export class ErrorUtils {
   }
 
   private static getIdentValue(errorVals: string[][], identNr: number): string {
-    const val = errorVals.find(eArr => eArr[0] === 'IDENT_' + identNr)[1];
+    const val = errorVals.find((eArr) => eArr[0] === 'IDENT_' + identNr)[1];
     return val ? val.trim() : null;
   }
 }
-

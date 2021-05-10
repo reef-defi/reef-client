@@ -10,7 +10,8 @@ import {
 } from '../../../../core/models/types';
 import { BehaviorSubject } from 'rxjs';
 import {
-  basketNameGenerator, getBasketErrorSymbol,
+  basketNameGenerator,
+  getBasketErrorSymbol,
   getBasketPoolsAndCoins,
   makeBasket,
 } from '../../../../core/utils/pools-utils';
@@ -19,7 +20,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
 import { map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import {ErrorUtils} from '../../../../shared/utils/error.utils';
+import { ErrorUtils } from '../../../../shared/utils/error.utils';
 
 @Component({
   selector: 'app-custom-basket',
@@ -126,16 +127,20 @@ export class CustomBasketPage implements OnInit {
       getBasketPoolsAndCoins(basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
     try {
-    await this.contractService.createBasket(
-      name,
-      basketPoolAndCoinInfo,
-      ethAmount
-    );
-    } catch (err){
+      await this.contractService.createBasket(
+        name,
+        basketPoolAndCoinInfo,
+        ethAmount
+      );
+    } catch (err) {
       // err = `///R_ERRORS|POS_TYPE=BAL_POOL |IDENT_1=0x432081eF9aa1b8503F8C7Be37E4bB158A0543Da9 |IDENT_2=0x45645///R_ERRORS`;
       const basketPositionError = ErrorUtils.parseBasketPositionError(err);
       if (basketPositionError) {
-        this.basketPositionErrorSymbol = getBasketErrorSymbol(basketPositionError, this.pools$.value, this.tokens$.value);
+        this.basketPositionErrorSymbol = getBasketErrorSymbol(
+          basketPositionError,
+          this.pools$.value,
+          this.tokens$.value
+        );
       }
     }
   }
