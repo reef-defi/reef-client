@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { ChartsService } from '../../../../core/services/charts.service';
 import {
-  BasketPositionError,
   IBasketHistoricRoi,
   IBasketPoolsAndCoinInfo,
   IPoolsMetadata,
@@ -10,7 +9,7 @@ import {
 } from '../../../../core/models/types';
 import { BehaviorSubject } from 'rxjs';
 import {
-  basketNameGenerator, getBasketErrorSymbol,
+  basketNameGenerator,
   getBasketPoolsAndCoins,
   makeBasket,
 } from '../../../../core/utils/pools-utils';
@@ -19,7 +18,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
 import { map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import {ErrorUtils} from '../../../../shared/utils/error.utils';
 
 @Component({
   selector: 'app-custom-basket',
@@ -48,7 +46,6 @@ export class CustomBasketPage implements OnInit {
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
   public currentRoiTimespan = 1;
   public roiData: number[][];
-  public basketPositionErrorSymbol: string;
 
   constructor(
     private readonly contractService: ContractService,
@@ -66,7 +63,6 @@ export class CustomBasketPage implements OnInit {
   }
 
   addPool(poolName: string): void {
-    this.basketPositionErrorSymbol = null;
     if (!(Object.keys(this.chartPoolData).length < this.COMPOSITION_LIMIT)) {
       alert(`Can't have more than 10 compositions.`);
     } else {
@@ -78,9 +74,6 @@ export class CustomBasketPage implements OnInit {
   }
 
   removePool(poolName: string): void {
-    if (poolName === this.basketPositionErrorSymbol) {
-      this.basketPositionErrorSymbol = null;
-    }
     delete this.chartPoolData[poolName];
     this.balancePoolAllocation();
     this.setChart();
@@ -90,7 +83,6 @@ export class CustomBasketPage implements OnInit {
   }
 
   editBasketAllocation(config: any[]): void {
-    this.basketPositionErrorSymbol = null;
     const [poolName, percentage] = config;
     const oldValue = this.chartPoolData[poolName] || 0;
     const newValue = (this.chartPoolData[poolName] = percentage);
@@ -120,7 +112,6 @@ export class CustomBasketPage implements OnInit {
   }
 
   async createBasket(ethAmount: number): Promise<any> {
-    this.basketPositionErrorSymbol = null;
     const basket = makeBasket(this.chartPoolData);
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
       basket,
@@ -128,19 +119,11 @@ export class CustomBasketPage implements OnInit {
       this.tokens$.value
     );
     const name = basketNameGenerator();
-    try {
     await this.contractService.createBasket(
       name,
       basketPoolAndCoinInfo,
       ethAmount
     );
-    } catch (err){
-      // err = `///R_ERRORS|POS_TYPE=BAL_POOL |IDENT_1=0x432081eF9aa1b8503F8C7Be37E4bB158A0543Da9 |IDENT_2=0x45645///R_ERRORS`;
-      const basketPositionError = ErrorUtils.parseBasketPositionError(err);
-      if (basketPositionError) {
-        this.basketPositionErrorSymbol = getBasketErrorSymbol(basketPositionError, this.pools$.value, this.tokens$.value);
-      }
-    }
   }
 
   getHistoricRoi(subtractMonths = 1): void {

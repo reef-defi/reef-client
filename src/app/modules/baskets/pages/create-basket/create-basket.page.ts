@@ -107,15 +107,11 @@ export class CreateBasketPage implements OnInit {
       this.tokens$.value
     );
     const name = basketNameGenerator();
-    try {
-      await this.contractService.createBasket(
-        name,
-        basketPoolAndCoinInfo,
-        this.ethAmount.value
-      );
-    } catch (err){
-      console.log('create basket error=',err)
-    }
+    await this.contractService.createBasket(
+      name,
+      basketPoolAndCoinInfo,
+      this.ethAmount.value
+    );
   }
 
   onPercentageChange(val: number): void {
