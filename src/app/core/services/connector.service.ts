@@ -156,9 +156,8 @@ export class ConnectorService {
   private async createUserProviderInfo(web3: Web3): Promise<IProviderUserInfo> {
     const address = await this.getAddress(web3);
     const chainInfo = await this.getChainInfo(web3);
-    const availableSmartContractAddresses = AddressUtils.getChainAddresses(
-      chainInfo
-    );
+    const availableSmartContractAddresses =
+      AddressUtils.getChainAddresses(chainInfo);
     if (!availableSmartContractAddresses) {
       throw new Error(
         'Could not get contract addresses for chain_id=' + chainInfo.chain_id
@@ -241,10 +240,8 @@ export class ConnectorService {
     tokenSymbol: TokenSymbol,
     addresses: ProtocolAddresses
   ): Contract {
-    const tokenSymbolContractAddress = AddressUtils.getTokenSymbolContractAddress(
-      addresses,
-      tokenSymbol
-    );
+    const tokenSymbolContractAddress =
+      AddressUtils.getTokenSymbolContractAddress(addresses, tokenSymbol);
     if (!tokenSymbolContractAddress) {
       return null;
     }

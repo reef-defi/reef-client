@@ -16,9 +16,8 @@ export class BondUtil {
       };
     }
     const now = new Date().getTime();
-    const { farmStartTime, farmEndTime, farmTimeSpan } = this.getBondFarmTime(
-      bondTimes
-    );
+    const { farmStartTime, farmEndTime, farmTimeSpan } =
+      this.getBondFarmTime(bondTimes);
     const relativeYearlyFarmDuration = farmTimeSpan / BondUtil.MILLIS_PER_YEAR;
     const yearlyReturnTotal =
       (parseFloat(bond.apy) / 100) * parseFloat(amountInvested);

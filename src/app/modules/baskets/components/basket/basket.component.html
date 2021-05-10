@@ -2,7 +2,14 @@
   <div class="card-body">
     <div class="row justify-content-between align-items-center">
       <div
-        class="col-lg-2 col-xl-2 col-sm-12 col-md-12 d-flex text-center flex-column justify-content-center align-content-center"
+        class="
+          col-lg-2 col-xl-2 col-sm-12 col-md-12
+          d-flex
+          text-center
+          flex-column
+          justify-content-center
+          align-content-center
+        "
       >
         <div class="h5">
           {{ basket.name }}
@@ -16,7 +23,10 @@
           {{ basketRoi | number: '1.1-2' }}%
         </div>
         <div class="text-monospace text-muted">TOTAL ACCRUED</div>
-        <div *ngIf="totalAccrued != null; else noRoi" class="h6 text-primary mb-3">
+        <div
+          *ngIf="totalAccrued != null; else noRoi"
+          class="h6 text-primary mb-3"
+        >
           {{ totalAccrued | number: '1.2-2' }} ETH
         </div>
         <div>
@@ -69,7 +79,10 @@
       <div *ngIf="basketRoi != null; else noRoi" class="h6 text-primary">
         {{ basketRoi | number: '1.1-2' }}%
       </div>
-      <div *ngIf="totalAccrued != null; else noRoi" class="h6 text-primary mb-3">
+      <div
+        *ngIf="totalAccrued != null; else noRoi"
+        class="h6 text-primary mb-3"
+      >
         {{ totalAccrued | number: '1.2-2' }} ETH
       </div>
     </div>

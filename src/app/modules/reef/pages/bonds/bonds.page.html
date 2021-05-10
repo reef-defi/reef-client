@@ -29,12 +29,25 @@
               <img class="img-size-top-65" [src]="bond.farmTokenLogo" />
             </div>
             <div
-              class="d-flex flex-column align-items-center justify-content-center"
+              class="
+                d-flex
+                flex-column
+                align-items-center
+                justify-content-center
+              "
             >
               <div class="h5">{{bond.bondName}}</div>
               <p class="text-center">{{bond.bondDescription}}</p>
               <div
-                class="card border-purple accent-text text-monospace small-text text-left p-2"
+                class="
+                  card
+                  border-purple
+                  accent-text
+                  text-monospace
+                  small-text
+                  text-left
+                  p-2
+                "
               >
                 <div class="mb-1">Lock token: {{bond.stake}}</div>
                 <div class="mb-1" *ngIf="bond.stake!==bond.farm">
@@ -84,7 +97,14 @@
             </div>
           </div>
           <div
-            class="d-flex align-items-center justify-content-center flex-column pb-3 m-2"
+            class="
+              d-flex
+              align-items-center
+              justify-content-center
+              flex-column
+              pb-3
+              m-2
+            "
           >
             <div>
               <ng-container *ngIf="bond.status$|async as bondStatus">

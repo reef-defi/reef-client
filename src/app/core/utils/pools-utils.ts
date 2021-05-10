@@ -1,4 +1,6 @@
 import {
+  BASKET_POS_ERR_TYPES,
+  BasketPositionError,
   IBasket,
   IBasketPoolsAndCoinInfo,
   IGenerateBasketResponse,
@@ -6,6 +8,20 @@ import {
 } from '../models/types';
 import { adjectives, animals } from './basket-name-data';
 import { BigNumber } from '@ethersproject/bignumber';
+
+export const getBasketErrorSymbol = (
+  error: BasketPositionError,
+  allPools: IPoolsMetadata[],
+  allCoins: any
+): string => {
+  if (error.type === BASKET_POS_ERR_TYPES.TOKEN) {
+    return Object.keys(allCoins).find(
+      (coinName) => allCoins[coinName] === error.positionIdent
+    );
+  }
+  return allPools.find((p) => p.ExchangeAddress === error.positionIdent)
+    ?.Symbol;
+};
 
 export const getBasketPoolsAndCoins = (
   basket: IGenerateBasketResponse,

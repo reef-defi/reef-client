@@ -152,9 +152,7 @@ export interface IContract {
   getPastEvents: (event: string, options?: any, cb?: () => any) => Promise<any[]>;
 }*/
 
-type ContractMethod = (
-  ...params: any
-) => {
+type ContractMethod = (...params: any) => {
   arguments: [];
   call: <T>(
     options?: { from?: string; gasPrice?: string; gas?: number },
@@ -510,4 +508,16 @@ export class ErrorDisplay {
   constructor(public errMessage: string, public errCode?: string) {
     console.log('ErrorDisplay ERROR MSG =', errMessage, errCode);
   }
+}
+
+export enum BASKET_POS_ERR_TYPES {
+  BAL_POOL = 'BAL_POOL',
+  UNI_POOL_v2 = 'UNI_POOL_v2',
+  TOKEN = 'TOKEN',
+  MOONI_POOL = 'MOONI_POOL',
+}
+
+export interface BasketPositionError {
+  type: string;
+  positionIdent: string;
 }
