@@ -106,9 +106,8 @@ export class UniswapService {
     amountOutMin: number,
     minutesDeadline: number
   ): Promise<void> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
     const payTokenContractAddress = AddressUtils.getTokenSymbolContractAddress(
       addresses,
@@ -261,9 +260,8 @@ export class UniswapService {
   }
 
   private async getAllowance(token: any, spenderAddr: string): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     return token.methods.allowance(info.address, spenderAddr).call();
   }
 
@@ -307,9 +305,8 @@ export class UniswapService {
     amountB: number,
     minutesDeadline: number
   ): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const tokenSymbolA = AddressUtils.getAddressTokenSymbol(
       info,
       tokenAddressA
@@ -399,9 +396,8 @@ export class UniswapService {
     ethAmount: number,
     minutesDeadline: number
   ): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const tokenSymbol = AddressUtils.getAddressTokenSymbol(info, tokenAddress);
     const to = info.address;
     const deadline = getUnixTime(addMinutes(new Date(), minutesDeadline));
@@ -480,9 +476,8 @@ export class UniswapService {
     poolAddress: string,
     tokenAmount: string
   ): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
     const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
     const transactionType = TokenUtil.getTransactionTypeByTokenName(poolSymbol);
@@ -545,14 +540,12 @@ export class UniswapService {
     tokenAmount: string | number
   ): Promise<any> {
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const addresses = info.availableSmartContractAddresses;
       const poolSymbol = AddressUtils.getAddressTokenSymbol(info, poolAddress);
-      const transactionType = TokenUtil.getTransactionTypeByTokenName(
-        poolSymbol
-      );
+      const transactionType =
+        TokenUtil.getTransactionTypeByTokenName(poolSymbol);
       const amount = TokenUtil.toContractIntegerBalanceValue(
         +tokenAmount,
         poolSymbol
@@ -602,9 +595,8 @@ export class UniswapService {
   }
 
   public async getReefRewards(poolAddress: string): Promise<number> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
     const address = info.address;
     poolAddress = poolAddress.toLocaleLowerCase();
@@ -618,9 +610,8 @@ export class UniswapService {
   }
 
   public async getStaked(poolAddress: string): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
 
     const address = info.address;
@@ -654,9 +645,8 @@ export class UniswapService {
     if (allowance && +allowance > 0) {
       return true;
     }
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     return await tokenContract.methods
       .approve(spenderAddr, MaxUint256.toString())
       .send({
@@ -698,9 +688,8 @@ export class UniswapService {
     amount?: number,
     slippageTolerance?: Percent
   ): Promise<IReefPricePerToken> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
     const tokenContractAddress = AddressUtils.getTokenSymbolContractAddress(
       info.availableSmartContractAddresses,
@@ -788,9 +777,8 @@ export class UniswapService {
   }
 
   private getInitPriceForSupportedBuyTokens$(): Observable<any> {
-    const supportedTokenSymbols = TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS.map(
-      (st) => st.tokenSymbol
-    );
+    const supportedTokenSymbols =
+      TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS.map((st) => st.tokenSymbol);
     // price for each token symbol
     const tokenPrices$ = combineLatest(
       supportedTokenSymbols.map((ts) => this.getReefPriceInInterval$(ts))

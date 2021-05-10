@@ -101,11 +101,12 @@ export class CreateBasketPage implements OnInit {
   }
 
   async createBasket(): Promise<any> {
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
-      this.basket,
-      this.pools$.value,
-      this.tokens$.value
-    );
+    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo =
+      getBasketPoolsAndCoins(
+        this.basket,
+        this.pools$.value,
+        this.tokens$.value
+      );
     const name = basketNameGenerator();
     await this.contractService.createBasket(
       name,

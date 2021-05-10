@@ -152,9 +152,7 @@ export interface IContract {
   getPastEvents: (event: string, options?: any, cb?: () => any) => Promise<any[]>;
 }*/
 
-type ContractMethod = (
-  ...params: any
-) => {
+type ContractMethod = (...params: any) => {
   arguments: [];
   call: <T>(
     options?: { from?: string; gasPrice?: string; gas?: number },

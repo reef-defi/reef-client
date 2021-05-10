@@ -27,8 +27,8 @@ import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 export class CustomBasketPage implements OnInit {
   Object = Object;
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
-  readonly pools$: BehaviorSubject<IPoolsMetadata[]> = this.basketService
-    .pools$;
+  readonly pools$: BehaviorSubject<IPoolsMetadata[]> =
+    this.basketService.pools$;
   readonly tokens$: BehaviorSubject<any> = this.basketService.tokens$;
   readonly poolsAndTokens$ = combineLatest(this.pools$, this.tokens$).pipe(
     map(([pools, tokens]: [IPoolsMetadata[], any]) => {
@@ -113,11 +113,8 @@ export class CustomBasketPage implements OnInit {
 
   async createBasket(ethAmount: number): Promise<any> {
     const basket = makeBasket(this.chartPoolData);
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
-      basket,
-      this.pools$.value,
-      this.tokens$.value
-    );
+    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo =
+      getBasketPoolsAndCoins(basket, this.pools$.value, this.tokens$.value);
     const name = basketNameGenerator();
     await this.contractService.createBasket(
       name,

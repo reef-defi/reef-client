@@ -95,22 +95,23 @@ export class BuyReefComponent extends NgDestroyableComponent {
       .subscribe(() => this.tokenAmountSub.next(null));
 
     // we get all supported token prices in advance
-    const tokenLivePrices$: Observable<
-      IReefPricePerToken[]
-    > = this.supportedTokensSub.pipe(
-      filter((v) => !!v.length),
-      switchMap((supportedTkns) => {
-        const supportedTokenSymbols = supportedTkns.map((st) => st.tokenSymbol);
-        // price for each token symbol
-        const supportedPrices$ = combineLatest(
-          supportedTokenSymbols.map((ts) =>
-            uniswapService.getReefPriceInInterval$(ts)
-          )
-        );
-        return supportedPrices$;
-      }),
-      shareReplay(1)
-    );
+    const tokenLivePrices$: Observable<IReefPricePerToken[]> =
+      this.supportedTokensSub.pipe(
+        filter((v) => !!v.length),
+        switchMap((supportedTkns) => {
+          const supportedTokenSymbols = supportedTkns.map(
+            (st) => st.tokenSymbol
+          );
+          // price for each token symbol
+          const supportedPrices$ = combineLatest(
+            supportedTokenSymbols.map((ts) =>
+              uniswapService.getReefPriceInInterval$(ts)
+            )
+          );
+          return supportedPrices$;
+        }),
+        shareReplay(1)
+      );
 
     this.selectedTokenPrice$ = combineLatest([
       this.selTokenSub,

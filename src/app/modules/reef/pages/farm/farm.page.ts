@@ -32,13 +32,12 @@ export class FarmPage implements OnInit {
   public loading = false;
   public TokenSymbol = TokenSymbol;
   public TokenUtil = TokenUtil;
-  readonly pendingTransactions$ = this.transactionService.getPendingTransactions(
-    [
+  readonly pendingTransactions$ =
+    this.transactionService.getPendingTransactions([
       TransactionType.REEF_FARM,
       TransactionType.REEF_USDT_FARM,
       TransactionType.REEF_ETH_FARM,
-    ]
-  );
+    ]);
   readonly providerUserInfo$ = this.connectorSerivce.providerUserInfo$;
   readonly farmingContract$ = this.uniswapService.farmingContract$;
   readonly lpContract$ = new BehaviorSubject<Contract | null>(null);

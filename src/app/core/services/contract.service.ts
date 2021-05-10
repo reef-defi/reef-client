@@ -48,9 +48,8 @@ export class ContractService {
   ) {}
 
   async getAllBaskets(): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     this.loading$.next(true);
     try {
       this.apiService
@@ -67,12 +66,12 @@ export class ContractService {
             resolvedBaskets.map(async (basket, idx) => ({
               ...basket,
               investedETH: await this.getUserInvestedBasketAmount(idx),
-              ...(await this.getBasketPoolsAndTokens(idx)).reduce(
-                (memo, curr) => ({
-                  ...memo,
-                  ...curr,
-                })
-              ),
+              ...(
+                await this.getBasketPoolsAndTokens(idx)
+              ).reduce((memo, curr) => ({
+                ...memo,
+                ...curr,
+              })),
               index: idx,
               isVault: false,
             }))
@@ -87,12 +86,12 @@ export class ContractService {
                 +basket.investedETH > 0 && basket.referrer === info.address
             )
             .map((basket) => {
-              const dbBasketRecord = data.find((b) => b.basket_idx === basket.index);
+              const dbBasketRecord = data.find(
+                (b) => b.basket_idx === basket.index
+              );
               if (dbBasketRecord) {
-                const timeStamp = parseInt(
-                  dbBasketRecord.invested_at, 10
-                );
-                return {...basket, timeStamp};
+                const timeStamp = parseInt(dbBasketRecord.invested_at, 10);
+                return { ...basket, timeStamp };
               }
               return basket;
             });
@@ -121,9 +120,8 @@ export class ContractService {
   }
 
   async getUserInvestedBasketAmount(idx: number): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const invested: number = await this.basketContract$.value.methods
       .investedAmountInBasket(info.address, idx)
       .call();
@@ -137,9 +135,8 @@ export class ContractService {
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const wei = this.connectorService.toWei(amountToInvest);
 
       const {
@@ -256,9 +253,8 @@ export class ContractService {
 
   async getBalanceOf(basketIdx): Promise<any> {
     // TODO: get balances of all polls...
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     return this.basketContract$.value.methods
       .getAvailableBasketUniswapPools(basketIdx)
       .call();
@@ -295,9 +291,8 @@ export class ContractService {
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       this.basketContract$.value.methods
         .disinvest(basketIdxs, basketIdxPercentage, yieldRatio, shouldRestake)
         .send({
@@ -343,9 +338,8 @@ export class ContractService {
 
   async stakeReef(amount: number): Promise<any> {
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const value = this.connectorService.toWei(amount);
       const res = await this.stakingContract$.value.methods.stake(value).send({
         from: info.address,
@@ -383,9 +377,8 @@ export class ContractService {
   }
 
   private async updateUserDetails(): Promise<void> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     //TODO refresh balance
     this.tokenBalanceService.refreshBalancesForAddress.next(info.address);
     // this is old way of refreshing balance - this.connectorService.getUserProviderInfo();
