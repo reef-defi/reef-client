@@ -1,11 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-} from '@angular/core';
-import { ConnectorService } from '../../../../core/services/connector.service';
-import { PoolService } from '../../../../core/services/pool.service';
-import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component,} from '@angular/core';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {PoolService} from '../../../../core/services/pool.service';
+import {filter, map, shareReplay, take, tap} from 'rxjs/operators';
 import {
   ChainId,
   ExchangeId,
@@ -17,17 +13,17 @@ import {
   TokenBalance,
   TokenSymbol,
 } from '../../../../core/models/types';
-import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
-import { UniswapService } from '../../../../core/services/uniswap.service';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
-import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
-import { first } from 'rxjs/internal/operators/first';
-import { scan } from 'rxjs/internal/operators/scan';
-import { addresses } from 'src/assets/addresses';
-import { startWith } from 'rxjs/internal/operators/startWith';
+import {BehaviorSubject, merge, Observable, of, Subject} from 'rxjs';
+import {UniswapService} from '../../../../core/services/uniswap.service';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import {first} from 'rxjs/internal/operators/first';
+import {scan} from 'rxjs/internal/operators/scan';
+import {addresses} from 'src/assets/addresses';
+import {startWith} from 'rxjs/internal/operators/startWith';
 
 @Component({
   selector: 'app-dashboard',
@@ -334,4 +330,5 @@ export class DashboardPage {
     }
     return this.chartsService.composePieChart(unified);
   }
+
 }
