@@ -53,6 +53,7 @@
     "highcharts-angular": "^2.8.0",
     "jquery": "^1.12.4",
     "ng-apexcharts": "^1.5.1",
+    "ng-qrcode": "^4.2.0",
     "ng5-slider": "^1.2.4",
     "ngx-skeleton-loader": "^2.5.0",
     "popper.js": "^1.16.1",

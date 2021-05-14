@@ -9,7 +9,7 @@ import { AssetDistributionChartComponent } from './components/asset-distribution
 import { HoldingsTableComponent } from './components/holdings-table/holdings-table.component';
 import { PortfolioPositionsComponent } from './components/holdings-table/portfolio-positions/portfolio-positions.component';
 import { PriceNotSupportedDialogComponent } from './components/price-not-supported-dialog/price-not-supported-dialog.component';
-import {AuthModule} from '../auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -20,6 +20,6 @@ import {AuthModule} from '../auth/auth.module';
     PortfolioPositionsComponent,
     PriceNotSupportedDialogComponent,
   ],
-    imports: [CommonModule, DashboardRoutingModule, SharedModule, AuthModule],
+  imports: [CommonModule, DashboardRoutingModule, SharedModule, AuthModule],
 })
 export class DashboardModule {}
