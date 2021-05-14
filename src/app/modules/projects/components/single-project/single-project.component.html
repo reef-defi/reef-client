@@ -1,0 +1,35 @@
+<div class="d-flex">
+  <img
+    [routerLink]="['/projects-list/project', project.id]"
+    class="img-size-top-75 mr-3 c-pointer"
+    [src]="project.logo"
+    [alt]="project.name"
+  />
+  <div>
+    <div class="d-flex align-items-center font-weight-bold mb-1">
+      <div
+        [routerLink]="['/projects-list/project', project.id]"
+        class="mr-2 c-pointer"
+      >
+        {{ project.name }}
+      </div>
+      <div>
+        <span *ngIf="isFeatured" class="badge badge-info small">Featured</span>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-1">
+      <app-social-media-icons [links]="project.links"></app-social-media-icons>
+    </div>
+    <div class="small mb-1">
+      {{ project.description }}
+    </div>
+    <div>
+      <span
+        class="mr-1 small text-muted text-monospace"
+        *ngFor="let cat of project.categories"
+      >
+        {{ cat }}
+      </span>
+    </div>
+  </div>
+</div>

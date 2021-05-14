@@ -14,6 +14,31 @@ import {
 } from 'ng-apexcharts';
 import { Observable, Subject } from 'rxjs';
 
+export interface IProjectsResponse {
+  categories: string[];
+  featured: Project;
+  items: Project[];
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  longDesc: string;
+  logo: string;
+  categories: string[];
+  links: {
+    facebook?: string;
+    app?: string;
+    email?: string;
+    website?: string;
+    twitter?: string;
+    telegram?: string;
+    github?: string;
+    medium?: string;
+  };
+}
+
 export type RpcErrorTypes = {
   [key in EErrorTypes]: string;
 };

@@ -1,0 +1,62 @@
+<ng-container *ngIf="project$ | async as project">
+  <div class="container">
+    <div class="row mt-2">
+      <div class="d-flex align-items-center">
+        <button [routerLink]="['/projects-list']" mat-flat-button>
+          <mat-icon>chevron_left</mat-icon>
+          <span class="mt-1">Back</span>
+        </button>
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-6 offset-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <img
+                class="img-size-top-75 mr-3 c-pointer"
+                [src]="project.logo"
+                [alt]="project.name"
+              />
+              <div>
+                <div class="font-weight-bold mb-1">{{ project.name }}</div>
+                <div class="small mb-1">{{ project.description }}</div>
+                <div>
+                  <span
+                    class="mr-1 small text-muted text-monospace"
+                    *ngFor="let cat of project.categories"
+                  >
+                    <span class="badge badge-pill badge-primary"
+                      >{{ cat }}</span
+                    >
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 my-3">
+          <mat-divider></mat-divider>
+        </div>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-primary mb-2">Launch DApp</button>
+        <div>
+          <app-social-media-icons
+            [links]="project.links"
+          ></app-social-media-icons>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6 offset-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="h5">About {{ project.name }}</div>
+            <div class="small">{{ project.longDesc }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

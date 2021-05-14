@@ -1,0 +1,42 @@
+<ng-container *ngIf="links">
+  <span *ngIf="links.facebook">
+    <a target="_blank" [href]="links.facebook" class="mr-1">
+      <i class="lab la-facebook"></i>
+    </a>
+  </span>
+  <span *ngIf="links.website">
+    <a target="_blank" [href]="links.website" class="mr-1">
+      <i class="las la-globe"></i>
+    </a>
+  </span>
+  <span *ngIf="links.app">
+    <a target="_blank" [href]="links.app" class="mr-1">
+      <i class="lab la-laptop-code"></i>
+    </a>
+  </span>
+  <span *ngIf="links.email">
+    <a target="_blank" [href]="links.email" class="mr-1">
+      <i class="las la-envelope"></i>
+    </a>
+  </span>
+  <span *ngIf="links.twitter">
+    <a target="_blank" [href]="links.twitter" class="mr-1">
+      <i class="lab la-twitter"></i>
+    </a>
+  </span>
+  <span *ngIf="links.telegram">
+    <a target="_blank" [href]="links.telegram" class="mr-1">
+      <i class="lab la-telegram"></i>
+    </a>
+  </span>
+  <span *ngIf="links.github">
+    <a target="_blank" [href]="links.github" class="mr-1">
+      <i class="lab la-github"></i>
+    </a>
+  </span>
+  <span *ngIf="links.medium">
+    <a target="_blank" [href]="links.medium" class="mr-1">
+      <i class="lab la-medium"></i>
+    </a>
+  </span>
+</ng-container>
