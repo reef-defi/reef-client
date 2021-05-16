@@ -16,10 +16,14 @@
   <div class="d-flex flex-column justify-content-start mb-3">
     <div class="h5">{{ data?.title }}</div>
     <div class="qr-wrap" *ngIf="data.secretUrl">
-      <qr-code value="{{data.secretUrl}}" size="300" errorCorrectionLevel="M"></qr-code>
+      <small>Scan with Google Authenticator or similar mobile app:</small>
+      <div>
+        <qr-code value="{{data.secretUrl}}" size="300" errorCorrectionLevel="M"></qr-code>
+      </div>
     </div>
-    <div>
-      <input #otpass>
+    <div class="d-flex align-items-center justify-content-between">
+      <label class="mr-3" for="otpass">Input time code:</label>
+      <input id="otpass" #otpass type="number" maxlength="6">
     </div>
   </div>
   <div class="dialog__footer">
@@ -30,9 +34,10 @@
       </button>
     </div>-->
     <div class="text-right">
-      <button mat-ripple (click)="action(null)" class="btn btn-primary">
+      <button mat-ripple (click)="action(null)" class="btn btn-primary mr-3">
         Cancel
-      </button> <button mat-ripple (click)="action(otpass.value)" class="btn btn-primary">
+      </button>
+      <button mat-ripple (click)="action(otpass.value)" class="btn btn-primary">
         Login
       </button>
     </div>

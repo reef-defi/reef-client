@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {EthAuthService} from '../eth-auth.service';
-import {catchError} from 'rxjs/operators';
+import {catchError, filter, map} from 'rxjs/operators';
 import {InfoModalComponent} from '../../../shared/components/info-modal/info-modal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs/internal/observable/of';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {Auth2faService} from '../auth-2fa.service';
 import {OtpModalComponent} from '../otp-modal/otp-modal.component';
-import {tap} from 'rxjs/internal/operators/tap';
+import {addresses} from '../../../../assets/addresses';
 
 @Component({
   selector: 'app-login-btn',
@@ -25,8 +24,29 @@ export class LoginBtnComponent {
     this.ethAuthService
       .login$()
       .pipe(
+        switchMap((res: { success: boolean, address: string, secret_url: string, message: string }) => {
+          if (res && res.success && res.address) {
+            const dialog = this.dialog.open(OtpModalComponent, {
+              data: {
+                title: '2FA password ...' + res.address.substring(res.address.length - 5),
+                secretUrl: res.secret_url
+              }
+            });
+            return dialog.afterClosed().pipe(
+              filter(v => !!v),
+              switchMap((otpToken: string) => this.ethAuthService.verifyOtp$(otpToken)),
+              map(tokenMatchRes => {
+                if (!!tokenMatchRes.success) {
+                  return res;
+                }
+                throw new Error(tokenMatchRes.message || 'Could not login.');
+              })
+            );
+          }
+          throw new Error(res.message || 'Could not login.');
+        }),
         catchError((err) => {
-          if (!err.success) {
+          if (err && !err.success) {
             this.dialog.open(InfoModalComponent, {
               data: {
                 title: 'Login error',
@@ -36,23 +56,6 @@ export class LoginBtnComponent {
           }
           return of({});
         })
-      )
-      .subscribe(
-        (res: { success: boolean, address: string, secret_url: string }) => {
-          if (res && res.success && res.address) {
-            const dialog=this.dialog.open(OtpModalComponent, {
-              data: {
-                title: '2FA password',
-                secretUrl: res.secret_url
-              }
-            });
-            dialog.afterClosed().subscribe((otpToken) => {
-              console.log('OTPPPP', otpToken);
-              this.ethAuthService.verifyOtp$(otpToken).subscribe(console.log);
-              }
-            );
-          }
-        }
-      );
+      ).subscribe();
   }
 }
