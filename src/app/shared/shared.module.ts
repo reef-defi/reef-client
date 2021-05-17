@@ -56,6 +56,8 @@ import { PendingTransactionMsgComponent } from './components/pending-transaction
 import { CountdownTimerComponent } from './components/countdown-timer/countdown-timer.component';
 import { UnsupportedChainMsgComponent } from './components/unsupported-chain-msg/unsupported-chain-msg.component';
 import { InfoModalComponent } from './components/info-modal/info-modal.component';
+import { MatInputModule } from '@angular/material/input';
+import { SocialMediaIconsComponent } from './components/social-media-icons/social-media-icons.component';
 
 const components = [
   FooterComponent,
@@ -109,6 +111,7 @@ const modules = [
   MatRadioModule,
   MatRippleModule,
   MatListModule,
+  MatInputModule,
 ];
 
 @NgModule({
@@ -119,6 +122,7 @@ const modules = [
     CountdownTimerComponent,
     UnsupportedChainMsgComponent,
     InfoModalComponent,
+    SocialMediaIconsComponent,
   ],
   providers: [
     {
@@ -138,6 +142,7 @@ const modules = [
     ...modules,
     CountdownTimerComponent,
     UnsupportedChainMsgComponent,
+    SocialMediaIconsComponent,
   ],
 })
 export class SharedModule {}

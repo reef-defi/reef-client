@@ -1,0 +1,34 @@
+<div class="container">
+  <ng-container *ngIf="projects$ | async as projects; else errorState">
+    <div class="row mb-4">
+      <app-projects-header
+        [categories]="projects.categories"
+        (filter)="filterBy($event)"
+      ></app-projects-header>
+    </div>
+    <div *ngIf="projects.featured" class="row mb-4">
+      <div class="col-4">
+        <app-single-project
+          [project]="projects.featured"
+          [isFeatured]="true"
+        ></app-single-project>
+      </div>
+    </div>
+    <div class="row">
+      <div
+        class="col-4 mb-4"
+        *ngFor="let project of projects.items | filter: filterCriteria : 'name,categories'"
+      >
+        <app-single-project
+          [project]="project"
+          [isFeatured]="false"
+        ></app-single-project>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #errorState>
+  <app-empty-state title="Could not load Projects" subtitle="Try again later">
+  </app-empty-state>
+</ng-template>

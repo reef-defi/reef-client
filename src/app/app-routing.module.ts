@@ -28,6 +28,14 @@ const routes: Routes = [
       import('./modules/baskets/baskets.module').then((m) => m.BasketsModule),
     canActivate: [WalletGuard],
   },
+  {
+    path: 'projects-list',
+    loadChildren: () =>
+      import('./modules/projects/projects.module').then(
+        (m) => m.ProjectsModule
+      ),
+    canActivate: [WalletGuard],
+  },
   // {
   //   path: 'vaults',
   //   loadChildren: () =>

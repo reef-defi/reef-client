@@ -1,0 +1,24 @@
+<div class="d-flex w-100 align-items-center">
+  <mat-form-field class="mr-4">
+    <mat-label>Search by Name</mat-label>
+    <input #search (keyup)="onFilter(search.value)" matInput type="text" />
+    <button
+      mat-button
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="search.value = ''; onFilter('')"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-chip-list>
+    <mat-chip
+      class="c-pointer"
+      (click)="onFilter(category)"
+      *ngFor="let category of categories"
+    >
+      {{ category }}
+    </mat-chip>
+  </mat-chip-list>
+</div>
