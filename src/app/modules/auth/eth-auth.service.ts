@@ -15,20 +15,33 @@ export class EthAuthService {
   constructor(
     private connectorService: ConnectorService,
     private http: HttpClient
-  ) {}
+  ) {
+  }
 
-  login$(): Observable<{ address: string }> {
+  getSignedLogin2feSecret$(): Observable<{ address: string }> {
     return combineLatest([
       this.connectorService.web3$,
       this.connectorService.providerUserInfo$,
     ]).pipe(
-      switchMap(([web3, info]: [any, IProviderUserInfo]) =>  this.getSignedMsg$(web3, info.address, 'login')),
+      switchMap(([web3, info]: [any, IProviderUserInfo]) => this.getSignedMsg$(web3, info.address, 'login')),
       switchMap((val: { signature: string; message: string }) => {
         const data = JSON.parse(val.message);
         return this.http.post(
-          environment.reefNodeApiUrl + '/verify-auth-signature',
-          { sig: val.signature, data }
+          environment.reefNodeApiUrl + '/init-otp-signed',
+          {sig: val.signature, data}
         ) as Observable<{ address: string }>;
+      })
+    );
+  }
+
+  get2feAddressSecret$(): Observable<{ success: boolean, address: string, secret_url: string, message: string }> {
+    return this.connectorService.providerUserInfo$.pipe(
+      switchMap((info: IProviderUserInfo) => {
+        const data = {authWithAddress: info.address};
+        return this.http.post(
+          environment.reefNodeApiUrl + '/init-otp',
+          {data}
+        ) as Observable<{ success: boolean, address: string, secret_url: string, message: string }>;
       })
     );
   }
@@ -49,9 +62,9 @@ export class EthAuthService {
       primaryType: 'LoginRequest',
       types: {
         LoginRequest: [
-          { name: 'authWithAddress', type: 'address' },
-          { name: 'timestamp', type: 'uint256' },
-          { name: 'value', type: 'string' },
+          {name: 'authWithAddress', type: 'address'},
+          {name: 'timestamp', type: 'uint256'},
+          {name: 'value', type: 'string'},
         ],
       },
     });
@@ -78,7 +91,7 @@ export class EthAuthService {
           console.warn(err);
           resultSubj.next(null);
         }
-        resultSubj.next({ signature: result.result, message: msgParams });
+        resultSubj.next({signature: result.result, message: msgParams});
       }
     );
     return resultSubj;
@@ -89,12 +102,12 @@ export class EthAuthService {
       this.connectorService.web3$,
       this.connectorService.providerUserInfo$,
     ]).pipe(
-      switchMap(([web3, info]: [any, IProviderUserInfo]) =>  this.getSignedMsg$(web3, info.address, otpToken)),
+      switchMap(([web3, info]: [any, IProviderUserInfo]) => this.getSignedMsg$(web3, info.address, otpToken)),
       switchMap((val: { signature: string; message: string }) => {
         const data = JSON.parse(val.message);
         return this.http.post(
           environment.reefNodeApiUrl + '/verify-otp-token',
-          { sig: val.signature, data }
+          {sig: val.signature, data}
         ) as Observable<{ valid: boolean, success: boolean, message: string }>;
       })
     );

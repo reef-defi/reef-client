@@ -22,7 +22,7 @@ export class LoginBtnComponent {
 
   login(): void {
     this.ethAuthService
-      .login$()
+      .get2feAddressSecret$()
       .pipe(
         switchMap((res: { success: boolean, address: string, secret_url: string, message: string }) => {
           if (res && res.success && res.address) {
