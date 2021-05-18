@@ -23,7 +23,7 @@ import { environment } from '../../../environments/environment';
 export class TransactionsService {
   static readonly PENDING_TX_KEY = 'pending_txs';
   private static SUPPORTED_CHAIN_TRANSACTIONS = {
-    [TransactionType.BUY_REEF]: [ChainId.MAINNET],
+    [TransactionType.BUY_REEF]: [ChainId.MAINNET, ChainId.LOCAL_FORK],
     [TransactionType.REEF_BOND]: [ChainId.MAINNET, ChainId.BINANCE_SMART_CHAIN],
     [TransactionType.LIQUIDITY_USDT]: [ChainId.MAINNET],
     [TransactionType.LIQUIDITY_ETH]: [ChainId.MAINNET],
