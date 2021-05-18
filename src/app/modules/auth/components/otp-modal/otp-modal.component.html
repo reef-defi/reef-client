@@ -18,12 +18,16 @@
     <div class="qr-wrap" *ngIf="data.secretUrl">
       <small>Scan with Google Authenticator or similar mobile app:</small>
       <div>
-        <qr-code value="{{data.secretUrl}}" size="300" errorCorrectionLevel="M"></qr-code>
+        <qr-code
+          value="{{ data.secretUrl }}"
+          size="300"
+          errorCorrectionLevel="M"
+        ></qr-code>
       </div>
     </div>
     <div class="d-flex align-items-center justify-content-between">
       <label class="mr-3" for="otpass">Input time code:</label>
-      <input id="otpass" #otpass type="number" maxlength="6">
+      <input id="otpass" #otpass type="number" maxlength="6" />
     </div>
   </div>
   <div class="dialog__footer">
