@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {EthAuthService} from '../eth-auth.service';
+import {EthAuthService} from '../../eth-auth.service';
 import {catchError, filter, map} from 'rxjs/operators';
-import {InfoModalComponent} from '../../../shared/components/info-modal/info-modal.component';
+import {InfoModalComponent} from '../../../../shared/components/info-modal/info-modal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs/internal/observable/of';
 import {switchMap} from 'rxjs/internal/operators/switchMap';
 import {OtpModalComponent} from '../otp-modal/otp-modal.component';
-import {addresses} from '../../../../assets/addresses';
+import {addresses} from '../../../../../assets/addresses';
 
 @Component({
   selector: 'app-login-btn',

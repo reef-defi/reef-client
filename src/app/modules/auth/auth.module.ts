@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginBtnComponent } from './login-btn/login-btn.component';
-import { OtpModalComponent } from './otp-modal/otp-modal.component';
+import { LoginBtnComponent } from './components/login-btn/login-btn.component';
+import { OtpModalComponent } from './components/otp-modal/otp-modal.component';
 import {QrCodeModule} from 'ng-qrcode';
 
 @NgModule({
