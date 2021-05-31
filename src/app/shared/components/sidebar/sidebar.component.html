@@ -193,8 +193,8 @@
   </mat-menu>
   <div class="d-flex flex-column align-items-start">
     <a
-      id="dashboardBtn"
-      [routerLink]="['/dashboard']"
+      id="bridge"
+      [routerLink]="['/bridge']"
       [routerLinkActiveOptions]="{ exact: true }"
       routerLinkActive="active"
       class="
@@ -208,9 +208,31 @@
       "
       (click)="mobileNavShown = false"
     >
+      <i class="la la-lg la-exchange-alt mr-1"></i>
+      Bridge
+    </a>
+    <a
+      id="dashboardBtn"
+      [routerLink]="['/dashboard']"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active"
+      class="
+        d-flex
+        align-items-center
+        h6
+        text-decoration-none
+        w-100
+        text-body
+        mb-3
+      "
+      (click)="mobileNavShown = false"
+    >
       <app-svg-icon icon="dashboard"></app-svg-icon>
       Dashboard
     </a>
+    <div class="w-100 mb-3">
+      <mat-divider></mat-divider>
+    </div>
     <!--    <div-->
     <!--      id="buy-crypto"-->
     <!--      [routerLink]="['/binance']"-->

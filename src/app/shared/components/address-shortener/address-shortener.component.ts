@@ -9,5 +9,7 @@ export class AddressShortenerComponent {
   @Input() address: string | null;
   @Input() standalone = true;
   @Input() showCopy = true;
+  @Input() showFirstDigitsNr = 4;
+  @Input() showLastDigitsNr = 4;
   constructor() {}
 }

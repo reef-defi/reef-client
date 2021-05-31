@@ -36,6 +36,12 @@ const routes: Routes = [
       ),
     canActivate: [WalletGuard],
   },
+  {
+    path: 'bridge',
+    loadChildren: () =>
+      import('./modules/bridge/bridge.module').then((m) => m.BridgeModule),
+    canActivate: [WalletGuard],
+  },
   // {
   //   path: 'vaults',
   //   loadChildren: () =>

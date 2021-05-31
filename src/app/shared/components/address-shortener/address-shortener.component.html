@@ -1,8 +1,8 @@
 <div class="d-flex align-items-center" *ngIf="address">
   <div [matTooltip]="address" class="mr-2">
     <div class="text-monospace small">
-      {{ address.slice(0, 4) }}...{{
-        address.slice(address.length - 4, address.length)
+      {{ address.slice(0, showFirstDigitsNr) }}...{{
+        address.slice(address.length - showLastDigitsNr, address.length)
       }}
     </div>
   </div>

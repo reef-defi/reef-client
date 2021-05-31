@@ -1,0 +1,123 @@
+<app-page-title
+  title="Reef Bridge"
+  subtitle="Transfer your REEF Tokens from Mainnet or BSC directly to the Reef Chain"
+></app-page-title>
+
+<ng-container *ngIf="reefBalance$ | async as reefBalance">
+  <ng-container *ngIf="info$ | async as info">
+    <div class="row mt-5">
+      <div class="col-6 offset-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-center">
+              <div class="small text-monospace text-muted">
+                Your current REEF Balance is {{ reefBalance.balance |
+                number:'1.0' }}
+                <img
+                  alt="token-logo"
+                  width="15"
+                  height="15"
+                  src="../../../../../assets/images/reef/reef-token.svg"
+                />
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-around my-4">
+              <div class="p-3 border border-light rounded shadow-sm">
+                <div class="small text-muted">From</div>
+                <div
+                  *ngIf="info.chainInfo.chain_id === ChainId.MAINNET"
+                  class="d-flex align-items-center"
+                >
+                  <div class="mr-1">Ethereum Network</div>
+                  <img
+                    alt="token-logo"
+                    width="20"
+                    height="20"
+                    src="../../../../../assets/images/eth.png"
+                  />
+                </div>
+                <div
+                  *ngIf="info.chainInfo.chain_id === ChainId.BINANCE_SMART_CHAIN"
+                  class="d-flex align-items-center"
+                >
+                  <div class="mr-1">Binance Smart Chain</div>
+                  <img
+                    alt="token-logo"
+                    width="20"
+                    height="20"
+                    src="../../../../../assets/images/bsc.png"
+                  />
+                </div>
+              </div>
+              <div class="align-self-center">
+                <i class="la la-lg la-arrow-right"></i>
+              </div>
+              <div class="p-3 border border-light rounded shadow-sm">
+                <div class="small text-muted">To</div>
+                <div class="d-flex align-items-center">
+                  <div class="mr-2">Reef Chain</div>
+                  <img
+                    alt="token-logo"
+                    width="30"
+                    height="30"
+                    src="../../../../../assets/images/reef/reef-v2.svg"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-around my-4 align-items-center">
+              <div class="p-3">
+                <div class="small text-muted mb-1">
+                  How much REEF would you like to transfer?
+                </div>
+                <div class="d-flex align-items-center">
+                  <input
+                    id="reefAmount"
+                    appNumbersOnlyInput
+                    [(ngModel)]="reefAmount"
+                    class="w-75 form-control accent-text"
+                    type="number"
+                    placeholder="0"
+                  />
+                  <img
+                    class="ml-2"
+                    alt="token-logo"
+                    width="26"
+                    height="26"
+                    src="../../../../../assets/images/reef/reef-token.svg"
+                  />
+                </div>
+                <div
+                  *ngIf="reefAmount > reefBalance.balance"
+                  class="small text-danger mt-1"
+                >
+                  Amount exceeds owned REEF.
+                </div>
+              </div>
+              <div class="align-self-center">
+                <i class="la la-lg la-arrow-right"></i>
+              </div>
+              <div class="p-3">
+                <div class="small text-muted mb-1">Destination Address</div>
+                <app-address-shortener
+                  [showFirstDigitsNr]="10"
+                  [showLastDigitsNr]="5"
+                  [address]="info.address"
+                ></app-address-shortener>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center mb-3 px-5">
+              <button
+                [disabled]="!reefAmount || reefAmount <= 0 || reefAmount > reefBalance.balance"
+                (click)="openConfirmModal()"
+                class="btn btn-primary btn-lg btn-block"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
