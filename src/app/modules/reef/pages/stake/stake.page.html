@@ -1,0 +1,57 @@
+<ng-container
+  *ngIf="(connectorService.providerUserInfo$|async)?.chainInfo.chain_id as chainId"
+>
+  <div class="row">
+    <div class="col">
+      <app-page-title
+        title="Stake REEF"
+        subtitle="Stake REEF natively on our Reef Chain"
+      ></app-page-title>
+    </div>
+  </div>
+
+  <div class="page__wrapper">
+    <div class="row justify-content-center">
+      <app-unsupported-chain-msg
+        [chainId]="chainId"
+        [transactionType]="TransactionType.BUY_REEF"
+        class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3"
+      >
+        <div id="buyReef" class="card max-w-500 margin-auto mt-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center mb-4">
+              <img
+                class="img-size-top-75"
+                src="../../../../../assets/images/reef/reef-token.svg"
+                alt="reef-token"
+              />
+            </div>
+            <div class="col-10 offset-1 my-auto">
+              <div class="mb-1">
+                <div class="h6 mb-4 text-center">Stake Reef Natively</div>
+                <div class="small text-muted mb-1">Enter your amount</div>
+                <div class="d-flex align-items-center">
+                  <input
+                    appNumbersOnlyInput
+                    class="w-75 form-control mr-2 accent-text"
+                    type="number"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div class="text-muted">
+                <app-set-input-relative-amount
+                  [value]="10000000"
+                  [tokenSymbol]="TokenSymbol.REEF"
+                ></app-set-input-relative-amount>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4 mb-2">
+              <button class="btn btn-primary">Stake</button>
+            </div>
+          </div>
+        </div>
+      </app-unsupported-chain-msg>
+    </div>
+  </div>
+</ng-container>
