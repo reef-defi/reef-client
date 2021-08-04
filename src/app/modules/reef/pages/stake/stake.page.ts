@@ -11,7 +11,7 @@ export class StakePage implements OnInit {
   TransactionType = TransactionType;
   TokenSymbol = TokenSymbol;
 
-  constructor(private readonly connectorService: ConnectorService) { }
+  constructor(public readonly connectorService: ConnectorService) { }
 
   ngOnInit(): void {
   }
