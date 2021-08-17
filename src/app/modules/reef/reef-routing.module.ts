@@ -10,6 +10,7 @@ import { CardPage } from './pages/card/card.page';
 import { BondsPage } from './pages/bonds/bonds.page';
 import { BondPage } from './pages/bond/bond.page';
 import { AboutPage } from './pages/about/about.page';
+import { CardAdminPage } from './pages/card-admin-page/card-admin-page';
 
 const routes: Routes = [
   {
@@ -45,8 +46,12 @@ const routes: Routes = [
     component: BondPage,
   },
   {
-    path: 'card',
+    path: 'card-promo',
     component: CardPage,
+  },
+  {
+    path: 'card',
+    component: CardAdminPage,
   },
   {
     path: 'about',

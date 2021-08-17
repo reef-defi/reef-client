@@ -16,6 +16,7 @@ import { CardPage } from './pages/card/card.page';
 import { BondsPage } from './pages/bonds/bonds.page';
 import { BondPage } from './pages/bond/bond.page';
 import { AboutPage } from './pages/about/about.page';
+import { CardAdminPage } from './pages/card-admin-page/card-admin-page';
 
 const components = [
   BuyReefComponent,
@@ -37,7 +38,7 @@ const pages = [
 ];
 
 @NgModule({
-  declarations: [...pages, ...components],
+  declarations: [...pages, ...components, CardAdminPage],
   imports: [CommonModule, ReefRoutingModule, SharedModule],
   providers: [DatePipe],
 })

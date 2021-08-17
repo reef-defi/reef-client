@@ -1,0 +1,236 @@
+<div class="row">
+  <div class="col">
+    <app-page-title
+      *ngIf="connectorService.providerUserInfo$|async as userInfo else noAddrTitle"
+      title="Reef Card"
+      subtitle="Manage Reef Card {{userInfo.address|shortAddrDisplay}}"
+    ></app-page-title>
+    <ng-template #noAddrTitle>
+      <app-page-title
+        title="Reef Card"
+        subtitle="Manage Reef Card {{(connectorService.providerUserInfo$|async)?.address|shortAddrDisplay}}"
+      ></app-page-title>
+    </ng-template>
+  </div>
+</div>
+
+<div class="page__wrapper">
+  <div class="row justify-content-center">
+    <ng-container
+      *ngIf="(connectorService.providerUserInfo$|async) as userInfo"
+    >
+      <ng-container
+        *ngIf="accountCardRegistered$|async as registered else cardNotRegistered"
+      >
+        <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+          <div class="card">
+            <div class="col-12">
+              <div class="card p-2">
+                <div class="row">
+                  <div
+                    class="col-12 d-flex align-items-center justify-content-center reef-card-w flex-column p-4 pt-3 pt-lg-3 pr-lg-0 pl-lg-4 mr-lg-0"
+                  >
+                    Reef card for {{userInfo.address|shortAddrDisplay}}
+                    <button
+                      class="btn btn-primary m-3 p-2"
+                      (click)="manageCard=true"
+                    >
+                      Manage
+                    </button>
+                    <ng-container *ngIf="manageCard">
+                      <ng-container *ngIf="iframeSession$|async as session">
+                        <ng-container *ngIf="!session.error else noSession">
+                          <iframe
+                            [src]="baanxBaseUrl+'/iframe/'+session.access_token+'/'+session.user_id | safeUrl"
+                            sandbox="allow-forms allow-popups allow-same-origin allow-scripts"
+                          ></iframe>
+                          <ng-container
+                            *ngIf="cardVerified$|async; else verifyToFillUp"
+                            >fill up</ng-container
+                          >
+                          <ng-template #verifyToFillUp
+                            >Verify card before you can fill up
+                            account.</ng-template
+                          >
+                        </ng-container>
+                        <ng-template #noSession
+                          >Error getting card session.</ng-template
+                        >
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
+          <div class="card">
+            <div class="d-flex flex-column">
+              <div class="card-body">
+                <div class="h6 mb-2">Manage card</div>
+                <div class="d-flex flex-column"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #cardNotRegistered>
+        <div class="col-lg-8 col-xl-6 col-12">
+          <div class="card justify-content-center">
+            <div class="col-12 text-center p-3">
+              <p>
+                Connected address
+                <app-address-shortener
+                  [standalone]="true"
+                  [showCopy]="false"
+                  [address]="userInfo.address"
+                >
+                </app-address-shortener>
+                is not registered with Reef card.
+              </p>
+              <button class="btn btn-primary m-3 p-2" (click)="openCardForm()">
+                Get Reef card
+              </button>
+              <p>or connect with different address.</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #cardFormDialog>
+  <div class="d-flex flex-column p-3">
+    <div class="d-flex justify-content-center align-items-center mb-4">
+      <div #h2 class="h4 mr-3 mt-1">Welcome to Reef Card!</div>
+      <mat-divider
+        [vertical]="true"
+        [style.height.px]="h2.clientHeight"
+      ></mat-divider>
+      <img
+        class="ml-3"
+        src="../../../../../assets/images/reef/reef-v2.svg"
+        width="50"
+        height="50"
+        alt=""
+      />
+    </div>
+    <mat-dialog-content>
+      <div class="d-flex flex-column justify-content-start mb-3">
+        <ng-form #cardData="ngForm">
+          <div class="d-flex flex-column mb-4 text-muted">
+            <div>
+              <div class="small mb-1">Title:</div>
+              <div class="d-flex">
+                <mat-select
+                  placeholder="Select title"
+                  id="title"
+                  name="title"
+                  required="required"
+                  [(ngModel)]="cardData.value.title"
+                  (selectionChange)="cardData.value.title=$event.value"
+                >
+                  <mat-option
+                    *ngFor="let title of ['Mr','Mrs']"
+                    [value]="title"
+                  >
+                    {{title}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Gender:</div>
+              <div class="d-flex">
+                <mat-select
+                  placeholder="Select gender"
+                  id="gender"
+                  name="gender"
+                  required="required"
+                  [(ngModel)]="cardData.value.gender"
+                  (selectionChange)="cardData.value.gender=$event.value"
+                >
+                  <mat-option
+                    *ngFor="let gender of [{v:'M', l:'Male'},{v:'F', l:'Female'}]"
+                    [value]="gender.v"
+                  >
+                    {{gender.l}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">First name:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.first_name"
+                  class="form-control text-monospace small accent-text"
+                  id="first_name"
+                  name="first_name"
+                  placeholder="First name"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Last name:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.last_name"
+                  class="form-control text-monospace small accent-text"
+                  id="last_name"
+                  name="last_name"
+                  placeholder="Last name"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Address:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.addressLine1"
+                  class="form-control text-monospace small accent-text"
+                  id="addressLine1"
+                  name="addressLine1"
+                  placeholder="Address"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">City or town:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.cityOrTown"
+                  class="form-control text-monospace small accent-text"
+                  id="cityOrTown"
+                  name="cityOrTown"
+                  placeholder="City or town"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-form>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="center">
+      <div class="mr-2">
+        <button
+          mat-ripple
+          (click)="createUser.next(cardData.value)"
+          class="btn btn-light"
+        >
+          Sign and send
+        </button>
+      </div>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
