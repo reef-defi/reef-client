@@ -19,9 +19,11 @@
     <ng-container
       *ngIf="(connectorService.providerUserInfo$|async) as userInfo"
     >
+      LL={{loading$|async}}
       <ng-container
         *ngIf="accountCardRegistered$|async as registered else cardNotRegistered"
       >
+        reg={{registered}}
         <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
           <div class="card">
             <div class="col-12">
@@ -225,7 +227,7 @@
       <div class="mr-2">
         <button
           mat-ripple
-          (click)="createUser.next(cardData.value)"
+          (click)="createUser.next(cardData.value); dialog.closeAll()"
           class="btn btn-light"
         >
           Sign and send
