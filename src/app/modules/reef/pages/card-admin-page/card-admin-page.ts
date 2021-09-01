@@ -1,4 +1,4 @@
-import {Component, OnDestroy, TemplateRef, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, TemplateRef, ViewChild} from '@angular/core';
 import {ConnectorService} from '../../../../core/services/connector.service';
 import {
   HttpClient,
@@ -7,7 +7,7 @@ import {
   HttpResponse,
   HttpResponseBase,
 } from '@angular/common/http';
-import {merge, Observable, pipe, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, merge, Observable, pipe, ReplaySubject, Subject} from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
@@ -29,13 +29,22 @@ import {EthAuthService} from '../../../../core/services/eth-auth.service';
 import {environment} from '../../../../../environments/environment';
 import {startWith} from 'rxjs/internal/operators/startWith';
 import {HttpUtil} from '../../../../shared/utils/http-util';
+import {IProviderUserInfo, PendingTransaction, Token, TokenSymbol} from '../../../../core/models/types';
+import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
+import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 
 @Component({
   selector: 'app-card-admin-page',
   templateUrl: './card-admin-page.html',
   styleUrls: ['./card-admin-page.scss'],
 })
-export class CardAdminPage implements OnDestroy {
+export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
+
+  set supportedTokens(val: { tokenSymbol: TokenSymbol; src: string }[]) {
+    this.supportedTokensSub.next(val);
+    this.selTokenSub.next(val[0].tokenSymbol);
+  }
+
   baanxBaseUrl = 'http://localhost:3000';
   cardBaseUrl = environment.reefNodeApiUrl;
   accountCardRegistered$: Observable<boolean>;
@@ -43,39 +52,46 @@ export class CardAdminPage implements OnDestroy {
   iframeSession$: Observable<any>;
   iframeUrl$: Observable<string>;
   createUser: Subject<any> = new Subject<any>();
-  manageCard = false;
   destroyed$ = new Subject<void>();
   @ViewChild('cardFormDialog') cardFormDialog: TemplateRef<any>;
   loading$: Observable<boolean>;
+
+  selectedTokenBalance$: Observable<Token>;
+  supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol; src: string }[]>([]);
+  selTokenSub = new ReplaySubject<TokenSymbol>();
+  tokenAmountSub = new BehaviorSubject<number>(null);
+  TokenSymbol = TokenSymbol;
+  cardBalance$: Observable<string>;
 
   constructor(
     public readonly connectorService: ConnectorService,
     private dialog: MatDialog,
     private notificationService: NotificationService,
     private ethAuthService: EthAuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private tokenBalanceService: TokenBalanceService
   ) {
+    super();
+    this.supportedTokens = TokenBalanceService.SUPPORTED_CARD_TOKENS;
     const existingUser$ = connectorService.providerUserInfo$.pipe(
       switchMap((userInfo: any) => {
-          if (userInfo) {
-            return this.http
-              .get(this.cardBaseUrl + '/card/' + userInfo.address)
-              .pipe(
-                tap((v) => console.log('PROOO', v))
-              )
-          }
-          return of({
-            _status:
-              {message: 'No wallet connected'}
-          });
+        if (userInfo) {
+          return this.http
+            .get(this.cardBaseUrl + '/card/' + userInfo.address)
+            .pipe(
+              tap((v) => console.log('PROOO', v)),
+              catchError((e) => {
+                if (e.status === 404 || e.status === 400) {
+                  console.log('Existing user 404 err=', e);
+                  return of({type: HttpEventType.Response});
+                }
+                return of({error: e.message, type: HttpEventType.Response});
+              })
+            );
         }
-      ),
-      catchError((e) => {
-        if (e.status === 404 || e.status === 400) {
-          console.log('Existing user 404 err=', e);
-          return of({type: HttpEventType.Response});
-        }
-        return of({error: e.message, type: HttpEventType.Response});
+        return of({
+          _status: {message: 'No wallet connected'},
+        });
       })
     );
 
@@ -217,6 +233,21 @@ export class CardAdminPage implements OnDestroy {
           'error'
         );
       });
+
+    this.selectedTokenBalance$ = combineLatest([
+      this.selTokenSub,
+      this.connectorService.providerUserInfo$.pipe(filter((v) => !!v)),
+    ]).pipe(
+      switchMap(([tokenSymbol, uInfo]: [TokenSymbol, IProviderUserInfo]) =>
+        this.tokenBalanceService.getTokenBalance$(uInfo.address, tokenSymbol)
+      ),
+      shareReplay(1)
+    ) as Observable<Token>;
+
+    this.selTokenSub
+      .pipe(takeUntil(this.onDestroyed$))
+      .subscribe(() => this.tokenAmountSub.next(null));
+
   }
 
   private isRequestStatus(v): boolean {

@@ -1,8 +1,8 @@
-import {catchError, filter, map, mapTo, shareReplay} from 'rxjs/operators';
-import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {merge, Observable} from 'rxjs';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {of} from 'rxjs/internal/observable/of';
+import { catchError, filter, map, mapTo, shareReplay } from 'rxjs/operators';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { merge, Observable } from 'rxjs';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { of } from 'rxjs/internal/observable/of';
 
 export class HttpUtil {
   static REQ_LOADING_EVENT_OPTIONS = {
@@ -56,7 +56,9 @@ export class HttpUtil {
 
     const error$ = data$.pipe(
       filter((res) => !!res._status),
-      map((res) => res._status.error ? res._status.error.message : res._status.message),
+      map((res) =>
+        res._status.error ? res._status.error.message : res._status.message
+      ),
       catchError((err) => {
         return of(err.message);
       }),
@@ -70,6 +72,6 @@ export class HttpUtil {
       shareReplay(1)
     );
 
-    return {response$, loading$, error$};
+    return { response$, loading$, error$ };
   }
 }
