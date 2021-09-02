@@ -37,34 +37,40 @@
               <div class="d-flex flex-column">
                 <div class="card-body">
                   <div class="h6 mb-2">Fill up card</div>
-
+                  <p *ngIf="!(cardVerified$|async)">
+                    Please complete card verification before filling it up.
+                  </p>
                   <div class="d-flex flex-column">
                     <div class="align-items-center">
-                    <div class="col-12 col-lg-4">
-                    <div class="mb-1">
-<!--                      <div class="h6 mb-4 text-center">Buy REEF token</div>-->
-                      <div class="small text-muted mb-1">Enter your amount</div>
-                      <div class="d-flex align-items-center">
-                        <input
-                          appNumbersOnlyInput
-                          [ngModel]="tokenAmountSub | async"
-                          (ngModelChange)="tokenAmountSub.next($event)"
-                          class="w-75 form-control mr-2 accent-text"
-                          type="number"
-                          placeholder="0"
-                        />
-                        <ng-container *ngIf="selTokenSub | async as selectedToken">
+                      <div class="col-12">
+                        <div class="mb-1">
+                          <!--                      <div class="h6 mb-4 text-center">Buy REEF token</div>-->
+                          <div class="small text-muted mb-1">
+                            Enter your amount
+                          </div>
                           <div class="d-flex align-items-center">
-                            <img
-                              (click)="tokenSelect.open()"
-                              *ngIf="selectedToken === TokenSymbol.ETH"
-                              class="c-pointer"
-                              alt="token-logo"
-                              width="26"
-                              height="26"
-                              src="../../../../../assets/images/eth.png"
+                            <input
+                              appNumbersOnlyInput
+                              [ngModel]="tokenAmountSub | async"
+                              (ngModelChange)="tokenAmountSub.next($event)"
+                              class="w-75 form-control mr-2 accent-text"
+                              type="number"
+                              placeholder="0"
                             />
-                            <!--<img
+                            <ng-container
+                              *ngIf="selTokenSub | async as selectedToken"
+                            >
+                              <div class="d-flex align-items-center">
+                                <img
+                                  (click)="tokenSelect.open()"
+                                  *ngIf="selectedToken === TokenSymbol.ETH"
+                                  class="c-pointer"
+                                  alt="token-logo"
+                                  width="26"
+                                  height="26"
+                                  src="../../../../../assets/images/eth.png"
+                                />
+                                <!--<img
                               (click)="tokenSelect.open()"
                               *ngIf="selectedToken === TokenSymbol.USDT"
                               class="c-pointer"
@@ -73,75 +79,99 @@
                               height="26"
                               src="../../../../../assets/images/usdt.png"
                             />-->
-                            <div
-                              class="small mx-1 c-pointer"
-                              (click)="tokenSelect.open()"
-                            >
-                              {{ selectedToken }}
-                            </div>
-                            <mat-select
-                              #tokenSelect
-                              [value]="selectedToken"
-                              (valueChange)="selTokenSub.next($event)"
-                            >
-                              <mat-option
-                                [value]="token.tokenSymbol"
-                                *ngFor="let token of supportedTokensSub.value"
-                              >
-                                <div class="d-flex align-items-center">
-                                  <img
-                                    class="mr-1"
-                                    width="18"
-                                    height="18"
-                                    src="../../../../../assets/images/{{ token.src }}"
-                                    alt=""
-                                  />
-                                  {{ token.tokenSymbol }}
+                                <div
+                                  class="small mx-1 c-pointer"
+                                  (click)="tokenSelect.open()"
+                                >
+                                  {{ selectedToken }}
                                 </div>
-                              </mat-option>
-                            </mat-select>
-                            <button class="btn btn-primary btn ml-2">Send to card</button>
+                                <mat-select
+                                  #tokenSelect
+                                  [value]="selectedToken"
+                                  (valueChange)="selTokenSub.next($event)"
+                                >
+                                  <mat-option
+                                    [value]="token.tokenSymbol"
+                                    *ngFor="let token of supportedTokensSub.value"
+                                  >
+                                    <div class="d-flex align-items-center">
+                                      <img
+                                        class="mr-1"
+                                        width="18"
+                                        height="18"
+                                        src="../../../../../assets/images/{{ token.src }}"
+                                        alt=""
+                                      />
+                                      {{ token.tokenSymbol }}
+                                    </div>
+                                  </mat-option>
+                                </mat-select>
+                                <button
+                                  class="btn btn-primary btn ml-2 d-none d-sm-flex"
+                                  [disabled]="!(cardVerified$|async)"
+                                  (click)="transferToCard()"
+                                >
+                                  Send to card
+                                </button>
+                              </div>
+                            </ng-container>
                           </div>
-                        </ng-container>
-                      </div>
-                    </div>
-                      <ng-container *ngIf="selectedTokenBalance$ | async as tokenBalance">
-                        <div class="d-flex align-items-center">
-                          <app-exceeded-balance-msg
-                            [tokenBalance]="tokenBalance"
-                            [tokenAmount]="tokenAmountSub.value"
-                          ></app-exceeded-balance-msg>
                         </div>
                         <ng-container
-                          *ngIf="connectorService.providerUserInfo$ | async as userInfo"
+                          *ngIf="selectedTokenBalance$ | async as tokenBalance"
                         >
-                          <div class="text-muted">
-                            <app-set-input-relative-amount
-                              [value]="tokenBalance.balance"
-                              [tokenSymbol]="
+                          <div class="d-flex align-items-center">
+                            <app-exceeded-balance-msg
+                              [tokenBalance]="tokenBalance"
+                              [tokenAmount]="tokenAmountSub.value"
+                            ></app-exceeded-balance-msg>
+                          </div>
+                          <ng-container
+                            *ngIf="connectorService.providerUserInfo$ | async as userInfo"
+                          >
+                            <div class="text-muted">
+                              <app-set-input-relative-amount
+                                [value]="tokenBalance.balance"
+                                [tokenSymbol]="
                       TokenSymbol[tokenBalance.contract_ticker_symbol]
                     "
-                              (refreshBalance)="
+                                (refreshBalance)="
                       this.tokenBalanceService.refreshBalancesForAddress.next(
                         userInfo.address
                       )
                     "
-                              (valueChange)="tokenAmountSub.next($event)"
-                            ></app-set-input-relative-amount>
-                          </div>
+                                (valueChange)="tokenAmountSub.next($event)"
+                              ></app-set-input-relative-amount>
+                            </div>
+                          </ng-container>
                         </ng-container>
-                      </ng-container>
+
+                        <div class="d-sm-none mt-3 text-center">
+                          <button
+                            class="btn btn-primary btn"
+                            [disabled]="!(cardVerified$|async)"
+                            (click)="transferToCard()"
+                          >
+                            Send to card
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    </div>
-                    <div class="mb-3">
-                      <div class="h6 mb-3">Balances</div>
+                    <div class="mb-3 mt-3">
+                      <!--                      <div class="h6 mb-3">Balances</div>-->
                       <div class="d-flex justify-content-between text-white">
                         <div class="card w-50 mr-2">
                           <div class="card-body border-purple accent-text">
-                            <div class="small text-monospace">{{userInfo.address|shortAddrDisplay}} balance</div>
+                            <div class="small text-monospace">
+                              {{userInfo.address|shortAddrDisplay}} balance
+                            </div>
                             <div class="text-monospace">
-                              <ng-container *ngIf="selectedTokenBalance$ | async as tokenBalance">
-                              {{tokenBalance.balance}} {{TokenSymbol[tokenBalance.contract_ticker_symbol]}}
+                              <ng-container
+                                *ngIf="selectedTokenBalance$ | async as tokenBalance"
+                              >
+                                {{ TokenUtil.toMaxDisplayDecimalPlaces(
+                                tokenBalance.balance, TokenSymbol.ETH )}}
+                                {{TokenSymbol[tokenBalance.contract_ticker_symbol]}}
                               </ng-container>
                             </div>
                           </div>
@@ -150,7 +180,9 @@
                           <div class="card-body bg-purple">
                             <div class="small text-monospace">Card balance</div>
                             <div class="text-monospace">
-                              <div *ngIf="cardVerified$|async; else notVerifiedBalance">
+                              <div
+                                *ngIf="cardVerified$|async; else notVerifiedBalance"
+                              >
                                 {{cardBalance$|async}}}
                               </div>
                               <ng-template #notVerifiedBalance>
@@ -162,55 +194,30 @@
                       </div>
                     </div>
                   </div>
-
-                  <!--<ng-template #notVerified>
-                    <div
-                      class="d-flex justify-content-between text-white"
-                    >
-                      <div class="card w-50 mr-2">
-                        <div class="card-body border-purple">
-                          <div class="small text-monospace">Account balance</div>
-                          <div class="text-monospace">
-                            <div>
-                              Please complete card verification first.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    <div class="card w-50 mr-2">
-                        <div class="card-body bg-purple">
-                          <div class="small text-monospace">Card balance</div>
-                          <div class="text-monospace">
-                            <div>
-                              Please complete card verification first.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </ng-template>-->
-
                 </div>
               </div>
             </div>
           </div>
           <div class="col-xl-5 col-md-12 mb-xl-0 mb-md-3 mb-sm-3 mb-3">
-            <div class="card border-purple">
+            <div class="card">
               <div class="d-flex flex-column">
                 <div class="card-body">
-                  <div class="h6 mb-2">Manage Reef Card {{userInfo.address|shortAddrDisplay}}</div>
+                  <div class="h6 mb-2">
+                    Manage Reef Card {{userInfo.address|shortAddrDisplay}}
+                  </div>
                   <div class="d-flex flex-column">
                     <ng-container *ngIf="iframeSession$|async as session">
                       <ng-container *ngIf="!session.error else noSession">
-                        <iframe class="card-iframe w-100 h-auto" frameborder="0"
-                                [src]="baanxBaseUrl+'/iframe/'+session.access_token+'/'+session.user_id | safeUrl"
-                                sandbox="allow-forms allow-popups allow-same-origin allow-scripts"
+                        <iframe
+                          class="card-iframe w-100 h-auto"
+                          frameborder="0"
+                          [src]="baanxBaseUrl+'/iframe/'+session.access_token+'/'+session.user_id | safeUrl"
+                          sandbox="allow-forms allow-popups allow-scripts"
                         ></iframe>
                       </ng-container>
                       <ng-template #noSession
-                      >Error getting card session.
-                      </ng-template
-                      >
+                        >Error getting card session.
+                      </ng-template>
                     </ng-container>
                   </div>
                 </div>
@@ -219,23 +226,125 @@
           </div>
         </ng-container>
         <ng-template #cardNotRegistered>
-          <div class="col-lg-8 col-xl-6 col-12">
-            <div class="card justify-content-center">
-              <div class="col-12 text-center p-3">
-                <p>
-                  Connected address
-                  <app-address-shortener
-                    [standalone]="true"
-                    [showCopy]="false"
-                    [address]="userInfo.address"
+          <div class="col">
+            <!--<div class="row justify-content-center">
+              <div class="col-lg-8 col-xl-6 col-12">
+                <div class="card justify-content-center">
+                  <div class="col-12 text-center p-3">
+                    <p>
+                      Connected address {{userInfo.address|shortAddrDisplay}}<br>
+                      is not registered with Reef card.
+                    </p>
+                    <button
+                      class="btn btn-primary m-3 p-2"
+                      (click)="openCardForm()"
+                    >
+                      <app-svg-icon icon="credit-card"></app-svg-icon>
+                      Order Reef card
+                    </button>
+                    <p>or connect with different address.</p>
+                  </div>
+                </div>
+              </div>
+            </div>-->
+            <div class="row justify-content-center">
+              <div class="col-12 col-xl-8">
+                <div class="row justify-content-center">
+                  <div
+                    class="col-12 _col-lg-4 d-flex align-items-center justify-content-center reef-card-w flex-column p-4 pt-3 pt-lg-3 pr-lg-0 pl-lg-4 mr-lg-0"
                   >
-                  </app-address-shortener>
-                  is not registered with Reef card.
-                </p>
-                <button class="btn btn-primary m-3 p-2" (click)="openCardForm()">
-                  Get Reef card
-                </button>
-                <p>or connect with different address.</p>
+                    <img
+                      src="assets/images/reef/reef-card.png"
+                      class="reef-card-img p-0 mb-4"
+                    />
+                  </div>
+                  <div class="col-12 _col-lg-8">
+                    <div class="card">
+                      <div class="col-12">
+                        <div class="_card justify-content-center">
+                          <div class="col-12 text-center p-3">
+                            <p>
+                              Connected address
+                              {{userInfo.address|shortAddrDisplay}}<br />
+                              is not registered with Reef card.
+                            </p>
+                            <button
+                              class="btn btn-primary m-3 p-2"
+                              (click)="openCardForm()"
+                            >
+                              <app-svg-icon icon="credit-card"></app-svg-icon>
+                              Order Reef card
+                            </button>
+                            <p>or connect with your registered card address.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="row">
+                          <div class="col-12 col-md-6">
+                            <div class="card">
+                              <div class="card-body">
+                                <h6 class="card-title">
+                                  Spend crypto in 60 million stores
+                                </h6>
+                                <p class="card-text">
+                                  With Reef Visa Card you can buy directly at 60
+                                  million merchants worldwide. Just transfer
+                                  REEF to your card wallet and you are ready to
+                                  pay. Spend your REEF earnings anytime,
+                                  anywhere.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 col-md-6">
+                            <div class="card">
+                              <div class="card-body">
+                                <h6 class="card-title">
+                                  Zero, 零, el cero, ゼロ Fees
+                                </h6>
+                                <p class="card-text">
+                                  Your Reef Visa Card is completely free! Reef
+                                  will not charge any administrative or
+                                  processing fees*.
+                                  <br /><small
+                                    >*Third-party fees might be still
+                                    applicable</small
+                                  >
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 col-md-6">
+                            <div class="card">
+                              <div class="card-body">
+                                <h6 class="card-title">
+                                  #hodl and exchange only when needed
+                                </h6>
+                                <p class="card-text">
+                                  Keep your savings in crypto and convert only
+                                  what you spend.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 col-md-6">
+                            <div class="card">
+                              <div class="card-body">
+                                <h6 class="card-title">Up to 8% cash-back</h6>
+                                <p class="card-text">
+                                  Earn extra REEF for the money you spend. The
+                                  more you spend the more REEF you get.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

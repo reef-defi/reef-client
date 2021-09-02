@@ -1,5 +1,11 @@
-import {Component, Input, OnDestroy, TemplateRef, ViewChild} from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { ConnectorService } from '../../../../core/services/connector.service';
 import {
   HttpClient,
   HttpEvent,
@@ -7,7 +13,15 @@ import {
   HttpResponse,
   HttpResponseBase,
 } from '@angular/common/http';
-import {BehaviorSubject, combineLatest, merge, Observable, pipe, ReplaySubject, Subject} from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  merge,
+  Observable,
+  pipe,
+  ReplaySubject,
+  Subject,
+} from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
@@ -20,18 +34,24 @@ import {
   take,
   takeUntil,
 } from 'rxjs/operators';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {of} from 'rxjs/internal/observable/of';
-import {tap} from 'rxjs/internal/operators/tap';
-import {MatDialog} from '@angular/material/dialog';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {EthAuthService} from '../../../../core/services/eth-auth.service';
-import {environment} from '../../../../../environments/environment';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {HttpUtil} from '../../../../shared/utils/http-util';
-import {IProviderUserInfo, PendingTransaction, Token, TokenSymbol} from '../../../../core/models/types';
-import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { of } from 'rxjs/internal/observable/of';
+import { tap } from 'rxjs/internal/operators/tap';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { EthAuthService } from '../../../../core/services/eth-auth.service';
+import { environment } from '../../../../../environments/environment';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { HttpUtil } from '../../../../shared/utils/http-util';
+import {
+  IProviderUserInfo,
+  PendingTransaction,
+  Token,
+  TokenSymbol,
+} from '../../../../core/models/types';
+import { NgDestroyableComponent } from '../../../../shared/ng-destroyable-component';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { TokenUtil } from 'src/app/shared/utils/token.util';
 
 @Component({
   selector: 'app-card-admin-page',
@@ -39,29 +59,30 @@ import {TokenBalanceService} from '../../../../shared/service/token-balance.serv
   styleUrls: ['./card-admin-page.scss'],
 })
 export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
-
   set supportedTokens(val: { tokenSymbol: TokenSymbol; src: string }[]) {
     this.supportedTokensSub.next(val);
     this.selTokenSub.next(val[0].tokenSymbol);
   }
 
-  baanxBaseUrl = 'http://localhost:3000';
+  baanxBaseUrl = 'https://reeffinance.baanx.co.uk';
   cardBaseUrl = environment.reefNodeApiUrl;
   accountCardRegistered$: Observable<boolean>;
   cardVerified$: Observable<boolean>;
   iframeSession$: Observable<any>;
-  iframeUrl$: Observable<string>;
   createUser: Subject<any> = new Subject<any>();
   destroyed$ = new Subject<void>();
   @ViewChild('cardFormDialog') cardFormDialog: TemplateRef<any>;
   loading$: Observable<boolean>;
 
   selectedTokenBalance$: Observable<Token>;
-  supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol; src: string }[]>([]);
+  supportedTokensSub = new BehaviorSubject<
+    { tokenSymbol: TokenSymbol; src: string }[]
+  >([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
   tokenAmountSub = new BehaviorSubject<number>(null);
   TokenSymbol = TokenSymbol;
   cardBalance$: Observable<string>;
+  TokenUtil = TokenUtil;
 
   constructor(
     public readonly connectorService: ConnectorService,
@@ -83,14 +104,14 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
               catchError((e) => {
                 if (e.status === 404 || e.status === 400) {
                   console.log('Existing user 404 err=', e);
-                  return of({type: HttpEventType.Response});
+                  return of({ type: HttpEventType.Response });
                 }
-                return of({error: e.message, type: HttpEventType.Response});
+                return of({ error: e.message, type: HttpEventType.Response });
               })
             );
         }
         return of({
-          _status: {message: 'No wallet connected'},
+          _status: { message: 'No wallet connected' },
         });
       })
     );
@@ -134,9 +155,9 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
             }),
             catchError((e) => {
               console.log('err', e);
-              return of({error: e.message, type: HttpEventType.Response});
+              return of({ error: e.message, type: HttpEventType.Response });
             }),
-            startWith({type: HttpEventType.Sent})
+            startWith({ type: HttpEventType.Sent })
           )
       )
     );
@@ -146,7 +167,7 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
     // TODO display loading
     this.loading$ = userData$.pipe(
       map((v) =>
-        !!v && !!v.external_id ? {type: HttpEventType.Response} : v
+        !!v && !!v.external_id ? { type: HttpEventType.Response } : v
       ),
       filter((v) => this.isRequestStatus(v)),
       map((event) => {
@@ -197,21 +218,14 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
       switchMap((bUser: any) =>
         bUser
           ? this.http.post(this.cardBaseUrl + '/card/session', {
-            reefCardId: bUser.external_id,
-          })
-          : of({error: true, type: HttpEventType.Response})
+              reefCardId: bUser.external_id,
+            })
+          : of({ error: true, type: HttpEventType.Response })
       ),
       catchError((v) => {
         console.log('session error=', v);
-        return of({error: true, type: HttpEventType.Response});
+        return of({ error: true, type: HttpEventType.Response });
       }),
-      shareReplay(1)
-    );
-    this.iframeUrl$ = this.iframeSession$.pipe(
-      map(
-        (session) =>
-          `${this.baanxBaseUrl}/iframe/${session.access_token}/${session.user_id}`
-      ),
       shareReplay(1)
     );
 
@@ -247,7 +261,6 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
     this.selTokenSub
       .pipe(takeUntil(this.onDestroyed$))
       .subscribe(() => this.tokenAmountSub.next(null));
-
   }
 
   private isRequestStatus(v): boolean {
@@ -278,4 +291,6 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
         }
       });
   }
+
+  transferToCard() {}
 }
