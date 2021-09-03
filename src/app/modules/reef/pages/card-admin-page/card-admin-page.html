@@ -205,14 +205,14 @@
                   <div class="h6 mb-2">
                     Manage Reef Card {{userInfo.address|shortAddrDisplay}}
                   </div>
-                  <div class="d-flex flex-column">
+                  <div class="d-flex flex-column card-w">
                     <ng-container *ngIf="iframeSession$|async as session">
                       <ng-container *ngIf="!session.error else noSession">
                         <iframe
-                          class="card-iframe w-100 h-auto"
-                          frameborder="0"
+                          class="card-iframe w-100 h-100"
+                          frameborder="0" height="600px"
                           [src]="baanxBaseUrl+'/iframe/'+session.access_token+'/'+session.user_id | safeUrl"
-                          sandbox="allow-forms allow-popups allow-scripts"
+                          sandbox="allow-forms allow-popups allow-scripts allow-same-origin"
                         ></iframe>
                       </ng-container>
                       <ng-template #noSession
@@ -403,7 +403,7 @@
                   name="gender"
                   required="required"
                   [(ngModel)]="cardData.value.gender"
-                  (selectionChange)="cardData.value.gender=$event.value"
+                  (selectionChange)="cardData.value.gender=$event.value;cardData.value.title=$event.value=='M'?'Mr':'Mrs'"
                 >
                   <mat-option
                     *ngFor="let gender of [{v:'M', l:'Male'},{v:'F', l:'Female'}]"
@@ -414,6 +414,14 @@
                 </mat-select>
               </div>
             </div>
+            <input
+            [(ngModel)]="cardData.value.external_id"
+            class="form-control text-monospace small accent-text"
+            id="external_id"
+            name="external_id"
+            type="hidden"
+            [value]="(connectorService.providerUserInfo$|async)?.address"
+          />
             <div>
               <div class="small mb-1">First name:</div>
               <div class="d-flex">
@@ -425,7 +433,6 @@
                   placeholder="First name"
                   type="text"
                   required="required"
-                  disabled="disabled"
                 />
               </div>
             </div>
@@ -466,6 +473,118 @@
                   id="cityOrTown"
                   name="cityOrTown"
                   placeholder="City or town"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Phone Country Code:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.country_code"
+                  class="form-control text-monospace small accent-text"
+                  id="country_code"
+                  name="country_code"
+                  placeholder="Phone Country Code"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Country:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.selected_country"
+                  class="form-control text-monospace small accent-text"
+                  id="selected_country"
+                  name="selected_country"
+                  placeholder="Selected Country"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">Country Name:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.countryName"
+                  class="form-control text-monospace small accent-text"
+                  id="countryName"
+                  name="countryName"
+                  placeholder="Country Name"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">Email:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.email"
+                  class="form-control text-monospace small accent-text"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">Phone Number:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.phone_number"
+                  class="form-control text-monospace small accent-text"
+                  id="phone_number"
+                  name="phone_number"
+                  placeholder="Phone Number"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">House Number:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.house_number"
+                  class="form-control text-monospace small accent-text"
+                  id="house_number"
+                  name="house_number"
+                  placeholder="House Number"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">Postcode:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.postcode"
+                  class="form-control text-monospace small accent-text"
+                  id="postcode"
+                  name="postcode"
+                  placeholder="Postcode"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+          <div>
+              <div class="small mb-1">Date Of Birth:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.dateOfBirth"
+                  class="form-control text-monospace small accent-text"
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  placeholder="Date Of Birth"
                   type="text"
                   required="required"
                 />
