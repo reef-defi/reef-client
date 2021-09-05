@@ -52,6 +52,8 @@ import {
 import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
 import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
 import {TokenUtil} from 'src/app/shared/utils/token.util';
+import {countryCodes} from '../../../../shared/data/country_codes';
+import {MatSelectChange} from '@angular/material/select';
 
 @Component({
   selector: 'app-card-admin-page',
@@ -82,6 +84,8 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
   TokenSymbol = TokenSymbol;
   cardBalance$: Observable<string>;
   TokenUtil = TokenUtil;
+  GENDER_OPTIONS: { v: string, l: string }[] = [{v: 'M', l: 'Male'}, {v: 'F', l: 'Female'}];
+  countryCodes = countryCodes;
 
   constructor(
     public readonly connectorService: ConnectorService,
@@ -135,7 +139,7 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
         postcode: 'M202RH',
         dateOfBirth: '1980-01-01T00:00:00.000Z',
       })),*/
-      map((u) => ({
+      /*map((u) => ({
         external_id: u.external_id,
         addressLine1: 'Rozicno 8',
         addressLine2: '',
@@ -151,10 +155,13 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
         phone_number: '41661599',
         postcode: '1240',
         selected_country: 'SI',
-        title: 'Mr'
-      })),
-      switchMap((uData) =>
-        this.ethAuthService.signCardApplication$(JSON.stringify(uData))
+        title: 'Mr',
+      })),*/
+      switchMap((newUser: any) => {
+          return of(null)
+          // newUser.title = newUser.gender === 'M' ? 'Mr' : 'Mrs';
+          return this.ethAuthService.signCardApplication$(JSON.stringify(newUser));
+        }
       ),
       switchMap((uData) =>
         this.http
@@ -172,7 +179,10 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
             }),
             catchError((e) => {
               console.log('Error 1 creating user=', e);
-              return of({error: e.error.message, type: HttpEventType.Response});
+              return of({
+                error: e.error.message,
+                type: HttpEventType.Response,
+              });
             }),
             startWith({type: HttpEventType.Sent})
           )
@@ -310,5 +320,9 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
   }
 
   transferToCard() {
+  }
+
+  setCountryName(cardData: any, countryCode: any, countries: any[]): void {
+    cardData.countryName = countries.find(c => c['alpha-2'] === countryCode).name;
   }
 }

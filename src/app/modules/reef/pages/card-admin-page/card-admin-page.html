@@ -210,7 +210,8 @@
                       <ng-container *ngIf="!session.error else noSession">
                         <iframe
                           class="card-iframe w-100 h-100"
-                          frameborder="0" height="600px"
+                          frameborder="0"
+                          height="600px"
                           [src]="baanxBaseUrl+'/iframe/'+session.access_token+'/'+session.user_id | safeUrl"
                           sandbox="allow-forms allow-popups allow-scripts allow-same-origin"
                         ></iframe>
@@ -374,7 +375,7 @@
       <div class="d-flex flex-column justify-content-start mb-3">
         <ng-form #cardData="ngForm">
           <div class="d-flex flex-column mb-4 text-muted">
-            <div>
+            <!--<div>
               <div class="small mb-1">Title:</div>
               <div class="d-flex">
                 <mat-select
@@ -393,7 +394,7 @@
                   </mat-option>
                 </mat-select>
               </div>
-            </div>
+            </div>-->
             <div>
               <div class="small mb-1">Gender:</div>
               <div class="d-flex">
@@ -406,7 +407,7 @@
                   (selectionChange)="cardData.value.gender=$event.value;cardData.value.title=$event.value=='M'?'Mr':'Mrs'"
                 >
                   <mat-option
-                    *ngFor="let gender of [{v:'M', l:'Male'},{v:'F', l:'Female'}]"
+                    *ngFor="let gender of GENDER_OPTIONS"
                     [value]="gender.v"
                   >
                     {{gender.l}}
@@ -414,14 +415,14 @@
                 </mat-select>
               </div>
             </div>
-            <input
-            [(ngModel)]="cardData.value.external_id"
-            class="form-control text-monospace small accent-text"
-            id="external_id"
-            name="external_id"
-            type="hidden"
-            [value]="(connectorService.providerUserInfo$|async)?.address"
-          />
+            <!--<input
+              [(ngModel)]="cardData.value.external_id"
+              class="form-control text-monospace small accent-text"
+              id="external_id"
+              name="external_id"
+              type="hidden"
+              [value]="(connectorService.providerUserInfo$|async)?.address"
+            />-->
             <div>
               <div class="small mb-1">First name:</div>
               <div class="d-flex">
@@ -495,18 +496,24 @@
             <div>
               <div class="small mb-1">Country:</div>
               <div class="d-flex">
-                <input
-                  [(ngModel)]="cardData.value.selected_country"
-                  class="form-control text-monospace small accent-text"
+                <mat-select
+                  placeholder="Country"
                   id="selected_country"
                   name="selected_country"
-                  placeholder="Selected Country"
-                  type="text"
                   required="required"
-                />
+                  [(ngModel)]="cardData.value.selected_country"
+                  (selectionChange)="setCountryName(cardData.value, $event.value, countryCodes)"
+                >
+                  <mat-option
+                    *ngFor="let country of countryCodes"
+                    [value]="country['alpha-2']"
+                  >
+                    {{country.name}}
+                  </mat-option>
+                </mat-select>
               </div>
             </div>
-          <div>
+            <!--<div>
               <div class="small mb-1">Country Name:</div>
               <div class="d-flex">
                 <input
@@ -519,8 +526,8 @@
                   required="required"
                 />
               </div>
-            </div>
-          <div>
+            </div>-->
+            <div>
               <div class="small mb-1">Email:</div>
               <div class="d-flex">
                 <input
@@ -534,7 +541,7 @@
                 />
               </div>
             </div>
-          <div>
+            <div>
               <div class="small mb-1">Phone Number:</div>
               <div class="d-flex">
                 <input
@@ -548,7 +555,7 @@
                 />
               </div>
             </div>
-          <div>
+            <div>
               <div class="small mb-1">House Number:</div>
               <div class="d-flex">
                 <input
@@ -562,7 +569,7 @@
                 />
               </div>
             </div>
-          <div>
+            <div>
               <div class="small mb-1">Postcode:</div>
               <div class="d-flex">
                 <input
@@ -576,7 +583,7 @@
                 />
               </div>
             </div>
-          <div>
+            <div>
               <div class="small mb-1">Date Of Birth:</div>
               <div class="d-flex">
                 <input
