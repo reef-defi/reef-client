@@ -5,7 +5,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import {ConnectorService} from '../../../../core/services/connector.service';
+import { ConnectorService } from '../../../../core/services/connector.service';
 import {
   HttpClient,
   HttpEvent,
@@ -34,26 +34,31 @@ import {
   take,
   takeUntil,
 } from 'rxjs/operators';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
-import {of} from 'rxjs/internal/observable/of';
-import {tap} from 'rxjs/internal/operators/tap';
-import {MatDialog} from '@angular/material/dialog';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {EthAuthService} from '../../../../core/services/eth-auth.service';
-import {environment} from '../../../../../environments/environment';
-import {startWith} from 'rxjs/internal/operators/startWith';
-import {HttpUtil} from '../../../../shared/utils/http-util';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { of } from 'rxjs/internal/observable/of';
+import { tap } from 'rxjs/internal/operators/tap';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { EthAuthService } from '../../../../core/services/eth-auth.service';
+import { environment } from '../../../../../environments/environment';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { HttpUtil } from '../../../../shared/utils/http-util';
 import {
   IProviderUserInfo,
   PendingTransaction,
   Token,
   TokenSymbol,
 } from '../../../../core/models/types';
-import {NgDestroyableComponent} from '../../../../shared/ng-destroyable-component';
-import {TokenBalanceService} from '../../../../shared/service/token-balance.service';
-import {TokenUtil} from 'src/app/shared/utils/token.util';
-import {countryCodes} from '../../../../shared/data/country_codes';
-import {MatSelectChange} from '@angular/material/select';
+import { NgDestroyableComponent } from '../../../../shared/ng-destroyable-component';
+import { TokenBalanceService } from '../../../../shared/service/token-balance.service';
+import { TokenUtil } from 'src/app/shared/utils/token.util';
+import { countryCodes } from '../../../../shared/data/country_codes';
+import { MatSelectChange } from '@angular/material/select';
+import {
+  CountryISO,
+  PhoneNumberFormat,
+  SearchCountryField,
+} from 'ngx-intl-tel-input';
 
 @Component({
   selector: 'app-card-admin-page',
@@ -78,14 +83,50 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
   loading$: Observable<boolean>;
 
   selectedTokenBalance$: Observable<Token>;
-  supportedTokensSub = new BehaviorSubject<{ tokenSymbol: TokenSymbol; src: string }[]>([]);
+  supportedTokensSub = new BehaviorSubject<
+    { tokenSymbol: TokenSymbol; src: string }[]
+  >([]);
   selTokenSub = new ReplaySubject<TokenSymbol>();
   tokenAmountSub = new BehaviorSubject<number>(null);
   TokenSymbol = TokenSymbol;
   cardBalance$: Observable<string>;
   TokenUtil = TokenUtil;
-  GENDER_OPTIONS: { v: string, l: string }[] = [{v: 'M', l: 'Male'}, {v: 'F', l: 'Female'}];
+  GENDER_OPTIONS: { v: string; l: string }[] = [
+    { v: 'M', l: 'Male' },
+    { v: 'F', l: 'Female' },
+  ];
   countryCodes = countryCodes;
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+  preferredCountries: CountryISO[] = [
+    CountryISO.UnitedStates,
+    CountryISO.Turkey,
+    CountryISO.Brazil,
+    CountryISO.Italy,
+    CountryISO.Vietnam,
+    CountryISO.UnitedKingdom,
+    CountryISO.India,
+    CountryISO.Russia,
+    CountryISO.Indonesia,
+    CountryISO.Germany,
+    CountryISO.Australia,
+    CountryISO.Indonesia,
+    CountryISO.Spain,
+    CountryISO.France,
+    CountryISO.Canada,
+    CountryISO.Thailand,
+    CountryISO.Japan,
+    CountryISO.Argentina,
+    CountryISO.Ukraine,
+    CountryISO.Malaysia,
+    CountryISO.Poland,
+    CountryISO.Romania,
+    CountryISO.China,
+    CountryISO.Singapore,
+    CountryISO.Switzerland,
+    CountryISO.Portugal,
+  ];
 
   constructor(
     public readonly connectorService: ConnectorService,
@@ -103,18 +144,17 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
           return this.http
             .get(this.cardBaseUrl + '/card/' + userInfo.address)
             .pipe(
-              tap((v) => console.log('PROOO', v)),
               catchError((e) => {
                 if (e.status === 404 || e.status === 400) {
                   console.log('Existing user 404 err=', e);
-                  return of({type: HttpEventType.Response});
+                  return of({ type: HttpEventType.Response });
                 }
-                return of({error: e.message, type: HttpEventType.Response});
+                return of({ error: e.message, type: HttpEventType.Response });
               })
             );
         }
         return of({
-          _status: {message: 'No wallet connected'},
+          _status: { message: 'No wallet connected' },
         });
       })
     );
@@ -158,11 +198,12 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
         title: 'Mr',
       })),*/
       switchMap((newUser: any) => {
-          return of(null)
-          // newUser.title = newUser.gender === 'M' ? 'Mr' : 'Mrs';
-          return this.ethAuthService.signCardApplication$(JSON.stringify(newUser));
-        }
-      ),
+        return of(null);
+        // newUser.title = newUser.gender === 'M' ? 'Mr' : 'Mrs';
+        return this.ethAuthService.signCardApplication$(
+          JSON.stringify(newUser)
+        );
+      }),
       switchMap((uData) =>
         this.http
           .post(this.cardBaseUrl + '/card', uData, {
@@ -173,7 +214,7 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
               console.log('Created user=', v);
               if (!!v && !!v.error) {
                 console.log('Error 0 creating user', v);
-                return {error: v.error.message, type: HttpEventType.Response};
+                return { error: v.error.message, type: HttpEventType.Response };
               }
               return v;
             }),
@@ -184,7 +225,7 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
                 type: HttpEventType.Response,
               });
             }),
-            startWith({type: HttpEventType.Sent})
+            startWith({ type: HttpEventType.Sent })
           )
       )
     );
@@ -194,7 +235,7 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
     // TODO display loading
     this.loading$ = userData$.pipe(
       map((v: any) =>
-        !!v && !!v.external_id ? {type: HttpEventType.Response} : v
+        !!v && !!v.external_id ? { type: HttpEventType.Response } : v
       ),
       filter((v) => this.isRequestStatus(v)),
       map((event: any) => {
@@ -245,13 +286,13 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
       switchMap((bUser: any) =>
         bUser
           ? this.http.post(this.cardBaseUrl + '/card/session', {
-            reefCardId: bUser.external_id,
-          })
-          : of({error: true, type: HttpEventType.Response})
+              reefCardId: bUser.external_id,
+            })
+          : of({ error: true, type: HttpEventType.Response })
       ),
       catchError((v) => {
         console.log('session error=', v);
-        return of({error: true, type: HttpEventType.Response});
+        return of({ error: true, type: HttpEventType.Response });
       }),
       shareReplay(1)
     );
@@ -319,10 +360,21 @@ export class CardAdminPage extends NgDestroyableComponent implements OnDestroy {
       });
   }
 
-  transferToCard() {
-  }
+  transferToCard() {}
 
   setCountryName(cardData: any, countryCode: any, countries: any[]): void {
-    cardData.countryName = countries.find(c => c['alpha-2'] === countryCode).name;
+    cardData.countryName = countries.find(
+      (c) => c['alpha-2'] === countryCode
+    ).name;
+  }
+
+  setPhone(countryCode: string, phoneNr: string, cardData: any): void {
+    cardData.country_code = '+' + countryCode;
+    cardData.phone_number = phoneNr;
+  }
+
+  setDate(value: any, cardData: any): void {
+    const date = new Date(value);
+    cardData.dateOfBirth = date.toISOString();
   }
 }

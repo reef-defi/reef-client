@@ -107,7 +107,11 @@
                                   </mat-option>
                                 </mat-select>
                                 <button
-                                  class="btn btn-primary btn ml-2 d-none d-sm-flex"
+                                  class="
+                                    btn btn-primary btn
+                                    ml-2
+                                    d-none d-sm-flex
+                                  "
                                   [disabled]="!(cardVerified$|async)"
                                   (click)="transferToCard()"
                                 >
@@ -252,7 +256,20 @@
               <div class="col-12 col-xl-8">
                 <div class="row justify-content-center">
                   <div
-                    class="col-12 _col-lg-4 d-flex align-items-center justify-content-center reef-card-w flex-column p-4 pt-3 pt-lg-3 pr-lg-0 pl-lg-4 mr-lg-0"
+                    class="
+                      col-12
+                      _col-lg-4
+                      d-flex
+                      align-items-center
+                      justify-content-center
+                      reef-card-w
+                      flex-column
+                      p-4
+                      pt-3 pt-lg-3
+                      pr-lg-0
+                      pl-lg-4
+                      mr-lg-0
+                    "
                   >
                     <img
                       src="assets/images/reef/reef-card.png"
@@ -373,28 +390,9 @@
     </div>
     <mat-dialog-content>
       <div class="d-flex flex-column justify-content-start mb-3">
+        {{cardData.valid}}
         <ng-form #cardData="ngForm">
           <div class="d-flex flex-column mb-4 text-muted">
-            <!--<div>
-              <div class="small mb-1">Title:</div>
-              <div class="d-flex">
-                <mat-select
-                  placeholder="Select title"
-                  id="title"
-                  name="title"
-                  required="required"
-                  [(ngModel)]="cardData.value.title"
-                  (selectionChange)="cardData.value.title=$event.value"
-                >
-                  <mat-option
-                    *ngFor="let title of ['Mr','Mrs']"
-                    [value]="title"
-                  >
-                    {{title}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>-->
             <div>
               <div class="small mb-1">Gender:</div>
               <div class="d-flex">
@@ -415,14 +413,6 @@
                 </mat-select>
               </div>
             </div>
-            <!--<input
-              [(ngModel)]="cardData.value.external_id"
-              class="form-control text-monospace small accent-text"
-              id="external_id"
-              name="external_id"
-              type="hidden"
-              [value]="(connectorService.providerUserInfo$|async)?.address"
-            />-->
             <div>
               <div class="small mb-1">First name:</div>
               <div class="d-flex">
@@ -452,82 +442,6 @@
               </div>
             </div>
             <div>
-              <div class="small mb-1">Address:</div>
-              <div class="d-flex">
-                <input
-                  [(ngModel)]="cardData.value.addressLine1"
-                  class="form-control text-monospace small accent-text"
-                  id="addressLine1"
-                  name="addressLine1"
-                  placeholder="Address"
-                  type="text"
-                  required="required"
-                />
-              </div>
-            </div>
-            <div>
-              <div class="small mb-1">City or town:</div>
-              <div class="d-flex">
-                <input
-                  [(ngModel)]="cardData.value.cityOrTown"
-                  class="form-control text-monospace small accent-text"
-                  id="cityOrTown"
-                  name="cityOrTown"
-                  placeholder="City or town"
-                  type="text"
-                  required="required"
-                />
-              </div>
-            </div>
-            <div>
-              <div class="small mb-1">Phone Country Code:</div>
-              <div class="d-flex">
-                <input
-                  [(ngModel)]="cardData.value.country_code"
-                  class="form-control text-monospace small accent-text"
-                  id="country_code"
-                  name="country_code"
-                  placeholder="Phone Country Code"
-                  type="text"
-                  required="required"
-                />
-              </div>
-            </div>
-            <div>
-              <div class="small mb-1">Country:</div>
-              <div class="d-flex">
-                <mat-select
-                  placeholder="Country"
-                  id="selected_country"
-                  name="selected_country"
-                  required="required"
-                  [(ngModel)]="cardData.value.selected_country"
-                  (selectionChange)="setCountryName(cardData.value, $event.value, countryCodes)"
-                >
-                  <mat-option
-                    *ngFor="let country of countryCodes"
-                    [value]="country['alpha-2']"
-                  >
-                    {{country.name}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <!--<div>
-              <div class="small mb-1">Country Name:</div>
-              <div class="d-flex">
-                <input
-                  [(ngModel)]="cardData.value.countryName"
-                  class="form-control text-monospace small accent-text"
-                  id="countryName"
-                  name="countryName"
-                  placeholder="Country Name"
-                  type="text"
-                  required="required"
-                />
-              </div>
-            </div>-->
-            <div>
               <div class="small mb-1">Email:</div>
               <div class="d-flex">
                 <input
@@ -542,14 +456,35 @@
               </div>
             </div>
             <div>
-              <div class="small mb-1">Phone Number:</div>
+              <div class="small mb-1">Phone number:</div>
+              <div class="d-flex">
+                <ngx-intl-tel-input
+                  #phoneSelect
+                  required="required"
+                  [preferredCountries]="preferredCountries"
+                  [enableAutoCountrySelect]="true"
+                  [enablePlaceholder]="true"
+                  [searchCountryFlag]="true"
+                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                  [selectFirstCountry]="false"
+                  [maxLength]="15"
+                  [phoneValidation]="true"
+                  [separateDialCode]="true"
+                  [numberFormat]="PhoneNumberFormat.International"
+                  (change)="setPhone(phoneSelect.selectedCountry.dialCode, phoneSelect.value, cardData.value)"
+                >
+                </ngx-intl-tel-input>
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Street address:</div>
               <div class="d-flex">
                 <input
-                  [(ngModel)]="cardData.value.phone_number"
+                  [(ngModel)]="cardData.value.addressLine1"
                   class="form-control text-monospace small accent-text"
-                  id="phone_number"
-                  name="phone_number"
-                  placeholder="Phone Number"
+                  id="addressLine1"
+                  name="addressLine1"
+                  placeholder="Address"
                   type="text"
                   required="required"
                 />
@@ -570,6 +505,20 @@
               </div>
             </div>
             <div>
+              <div class="small mb-1">City or town:</div>
+              <div class="d-flex">
+                <input
+                  [(ngModel)]="cardData.value.cityOrTown"
+                  class="form-control text-monospace small accent-text"
+                  id="cityOrTown"
+                  name="cityOrTown"
+                  placeholder="City or town"
+                  type="text"
+                  required="required"
+                />
+              </div>
+            </div>
+            <div>
               <div class="small mb-1">Postcode:</div>
               <div class="d-flex">
                 <input
@@ -584,17 +533,49 @@
               </div>
             </div>
             <div>
-              <div class="small mb-1">Date Of Birth:</div>
+              <div class="small mb-1">Country:</div>
               <div class="d-flex">
-                <input
+                <mat-select
+                  placeholder="Select Country"
+                  id="selected_country"
+                  name="selected_country"
+                  required="required"
+                  [(ngModel)]="cardData.value.selected_country"
+                  (selectionChange)="setCountryName(cardData.value, $event.value, countryCodes)"
+                >
+                  <mat-option
+                    *ngFor="let country of countryCodes"
+                    [value]="country['alpha-2']"
+                  >
+                    {{country.name}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div>
+              <div class="small mb-1">Date of birth:</div>
+              <div class="d-flex">
+                <!--<input
                   [(ngModel)]="cardData.value.dateOfBirth"
                   class="form-control text-monospace small accent-text"
                   id="dateOfBirth"
                   name="dateOfBirth"
-                  placeholder="Date Of Birth"
+                  placeholder="Date of birth"
                   type="text"
                   required="required"
+                />-->
+
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  (click)="picker.open()"
+                  (dateChange)="setDate($event.value, cardData.value)"
                 />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
               </div>
             </div>
           </div>
@@ -606,7 +587,7 @@
         <button
           mat-ripple
           (click)="createUser.next(cardData.value); dialog.closeAll()"
-          class="btn btn-light"
+          class="btn btn-primary"
         >
           Sign and send
         </button>

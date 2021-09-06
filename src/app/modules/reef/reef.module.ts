@@ -17,6 +17,10 @@ import { BondsPage } from './pages/bonds/bonds.page';
 import { BondPage } from './pages/bond/bond.page';
 import { AboutPage } from './pages/about/about.page';
 import { CardAdminPage } from './pages/card-admin-page/card-admin-page';
+import {NgxIntlTelInputModule} from 'ngx-intl-tel-input';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatNativeDateModule} from '@angular/material/core';
 
 const components = [
   BuyReefComponent,
@@ -35,11 +39,12 @@ const pages = [
   BondsPage,
   BondPage,
   AboutPage,
+  CardAdminPage
 ];
 
 @NgModule({
-  declarations: [...pages, ...components, CardAdminPage],
-  imports: [CommonModule, ReefRoutingModule, SharedModule],
+  declarations: [...pages, ...components],
+  imports: [CommonModule, ReefRoutingModule, SharedModule, NgxIntlTelInputModule, MatDatepickerModule, MatInputModule, MatNativeDateModule],
   providers: [DatePipe],
 })
 export class ReefModule {}
