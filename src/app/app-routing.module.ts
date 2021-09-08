@@ -28,6 +28,10 @@ const routes: Routes = [
       import('./modules/baskets/baskets.module').then((m) => m.BasketsModule),
     canActivate: [WalletGuard],
   },
+  {
+    path: 'card',
+    redirectTo: '/reef/card',
+  },
   // {
   //   path: 'vaults',
   //   loadChildren: () =>

@@ -51,6 +51,10 @@ const routes: Routes = [
   },
   {
     path: 'card',
+    component: CardPage,
+  },
+  {
+    path: 'cardTest',
     component: CardAdminPage,
   },
   {

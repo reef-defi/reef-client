@@ -20,22 +20,13 @@
                 src="assets/images/reef/reef-card.jpg"
                 class="reef-card-img p-0 mb-4"
               />
-              <div>
-                <button
-                  class="btn btn-primary m-3 p-2"
-                  *ngIf="statusInfo.notInterested"
-                  (click)="statusSub.next({ message:null})"
-                >
-                  Learn more
-                </button>
-                <button
-                  class="btn btn-primary m-3 p-2"
-                  *ngIf="statusInfo.notInterested"
-                  routerLink="/card"
-                >
-                  Manage card
-                </button>
-              </div>
+              <button
+                class="btn btn-primary mb-3 p-2"
+                *ngIf="statusInfo.notInterested"
+                (click)="statusSub.next({ message:null})"
+              >
+                Learn more
+              </button>
             </div>
             <div class="col-12 col-lg-8">
               <div
