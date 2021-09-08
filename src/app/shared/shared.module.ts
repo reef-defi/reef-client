@@ -56,6 +56,8 @@ import { PendingTransactionMsgComponent } from './components/pending-transaction
 import { CountdownTimerComponent } from './components/countdown-timer/countdown-timer.component';
 import { UnsupportedChainMsgComponent } from './components/unsupported-chain-msg/unsupported-chain-msg.component';
 import { InfoModalComponent } from './components/info-modal/info-modal.component';
+import { SafeUrlPipe } from './pipes/safe-url.pipe';
+import { ShortAddrDisplayPipe } from './pipes/short-addr-display.pipe';
 
 const components = [
   FooterComponent,
@@ -119,6 +121,8 @@ const modules = [
     CountdownTimerComponent,
     UnsupportedChainMsgComponent,
     InfoModalComponent,
+    SafeUrlPipe,
+    ShortAddrDisplayPipe,
   ],
   providers: [
     {
@@ -138,6 +142,8 @@ const modules = [
     ...modules,
     CountdownTimerComponent,
     UnsupportedChainMsgComponent,
+    SafeUrlPipe,
+    ShortAddrDisplayPipe,
   ],
 })
 export class SharedModule {}

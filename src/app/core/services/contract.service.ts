@@ -87,12 +87,12 @@ export class ContractService {
                 +basket.investedETH > 0 && basket.referrer === info.address
             )
             .map((basket) => {
-              const dbBasketRecord = data.find((b) => b.basket_idx === basket.index);
+              const dbBasketRecord = data.find(
+                (b) => b.basket_idx === basket.index
+              );
               if (dbBasketRecord) {
-                const timeStamp = parseInt(
-                  dbBasketRecord.invested_at, 10
-                );
-                return {...basket, timeStamp};
+                const timeStamp = parseInt(dbBasketRecord.invested_at, 10);
+                return { ...basket, timeStamp };
               }
               return basket;
             });

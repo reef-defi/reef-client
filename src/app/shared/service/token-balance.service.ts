@@ -40,6 +40,10 @@ export class TokenBalanceService {
     { tokenSymbol: TokenSymbol.USDT, src: 'usdt.png' },
   ];
 
+  public static SUPPORTED_CARD_TOKENS = [
+    { tokenSymbol: TokenSymbol.ETH, src: 'eth.png' },
+  ];
+
   public static REEF_PROTOCOL_TOKENS = [
     ...TokenBalanceService.SUPPORTED_BUY_REEF_TOKENS,
     { tokenSymbol: TokenSymbol.REEF, src: 'reef.png' },
