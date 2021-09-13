@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import Web3 from 'web3';
-import { Contract } from 'web3-eth-contract';
+import {Contract} from 'web3-eth-contract';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import WalletLink from 'walletlink';
 import Torus from '@toruslabs/torus-embed';
-import { getProviderName } from '../utils/provider-name';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import {getProviderName} from '../utils/provider-name';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {
   ChainId,
   IChainData,
@@ -16,14 +16,14 @@ import {
   ProviderName,
   TokenSymbol,
 } from '../models/types';
-import { getChainData } from '../utils/chains';
-import { NotificationService } from './notification.service';
-import { getContractData } from '../../../assets/abi';
-import { take } from 'rxjs/operators';
-import { AddressUtils } from '../../shared/utils/address.utils';
-import { ProviderUtil } from '../../shared/utils/provider.util';
-import { first } from 'rxjs/internal/operators/first';
-import { DevUtil } from '../../shared/utils/dev-util';
+import {getChainData} from '../utils/chains';
+import {NotificationService} from './notification.service';
+import {getContractData} from '../../../assets/abi';
+import {take} from 'rxjs/operators';
+import {AddressUtils} from '../../shared/utils/address.utils';
+import {ProviderUtil} from '../../shared/utils/provider.util';
+import {first} from 'rxjs/internal/operators/first';
+import {DevUtil} from '../../shared/utils/dev-util';
 
 const Web3Modal = window.Web3Modal.default;
 
@@ -124,9 +124,11 @@ export class ConnectorService {
     this.web3 = web3;
     this.web3$.next(this.web3);
     const info: IProviderUserInfo = await this.createUserProviderInfo(web3);
-    await this.connectToContract(info, web3);
-    this.subToProviderEvents();
-    this.providerUserInfo$.next(info);
+    if (info) {
+      await this.connectToContract(info, web3);
+      this.subToProviderEvents();
+      this.providerUserInfo$.next(info);
+    }
   }
 
   public async onDisconnect(): Promise<any> {
@@ -160,9 +162,10 @@ export class ConnectorService {
       chainInfo
     );
     if (!availableSmartContractAddresses) {
-      throw new Error(
-        'Could not get contract addresses for chain_id=' + chainInfo.chain_id
+      alert(
+        'Chain ' + chainInfo.chain_id + ' not supported.'
       );
+      return Promise.resolve(null);
     }
     return Promise.resolve({
       address,
@@ -269,8 +272,8 @@ export class ConnectorService {
   }
 
   public setSelectedGas(type: string, price: number): void {
-    this.selectedGasPrice$.next({ type, price });
-    localStorage.setItem('reef_gas_price', JSON.stringify({ type, price }));
+    this.selectedGasPrice$.next({type, price});
+    localStorage.setItem('reef_gas_price', JSON.stringify({type, price}));
   }
 
   public getGasPrice(chainId = ChainId.MAINNET): string {
@@ -369,7 +372,8 @@ export class ConnectorService {
     if (!this.currentProvider$.value.on) {
       return;
     }
-    this.currentProvider$.value.on('connect', () => {});
+    this.currentProvider$.value.on('connect', () => {
+    });
     this.currentProvider$.value.on('disconnect', () => this.onDisconnect());
     this.currentProvider$.value.on(
       'accountsChanged',

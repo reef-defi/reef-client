@@ -4,7 +4,7 @@ import {
   ProtocolAddresses,
   TokenSymbol,
 } from '../../core/models/types';
-import { addresses } from '../../../assets/addresses';
+import {addresses} from '../../../assets/addresses';
 
 export class AddressUtils {
   private static labels = {
@@ -21,9 +21,9 @@ export class AddressUtils {
 
   static getChainAddresses(chainInfo: IChainData): ProtocolAddresses {
     const chainAddresses = addresses[chainInfo.chain_id];
-    if (!!chainAddresses) {
-    } else {
-      throw new Error('ERROR getting addresses for chain=' + chainInfo);
+    if (!chainAddresses) {
+      console.warn('ERROR getting addresses for chain=' + chainInfo);
+      return null;
     }
     return chainAddresses;
   }
