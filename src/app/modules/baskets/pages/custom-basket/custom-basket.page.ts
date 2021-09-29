@@ -1,23 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
+import {Component, OnInit} from '@angular/core';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
 import {
   IBasketHistoricRoi,
   IBasketPoolsAndCoinInfo,
   IPoolsMetadata,
   PoolsChartOptions,
 } from '../../../../core/models/types';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {
   basketNameGenerator,
   getBasketPoolsAndCoins,
   makeBasket,
 } from '../../../../core/utils/pools-utils';
-import { ContractService } from '../../../../core/services/contract.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
-import { map, take } from 'rxjs/operators';
-import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import {ContractService} from '../../../../core/services/contract.service';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {CustomInvestModalComponent} from '../../components/custom-invest-modal/custom-invest-modal.component';
+import {map, take} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
+import {NotificationService} from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-custom-basket',
@@ -37,7 +38,7 @@ export class CustomBasketPage implements OnInit {
         ExchangeName: 'N/A',
         type: 'Token',
       }));
-      const pols = pools.map((pool) => ({ ...pool, type: 'Pool' }));
+      const pols = pools.map((pool) => ({...pool, type: 'Pool'}));
       return [...pols, ...arr];
     })
   );
@@ -51,8 +52,10 @@ export class CustomBasketPage implements OnInit {
     private readonly contractService: ContractService,
     private readonly basketService: ApiService,
     private readonly chartsService: ChartsService,
-    private readonly dialog: MatDialog
-  ) {}
+    private readonly dialog: MatDialog,
+    private readonly notificationService: NotificationService
+  ) {
+  }
 
   ngOnInit(): void {
     const basketRef = history.state?.data;
@@ -112,7 +115,13 @@ export class CustomBasketPage implements OnInit {
   }
 
   async createBasket(ethAmount: number): Promise<any> {
-    const basket = makeBasket(this.chartPoolData);
+    this.notificationService.showNotification(
+      'We are in the process of building new opportunities on our Reef chain.',
+      'Ok',
+      'info'
+    );
+
+    /*const basket = makeBasket(this.chartPoolData);
     const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
       basket,
       this.pools$.value,
@@ -123,7 +132,7 @@ export class CustomBasketPage implements OnInit {
       name,
       basketPoolAndCoinInfo,
       ethAmount
-    );
+    );*/
   }
 
   getHistoricRoi(subtractMonths = 1): void {

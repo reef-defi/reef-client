@@ -1,24 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
+import {Component, OnInit} from '@angular/core';
+import {ApiService} from '../../../../core/services/api.service';
 import {
   IBasketHistoricRoi,
   IBasketPoolsAndCoinInfo,
   IGenerateBasketResponse,
   PoolsChartOptions,
 } from '../../../../core/models/types';
-import { first, startWith, switchMap, take } from 'rxjs/operators';
-import { PoolService } from '../../../../core/services/pool.service';
-import { FormControl } from '@angular/forms';
-import { tap } from 'rxjs/internal/operators/tap';
-import { ChartsService } from '../../../../core/services/charts.service';
-import { combineLatest } from 'rxjs';
+import {first, startWith, switchMap, take} from 'rxjs/operators';
+import {PoolService} from '../../../../core/services/pool.service';
+import {FormControl} from '@angular/forms';
+import {tap} from 'rxjs/internal/operators/tap';
+import {ChartsService} from '../../../../core/services/charts.service';
+import {combineLatest} from 'rxjs';
 import {
   basketNameGenerator,
   convertToInt,
   getBasketPoolsAndCoins,
 } from '../../../../core/utils/pools-utils';
-import { ContractService } from '../../../../core/services/contract.service';
-import { ConnectorService } from '../../../../core/services/connector.service';
+import {ContractService} from '../../../../core/services/contract.service';
+import {ConnectorService} from '../../../../core/services/connector.service';
+import {NotificationService} from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-my-baskets',
@@ -44,8 +45,10 @@ export class CreateBasketPage implements OnInit {
     private readonly poolService: PoolService,
     private readonly chartsService: ChartsService,
     private readonly contractService: ContractService,
-    private readonly connectorService: ConnectorService
-  ) {}
+    private readonly connectorService: ConnectorService,
+    private readonly notificationService: NotificationService
+  ) {
+  }
 
   ngOnInit(): void {
     this.getAllPools();
@@ -101,7 +104,13 @@ export class CreateBasketPage implements OnInit {
   }
 
   async createBasket(): Promise<any> {
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
+    this.notificationService.showNotification(
+      'We are in the process of building new opportunities on our Reef chain.',
+      'Ok',
+      'info'
+    );
+
+    /*const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
       this.basket,
       this.pools$.value,
       this.tokens$.value
@@ -111,7 +120,7 @@ export class CreateBasketPage implements OnInit {
       name,
       basketPoolAndCoinInfo,
       this.ethAmount.value
-    );
+    );*/
   }
 
   onPercentageChange(val: number): void {
@@ -139,8 +148,8 @@ export class CreateBasketPage implements OnInit {
 
   private makeBasket(basket: IGenerateBasketResponse): IGenerateBasketResponse {
     const b: IGenerateBasketResponse = Object.keys(basket)
-      .map((key) => ({ [key]: convertToInt(basket[key] * 100) }))
-      .reduce((memo, curr) => ({ ...memo, ...curr }));
+      .map((key) => ({[key]: convertToInt(basket[key] * 100)}))
+      .reduce((memo, curr) => ({...memo, ...curr}));
     const weights = Object.values(b);
     const sum = weights.reduce((memo, curr) => memo + curr);
     if (sum === 100) {
