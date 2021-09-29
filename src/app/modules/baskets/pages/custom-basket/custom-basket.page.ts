@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { ChartsService } from '../../../../core/services/charts.service';
+import {Component, OnInit} from '@angular/core';
+import {ApiService} from '../../../../core/services/api.service';
+import {ChartsService} from '../../../../core/services/charts.service';
 import {
   BasketPositionError,
   IBasketHistoricRoi,
@@ -8,13 +8,14 @@ import {
   IPoolsMetadata,
   PoolsChartOptions,
 } from '../../../../core/models/types';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {
   basketNameGenerator,
   getBasketErrorSymbol,
   getBasketPoolsAndCoins,
   makeBasket,
 } from '../../../../core/utils/pools-utils';
+import {NotificationService} from '../../../../core/services/notification.service';
 import { ContractService } from '../../../../core/services/contract.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
@@ -40,7 +41,7 @@ export class CustomBasketPage implements OnInit {
         ExchangeName: 'N/A',
         type: 'Token',
       }));
-      const pols = pools.map((pool) => ({ ...pool, type: 'Pool' }));
+      const pols = pools.map((pool) => ({...pool, type: 'Pool'}));
       return [...pols, ...arr];
     })
   );
@@ -55,8 +56,10 @@ export class CustomBasketPage implements OnInit {
     private readonly contractService: ContractService,
     private readonly basketService: ApiService,
     private readonly chartsService: ChartsService,
-    private readonly dialog: MatDialog
-  ) {}
+    private readonly dialog: MatDialog,
+    private readonly notificationService: NotificationService
+  ) {
+  }
 
   ngOnInit(): void {
     const basketRef = history.state?.data;
@@ -121,28 +124,11 @@ export class CustomBasketPage implements OnInit {
   }
 
   async createBasket(ethAmount: number): Promise<any> {
-    this.basketPositionErrorSymbol = null;
-    const basket = makeBasket(this.chartPoolData);
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo =
-      getBasketPoolsAndCoins(basket, this.pools$.value, this.tokens$.value);
-    const name = basketNameGenerator();
-    try {
-      await this.contractService.createBasket(
-        name,
-        basketPoolAndCoinInfo,
-        ethAmount
-      );
-    } catch (err) {
-      // err = `///R_ERRORS|POS_TYPE=BAL_POOL |IDENT_1=0x432081eF9aa1b8503F8C7Be37E4bB158A0543Da9 |IDENT_2=0x45645///R_ERRORS`;
-      const basketPositionError = ErrorUtils.parseBasketPositionError(err);
-      if (basketPositionError) {
-        this.basketPositionErrorSymbol = getBasketErrorSymbol(
-          basketPositionError,
-          this.pools$.value,
-          this.tokens$.value
-        );
-      }
-    }
+    this.notificationService.showNotification(
+      'We are in the process of building new opportunities on our Reef chain.',
+      'Ok',
+      'info'
+    );
   }
 
   getHistoricRoi(subtractMonths = 1): void {
