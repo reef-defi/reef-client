@@ -43,9 +43,11 @@ export class PoolPage {
   );
   readonly providerUserInfo$ = this.connectorService.providerUserInfo$;
   readonly error$ = new BehaviorSubject<boolean>(false);
-  readonly pendingTransactions$ = this.transactionService.getPendingTransactions(
-    [TransactionType.LIQUIDITY_USDT, TransactionType.LIQUIDITY_ETH]
-  );
+  readonly pendingTransactions$ =
+    this.transactionService.getPendingTransactions([
+      TransactionType.LIQUIDITY_USDT,
+      TransactionType.LIQUIDITY_ETH,
+    ]);
   public reefContract$: Observable<Contract | null>;
   public lpTokenContract$: Observable<Contract | null>;
   public pricePerTokens$: Observable<IReefPricePerToken | null> = of(null);
@@ -191,9 +193,8 @@ export class PoolPage {
   async addLiquidity(tokenSymbolB: TokenSymbol): Promise<void> {
     this.loading = true;
 
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const addresses = info.availableSmartContractAddresses;
     try {
       const lpTokenContract = await this.lpTokenContract$

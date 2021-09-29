@@ -48,9 +48,8 @@ export class ContractService {
   ) {}
 
   async getAllBaskets(): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     this.loading$.next(true);
     try {
       this.apiService
@@ -67,12 +66,12 @@ export class ContractService {
             resolvedBaskets.map(async (basket, idx) => ({
               ...basket,
               investedETH: await this.getUserInvestedBasketAmount(idx),
-              ...(await this.getBasketPoolsAndTokens(idx)).reduce(
-                (memo, curr) => ({
-                  ...memo,
-                  ...curr,
-                })
-              ),
+              ...(
+                await this.getBasketPoolsAndTokens(idx)
+              ).reduce((memo, curr) => ({
+                ...memo,
+                ...curr,
+              })),
               index: idx,
               isVault: false,
             }))
@@ -87,12 +86,12 @@ export class ContractService {
                 +basket.investedETH > 0 && basket.referrer === info.address
             )
             .map((basket) => {
-              const dbBasketRecord = data.find((b) => b.basket_idx === basket.index);
+              const dbBasketRecord = data.find(
+                (b) => b.basket_idx === basket.index
+              );
               if (dbBasketRecord) {
-                const timeStamp = parseInt(
-                  dbBasketRecord.invested_at, 10
-                );
-                return {...basket, timeStamp};
+                const timeStamp = parseInt(dbBasketRecord.invested_at, 10);
+                return { ...basket, timeStamp };
               }
               return basket;
             });
@@ -121,9 +120,8 @@ export class ContractService {
   }
 
   async getUserInvestedBasketAmount(idx: number): Promise<any> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     const invested: number = await this.basketContract$.value.methods
       .investedAmountInBasket(info.address, idx)
       .call();
@@ -136,24 +134,118 @@ export class ContractService {
     amountToInvest: number
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
-    try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
-      const wei = this.connectorService.toWei(amountToInvest);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const info: IProviderUserInfo =
+          await this.connectorService.providerUserInfo$
+            .pipe(take(1))
+            .toPromise();
+        const wei = this.connectorService.toWei(amountToInvest);
+        const {
+          uniswapPools,
+          tokenPools,
+          balancerPools,
+          balancerWeights,
+          tokenWeights,
+          uniSwapWeights,
+          mooniswapPools,
+          mooniswapWeights,
+        } = basketPoolTokenInfo;
 
-      const {
-        uniswapPools,
-        tokenPools,
-        balancerPools,
-        balancerWeights,
-        tokenWeights,
-        uniSwapWeights,
-        mooniswapPools,
-        mooniswapWeights,
-      } = basketPoolTokenInfo;
-      this.basketContract$.value.methods
-        .createBasket(
+        this.basketContract$.value.methods
+          .createBasket(
+            name,
+            uniswapPools,
+            uniSwapWeights,
+            tokenPools,
+            tokenWeights,
+            balancerPools,
+            balancerWeights,
+            mooniswapPools,
+            mooniswapWeights
+          )
+          .estimateGas(
+            {
+              from: addresses[ChainId.MAINNET].REEF_ESTIMATE_GAS,
+              value: `${wei}`,
+            },
+            async (error, gas) => {
+              if (!error && gas) {
+                await this.eventService.subToInvestEvent(
+                  this.basketContract$.value
+                );
+                this.basketContract$.value.methods
+                  .createBasket(
+                    name,
+                    uniswapPools,
+                    uniSwapWeights,
+                    tokenPools,
+                    tokenWeights,
+                    balancerPools,
+                    balancerWeights,
+                    mooniswapPools,
+                    mooniswapWeights
+                  )
+                  .send({
+                    from: info.address,
+                    value: `${wei}`,
+                    gasPrice: this.connectorService.getGasPrice(
+                      ChainId.MAINNET
+                    ),
+                    gas,
+                  })
+                  .on('transactionHash', (hash) => {
+                    dialogRef.close();
+                    this.notificationService.showNotification(
+                      'The transaction is now pending.',
+                      'Ok',
+                      'info'
+                    );
+                    this.transactionService.addPendingTx(
+                      hash,
+                      TransactionType.REEF_BASKET,
+                      [TokenSymbol.ETH],
+                      info.chainInfo.chain_id
+                    );
+                  })
+                  .on('receipt', async (receipt) => {
+                    this.transactionService.removePendingTx(
+                      receipt.transactionHash
+                    );
+                    this.notificationService.showNotification(
+                      `Success! ${amountToInvest} ETH invested in ${name} Basket`,
+                      'Okay',
+                      'success'
+                    );
+                    resolve();
+                  })
+                  .on('error', (err) => {
+                    dialogRef.close();
+                    if (err.code === EErrorTypes.INTERNAL_ERROR) {
+                      err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+                    }
+                    this.notificationService.showNotification(
+                      ErrorUtils.parseError(err.code, err.message),
+                      'Close',
+                      'error'
+                    );
+                    reject(err);
+                  });
+              } else {
+                if (error.code === EErrorTypes.INTERNAL_ERROR) {
+                  error.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
+                }
+                dialogRef.close();
+                this.notificationService.showNotification(
+                  ErrorUtils.parseError(error.code, error.message),
+                  'Close',
+                  'error'
+                );
+                reject(error.message);
+              }
+            }
+          );
+        DevUtil.devLog('Params= ', {
           name,
           uniswapPools,
           uniSwapWeights,
@@ -162,103 +254,20 @@ export class ContractService {
           balancerPools,
           balancerWeights,
           mooniswapPools,
-          mooniswapWeights
-        )
-        .estimateGas(
-          {
-            from: addresses[ChainId.MAINNET].REEF_ESTIMATE_GAS,
-            value: `${wei}`,
-          },
-          async (err, gas) => {
-            if (!err && gas) {
-              await this.eventService.subToInvestEvent(
-                this.basketContract$.value
-              );
-              this.basketContract$.value.methods
-                .createBasket(
-                  name,
-                  uniswapPools,
-                  uniSwapWeights,
-                  tokenPools,
-                  tokenWeights,
-                  balancerPools,
-                  balancerWeights,
-                  mooniswapPools,
-                  mooniswapWeights
-                )
-                .send({
-                  from: info.address,
-                  value: `${wei}`,
-                  gasPrice: this.connectorService.getGasPrice(ChainId.MAINNET),
-                  gas,
-                })
-                .on('transactionHash', (hash) => {
-                  dialogRef.close();
-                  this.notificationService.showNotification(
-                    'The transaction is now pending.',
-                    'Ok',
-                    'info'
-                  );
-                  this.transactionService.addPendingTx(
-                    hash,
-                    TransactionType.REEF_BASKET,
-                    [TokenSymbol.ETH],
-                    info.chainInfo.chain_id
-                  );
-                })
-                .on('receipt', async (receipt) => {
-                  this.transactionService.removePendingTx(
-                    receipt.transactionHash
-                  );
-                  this.notificationService.showNotification(
-                    `Success! ${amountToInvest} ETH invested in ${name} Basket`,
-                    'Okay',
-                    'success'
-                  );
-                })
-                .on('error', (err) => {
-                  dialogRef.close();
-                  if (err.code === EErrorTypes.INTERNAL_ERROR) {
-                    err.code = EErrorTypes.BASKET_POSITION_INVEST_ERROR;
-                  }
-                  this.notificationService.showNotification(
-                    ErrorUtils.parseError(err.code, err.message),
-                    'Close',
-                    'error'
-                  );
-                });
-            } else {
-              dialogRef.close();
-              this.notificationService.showNotification(
-                err.message,
-                'Close',
-                'error'
-              );
-            }
-          }
-        );
-      DevUtil.devLog('Params= ', {
-        name,
-        uniswapPools,
-        uniSwapWeights,
-        tokenPools,
-        tokenWeights,
-        balancerPools,
-        balancerWeights,
-        mooniswapPools,
-        mooniswapWeights,
-      });
-    } catch (e) {
-      DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
-      this.notificationService.showNotification(e.message, 'Close', 'error');
-    }
+          mooniswapWeights,
+        });
+      } catch (e) {
+        DevUtil.devLog('Create basket err=', e, LogLevel.ERROR);
+        this.notificationService.showNotification(e.message, 'Close', 'error');
+        reject(null);
+      }
+    });
   }
 
   async getBalanceOf(basketIdx): Promise<any> {
     // TODO: get balances of all polls...
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     return this.basketContract$.value.methods
       .getAvailableBasketUniswapPools(basketIdx)
       .call();
@@ -295,9 +304,8 @@ export class ContractService {
   ): Promise<any> {
     const dialogRef = this.dialog.open(TransactionConfirmationComponent);
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       this.basketContract$.value.methods
         .disinvest(basketIdxs, basketIdxPercentage, yieldRatio, shouldRestake)
         .send({
@@ -343,9 +351,8 @@ export class ContractService {
 
   async stakeReef(amount: number): Promise<any> {
     try {
-      const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-        .pipe(take(1))
-        .toPromise();
+      const info: IProviderUserInfo =
+        await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
       const value = this.connectorService.toWei(amount);
       const res = await this.stakingContract$.value.methods.stake(value).send({
         from: info.address,
@@ -383,9 +390,8 @@ export class ContractService {
   }
 
   private async updateUserDetails(): Promise<void> {
-    const info: IProviderUserInfo = await this.connectorService.providerUserInfo$
-      .pipe(take(1))
-      .toPromise();
+    const info: IProviderUserInfo =
+      await this.connectorService.providerUserInfo$.pipe(take(1)).toPromise();
     //TODO refresh balance
     this.tokenBalanceService.refreshBalancesForAddress.next(info.address);
     // this is old way of refreshing balance - this.connectorService.getUserProviderInfo();

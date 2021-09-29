@@ -69,9 +69,8 @@ export class TokenBalanceService {
 
   public chainSupportedPortfolio(chainId: ChainId): boolean {
     // atm we only support Covalent portfolio data
-    let indexOf = TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(
-      chainId
-    );
+    let indexOf =
+      TokenBalanceService.COVALENT_SUPPORTED_NETWORK_IDS.indexOf(chainId);
     DevUtil.devLog('chainSupportedPortfolio VAL=', indexOf);
 
     return indexOf > -1;
@@ -414,9 +413,8 @@ export class TokenBalanceService {
       );
     }
     if (!contract && tokenAddress) {
-      contract = this.connectorService.createErc20TokenContractFromAddress(
-        tokenAddress
-      );
+      contract =
+        this.connectorService.createErc20TokenContractFromAddress(tokenAddress);
     }
 
     if (!contract) {

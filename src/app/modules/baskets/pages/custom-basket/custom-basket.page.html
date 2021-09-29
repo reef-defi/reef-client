@@ -15,6 +15,7 @@
       <app-custom-basket-composition
         [basket]="chartPoolData"
         [disabledSlider]="Object.keys(chartPoolData).length === 1"
+        [errorSymbol]="basketPositionErrorSymbol"
         (removePool)="removePool($event)"
         (changeAllocation)="editBasketAllocation($event)"
         (invest)="onInvest()"

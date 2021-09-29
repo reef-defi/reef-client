@@ -6,7 +6,14 @@
         You can modify the allocated amount using the sliders
       </div>
       <div *ngFor="let key of Object.keys(basket); let i = index">
-        <div class="small text-monospace ml-2">{{ key }}</div>
+        <div class="small text-monospace ml-2 d-flex align-items-end">
+          <mat-icon
+            *ngIf="errorSymbol === key"
+            class="red-text position-warning-icon"
+            >warning</mat-icon
+          >
+          <span [class.red-text]="errorSymbol === key">{{ key }}</span>
+        </div>
         <div
           class="d-flex justify-content-between align-items-center ml-2 mr-2"
         >

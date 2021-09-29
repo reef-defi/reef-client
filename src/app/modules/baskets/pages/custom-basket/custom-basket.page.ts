@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../../../core/services/api.service';
 import {ChartsService} from '../../../../core/services/charts.service';
 import {
+  BasketPositionError,
   IBasketHistoricRoi,
   IBasketPoolsAndCoinInfo,
   IPoolsMetadata,
@@ -10,15 +11,17 @@ import {
 import {BehaviorSubject} from 'rxjs';
 import {
   basketNameGenerator,
+  getBasketErrorSymbol,
   getBasketPoolsAndCoins,
   makeBasket,
 } from '../../../../core/utils/pools-utils';
-import {ContractService} from '../../../../core/services/contract.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {CustomInvestModalComponent} from '../../components/custom-invest-modal/custom-invest-modal.component';
-import {map, take} from 'rxjs/operators';
-import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 import {NotificationService} from '../../../../core/services/notification.service';
+import { ContractService } from '../../../../core/services/contract.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CustomInvestModalComponent } from '../../components/custom-invest-modal/custom-invest-modal.component';
+import { map, take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { ErrorUtils } from '../../../../shared/utils/error.utils';
 
 @Component({
   selector: 'app-custom-basket',
@@ -28,8 +31,8 @@ import {NotificationService} from '../../../../core/services/notification.servic
 export class CustomBasketPage implements OnInit {
   Object = Object;
   readonly COMPOSITION_LIMIT = this.basketService.COMPOSITION_LIMIT;
-  readonly pools$: BehaviorSubject<IPoolsMetadata[]> = this.basketService
-    .pools$;
+  readonly pools$: BehaviorSubject<IPoolsMetadata[]> =
+    this.basketService.pools$;
   readonly tokens$: BehaviorSubject<any> = this.basketService.tokens$;
   readonly poolsAndTokens$ = combineLatest(this.pools$, this.tokens$).pipe(
     map(([pools, tokens]: [IPoolsMetadata[], any]) => {
@@ -47,6 +50,7 @@ export class CustomBasketPage implements OnInit {
   public basketPayload: IBasketPoolsAndCoinInfo | null = null;
   public currentRoiTimespan = 1;
   public roiData: number[][];
+  public basketPositionErrorSymbol: string;
 
   constructor(
     private readonly contractService: ContractService,
@@ -66,6 +70,7 @@ export class CustomBasketPage implements OnInit {
   }
 
   addPool(poolName: string): void {
+    this.basketPositionErrorSymbol = null;
     if (!(Object.keys(this.chartPoolData).length < this.COMPOSITION_LIMIT)) {
       alert(`Can't have more than 10 compositions.`);
     } else {
@@ -77,6 +82,9 @@ export class CustomBasketPage implements OnInit {
   }
 
   removePool(poolName: string): void {
+    if (poolName === this.basketPositionErrorSymbol) {
+      this.basketPositionErrorSymbol = null;
+    }
     delete this.chartPoolData[poolName];
     this.balancePoolAllocation();
     this.setChart();
@@ -86,6 +94,7 @@ export class CustomBasketPage implements OnInit {
   }
 
   editBasketAllocation(config: any[]): void {
+    this.basketPositionErrorSymbol = null;
     const [poolName, percentage] = config;
     const oldValue = this.chartPoolData[poolName] || 0;
     const newValue = (this.chartPoolData[poolName] = percentage);
@@ -120,19 +129,6 @@ export class CustomBasketPage implements OnInit {
       'Ok',
       'info'
     );
-
-    /*const basket = makeBasket(this.chartPoolData);
-    const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
-      basket,
-      this.pools$.value,
-      this.tokens$.value
-    );
-    const name = basketNameGenerator();
-    await this.contractService.createBasket(
-      name,
-      basketPoolAndCoinInfo,
-      ethAmount
-    );*/
   }
 
   getHistoricRoi(subtractMonths = 1): void {

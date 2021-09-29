@@ -172,13 +172,8 @@ export class ApiService {
   }
 
   getBinanceQuote(params: QuotePayload): Observable<any> {
-    const {
-      cryptoCurrency,
-      baseCurrency,
-      requestedAmount,
-      address,
-      email,
-    } = params;
+    const { cryptoCurrency, baseCurrency, requestedAmount, address, email } =
+      params;
     return this.http
       .post(`${this.binanceApiUrl}/getQuote`, {
         cryptoCurrency,

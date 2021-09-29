@@ -26,7 +26,12 @@
               <div class="card align-items-center max-w-550 margin-auto">
                 <div class="card-body">
                   <div
-                    class="d-flex align-items-center justify-content-center mb-4"
+                    class="
+                      d-flex
+                      align-items-center
+                      justify-content-center
+                      mb-4
+                    "
                   >
                     <img
                       *ngIf="token === TokenSymbol.REEF_WETH_POOL"
@@ -59,10 +64,22 @@
                     Farm REEF token
                   </div>
                   <div
-                    class="col-sm-12 col-md-10 offset-md-1 max-w-xs flex-column mb-5 text-muted"
+                    class="
+                      col-sm-12 col-md-10
+                      offset-md-1
+                      max-w-xs
+                      flex-column
+                      mb-5
+                      text-muted
+                    "
                   >
                     <div
-                      class="d-flex justify-content-start align-items-center mb-2"
+                      class="
+                        d-flex
+                        justify-content-start
+                        align-items-center
+                        mb-2
+                      "
                     >
                       <div class="small align-self-start mr-1">
                         {{ token !== TokenSymbol.REEF ? 'LP Tokens' : 'REEF' }}
@@ -111,7 +128,15 @@
                     >
                       <div class="mb-4 col">
                         <div
-                          class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                          class="
+                            card
+                            border-purple
+                            accent-text
+                            p-05
+                            height-100
+                            text-monospace
+                            justify-content-center
+                          "
                         >
                           <div class="small mb-1 text-center">Pool APY</div>
                           <div class="small text-center">
@@ -127,7 +152,12 @@
                                 || reefAmount <= 0
                                 || (pendingTxs.length && pendingTxs[0].hash)"
                                 (click)="deposit(contract, address, reefAmount.toString(10))"
-                                class="btn btn-primary white-space-normal width-100 small-line-h"
+                                class="
+                                  btn btn-primary
+                                  white-space-normal
+                                  width-100
+                                  small-line-h
+                                "
                               >
                                 Deposit
                                 <span class="x-small-text">Tokens</span>
@@ -138,7 +168,15 @@
                       </div>
                       <div class="mb-4 col">
                         <div
-                          class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                          class="
+                            card
+                            border-purple
+                            accent-text
+                            p-05
+                            height-100
+                            text-monospace
+                            justify-content-center
+                          "
                         >
                           <div class="small mb-1 text-center">
                             Staked LP Tokens
@@ -161,7 +199,11 @@
                               <button
                                 [disabled]="staked <= 0 || (pendingTxs.length && pendingTxs[0].hash)"
                                 (click)="withdraw(address, reefAmount)"
-                                class="btn btn-primary white-space-normal width-100"
+                                class="
+                                  btn btn-primary
+                                  white-space-normal
+                                  width-100
+                                "
                               >
                                 Withdraw
                               </button>
@@ -171,7 +213,15 @@
                       </div>
                       <div class="mb-4 col">
                         <div
-                          class="card border-purple accent-text p-05 height-100 text-monospace justify-content-center"
+                          class="
+                            card
+                            border-purple
+                            accent-text
+                            p-05
+                            height-100
+                            text-monospace
+                            justify-content-center
+                          "
                         >
                           <div class="small mb-1 text-center">
                             Pending REWARD
@@ -194,7 +244,12 @@
                               <button
                                 [disabled]="reward <= 0 || (pendingTxs.length && pendingTxs[0].hash)"
                                 (click)="withdraw(address, 0)"
-                                class="btn btn-primary white-space-normal width-100 small-line-h"
+                                class="
+                                  btn btn-primary
+                                  white-space-normal
+                                  width-100
+                                  small-line-h
+                                "
                               >
                                 Harvest
                                 <span class="x-small-text">Tokens</span>

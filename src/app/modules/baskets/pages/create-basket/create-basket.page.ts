@@ -110,17 +110,6 @@ export class CreateBasketPage implements OnInit {
       'info'
     );
 
-    /*const basketPoolAndCoinInfo: IBasketPoolsAndCoinInfo = getBasketPoolsAndCoins(
-      this.basket,
-      this.pools$.value,
-      this.tokens$.value
-    );
-    const name = basketNameGenerator();
-    await this.contractService.createBasket(
-      name,
-      basketPoolAndCoinInfo,
-      this.ethAmount.value
-    );*/
   }
 
   onPercentageChange(val: number): void {

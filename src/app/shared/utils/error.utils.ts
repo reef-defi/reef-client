@@ -1,4 +1,9 @@
-import { EErrorTypes, RpcErrorTypes } from '../../core/models/types';
+import {
+  BASKET_POS_ERR_TYPES,
+  BasketPositionError,
+  EErrorTypes,
+  RpcErrorTypes,
+} from '../../core/models/types';
 
 export class ErrorUtils {
   private static JSON_RPC_ERROR_TYPES: any = {
@@ -16,7 +21,7 @@ export class ErrorUtils {
   };
 
   public static parseError(errorCode: EErrorTypes, message?: string): string {
-    if (message) {
+    /*if (message) {
       const maxRatio = message.indexOf('ERR_MAX_IN_RATIO') > -1;
       const minRatio = message.indexOf('ERR_MIN_IN_RATIO') > -1;
       if (maxRatio || minRatio) {
@@ -24,7 +29,7 @@ export class ErrorUtils {
           maxRatio ? 'too big' : 'too small'
         }.`;
       }
-    }
+    }*/
     if (!!this.JSON_RPC_ERROR_TYPES[errorCode]) {
       return this.JSON_RPC_ERROR_TYPES[errorCode];
     }
@@ -35,5 +40,55 @@ export class ErrorUtils {
       );
     }
     return 'Something went wrong. The transaction has been cancelled.';
+  }
+
+  public static parseBasketPositionError(message: string): BasketPositionError {
+    // `///R_ERRORS|POS_TYPE=BAL_POOL, |IDENT_1=0x2345345 |IDENT_2=0x45645///R_ERRORS`;
+
+    const reefErrorsIdent = '///R_ERRORS';
+    if (message.indexOf(reefErrorsIdent) > -1) {
+      const openErrIndex =
+        message.indexOf(reefErrorsIdent, 0) + reefErrorsIdent.length;
+      const closeErrIndex = message.indexOf(reefErrorsIdent, openErrIndex);
+      const reefErrStr = message.substring(openErrIndex, closeErrIndex);
+      if (reefErrStr) {
+        const errorVals = reefErrStr.split('|').map((eStr) => eStr.split('='));
+        const posType = errorVals.find((eArr) => eArr[0] === 'POS_TYPE');
+        if (posType) {
+          const posTypeVal = posType[1].trim();
+          switch (posTypeVal) {
+            case BASKET_POS_ERR_TYPES.BAL_POOL:
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
+            case BASKET_POS_ERR_TYPES.TOKEN:
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
+            case BASKET_POS_ERR_TYPES.UNI_POOL_v2:
+              return {
+                type: posTypeVal,
+                positionIdent:
+                  ErrorUtils.getIdentValue(errorVals, 1) +
+                  '_' +
+                  ErrorUtils.getIdentValue(errorVals, 2),
+              };
+            case BASKET_POS_ERR_TYPES.MOONI_POOL:
+              return {
+                type: posTypeVal,
+                positionIdent: ErrorUtils.getIdentValue(errorVals, 1),
+              };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  private static getIdentValue(errorVals: string[][], identNr: number): string {
+    const val = errorVals.find((eArr) => eArr[0] === 'IDENT_' + identNr)[1];
+    return val ? val.trim() : null;
   }
 }
