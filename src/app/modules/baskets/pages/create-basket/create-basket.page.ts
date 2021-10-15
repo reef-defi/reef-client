@@ -105,7 +105,7 @@ export class CreateBasketPage implements OnInit {
 
   async createBasket(): Promise<any> {
     this.notificationService.showNotification(
-      'We are in the process of building new opportunities on our Reef chain.',
+      'We are in the process of building new opportunities on our Reef chain so we disabled new basket creation on ETH.',
       'Ok',
       'info'
     );
