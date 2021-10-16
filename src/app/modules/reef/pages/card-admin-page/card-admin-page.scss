@@ -1,0 +1,31 @@
+.reef-card-img {
+  min-width: 0;
+  max-width: 400px;
+  height: auto;
+  width: 100%;
+  border: solid 1px #707070;
+  border-radius: 0.9em;
+}
+
+.card-w {
+  height: 500px;
+}
+
+.card-iframe {
+  height: 100% !important;
+}
+
+.modal-label{
+  align-self: flex-end;
+}
+.mat-dialog-content{
+  max-height: 76vh;
+}
+
+.mat-dialog-container{
+  padding-top: 0;
+}
+
+.lh-small{
+  line-height: 1.5em;
+}

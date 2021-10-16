@@ -1,9 +1,9 @@
-<div class="d-flex align-items-center" *ngIf="address">
-  <div [matTooltip]="address" class="mr-2">
+<!--<div class="d-flex align-items-center" *ngIf="address">-->
+<div *ngIf="address">
+  <!--  <div [matTooltip]="address" class="mr-2">-->
+  <div [matTooltip]="address">
     <div class="text-monospace small">
-      {{ address.slice(0, 4) }}...{{
-        address.slice(address.length - 4, address.length)
-      }}
+      {{ address | shortAddrDisplay }}
     </div>
   </div>
   <div *ngIf="showCopy" class="c-pointer" matTooltip="Copy to clipboard">
