@@ -20,7 +20,7 @@
 }
 
 .c-pointer {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 :root {

@@ -333,6 +333,24 @@
       Farm Reef
     </a>-->
     <a
+      id="projects"
+      [routerLink]="['/projects-list']"
+      routerLinkActive="active"
+      class="
+        d-flex
+        align-items-center
+        h6
+        text-decoration-none
+        w-100
+        text-body
+        mb-3
+      "
+      (click)="mobileNavShown = false"
+    >
+      <i class="la la-lg la-archive mr-1"></i>
+      Projects
+    </a>
+    <a
       id="reefCard"
       [routerLink]="['/reef/card']"
       routerLinkActive="active"
